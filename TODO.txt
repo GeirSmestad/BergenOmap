@@ -1,0 +1,28 @@
+-Fiks system for å rotere kart
+-Fiks system for å dra et punkt på O-kartet til å matche ekte-kartet
+
+
+
+
+
+
+Likningssystem jeg må løse:
+
+lng_nw, lat_nw = ?, ?
+lng_se, lat_se = ?, ?
+
+
+Kjente verdier med eksempler:
+
+lng_1_map, lat_1_map : (5.3, 60.4)
+lng_2_map, lat_2_map : (5.4, 60.3)
+
+
+x_1, y_1 : 0.2, 0.2
+x_2, y_2: 0.8, 0.8
+
+x_nw, y_nw: 0, 0
+x_se, y_se: 1, 1
+
+
+Forutsetning er øst for Greenwitch og nord for ekvator.
