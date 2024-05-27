@@ -17,7 +17,7 @@ def add_transparent_border(image, border_size):
 def transform_image():
     #image_path = request.args.get('path')  # Path to the image file
     image_path = "../maps/floyen-1.JPG"
-    rotation_angle = int(request.args.get('angle', 0))  # Rotation angle
+    rotation_angle = float(request.args.get('angle', 0))  # Rotation angle
     border_size = int(request.args.get('border', 10))  # Border size
 
     if not image_path:

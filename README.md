@@ -16,6 +16,7 @@ Leverer kart-rotasjoner på endepunkt http://127.0.0.1:5000/transform?angle=20&b
 
 
 * (X) Fiks system for å rotere kart
+* Bytt checkboks til å resize kart og beholde forhold mellom X- og Y-dimensjon
 * Fiks system for å dra et punkt på O-kartet til å matche ekte-kartet
 
 
