@@ -1,6 +1,8 @@
-let mapBorder = 300;
+let mapBorder = 150;
 
 document.addEventListener("DOMContentLoaded", function() {
+
+
 
   const sliderAngle = document.getElementById('slider');
   const sliderValue = document.getElementById('sliderValue');
@@ -12,14 +14,20 @@ document.addEventListener("DOMContentLoaded", function() {
 
   var modifySwCheckbox = document.getElementById('modifySwCheckbox');
 
-
   var startLatLon = [60.4002, 5.3411]; // Bergen
 
   // var overlaySouthWest = [60.4002, 5.3411];
   // var overlayNorthEast =[60.3002, 5.2411];
 
-  var overlayNorthWest = [60.4002, 5.2411];
-  var overlaySouthEast =[60.3002, 5.3411];
+  var mapRatio = 1409.0 / 1025.0;
+
+  var overlayNorthWest = [60.41162, 5.31789];
+  //var overlaySouthEast =[60.3002, 5.3411];
+
+  // TODO: Jeg skjønner ikke hvorfor dimensjonene blir feil av dette. Må skrive ut alle koordinatene og sjekke.
+  var overlaySouthEast =  [overlayNorthWest[0] - 0.05 * mapRatio, overlayNorthWest[1] + 0.05]
+  //var overlaySouthEast =  [overlayNorthWest[0] - 0.1 * mapRatio, overlayNorthWest[1] + 0.1]
+  console.log(overlaySouthEast)
 
   var map = L.map('map').setView(startLatLon, 15);
   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -44,7 +52,6 @@ document.addEventListener("DOMContentLoaded", function() {
     interactive: true
   }).addTo(map);
 
-
   function redrawMapWithNewRotation() {
     imageOverlay.remove();
 
@@ -59,7 +66,6 @@ document.addEventListener("DOMContentLoaded", function() {
       interactive: true
     }).addTo(map);
   }
-
 
   var isDragging = false;
   var startCoords = null;
@@ -91,7 +97,8 @@ document.addEventListener("DOMContentLoaded", function() {
     var southEastLng = currentBounds.getSouthEast().lng;
 
     if (modifySwCheckbox.checked) {
-      imageOverlay.setBounds([[northWestLat, northWestLng], [southEastLat + yDelta, southEastLng + xDelta]]);
+      let boundsAfterResizing = resizeBounds(currentBounds, xDelta * 200);
+      imageOverlay.setBounds(boundsAfterResizing);
 
       startCoords.lng = currentCoords.lng;
       startCoords.lat = currentCoords.lat;
@@ -129,7 +136,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
   window.map = map;
   window.imageOverlay = imageOverlay;
-
+  window.mapRatio = mapRatio;
 
   for (var angle = -3 ; angle >= 3 ; angle += 1) {
     fetchAndCacheImage(`http://127.0.0.1:5000/transform?angle=${angle}&border=${mapBorder}`);
@@ -148,7 +155,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
 
 // TODO Geir: This doesn't seem to work; might as well remove it.
-async function fetchAndCacheImage(url) {
+async function fetchImage(url) {
   try {
     console.log("Fetching " + url);
     const response = await fetch(url, { mode: 'no-cors' }); // 'no-cors' mode can be used if dealing with CORS issues
@@ -156,17 +163,42 @@ async function fetchAndCacheImage(url) {
       throw new Error('Network response was not ok');
     }
     const blob = await response.blob();
-
     // Create an object URL but don't use it
     const objectURL = URL.createObjectURL(blob);
     // You can revoke the object URL immediately if you don't need to use it
     URL.revokeObjectURL(objectURL);
+
+    return blob;
   } catch (error) {
     console.error('Failed to fetch image:', error);
   }
 }
 
+function getMapDimensionRatio(imageOverlay) {
+  let image = imageOverlay.getElement();
+  return image.height / image.width;
+}
+
+function resizeBounds(bounds, percentToResize) {
+  var northWestLat = bounds.getNorthWest().lat;
+  var northWestLng = bounds.getNorthWest().lng;
+
+  var southEastLat = bounds.getSouthEast().lat;
+  var southEastLng = bounds.getSouthEast().lng;
+
+  let latDim = northWestLat - southEastLat;
+  let lngDim = southEastLng - northWestLng;
+
+  let latDelta = latDim * (percentToResize/100.0);
+  let lngDelta = lngDim * (percentToResize/100.0);
+
+  var newNorthWestBounds = [northWestLat + latDelta/2.0, northWestLng - lngDelta/2.0]
+  var newSouthEastBounds = [southEastLat - latDelta/2.0, southEastLng + lngDelta/2.0]
+
+  return [newNorthWestBounds, newSouthEastBounds]
+}
+
 for (var angle = -3 ; angle <= 3 ; angle += 0.5) {
- //fetchAndCacheImage(`http://127.0.0.1:5000/transform?angle=${angle}&border=${mapBorder}`);
+ //fetchImage(`http://127.0.0.1:5000/transform?angle=${angle}&border=${mapBorder}`);
 }
 
