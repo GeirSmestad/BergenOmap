@@ -14,11 +14,27 @@ Leverer kart-rotasjoner på endepunkt http://127.0.0.1:5000/transform?angle=20&b
 
 # TODO
 
+## Registrering av kart
 
+* Estimer kart-dimensjoner med høyde for mine selvpåførte marger
+* Preload +/- 5 grader rotasjon fra back-end
+* Lag justerbar gjennomsiktighet for overlay
+* Lag system for å klikke på bilde og kart for å regne ut riktige koordinater
+* (0) Fiks system for å dra et punkt på O-kartet til å matche ekte-kartet
 * (X) Fiks system for å rotere kart
-* Bytt checkboks til å resize kart og beholde forhold mellom X- og Y-dimensjon
-* Fiks system for å dra et punkt på O-kartet til å matche ekte-kartet
+* (X) Regn ut koordinater for kart basert på dimensjon og målestokk for A4-kart
+* (X) Bytt checkboks til å resize kart og beholde forhold mellom X- og Y-dimensjon
 
+## Navigasjons-app
+
+* Visning hvor kart er satt til korrekt posisjon med 0% opacity
+* GPS-posisjon vises på kartet
+* Hosting, som eksponerer appen på twerkules.com
+* Flere kart på en gang
+
+## Infrastruktur
+
+* Databasesystem for lagring av kart-filer og deres registrerte posisjon
 
 
 Likningssystem jeg må løse:

@@ -1,8 +1,8 @@
+
+
 let mapBorder = 150;
 
 document.addEventListener("DOMContentLoaded", function() {
-
-
 
   const sliderAngle = document.getElementById('slider');
   const sliderValue = document.getElementById('sliderValue');
@@ -16,17 +16,20 @@ document.addEventListener("DOMContentLoaded", function() {
 
   var startLatLon = [60.4002, 5.3411]; // Bergen
 
-  // var overlaySouthWest = [60.4002, 5.3411];
-  // var overlayNorthEast =[60.3002, 5.2411];
 
   var mapRatio = 1409.0 / 1025.0;
 
-  var overlayNorthWest = [60.41162, 5.31789];
-  //var overlaySouthEast =[60.3002, 5.3411];
+  /* Rimelige start-dimensjoner for floyen-1-JPG:
+     Rotasjon 3,5 grader
+     Nord-østlig hjørne: [60.40861257945189, 5.369401050315699 ]
+     Sør-vestlig hjørne: [60.3878224489127, 5.335141760995066 ] */
 
-  // TODO: Jeg skjønner ikke hvorfor dimensjonene blir feil av dette. Må skrive ut alle koordinatene og sjekke.
-  var overlaySouthEast =  [overlayNorthWest[0] - 0.05 * mapRatio, overlayNorthWest[1] + 0.05]
-  //var overlaySouthEast =  [overlayNorthWest[0] - 0.1 * mapRatio, overlayNorthWest[1] + 0.1]
+  var overlayNorthWest = [60.41162, 5.31789];
+
+  var A4PortraitMapBounds = getBoundsForA4Sheet(startLatLon, 7500, true);
+
+  var overlaySouthEast = A4PortraitMapBounds[1];
+
   console.log(overlaySouthEast)
 
   var map = L.map('map').setView(startLatLon, 15);
@@ -138,9 +141,9 @@ document.addEventListener("DOMContentLoaded", function() {
   window.imageOverlay = imageOverlay;
   window.mapRatio = mapRatio;
 
-  for (var angle = -3 ; angle >= 3 ; angle += 1) {
-    fetchAndCacheImage(`http://127.0.0.1:5000/transform?angle=${angle}&border=${mapBorder}`);
-  }
+  // for (var angle = -3 ; angle >= 3 ; angle += 1) {
+  //   fetchAndCacheImage(`http://127.0.0.1:5000/transform?angle=${angle}&border=${mapBorder}`);
+  // }
 });
 
 
@@ -152,27 +155,57 @@ document.addEventListener("DOMContentLoaded", function() {
 // _northEast: Object { lat: 60.406493144255755, lng: 5.363201402282686 }
 // _southWest: Object { lat: 60.38985347479142, lng: 5.345684693908729  }
 
+// *** Helper functions below *** //
 
+function getBoundsForA4Sheet(northWestCornerLatLng, scale=7500, portraitOrientation=true) {
+  let mapRangeX, mapRangeY;
 
-// TODO Geir: This doesn't seem to work; might as well remove it.
-async function fetchImage(url) {
-  try {
-    console.log("Fetching " + url);
-    const response = await fetch(url, { mode: 'no-cors' }); // 'no-cors' mode can be used if dealing with CORS issues
-    if (!response.ok) {
-      throw new Error('Network response was not ok');
-    }
-    const blob = await response.blob();
-    // Create an object URL but don't use it
-    const objectURL = URL.createObjectURL(blob);
-    // You can revoke the object URL immediately if you don't need to use it
-    URL.revokeObjectURL(objectURL);
-
-    return blob;
-  } catch (error) {
-    console.error('Failed to fetch image:', error);
+  if (portraitOrientation) {
+    mapRangeX = scale * A4SheetShortSideInMeters;
+    mapRangeY = scale * A4SheetLongSideInMeters;
   }
+  else {
+    mapRangeX = scale * A4SheetLongSideInMeters;
+    mapRangeY = scale * A4SheetShortSideInMeters;
+  }
+
+  return getBoundsForAreaOfSpecifiedDimensions(northWestCornerLatLng, mapRangeX, mapRangeY);
 }
+
+function getBoundsForAreaOfSpecifiedDimensions(northWestCornerLatLng, x_in_meters, y_in_meters) {
+  let nw_lat = northWestCornerLatLng[0]
+  let nw_lon = northWestCornerLatLng[1]
+
+  // metersPerDegreeOfLatitude = meter / latitude <=> latitude = meters / metersPerDegreeOfLatitude
+
+  degreesLat = y_in_meters / metersPerDegreeOfLatitude();
+  degreesLon = x_in_meters / metersPerDegreeOfLongitude(nw_lat);
+
+  return [northWestCornerLatLng, [ nw_lat - degreesLat, nw_lon + degreesLon ]];
+}
+
+function metersPerDegreeOfLongitude(latitude) {
+  // Earth's equatorial radius in kilometers
+  const equatorialRadius = 6378.137;
+
+  // Convert latitude to radians
+  const latitudeInRadians = latitude * (Math.PI / 180);
+
+  // Calculate the distance in kilometers
+  const distanceKm = (Math.PI / 180) * equatorialRadius * Math.cos(latitudeInRadians);
+
+  // Convert distance from kilometers to meters
+  const distanceMeters = distanceKm * 1000;
+
+  return distanceMeters;
+}
+
+function metersPerDegreeOfLatitude() {
+  return 111111.0;
+}
+
+const A4SheetLongSideInMeters = 0.297;
+const A4SheetShortSideInMeters = 0.210;
 
 function getMapDimensionRatio(imageOverlay) {
   let image = imageOverlay.getElement();
