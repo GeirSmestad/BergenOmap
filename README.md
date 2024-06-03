@@ -19,7 +19,8 @@ Leverer kart-rotasjoner på endepunkt http://127.0.0.1:5000/transform?angle=20&b
 * Estimer kart-dimensjoner med høyde for mine selvpåførte marger
 * Preload +/- 5 grader rotasjon fra back-end
 * Lag justerbar gjennomsiktighet for overlay
-* Lag system for å klikke på bilde og kart for å regne ut riktige koordinater
+* Lag grensesnitt for å plassere kartet riktig, basert på beregninger
+* (X) Beregn matematikken for å klikke på bilde og kart for å regne ut riktige koordinater
 * (0) Fiks system for å dra et punkt på O-kartet til å matche ekte-kartet
 * (X) Fiks system for å rotere kart
 * (X) Regn ut koordinater for kart basert på dimensjon og målestokk for A4-kart
@@ -35,7 +36,11 @@ Leverer kart-rotasjoner på endepunkt http://127.0.0.1:5000/transform?angle=20&b
 ## Infrastruktur
 
 * Databasesystem for lagring av kart-filer og deres registrerte posisjon
+* Strukturere kode i moduler
 
+## Ambisjoner
+
+* Vise Strava-track i registrert kart
 
 Likningssystem jeg må løse:
 
