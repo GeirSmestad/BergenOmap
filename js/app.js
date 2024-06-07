@@ -45,6 +45,9 @@ document.addEventListener("DOMContentLoaded", function() {
   var mapUrl_3point5_degrees = `http://127.0.0.1:5000/transform?angle=3.5&border=${mapBorder}`
 
 
+  var exampleBoundsFrom_sumOfLeastSquares = [ [60.40879834160472, 5.337828952398146], [60.386353899057454, 5.36864138171766 ] ];
+  var mapUrl_1_degree = `http://127.0.0.1:5000/transform?angle=1&border=${mapBorder}`
+
   console.log(overlaySouthEast)
 
   var map = L.map('map').setView(startLatLon, 15);
@@ -64,7 +67,8 @@ document.addEventListener("DOMContentLoaded", function() {
 
   // var imageOverlay = L.imageOverlay(imageUrl, latLngBounds, {
   //var imageOverlay = L.imageOverlay(oMapUrl, [overlayNorthWest, overlaySouthEast], {
-  var imageOverlay = L.imageOverlay(mapUrl_3point5_degrees, exampleBoundsFrom_calculateOverlayCorners, {
+  //var imageOverlay = L.imageOverlay(mapUrl_3point5_degrees, exampleBoundsFrom_calculateOverlayCorners, { // This is the one I registered manually!
+  var imageOverlay = L.imageOverlay(mapUrl_1_degree, exampleBoundsFrom_sumOfLeastSquares, { // This is the one I registered with sumOfLeastSquares
     opacity: 0.6,
     errorOverlayUrl: errorOverlayUrl,
     alt: altText,
@@ -165,16 +169,25 @@ document.addEventListener("DOMContentLoaded", function() {
 
 Clicked the following image coordinates: (269, 1361.6999969482422) app.js:23:13
 Coordinates lat, lng: 60.39113388285876, 5.3435611724853525
-
+[269, 1361.6999969482422], [60.39113388285876, 5.3435611724853525]
 
 Sør i Storediket:
 
 
 Clicked the following image coordinates: (811, 306.70001220703125)
-
 Coordinates lat, lng: 60.40450336375729, 5.357653498649598 app.js:92:13
+[811, 306.70001220703125], [60.40450336375729, 5.357653498649598]
+
+Vestlige hushjørne på Åsebu:
+
+
+Clicked the following image coordinates: (387, 418.70001220703125)
+Coordinates lat, lng: 60.40313627352001, 5.346728861331941 app.js:97:13
+[387, 418.70001220703125], [60.40313627352001, 5.346728861331941]
 
 width,height=( 1325 , 1709 )
+
+
 
 
 Resulterer i:
