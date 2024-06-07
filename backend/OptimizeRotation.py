@@ -3,14 +3,6 @@ import math
 from scipy.optimize import minimize_scalar
 
 
-image_coords = [(269, 1361.6999969482422), (811, 306.70001220703125), (387, 418.70001220703125)]
-real_coords = [(60.39113388285876, 5.3435611724853525), (60.40450336375729, 5.357653498649598), (60.40313627352001, 5.346728861331941)]
-
-
-# Dimensions of the overlay image
-width, height = 1325 , 1709
-
-
 """
 Rotate points about the center of the image.
 
@@ -107,9 +99,28 @@ def getSouthEastCorner(x1, y1, lat1, lon1, scale_lat, scale_lon, width, height):
     return (lat_se, lon_se)
 
 
-"""Given three points on the image and three real-life coordinates, return the three sets of (lat,lon)
-   coordinates implied for the north-east and south-east corners."""
-def transformPointsToLatLonCorners(image_coords, real_coords, scale_lat, scale_lon, width, height):
+"""Given three sets of pixel coordinates on an orienteering map overlay
+   [(x1, y1), (x2, y2), (x3, y3)]
+
+   and three sets of real-world (lat, lon) coordinates matching their location
+   [(lat1, lon1), (lat2, lon2), (lat3, lon3)],
+
+   and scale factors for translating between pixel coordinates and (lat, lon) coordinates
+
+   and the pixel dimensions of the overlay,
+
+   calculate the three sets of (lat, lon) coordinates for the north-west and south-east 
+   corner of the overlay, that are implied by each of the three sets of coordinates.
+
+   Depending on which set of two coordinate pairs the scale factors are calculated from,
+   there will be a discrepancy between some of the returned coordinates if the overlay
+   is not oriented towards geographic north. (This is typically the case, which is the 
+   essential source of complexity that necessitates overlay registration in the first place).
+
+   Returns six sets of (lat, lon) tuples
+   
+"""
+def calculateOverlayCorners(image_coords, real_coords, scale_lat, scale_lon, width, height):
     x1, y1 = image_coords[0]
     lat1, lon1 = real_coords[0]
     nw1 = getNorthWestCorner(x1, y1, lat1, lon1, scale_lat, scale_lon)
@@ -160,8 +171,19 @@ def rotateAndRegisterOverlay(image_coords, real_coords, angle_degrees, overlayWi
 
     scale_lat, scale_lon = getScaleFactors(x1, y1, lat1, lon1, x2, y2, lat2, lon2)
 
-    latLonCorners = transformPointsToLatLonCorners(pointsAfterRotating, real_coords, scale_lat, scale_lon, overlayWidth, overlayHeight)
-    nw1, se1, nw2, se2, nw3, se3 = latLonCorners
+    overlayCorners = calculateOverlayCorners(pointsAfterRotating, real_coords, scale_lat, scale_lon, overlayWidth, overlayHeight)
+    nw1, se1, nw2, se2, nw3, se3 = overlayCorners
+
+    """
+    The scale factors are calculated from (x1, y1) and (lat1, lon1) and determine the location of the overlay 
+    corners nw1 and se1.
+    
+    nw3, however, is calculated from (x3, y3) and (lat3, lon3), and will only be at the same location as nw1 if the
+    overlay happens to be rotated such that its north corresponds to geographic north.
+    
+    The square of the distance between nw1 and nw3 is therefore a good measure of how closely
+    this particular rotation is to the one that matches geographic north.
+    """
 
     error = euclidean_distance(nw1, nw3) ** 2
 
@@ -224,7 +246,7 @@ def getOverlayCoordinatesWithOptimalRotation(image_coords, real_coords, overlayW
 
     optimal_angle = minimization_result.x
 
-    # Calculate coordinates of overlay corners    
+    # Calculate the correct coordinates of overlay corners    
     optimal_rotation_result = rotateAndRegisterOverlay(image_coords, real_coords, optimal_angle, overlayWidth, overlayHeight)
     
     result = {"nw_coords" : optimal_rotation_result["nw_coords"], "se_coords" : optimal_rotation_result["se_coords"], "optimal_rotation_angle" : optimal_angle}
@@ -237,10 +259,15 @@ image_coords = [(238, 1337.7000122070312), (844, 319.6999969482422), (414, 403.6
 real_coords = [(60.39113388285876, 5.3435611724853525), (60.40450336375729, 5.357653498649598), (60.40313627352001, 5.346728861331941)]
 
 
+# Dimensions of the overlay image
+width, height = 1325 , 1709
+
+
 # Check that output still makes sense after refactoring
 """ Should be something like
 
 {'nw_coords': (60.40845319707709, 5.33672273549868), 'se_coords': (60.386702210916575, 5.370807726609491), 'optimal_rotation_angle': 3.2224726220246245}
+{'nw_coords': (60.408453197075374, 5.33672273548746), 'se_coords': (60.386702210919736, 5.370807726626327), 'optimal_rotation_angle': 3.2224726466196616}
 """
 
 print(getOverlayCoordinatesWithOptimalRotation(image_coords, real_coords, width, height))
