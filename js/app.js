@@ -45,8 +45,13 @@ document.addEventListener("DOMContentLoaded", function() {
   var mapUrl_3point5_degrees = `http://127.0.0.1:5000/transform?angle=3.5&border=${mapBorder}`
 
 
+  // Perfect registration from manual run of algorithm
   var exampleBoundsFrom_sumOfLeastSquares = [ [60.4084547606827, 5.336732978048699], [60.38669932288318, 5.3707923558515445 ] ];
   var mapUrl_sumOfLeastSquares_degree = `http://127.0.0.1:5000/transform?angle=3.2&border=${mapBorder}`
+
+  // Registration from implemented algorithm with numpy optimization
+  exampleBoundsFrom_sumOfLeastSquares = [ [60.40845319707709, 5.33672273549868], [60.386702210916575, 5.370807726609491 ] ];
+  mapUrl_sumOfLeastSquares_degree = `http://127.0.0.1:5000/transform?angle=3.22247&border=${mapBorder}`
 
   console.log(overlaySouthEast)
 

@@ -20,6 +20,7 @@ Leverer kart-rotasjoner på endepunkt http://127.0.0.1:5000/transform?angle=20&b
 * Preload +/- 5 grader rotasjon fra back-end
 * Lag justerbar gjennomsiktighet for overlay
 * Lag grensesnitt for å plassere kartet riktig, basert på beregninger
+* (X) Lag algoritme for rotasjon og plassering av overlay
 * (X) Beregn matematikken for å klikke på bilde og kart for å regne ut riktige koordinater
 * (0) Fiks system for å dra et punkt på O-kartet til å matche ekte-kartet
 * (X) Fiks system for å rotere kart
@@ -42,23 +43,14 @@ Leverer kart-rotasjoner på endepunkt http://127.0.0.1:5000/transform?angle=20&b
 
 * Vise Strava-track i registrert kart
 
-Likningssystem jeg må løse:
-
-* lng_nw, lat_nw = ?, ?
-* lng_se, lat_se = ?, ?
 
 
-Kjente verdier med eksempler:
 
-* lng_1_map, lat_1_map : (5.3, 60.4)
-* lng_2_map, lat_2_map : (5.4, 60.3)
+## Notater
 
+Output fra registrering, for test av at refaktorering henger på greip:
 
-* x_1, y_1 : 0.2, 0.2
-* x_2, y_2: 0.8, 0.8
-
-* x_nw, y_nw: 0, 0
-* x_se, y_se: 1, 1
-
-
-Forutsetning er øst for Greenwitch og nord for ekvator.
+>>> getOverlayCoordinatesWithOptimalRotation(image_coords, real_coords, width, height)
+Optimal input number: 3.2224726220246245
+{'nw_coords': (60.40845319707709, 5.33672273549868), 'se_coords': (60.386702210916575, 5.370807726609491), 'optimal_rotation_angle': 3.2224726220246245}
+>>>

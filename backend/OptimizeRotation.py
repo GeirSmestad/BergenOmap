@@ -1,7 +1,7 @@
 import numpy as np
-from scipy.optimize import minimize
-import matplotlib.pyplot as plt
 import math
+from scipy.optimize import minimize
+from scipy.optimize import minimize_scalar
 
 def transformation_matrix(theta):
     return np.array([
@@ -149,24 +149,19 @@ def transformPointsToLatLonCorners(image_coords, real_coords, scale_lat, scale_l
     x1, y1 = image_coords[0]
     lat1, lon1 = real_coords[0]
     nw1 = getNorthWestCorner(x1, y1,  lat1, lon1, scale_lat, scale_lon)
-    ne1 = getSouthEastCorner(x1, y1,  lat1, lon1, scale_lat, scale_lon)
-
-    # TODO: ne1, ne2, ne3 need to be renamed in this function to se*
+    se1 = getSouthEastCorner(x1, y1,  lat1, lon1, scale_lat, scale_lon)
 
     x2, y2 = image_coords[1]
     lat2, lon2 = real_coords[1]
     nw2 = getNorthWestCorner(x2, y2,  lat2, lon2, scale_lat, scale_lon)
-    ne2 = getSouthEastCorner(x2, y2,  lat2, lon2, scale_lat, scale_lon)
+    se2 = getSouthEastCorner(x2, y2,  lat2, lon2, scale_lat, scale_lon)
 
     x3, y3 = image_coords[2]
     lat3, lon3 = real_coords[2]
     nw3 = getNorthWestCorner(x3, y3,  lat3, lon3, scale_lat, scale_lon)
-    ne3 = getSouthEastCorner(x3, y3,  lat3, lon3, scale_lat, scale_lon)
-    # TODO: Calculate difference between nw corner calculated from points 1, 2 and 3, and see how
-    # they differ. Expectation is that 1 and 2 should be identical, 3 should be displaced
-    # by a varying amount depending on how close rotation is to reality.
+    se3 = getSouthEastCorner(x3, y3,  lat3, lon3, scale_lat, scale_lon)
 
-    return nw1, ne1, nw2, ne2, nw3, ne3
+    return nw1, se1, nw2, se2, nw3, se3
 
 
 def printLatLonCornerDifferences(nw1, se1, nw2, se2, nw3, se3):
@@ -226,8 +221,9 @@ def getSumOfSquares_whenRegisteringRotatedCoordinates(image_coords, real_coords,
     nw1, se1, nw2, se2, nw3, se3 = latLonCorners
     sumOfSquares = total_sum_of_squares(nw1, nw2, nw3)
 
-    #print("Sum of squares for this rotation: ", sumOfSquares)
-    return sumOfSquares
+    result = {"nw_coords" : nw1, "se_coords" : se2, "error" : sumOfSquares}
+
+    return result
 
 """Given three sets of pixel coordinates on an orienteering map overlay
    [(x1, y1), (x2, y2), (x3, y3)]
@@ -248,6 +244,9 @@ def getSumOfSquares_whenRegisteringRotatedCoordinates(image_coords, real_coords,
    We need to do this because orienteering maps are oriented to magnetic north (which varies by
    location and date of map creation), while the reference map we're using for determining position
    is oriented to geographic north.
+
+   For best results, the three points should be close to different map edges, form a triangle
+   with significant angles and be accurately placed.
 """
 def getOverlayCoordinatesWithOptimalRotation(image_coords, real_coords, overlayWidth, overlayHeight):
     """
@@ -267,13 +266,30 @@ def getOverlayCoordinatesWithOptimalRotation(image_coords, real_coords, overlayW
       the smallest discrepancy.
     """
 
-    # TODO: Return a dictionary
-    pass
+    # Optimize overlay rotation    
+    def errorFunction(rotationAngle):
+        rotationAngle = rotationAngle[0] if isinstance(rotationAngle, np.ndarray) else rotationAngle
+        rotation_result = getSumOfSquares_whenRegisteringRotatedCoordinates(image_coords, real_coords, rotationAngle)
 
-# Dette er tre punkter på et ikke-rotert kart.
-#Clicked the following image coordinates: (844, 319.6999969482422) app.js:23:13
-#Clicked the following image coordinates: (238, 1337.7000122070312) app.js:23:13
-#Clicked the following image coordinates: (414, 403.6999969482422)
+        return rotation_result["error"]
+
+    initial_guess = 0
+
+    bounds = (-180, 180)
+    result = minimize_scalar(errorFunction, bounds=bounds, method='bounded')
+
+    optimal_angle = result.x
+
+    print(f"Optimal input number: {optimal_angle}")
+
+    # Calculate coordinates of overlay corners    
+    optimal_rotation_result = getSumOfSquares_whenRegisteringRotatedCoordinates(image_coords, real_coords, optimal_angle)
+    
+    result = {"nw_coords" : optimal_rotation_result["nw_coords"], "se_coords" : optimal_rotation_result["se_coords"], "optimal_rotation_angle" : optimal_angle}
+
+    return result
+
+
 
 
 #image_coords = [(269, 1361.6999969482422), (811, 306.70001220703125), (387, 418.70001220703125)]
@@ -301,47 +317,10 @@ print()
 scaleLat, scaleLon = scaleLatLon
 #getSumOfSquares_whenRegisteringRotatedCoordinates(image_coords, real_coords, scaleLat, scaleLon, 10)
 
-i = -2.0
-while i <= 5.0:
-    print(getSumOfSquares_whenRegisteringRotatedCoordinates(image_coords, real_coords, i), round(i, 1))
-    i += 0.2
+# i = -2.0
+# while i <= 5.0:
+#     print(getSumOfSquares_whenRegisteringRotatedCoordinates(image_coords, real_coords, i), round(i, 1))
+#     i += 0.2
 
 
-def visualize_rotation(width, height, original_points, rotated_points):
-    """
-    Visualize the original and rotated points on an image with given width and height.
-    
-    Parameters:
-    - width: int, width of the image.
-    - height: int, height of the image.
-    - original_points: list of tuples, each containing the (x, y) coordinates of original points.
-    - rotated_points: list of tuples, each containing the (x, y) coordinates of rotated points.
-    """
-    fig, ax = plt.subplots()
-    ax.set_aspect('equal')
 
-    # Original points
-    original_x, original_y = zip(*original_points)
-    ax.scatter(original_x, original_y, color='blue', label='Original Points')
-
-    # Rotated points
-    rotated_x, rotated_y = zip(*rotated_points)
-    ax.scatter(rotated_x, rotated_y, color='red', label='Rotated Points')
-
-    # Center of the image
-    cx = width / 2
-    cy = height / 2
-    ax.scatter([cx], [cy], color='green', label='Center of Image')
-
-    # Setting up the plot
-    ax.set_xlim(0, width)
-    ax.set_ylim(height, 0)  # Inverting y-axis to match image coordinates
-    ax.set_xlabel('X')
-    ax.set_ylabel('Y')
-    ax.set_title('Original and Rotated Points')
-    ax.legend()
-    plt.grid(True)
-    plt.show()
-
-
-# visualize_rotation(width, height, image_coords, pointsAfterRotating)
