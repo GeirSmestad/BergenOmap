@@ -74,7 +74,7 @@ document.addEventListener("DOMContentLoaded", function() {
   //var imageOverlay = L.imageOverlay(oMapUrl, [overlayNorthWest, overlaySouthEast], {
   //var imageOverlay = L.imageOverlay(mapUrl_3point5_degrees, exampleBoundsFrom_calculateOverlayCorners, { // This is the one I registered manually!
   var imageOverlay = L.imageOverlay(mapUrl_sumOfLeastSquares_degree, exampleBoundsFrom_sumOfLeastSquares, { // This is the one I registered with sumOfLeastSquares
-    opacity: 0.6,
+    opacity: 1,
     errorOverlayUrl: errorOverlayUrl,
     alt: altText,
     interactive: true

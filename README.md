@@ -16,10 +16,12 @@ Leverer kart-rotasjoner på endepunkt http://127.0.0.1:5000/transform?angle=20&b
 
 ## Registrering av kart
 
+* Legg inn nytt og mer detaljert kart
+* Standardiser marger på overlay som en prosent av størrelsen
+* Lag grensesnitt for å plassere kartet riktig, basert på algoritme
 * Estimer kart-dimensjoner med høyde for mine selvpåførte marger
-* Preload +/- 5 grader rotasjon fra back-end
-* Lag justerbar gjennomsiktighet for overlay
-* Lag grensesnitt for å plassere kartet riktig, basert på beregninger
+* (0) Lag justerbar gjennomsiktighet for overlay
+* (0) Preload +/- 5 grader rotasjon fra back-end
 * (X) Lag algoritme for rotasjon og plassering av overlay
 * (X) Beregn matematikken for å klikke på bilde og kart for å regne ut riktige koordinater
 * (0) Fiks system for å dra et punkt på O-kartet til å matche ekte-kartet
@@ -37,9 +39,9 @@ Leverer kart-rotasjoner på endepunkt http://127.0.0.1:5000/transform?angle=20&b
 ## Infrastruktur
 
 * Databasesystem for lagring av kart-filer og deres registrerte posisjon
-* Strukturere kode i moduler
+* Strukturere web-kode i moduler
 
-## Ambisjoner
+## Langsiktige ambisjoner
 
 * Vise Strava-track i registrert kart
 
@@ -47,6 +49,8 @@ Leverer kart-rotasjoner på endepunkt http://127.0.0.1:5000/transform?angle=20&b
 
 
 ## Notater
+
+En rimelig margin på hver side av kartet, for å sikre kurant rotasjon, er 12% av den lengste dimensjonen.
 
 Output fra registrering, for test av at refaktorering henger på greip:
 
