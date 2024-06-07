@@ -50,7 +50,7 @@ document.addEventListener("DOMContentLoaded", function() {
   var mapUrl_sumOfLeastSquares_degree = `http://127.0.0.1:5000/transform?angle=3.2&border=${mapBorder}`
 
   // Registration from implemented algorithm with numpy optimization
-  exampleBoundsFrom_sumOfLeastSquares = [ [60.40845319707709, 5.33672273549868], [60.386702210916575, 5.370807726609491 ] ];
+  exampleBoundsFrom_sumOfLeastSquares = [ [60.408453197075374, 5.33672273548746], [60.386702210919736, 5.370807726626327 ] ];
   mapUrl_sumOfLeastSquares_degree = `http://127.0.0.1:5000/transform?angle=3.22247&border=${mapBorder}`
 
   console.log(overlaySouthEast)

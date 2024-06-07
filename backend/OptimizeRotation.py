@@ -1,73 +1,30 @@
 import numpy as np
 import math
-from scipy.optimize import minimize
 from scipy.optimize import minimize_scalar
 
-def transformation_matrix(theta):
-    return np.array([
-        [np.cos(theta), -np.sin(theta)],
-        [np.sin(theta), np.cos(theta)]
-    ])
 
-def transform_points_center(params, x, y, width, height):
-    theta, t_x, t_y = params
-    # Translate to center
-    x_centered, y_centered = x - width / 2, y - height / 2
-    # Apply rotation
-    matrix = transformation_matrix(theta)
-    x_rotated, y_rotated = np.dot(matrix, np.array([x_centered, y_centered]))
-    # Translate back
-    x_transformed, y_transformed = x_rotated + width / 2 + t_x, y_rotated + height / 2 + t_y
-    return x_transformed, y_transformed
-
-def objective_function(params, image_coords, real_coords, width, height):
-    errors = []
-    for (x, y), (lat, lon) in zip(image_coords, real_coords):
-        x_transformed, y_transformed = transform_points_center(params, x, y, width, height)
-        errors.append((x_transformed - lat) ** 2 + (y_transformed - lon) ** 2)
-    return np.sum(errors)
-
-# Example usage
 image_coords = [(269, 1361.6999969482422), (811, 306.70001220703125), (387, 418.70001220703125)]
 real_coords = [(60.39113388285876, 5.3435611724853525), (60.40450336375729, 5.357653498649598), (60.40313627352001, 5.346728861331941)]
 
-# Initial guess for parameters: theta, t_x, t_y
-initial_guess = [0, 0, 0]
 
 # Dimensions of the overlay image
 width, height = 1325 , 1709
 
+
 """
-# Minimize the objective function
-result = minimize(objective_function, initial_guess, args=(image_coords, real_coords, width, height))
+Rotate points about the center of the image.
 
-theta, t_x, t_y = result.x
+Parameters:
+- points: list of tuples, each containing the (x, y) coordinates of a point.
+- width: int, width of the image.
+- height: int, height of the image.
+- angle_degrees: float, angle in degrees to rotate the points.
 
-# Calculate NW and SE corners
-# Transform NW corner (0, 0)
-nw_corner = transform_points_center([theta, t_x, t_y], 0, 0, width, height)
-
-# Transform SE corner (width, height)
-se_corner = transform_points_center([theta, t_x, t_y], width, height, width, height)
-
-print("NW Corner (lat, lon):", nw_corner)
-print("SE Corner (lat, lon):", se_corner)
-print("Optimal rotation angle (degrees):", np.degrees(theta))
+Returns:
+- rotated_points: list of tuples, each containing the rotated (x, y) coordinates of a point.
 """
-
 def rotate_points(points, width, height, angle_degrees):
-    """
-    Rotate points about the center of the image.
-    
-    Parameters:
-    - points: list of tuples, each containing the (x, y) coordinates of a point.
-    - width: int, width of the image.
-    - height: int, height of the image.
-    - angle_degrees: float, angle in degrees to rotate the points.
-    
-    Returns:
-    - rotated_points: list of tuples, each containing the rotated (x, y) coordinates of a point.
-    """
+
     angle_degrees *= -1 # Rotate counter-clockwise
 
     # Convert angle from degrees to radians
@@ -100,44 +57,51 @@ def rotate_points(points, width, height, angle_degrees):
     
     return rotated_points
 
-print("Points to be rotated: ", image_coords)
 
-angle_degrees = 3
-pointsAfterRotating = rotate_points(image_coords, width, height, angle_degrees)
-print("Rotating points about the center of image: ", pointsAfterRotating)
+"""Given two sets of pixel coordinates on an orienteering map overlay
+   (x1, y1), (x2, y2),
 
+   and two sets of real-world (lat, lon) coordinates matching their location
+   (lat1, lon1), (lat2, lon2)
 
+   return tuple (scale_lat, scale_lon) to translate between pixel coordinates
+   and real-world latitude and longitude.
 """
-
-Roter tre sett med koordinater med et antall grader theta
-
-Beregn skala-faktorer for å konvertere bildekoordinater til kart-koordinater basert på
-to koordinat-par
-
-Prøv å transformere alle de tre koordinat-parene til nordvestlig og sørøstlig hjørne
-basert på skala-faktoren
-
-Forventningen er at de to du beregnet skala-faktoren fra skal gi samme resultat, mens det tredje
-vil ha en feil.
-
-La denne feilen være feil-funksjon for optimisering av theta.
-
-Optimiser for beste theta.
-
-"""
-
-
-def getScaleLatLon(x1, y1, lat1, lon1, x2, y2, lat2, lon2):
+def getScaleFactors(x1, y1, lat1, lon1, x2, y2, lat2, lon2):
     scale_lat = (lat2 - lat1) / (y2 - y1)
     scale_lon = (lon2 - lon1) / (x2 - x1)
     return (scale_lat, scale_lon)
 
+"""Given a set of pixel coordinates on an orienteering map overlay
+   (x1, y1)
+
+   and a sets of real-world (lat, lon) coordinates matching their location
+   (lat1, lon1)
+
+   and scale factors to translate between pixel coordinates and real-world
+   latitude and longitude,
+
+   return the location (lat, lon) of the north-west corner of the overlay.
+"""
 def getNorthWestCorner(x1, y1, lat1, lon1, scale_lat, scale_lon):
     lat_nw = lat1 - y1 * scale_lat
     lon_nw = lon1 - x1 * scale_lon
     return (lat_nw, lon_nw)
 
-def getSouthEastCorner(x1, y1, lat1, lon1, scale_lat, scale_lon):
+"""Given a set of pixel coordinates on an orienteering map overlay
+   (x1, y1)
+
+   and a sets of real-world (lat, lon) coordinates matching their location
+   (lat1, lon1)
+
+   and scale factors to translate between pixel coordinates and real-world
+   latitude and longitude,
+
+   and the pixel dimensions of the overlay,
+
+   return the location (lat, lon) of the south-east corner of the overlay.
+"""
+def getSouthEastCorner(x1, y1, lat1, lon1, scale_lat, scale_lon, width, height):
     lat_se = lat1 + (height - y1) * scale_lat
     lon_se = lon1 + (width - x1) * scale_lon
     return (lat_se, lon_se)
@@ -145,41 +109,24 @@ def getSouthEastCorner(x1, y1, lat1, lon1, scale_lat, scale_lon):
 
 """Given three points on the image and three real-life coordinates, return the three sets of (lat,lon)
    coordinates implied for the north-east and south-east corners."""
-def transformPointsToLatLonCorners(image_coords, real_coords, scale_lat, scale_lon):
+def transformPointsToLatLonCorners(image_coords, real_coords, scale_lat, scale_lon, width, height):
     x1, y1 = image_coords[0]
     lat1, lon1 = real_coords[0]
-    nw1 = getNorthWestCorner(x1, y1,  lat1, lon1, scale_lat, scale_lon)
-    se1 = getSouthEastCorner(x1, y1,  lat1, lon1, scale_lat, scale_lon)
+    nw1 = getNorthWestCorner(x1, y1, lat1, lon1, scale_lat, scale_lon)
+    se1 = getSouthEastCorner(x1, y1, lat1, lon1, scale_lat, scale_lon, width, height)
 
     x2, y2 = image_coords[1]
     lat2, lon2 = real_coords[1]
-    nw2 = getNorthWestCorner(x2, y2,  lat2, lon2, scale_lat, scale_lon)
-    se2 = getSouthEastCorner(x2, y2,  lat2, lon2, scale_lat, scale_lon)
+    nw2 = getNorthWestCorner(x2, y2, lat2, lon2, scale_lat, scale_lon)
+    se2 = getSouthEastCorner(x2, y2, lat2, lon2, scale_lat, scale_lon, width, height)
 
     x3, y3 = image_coords[2]
     lat3, lon3 = real_coords[2]
-    nw3 = getNorthWestCorner(x3, y3,  lat3, lon3, scale_lat, scale_lon)
-    se3 = getSouthEastCorner(x3, y3,  lat3, lon3, scale_lat, scale_lon)
+    nw3 = getNorthWestCorner(x3, y3, lat3, lon3, scale_lat, scale_lon)
+    se3 = getSouthEastCorner(x3, y3, lat3, lon3, scale_lat, scale_lon, width, height)
 
     return nw1, se1, nw2, se2, nw3, se3
 
-
-def printLatLonCornerDifferences(nw1, se1, nw2, se2, nw3, se3):
-    print("North-west corner coordinates follow:")
-    print(nw1)
-    print(nw2)
-    print(nw3)
-    print("South-east corner coordinates follow:")
-    print(se1)
-    print(se2)
-    print(se3)
-    print("Distance nw1-nw2: ", euclidean_distance(nw1, nw2))
-    print("Distance nw2-nw3: ", euclidean_distance(nw2, nw3))
-    print("Distance nw3-nw1: ", euclidean_distance(nw3, nw1))
-    print("Distance se1-se2: ", euclidean_distance(se1, se2))
-    print("Distance se2-se3: ", euclidean_distance(se2, se3))
-    print("Distance se3-se1: ", euclidean_distance(se3, se1))
-    print("Total sum of squares for nw coordinates: ", total_sum_of_squares(nw1, nw2, nw3))
 
 def euclidean_distance(coord1, coord2):
     x1, y1 = coord1
@@ -187,41 +134,38 @@ def euclidean_distance(coord1, coord2):
     return math.sqrt((x2 - x1)**2 + (y2 - y1)**2)
 
 
-def sum_of_squares(coord1, coord2):
-    x1, y1 = coord1
-    x2, y2 = coord2
-    return (x2 - x1)**2 + (y2 - y1)**2
+"""Given three sets of pixel coordinates on an orienteering map overlay
+   [(x1, y1), (x2, y2), (x3, y3)]
 
-def total_sum_of_squares(coords1, coords2, coords3):    
-    s1 = sum_of_squares(coords1, coords2)
-    s2 = sum_of_squares(coords2, coords3)
-    s3 = sum_of_squares(coords3, coords1)
-    
-    return s1 + s2 + s3
+   and three sets of real-world (lat, lon) coordinates matching their location
+   [(lat1, lon1), (lat2, lon2), (lat3, lon3)],
 
+   and an angle of counter-clockwise rotation,
 
+   rotate the pixel coordinates, then register the pixel coordinates onto real-world
+   coordinates. Use the third set of coordinates to calculate the degree of error
+   between this registration and the optimal one.
 
-def getSumOfSquares_whenRegisteringRotatedCoordinates(image_coords, real_coords, angle_degrees):
+   Return the northwest and southeast (lat, lon) coordinates of this registration,
+   and the error.
+"""
+def rotateAndRegisterOverlay(image_coords, real_coords, angle_degrees, overlayWidth, overlayHeight):
     pointsAfterRotating = rotate_points(image_coords, width, height, angle_degrees)
-
-    # We will use the first sets of two points to calculate the placement of the overlay, then 
-    # use the third to calibrate how accurate the rotation was for correctly registering the coordinates.
 
     x1, y1 = pointsAfterRotating[0]
     x2, y2 = pointsAfterRotating[1]
-    x3, y3 = pointsAfterRotating[2]
 
     lat1, lon1 = real_coords[0]
     lat2, lon2 = real_coords[1]
-    lat3, lon3 = real_coords[2]
 
-    scale_lat, scale_lon = getScaleLatLon(x1, y1, lat1, lon1, x2, y2, lat2, lon2)
+    scale_lat, scale_lon = getScaleFactors(x1, y1, lat1, lon1, x2, y2, lat2, lon2)
 
-    latLonCorners = transformPointsToLatLonCorners(pointsAfterRotating, real_coords, scale_lat, scale_lon)
+    latLonCorners = transformPointsToLatLonCorners(pointsAfterRotating, real_coords, scale_lat, scale_lon, overlayWidth, overlayHeight)
     nw1, se1, nw2, se2, nw3, se3 = latLonCorners
-    sumOfSquares = total_sum_of_squares(nw1, nw2, nw3)
 
-    result = {"nw_coords" : nw1, "se_coords" : se2, "error" : sumOfSquares}
+    error = euclidean_distance(nw1, nw3) ** 2
+
+    result = {"nw_coords" : nw1, "se_coords" : se1, "error" : error}
 
     return result
 
@@ -269,58 +213,34 @@ def getOverlayCoordinatesWithOptimalRotation(image_coords, real_coords, overlayW
     # Optimize overlay rotation    
     def errorFunction(rotationAngle):
         rotationAngle = rotationAngle[0] if isinstance(rotationAngle, np.ndarray) else rotationAngle
-        rotation_result = getSumOfSquares_whenRegisteringRotatedCoordinates(image_coords, real_coords, rotationAngle)
+        rotation_result = rotateAndRegisterOverlay(image_coords, real_coords, rotationAngle, overlayWidth, overlayHeight)
 
         return rotation_result["error"]
 
     initial_guess = 0
 
     bounds = (-180, 180)
-    result = minimize_scalar(errorFunction, bounds=bounds, method='bounded')
+    minimization_result = minimize_scalar(errorFunction, bounds=bounds, method='bounded')
 
-    optimal_angle = result.x
-
-    print(f"Optimal input number: {optimal_angle}")
+    optimal_angle = minimization_result.x
 
     # Calculate coordinates of overlay corners    
-    optimal_rotation_result = getSumOfSquares_whenRegisteringRotatedCoordinates(image_coords, real_coords, optimal_angle)
+    optimal_rotation_result = rotateAndRegisterOverlay(image_coords, real_coords, optimal_angle, overlayWidth, overlayHeight)
     
     result = {"nw_coords" : optimal_rotation_result["nw_coords"], "se_coords" : optimal_rotation_result["se_coords"], "optimal_rotation_angle" : optimal_angle}
 
     return result
 
 
-
-
-#image_coords = [(269, 1361.6999969482422), (811, 306.70001220703125), (387, 418.70001220703125)]
+# Manually-collected sample input -- must fetch this from the webapp in the future
 image_coords = [(238, 1337.7000122070312), (844, 319.6999969482422), (414, 403.6999969482422)]
 real_coords = [(60.39113388285876, 5.3435611724853525), (60.40450336375729, 5.357653498649598), (60.40313627352001, 5.346728861331941)]
 
-x1, y1 = image_coords[0]
-x2, y2 = image_coords[1]
 
-lat1, lon1 = real_coords[0]
-lat2, lon2 = real_coords[1]
+# Check that output still makes sense after refactoring
+""" Should be something like
 
-scaleLatLon = getScaleLatLon(x1, y1, lat1, lon1, x2, y2, lat2, lon2)
-print("scaleLatLon: ", scaleLatLon)
-print()
+{'nw_coords': (60.40845319707709, 5.33672273549868), 'se_coords': (60.386702210916575, 5.370807726609491), 'optimal_rotation_angle': 3.2224726220246245}
+"""
 
-latLonCorners = transformPointsToLatLonCorners(image_coords, real_coords, scaleLatLon[0], scaleLatLon[1])
-print("latLonCorners: ", latLonCorners)
-print()
-
-nw1, se1, nw2, se2, nw3, se3 = latLonCorners
-printLatLonCornerDifferences(nw1, se1, nw2, se2, nw3, se3)
-print()
-
-scaleLat, scaleLon = scaleLatLon
-#getSumOfSquares_whenRegisteringRotatedCoordinates(image_coords, real_coords, scaleLat, scaleLon, 10)
-
-# i = -2.0
-# while i <= 5.0:
-#     print(getSumOfSquares_whenRegisteringRotatedCoordinates(image_coords, real_coords, i), round(i, 1))
-#     i += 0.2
-
-
-
+print(getOverlayCoordinatesWithOptimalRotation(image_coords, real_coords, width, height))
