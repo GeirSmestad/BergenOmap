@@ -151,6 +151,8 @@ def transformPointsToLatLonCorners(image_coords, real_coords, scale_lat, scale_l
     nw1 = getNorthWestCorner(x1, y1,  lat1, lon1, scale_lat, scale_lon)
     ne1 = getSouthEastCorner(x1, y1,  lat1, lon1, scale_lat, scale_lon)
 
+    # TODO: ne1, ne2, ne3 need to be renamed in this function to se*
+
     x2, y2 = image_coords[1]
     lat2, lon2 = real_coords[1]
     nw2 = getNorthWestCorner(x2, y2,  lat2, lon2, scale_lat, scale_lon)
@@ -202,14 +204,71 @@ def total_sum_of_squares(coords1, coords2, coords3):
     
     return s1 + s2 + s3
 
-def getSumOfSquares_whenRegisteringRotatedCoordinates(image_coords, real_coords, scale_lat, scale_lon, angle_degrees):
+
+
+def getSumOfSquares_whenRegisteringRotatedCoordinates(image_coords, real_coords, angle_degrees):
     pointsAfterRotating = rotate_points(image_coords, width, height, angle_degrees)
-    latLonCorners = transformPointsToLatLonCorners(pointsAfterRotating, real_coords, scaleLat, scaleLon)
+
+    # We will use the first sets of two points to calculate the placement of the overlay, then 
+    # use the third to calibrate how accurate the rotation was for correctly registering the coordinates.
+
+    x1, y1 = pointsAfterRotating[0]
+    x2, y2 = pointsAfterRotating[1]
+    x3, y3 = pointsAfterRotating[2]
+
+    lat1, lon1 = real_coords[0]
+    lat2, lon2 = real_coords[1]
+    lat3, lon3 = real_coords[2]
+
+    scale_lat, scale_lon = getScaleLatLon(x1, y1, lat1, lon1, x2, y2, lat2, lon2)
+
+    latLonCorners = transformPointsToLatLonCorners(pointsAfterRotating, real_coords, scale_lat, scale_lon)
     nw1, se1, nw2, se2, nw3, se3 = latLonCorners
     sumOfSquares = total_sum_of_squares(nw1, nw2, nw3)
 
     #print("Sum of squares for this rotation: ", sumOfSquares)
     return sumOfSquares
+
+"""Given three sets of pixel coordinates on an orienteering map overlay
+   [(x1, y1), (x2, y2), (x3, y3)]
+
+   and three sets of real-world (lat, lon) coordinates matching their location
+   [(lat1, lon1), (lat2, lon2), (lat3, lon3)],
+
+   and the pixel dimensions of the overlay,
+
+   return the coordinates 
+   
+   (lat_nw, lon_nw); north-west corner,
+   (lat_se, lon_se); south-east corner, 
+   the counter-clockwise map rotation in degrees
+   
+   that most closely register the overlay onto real-world terrain.
+
+   We need to do this because orienteering maps are oriented to magnetic north (which varies by
+   location and date of map creation), while the reference map we're using for determining position
+   is oriented to geographic north.
+"""
+def getOverlayCoordinatesWithOptimalRotation(image_coords, real_coords, overlayWidth, overlayHeight):
+    """
+    Algorithm overview:
+    - Rotate the provided pixel coordinates by some chosen angle
+    - Using the two first sets of coordinates, calculate the scale factors to convert between pixel-
+      and real-world coordinates
+    - Calculate the north-west and south-east corners of the overlay implied by these
+    - Using the third set of coordinates, which was not used for getting the scale factor, calculate
+      the north-west overlay corner position implied by *that*
+    - This yields a discrepancy in the implied location of the north-west corner, which is caused by
+      the overlay not being correctly rotated to match geographic north.
+
+    - Repeat the steps above, varying the initial rotation angle each time, until the discrepancy is
+      minimized
+    - Return the north-west and south-east corners, plus the counter-clockwise rotation that yields
+      the smallest discrepancy.
+    """
+
+    # TODO: Return a dictionary
+    pass
 
 # Dette er tre punkter på et ikke-rotert kart.
 #Clicked the following image coordinates: (844, 319.6999969482422) app.js:23:13
@@ -243,8 +302,8 @@ scaleLat, scaleLon = scaleLatLon
 #getSumOfSquares_whenRegisteringRotatedCoordinates(image_coords, real_coords, scaleLat, scaleLon, 10)
 
 i = -2.0
-while i <= 2.0:
-    print(getSumOfSquares_whenRegisteringRotatedCoordinates(image_coords, real_coords, scaleLat, scaleLon, i), i)
+while i <= 5.0:
+    print(getSumOfSquares_whenRegisteringRotatedCoordinates(image_coords, real_coords, i), round(i, 1))
     i += 0.2
 
 

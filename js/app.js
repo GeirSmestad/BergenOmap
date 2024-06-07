@@ -45,8 +45,8 @@ document.addEventListener("DOMContentLoaded", function() {
   var mapUrl_3point5_degrees = `http://127.0.0.1:5000/transform?angle=3.5&border=${mapBorder}`
 
 
-  var exampleBoundsFrom_sumOfLeastSquares = [ [60.40879834160472, 5.337828952398146], [60.386353899057454, 5.36864138171766 ] ];
-  var mapUrl_1_degree = `http://127.0.0.1:5000/transform?angle=1&border=${mapBorder}`
+  var exampleBoundsFrom_sumOfLeastSquares = [ [60.4084547606827, 5.336732978048699], [60.38669932288318, 5.3707923558515445 ] ];
+  var mapUrl_sumOfLeastSquares_degree = `http://127.0.0.1:5000/transform?angle=3.2&border=${mapBorder}`
 
   console.log(overlaySouthEast)
 
@@ -68,7 +68,7 @@ document.addEventListener("DOMContentLoaded", function() {
   // var imageOverlay = L.imageOverlay(imageUrl, latLngBounds, {
   //var imageOverlay = L.imageOverlay(oMapUrl, [overlayNorthWest, overlaySouthEast], {
   //var imageOverlay = L.imageOverlay(mapUrl_3point5_degrees, exampleBoundsFrom_calculateOverlayCorners, { // This is the one I registered manually!
-  var imageOverlay = L.imageOverlay(mapUrl_1_degree, exampleBoundsFrom_sumOfLeastSquares, { // This is the one I registered with sumOfLeastSquares
+  var imageOverlay = L.imageOverlay(mapUrl_sumOfLeastSquares_degree, exampleBoundsFrom_sumOfLeastSquares, { // This is the one I registered with sumOfLeastSquares
     opacity: 0.6,
     errorOverlayUrl: errorOverlayUrl,
     alt: altText,
