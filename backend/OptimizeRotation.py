@@ -239,8 +239,6 @@ def getOverlayCoordinatesWithOptimalRotation(image_coords, real_coords, overlayW
 
         return rotation_result["error"]
 
-    initial_guess = 0
-
     bounds = (-180, 180)
     minimization_result = minimize_scalar(errorFunction, bounds=bounds, method='bounded')
 
