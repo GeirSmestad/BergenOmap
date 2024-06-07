@@ -1,6 +1,7 @@
 
 
-let mapBorder = 150;
+//let mapBorder = 150;
+let mapBorder = 444;
 
 document.addEventListener("DOMContentLoaded", function() {
 
@@ -16,11 +17,29 @@ document.addEventListener("DOMContentLoaded", function() {
 
   mapOverlay.addEventListener('click', function (event) {
     const img = event.target;
+
+    // Get the actual dimensions of the image
+    const naturalWidth = img.naturalWidth;
+    const naturalHeight = img.naturalHeight;
+
+    // Get the displayed dimensions of the image
     const rect = img.getBoundingClientRect();
+    const displayedWidth = rect.width;
+    const displayedHeight = rect.height;
+
+    // Calculate the scale factors
+    const scaleX = naturalWidth / displayedWidth;
+    const scaleY = naturalHeight / displayedHeight;
+
+    // Calculate the clicked coordinates in the displayed image
     const x = event.clientX - rect.left;
     const y = event.clientY - rect.top;
 
-    console.log(`Clicked the following image coordinates: (${x}, ${y})`);
+    // Calculate the clicked coordinates in the actual image
+    const actualX = x * scaleX;
+    const actualY = y * scaleY;
+
+    console.log(`Clicked the following underlying image coordinates: (${actualX}, ${actualY})`);
   });
 
   var modifySwCheckbox = document.getElementById('modifySwCheckbox');
@@ -52,6 +71,10 @@ document.addEventListener("DOMContentLoaded", function() {
   // Registration from implemented algorithm with numpy optimization
   exampleBoundsFrom_sumOfLeastSquares = [ [60.408453197075374, 5.33672273548746], [60.386702210919736, 5.370807726626327 ] ];
   mapUrl_sumOfLeastSquares_degree = `http://127.0.0.1:5000/transform?angle=3.22247&border=${mapBorder}`
+
+  // Registration of hi-res map
+  exampleBoundsFrom_sumOfLeastSquares = [ [60.40908318634827, 5.335459558239961], [60.385976819472006, 5.3720671422118995 ] ];
+  mapUrl_sumOfLeastSquares_degree = `http://127.0.0.1:5000/transform?angle=3.1975163&border=444`
 
   console.log(overlaySouthEast)
 

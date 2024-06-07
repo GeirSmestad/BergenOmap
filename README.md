@@ -16,10 +16,12 @@ Leverer kart-rotasjoner på endepunkt http://127.0.0.1:5000/transform?angle=20&b
 
 ## Registrering av kart
 
-* Legg inn nytt og mer detaljert kart
-* Standardiser marger på overlay som en prosent av størrelsen
+
+* Standardiser marger på overlay som en prosent av lengste dimensjon (13% per side er rimelig)
 * Lag grensesnitt for å plassere kartet riktig, basert på algoritme
-* Estimer kart-dimensjoner med høyde for mine selvpåførte marger
+* (X) Lag enkel software for å konvertere PDFer og fjerne magenta-linjer
+* (0) Estimer kart-dimensjoner med høyde for mine selvpåførte marger
+* (X) Legg inn nytt og mer detaljert kart
 * (0) Lag justerbar gjennomsiktighet for overlay
 * (0) Preload +/- 5 grader rotasjon fra back-end
 * (X) Lag algoritme for rotasjon og plassering av overlay
@@ -31,10 +33,10 @@ Leverer kart-rotasjoner på endepunkt http://127.0.0.1:5000/transform?angle=20&b
 
 ## Navigasjons-app
 
-* Visning hvor kart er satt til korrekt posisjon med 0% opacity
 * GPS-posisjon vises på kartet
 * Hosting, som eksponerer appen på twerkules.com
 * Flere kart på en gang
+* (X) Visning hvor kart er satt til korrekt posisjon med 0% opacity
 
 ## Infrastruktur
 
@@ -50,11 +52,10 @@ Leverer kart-rotasjoner på endepunkt http://127.0.0.1:5000/transform?angle=20&b
 
 ## Notater
 
-En rimelig margin på hver side av kartet, for å sikre kurant rotasjon, er 12% av den lengste dimensjonen.
-
 Output fra registrering, for test av at refaktorering henger på greip:
 
 >>> getOverlayCoordinatesWithOptimalRotation(image_coords, real_coords, width, height)
 Optimal input number: 3.2224726220246245
 {'nw_coords': (60.40845319707709, 5.33672273549868), 'se_coords': (60.386702210916575, 5.370807726609491), 'optimal_rotation_angle': 3.2224726220246245}
 >>>
+

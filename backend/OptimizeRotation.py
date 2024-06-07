@@ -161,7 +161,7 @@ def euclidean_distance(coord1, coord2):
    and the error.
 """
 def rotateAndRegisterOverlay(image_coords, real_coords, angle_degrees, overlayWidth, overlayHeight):
-    pointsAfterRotating = rotate_points(image_coords, width, height, angle_degrees)
+    pointsAfterRotating = rotate_points(image_coords, overlayWidth, overlayHeight, angle_degrees)
 
     x1, y1 = pointsAfterRotating[0]
     x2, y2 = pointsAfterRotating[1]
@@ -253,12 +253,12 @@ def getOverlayCoordinatesWithOptimalRotation(image_coords, real_coords, overlayW
 
 
 # Manually-collected sample input -- must fetch this from the webapp in the future
-image_coords = [(238, 1337.7000122070312), (844, 319.6999969482422), (414, 403.6999969482422)]
-real_coords = [(60.39113388285876, 5.3435611724853525), (60.40450336375729, 5.357653498649598), (60.40313627352001, 5.346728861331941)]
+image_c = [(238, 1337.7000122070312), (844, 319.6999969482422), (414, 403.6999969482422)]
+real_c = [(60.39113388285876, 5.3435611724853525), (60.40450336375729, 5.357653498649598), (60.40313627352001, 5.346728861331941)]
 
 
 # Dimensions of the overlay image
-width, height = 1325 , 1709
+w, h = 1325 , 1709
 
 
 # Check that output still makes sense after refactoring
@@ -268,4 +268,27 @@ width, height = 1325 , 1709
 {'nw_coords': (60.408453197075374, 5.33672273548746), 'se_coords': (60.386702210919736, 5.370807726626327), 'optimal_rotation_angle': 3.2224726466196616}
 """
 
-print(getOverlayCoordinatesWithOptimalRotation(image_coords, real_coords, width, height))
+print(getOverlayCoordinatesWithOptimalRotation(image_c, real_c, w, h))
+
+
+
+# Data for hi-res Fløyen PNG
+
+
+img_coords = [(642, 3095) ,(1995, 825) ,(1033, 1011)]
+rl_coords = [(60.391125401482086, 5.34356385469436), (60.40449276637944, 5.357677638530732), (60.40313627352001, 5.34672349691391)]
+# wdt=2386
+# hgt=3414
+wdt=3176
+hgt=4048
+
+print("Finding coords for new image: ")
+print(getOverlayCoordinatesWithOptimalRotation(img_coords, rl_coords, wdt, hgt))
+
+#{'nw_coords': (60.409033442481466, 5.33535374577085), 'se_coords': (60.35850533510405, 5.415379265861205), 'optimal_rotation_angle': 3.1975163282014054}
+#               dette sørøst-hjørnet er på bærtur.                  60.358239726394515, 5.415616035461426
+
+
+
+
+
