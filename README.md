@@ -17,8 +17,12 @@ Leverer kart-rotasjoner på endepunkt http://127.0.0.1:5000/transform?angle=20&b
 ## Registrering av kart
 
 
-* Standardiser marger på overlay som en prosent av lengste dimensjon (13% per side er rimelig)
+* Lag scraper for å hente og sortere alle kartene fra o-bergen
+* Lag programvare for å slå disse kartene sammen til (post-frie) kart man kan bruke i terrenget
 * Lag grensesnitt for å plassere kartet riktig, basert på algoritme
+* Ideelt sett mulighet for å lagre dette info om registrering til database, så lagringen av denne infoen går fortere
+
+* (X) Standardiser marger på overlay som en prosent av lengste dimensjon (13% per side er rimelig)
 * (X) Lag enkel software for å konvertere PDFer og fjerne magenta-linjer
 * (0) Estimer kart-dimensjoner med høyde for mine selvpåførte marger
 * (X) Legg inn nytt og mer detaljert kart
@@ -33,20 +37,32 @@ Leverer kart-rotasjoner på endepunkt http://127.0.0.1:5000/transform?angle=20&b
 
 ## Navigasjons-app
 
-* GPS-posisjon vises på kartet
+* Velge hvilke(t) kart man vil se, når det er flere å velge mellom
 * Hosting, som eksponerer appen på twerkules.com
 * Flere kart på en gang
+  
+* (X) GPS-posisjon vises på kartet
 * (X) Visning hvor kart er satt til korrekt posisjon med 0% opacity
 
 ## Infrastruktur
 
-* Databasesystem for lagring av kart-filer og deres registrerte posisjon
+* Databasesystem for lagring av kart-filer og deres registrerte posisjon. DynamoDB, SQLite eller AWS-SQLdatabase? (Trenger kanskje SQL hvis jeg skal ha relasjoner)
 * Strukturere web-kode i moduler
+* Se om det er mulig å komprimere kart-filene og samtidig beholde gjennomsiktige marger. Lossless PNG-filer er veldig store.
+* Javascript for å be nettleseren ikke sette låse telefonen ved inaktivitet
+
+## Generelle forbedringer
+
+* Ikke bruke 'alert' ved feil i mottak av GPS-posisjon; det er veldig in-your-face
 
 ## Langsiktige ambisjoner
 
+* Menysystem hvis appen begynner å bli komplisert; ha flere funksjoner
+* Funksjon for å registrere/stemple poster når man er ute og trener på et gammelt kart
+* Automatisk identifikasjon av start/mål og poster, via bildeanalyse med OpenAI, og utregning av GPS-koordinater for disse
 * Vise Strava-track i registrert kart
-
+* Et mer ordentlig system for hosting og deploy, når det blir nødvendig
+* Kreditere kart-tegneren
 
 
 
