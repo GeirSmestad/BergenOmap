@@ -3,6 +3,10 @@ from PIL import Image, ImageOps, ImageDraw
 import io
 from OptimizeRotation import getOverlayCoordinatesWithOptimalRotation
 
+default_overlay_path = "../maps/floyen-2-cropped.png"
+
+# Munkebotn: http://127.0.0.1:5000/transform?angle=3.22247&border=465&path=../maps/munkebotn_combined.png   w: 2481 h: 3508
+
 app = Flask(__name__)
 
 def add_transparent_border(image, border_size):
@@ -18,9 +22,12 @@ def add_transparent_border(image, border_size):
 # http://127.0.0.1:5000/transform?angle=3.22247&border=150
 @app.route('/transform', methods=['GET'])
 def transform_image():
-    #image_path = request.args.get('path')  # Path to the image file
-    #image_path = "../maps/floyen-1.JPG"
-    image_path = "../maps/floyen-2-cropped.png"
+    image_path = request.args.get('path')  # Path to the image file
+    if image_path == None:
+        image_path=default_overlay_path
+
+    print(image_path)
+
     rotation_angle = float(request.args.get('angle', 0))  # Rotation angle
     border_size = int(request.args.get('border', 10))  # Border size
 
