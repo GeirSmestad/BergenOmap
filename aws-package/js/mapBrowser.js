@@ -32,7 +32,48 @@ document.addEventListener("DOMContentLoaded", function() {
   window.map = map;
   window.imageOverlay = imageOverlay;
 
+  // Function to handle the location found event
+  function onLocationFound(e) {
+    var radius = e.accuracy / 2;
 
+    if (typeof window.marker != "undefined") {
+      window.marker.remove();
+    }
+
+    if (typeof window.locationCircle != "undefined") {
+      window.locationCircle.remove();
+    }
+
+      // Add a marker at the user's location
+    window.marker = L.marker(e.latlng).addTo(map);
+
+    // Add a circle around the user's location
+    window.locationCircle = L.circle(e.latlng, radius).addTo(map);
+  }
+
+// Function to handle the location error event
+  function onLocationError(e) {
+    alert("Error when receiving location: " + e.message);
+  }
+
+  function simulateLocation(lat, lon) {
+    var simulatedLocation = {
+      latlng: L.latLng(lat, lon),
+      accuracy: 50 // Example accuracy in meters
+    };
+    map.fire('locationfound', simulatedLocation);
+  }
+
+  window.simulateLocation = simulateLocation;
+
+// Locate the user
+  map.on('locationfound', onLocationFound);
+  map.on('locationerror', onLocationError);
+
+// Request location
+  map.locate({watch: true, enableHighAccuracy: true, setView: false, maxZoom: 16});
+
+  // simulateLocation(startLatLon[0], startLatLon[1])
 
 });
 
