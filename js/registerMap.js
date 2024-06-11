@@ -29,12 +29,18 @@ document.addEventListener("DOMContentLoaded", function() {
 
   var startLatLon = [60.4002, 5.3411]; // Bergen
 
+  let currentLatLonIndex = 0;
+  let currentXYIndex = 0;
+
   const overlayView = document.getElementById('overlayView');
 
   overlayView.addEventListener('click', function (event) {
     const { imageX, imageY } = calculateClickedImageCoordinates(event);
 
     console.log(`Clicked the following underlying image coordinates: (${imageX}, ${imageY})`);
+
+    currentXYIndex = (currentXYIndex + 1) % 3;
+    updateDisplay();
   });
 
 
@@ -62,6 +68,9 @@ document.addEventListener("DOMContentLoaded", function() {
   function onMouseUp(event) {
     if (!isDragging) {
       console.log("Coordinates lat, lng: " + event.latlng.lat + ", " + event.latlng.lng);
+
+      currentLatLonIndex = (currentLatLonIndex + 1) % 3;
+      updateDisplay();
     }
   }
 
@@ -94,6 +103,13 @@ document.addEventListener("DOMContentLoaded", function() {
     return index === 0;
   }
 
+
+
+  // Function to determine if a coordinate should be bold
+  function isBoldCondition(index, currentIndex) {
+    return index === currentIndex;
+  }
+
   function roundToFiveDecimals(num) {
     return Math.round(num * 100000) / 100000;
   }
@@ -107,11 +123,16 @@ document.addEventListener("DOMContentLoaded", function() {
       latLonElement.textContent = `Point ${i+1} - Lat: ${roundToFiveDecimals(coordinates.latLon[i].lat)}, Lon: ${roundToFiveDecimals(coordinates.latLon[i].lon)}`;
       xyElement.textContent = `Point ${i+1} - X: ${roundToFiveDecimals(coordinates.xy[i].x)}, Y: ${roundToFiveDecimals(coordinates.xy[i].y)}`;
 
-      if (isBoldCondition(i)) {
+
+      if (isBoldCondition(i, currentLatLonIndex)) {
         latLonElement.style.fontWeight = 'bold';
-        xyElement.style.fontWeight = 'bold';
       } else {
         latLonElement.style.fontWeight = 'normal';
+      }
+
+      if (isBoldCondition(i, currentXYIndex)) {
+        xyElement.style.fontWeight = 'bold';
+      } else {
         xyElement.style.fontWeight = 'normal';
       }
     }
