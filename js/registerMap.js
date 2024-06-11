@@ -72,6 +72,61 @@ document.addEventListener("DOMContentLoaded", function() {
 
   window.map = map;
   window.overlayView = overlayView;
+
+
+  // Example coordinate data
+  const coordinates = {
+    latLon: [
+      { lat: 40.7128, lon: -74.0060 },
+      { lat: 34.0522, lon: -118.2437 },
+      { lat: 51.5074, lon: -0.1278 }
+    ],
+    xy: [
+      { x: 100, y: 200 },
+      { x: 150, y: 250 },
+      { x: 200, y: 300 }
+    ]
+  };
+
+  // Function to determine if a coordinate should be bold
+  function isBoldCondition(index) {
+    // Example condition: make the first coordinate bold
+    return index === 0;
+  }
+
+  function roundToFiveDecimals(num) {
+    return Math.round(num * 100000) / 100000;
+  }
+
+  // Function to update the display
+  function updateDisplay() {
+    for (let i = 0; i < 3; i++) {
+      const latLonElement = document.getElementById(`latLon${i + 1}`);
+      const xyElement = document.getElementById(`xy${i + 1}`);
+
+      latLonElement.textContent = `Point ${i+1} - Lat: ${roundToFiveDecimals(coordinates.latLon[i].lat)}, Lon: ${roundToFiveDecimals(coordinates.latLon[i].lon)}`;
+      xyElement.textContent = `Point ${i+1} - X: ${roundToFiveDecimals(coordinates.xy[i].x)}, Y: ${roundToFiveDecimals(coordinates.xy[i].y)}`;
+
+      if (isBoldCondition(i)) {
+        latLonElement.style.fontWeight = 'bold';
+        xyElement.style.fontWeight = 'bold';
+      } else {
+        latLonElement.style.fontWeight = 'normal';
+        xyElement.style.fontWeight = 'normal';
+      }
+    }
+  }
+
+  // Event listener for the button
+  document.getElementById('processButton').addEventListener('click', () => {
+    const output = document.getElementById('output');
+    output.value = JSON.stringify(coordinates, null, 2);
+  });
+
+  // Initial display update
+  updateDisplay();
+
+
 });
 
 

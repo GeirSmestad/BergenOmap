@@ -38,14 +38,26 @@
   <script src="js/registerMap.js"></script>
 
   <div id="registrationMapBrowser"></div>
-    <p>Map registration</p>
-  <!-- TODO: Add side-by-side fields for 3 sets of coordinates; 2 placement & 1 calibration -->
-  <!-- TODO: Add highlight for the one we're currently collecting -->
-  <!-- TODO: Add button to output selected registration -->
-  <!-- TODO: Add text field that outputs the JSON of the selected registration -->
-  <div id="registrationControls">
 
+  <div id="registrationData">
+    <p>Map registration</p>
+    <p>Please mark three points in the terrain and their corresponding location on the map.</p>
+    <div class="coordinates">
+      <div>
+        <p id="latLon1"></p>
+        <p id="latLon2"></p>
+        <p id="latLon3"></p>
+      </div>
+      <div>
+        <p id="xy1"></p>
+        <p id="xy2"></p>
+        <p id="xy3"></p>
+      </div>
+    </div>
+    <button id="processButton">Process</button>
+    <textarea id="output"></textarea>
   </div>
+
 
   <!-- TODO: Should probably move border calculation out of rotation and into map file construction -->
   <img id="overlayView" src="http://127.0.0.1:5000/transform?angle=3.22247&border=465&path=../maps/munkebotn_combined.png" />
