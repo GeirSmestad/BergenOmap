@@ -275,20 +275,11 @@ print(getOverlayCoordinatesWithOptimalRotation(image_c, real_c, w, h))
 # Data for hi-res Fløyen PNG
 
 
-img_coords = [(642, 3095) ,(1995, 825) ,(1033, 1011)]
-rl_coords = [(60.391125401482086, 5.34356385469436), (60.40449276637944, 5.357677638530732), (60.40313627352001, 5.34672349691391)]
-# wdt=2386
-# hgt=3414
-wdt=3176
-hgt=4048
+#img_coords = [(642, 3095) ,(1995, 825) ,(1033, 1011)]
+#rl_coords = [(60.391125401482086, 5.34356385469436), (60.40449276637944, 5.357677638530732), (60.40313627352001, 5.34672349691391)]
+#wdt=3176
+#hgt=4048
 
-print("Finding coords for new image: ")
-print(getOverlayCoordinatesWithOptimalRotation(img_coords, rl_coords, wdt, hgt))
-
-#{'nw_coords': (60.409033442481466, 5.33535374577085), 'se_coords': (60.35850533510405, 5.415379265861205), 'optimal_rotation_angle': 3.1975163282014054}
-#               dette sørøst-hjørnet er på bærtur.                  60.358239726394515, 5.415616035461426
-
-
-
-
+#print("Finding coords for new image: ")
+#print(getOverlayCoordinatesWithOptimalRotation(img_coords, rl_coords, wdt, hgt))
 

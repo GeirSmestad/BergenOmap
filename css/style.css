@@ -88,6 +88,8 @@ textarea {
 
 #mapBrowser { height: 1024px; }
 
+#registrationMapBrowser { height: 512px; width: 1024px; }
+
 .slider {
   width: 100%;
   margin: 10px 0;
