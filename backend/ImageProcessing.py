@@ -2,27 +2,37 @@ import fitz  # PyMuPDF
 from PIL import Image
 import math
 
-floyen_a_pdf = "../maps/pdf/floyen-24-6-23/LoypeA.pdf"
-floyen_b_pdf = "../maps/pdf/floyen-24-6-23/LoypeB.pdf"
-floyen_c_pdf = "../maps/pdf/floyen-24-6-23/LoypeC.pdf"
+floyen_a_pdf = "../maps/pdf/floyen-23-6-24/LoypeA.pdf"
+floyen_b_pdf = "../maps/pdf/floyen-23-6-24/LoypeB.pdf"
+floyen_c_pdf = "../maps/pdf/floyen-23-6-24/LoypeC.pdf"
 
-floyen_a_png = "../maps/png/floyen-24-6-23/floyen_300_A.png"
-floyen_b_png = "../maps/png/floyen-24-6-23/floyen_300_B.png"
-floyen_c_png = "../maps/png/floyen-24-6-23/floyen_300_C.png"
+floyen_a_png = "../maps/png/floyen-23-6-24/floyen_300_A.png"
+floyen_b_png = "../maps/png/floyen-23-6-24/floyen_300_B.png"
+floyen_c_png = "../maps/png/floyen-23-6-24/floyen_300_C.png"
+
+munkebotn_a_pdf = "../maps/pdf/munkebotn-21-6-6/LoypeA.pdf"
+munkebotn_b_pdf = "../maps/pdf/munkebotn-21-6-6/LoypeB.pdf"
+
+munkebotn_a_png = "../maps/png/munkebotn-21-6-6/LoypeA.png"
+munkebotn_b_png = "../maps/png/munkebotn-21-6-6/LoypeB.png"
 
 output_folder = "../maps/png/"
 
 control_symbol_magenta = (208, 74, 148)
 
 """Convert PDF to hi-res PNG"""
-def pdf_to_png(pdf_path, output_folder, dpi=300):
+def pdf_to_png(pdf_path, output_folder, output_filename, dpi=300):
     doc = fitz.open(pdf_path)
     for page_num in range(len(doc)):
         page = doc.load_page(page_num)
         mat = fitz.Matrix(dpi / 72, dpi / 72)  # Scale to DPI
         pix = page.get_pixmap(matrix=mat)
         img = Image.frombytes("RGB", [pix.width, pix.height], pix.samples)
-        img.save(f"{output_folder}/page_{page_num + 1}.png", "PNG")
+
+        if len(doc) == 1:
+            img.save(f"{output_folder}/{output_filename}.png", "PNG")
+        else:
+            img.save(f"{output_folder}/{output_filename}_{page_num + 1}.png", "PNG")
 
 
 def merge_orienteering_maps(output_path, image1_path, image2_path, image3_path=None):
@@ -120,8 +130,9 @@ def most_common_color(color1, color2, color3):
 
 
 # Example usage
-merge_orienteering_maps(output_folder + 'output_image.png', floyen_a_png, floyen_b_png, floyen_c_png)
+#merge_orienteering_maps(output_folder + 'output_image.png', floyen_a_png, floyen_b_png, floyen_c_png)
+merge_orienteering_maps(output_folder + 'output_image.png', munkebotn_a_png, munkebotn_b_png)
 
 
-
-#pdf_to_png(floyen_b_pdf, ".")
+#pdf_to_png(munkebotn_a_pdf, ".", "munkebotn_a")
+#pdf_to_png(munkebotn_b_pdf, ".", "munkebotn_b")
