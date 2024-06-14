@@ -15,6 +15,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
   var startLatLon = [60.4002, 5.3411]; // Bergen
 
+  requestWakeLock();
 
   // Registration of hi-res map
   var exampleBoundsFrom_sumOfLeastSquares = [ [60.40908318634827, 5.335459558239961], [60.385976819472006, 5.3720671422118995 ] ];
@@ -104,6 +105,55 @@ document.addEventListener("DOMContentLoaded", function() {
   map.locate({watch: true, enableHighAccuracy: true, setView: false, maxZoom: 16});
 
   // simulateLocation(startLatLon[0], startLatLon[1])
+
+
+
+
+
+  // Request that device does not go to sleep
+  let wakeLock = null;
+
+  async function requestWakeLock() {
+    try {
+      wakeLock = await navigator.wakeLock.request('screen');
+      console.log('Wake Lock is active');
+    } catch (err) {
+      console.error(`${err.name}, ${err.message}`);
+    }
+  }
+
+  async function releaseWakeLock() {
+    if (wakeLock !== null) {
+      await wakeLock.release();
+      wakeLock = null;
+      console.log('Wake Lock has been released');
+    }
+  }
+
+  window.addEventListener('unload', (event) => {
+    releaseWakeLock();
+  });
+
+  document.addEventListener('visibilitychange', async () => {
+    if (document.visibilityState === 'visible') {
+      try {
+        wakeLock = await navigator.wakeLock.request('screen');
+        console.log('Wake Lock is re-acquired');
+      } catch (err) {
+        console.error(`${err.name}, ${err.message}`);
+      }
+    }
+
+    if (document.visibilityState === 'hidden') {
+      try {
+        releaseWakeLock();
+        console.log('Releasing Wake lock due to visibility hidden');
+      } catch (err) {
+        console.error(`${err.name}, ${err.message}`);
+      }
+    }
+  });
+
 
 });
 
