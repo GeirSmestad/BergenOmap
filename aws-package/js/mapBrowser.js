@@ -1,4 +1,15 @@
 
+let munkebotnJson = {
+  "nw_coords": [
+    60.4413596226974,
+    5.291421604355309
+  ],
+  "optimal_rotation_angle": 3.225405991892112,
+  "se_coords": [
+    60.416058601946006,
+    5.330736657405209
+  ]
+}
 
 document.addEventListener("DOMContentLoaded", function() {
 
@@ -29,8 +40,27 @@ document.addEventListener("DOMContentLoaded", function() {
   }).addTo(map);
 
 
+  // Munkebotn data, hard-coded
+  // TODO: Extract all maps to data structure later
+  let nw_coords = munkebotnJson.nw_coords;
+  let optimal_rotation_angle = munkebotnJson.optimal_rotation_angle;
+  let se_coords = munkebotnJson.se_coords;
+
+  let overlay_coords = [nw_coords, se_coords]
+  let munkebotn_overlay_file = 'munkebotn_rotated.png'
+
+  var secondOverlay = L.imageOverlay(munkebotn_overlay_file, overlay_coords, {
+    opacity: 1,
+    errorOverlayUrl: errorOverlayUrl,
+    alt: altText,
+    interactive: true
+  }).addTo(map);
+
+
+
   window.map = map;
   window.imageOverlay = imageOverlay;
+  window.secondOverlay = secondOverlay;
 
   // Function to handle the location found event
   function onLocationFound(e) {
@@ -53,7 +83,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
 // Function to handle the location error event
   function onLocationError(e) {
-    alert("Error when receiving location: " + e.message);
+    console.log("Error when receiving location: " + e.message);
   }
 
   function simulateLocation(lat, lon) {

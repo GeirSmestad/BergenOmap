@@ -25,12 +25,28 @@ function calculateClickedImageCoordinates(event) {
   return { imageX, imageY };
 }
 
+
+
 document.addEventListener("DOMContentLoaded", function() {
 
   var startLatLon = [60.4002, 5.3411]; // Bergen
 
   let currentLatLonIndex = 0;
   let currentXYIndex = 0;
+
+// Example coordinate data
+  const coordinates = {
+    latLon: [
+      { lat: 0, lon: 0 },
+      { lat: 0, lon: 0 },
+      { lat: 0, lon: 0 }
+    ],
+    xy: [
+      { x: 0, y: 0 },
+      { x: 0, y: 0 },
+      { x: 0, y: 0 }
+    ]
+  };
 
   const overlayView = document.getElementById('overlayView');
 
@@ -39,21 +55,16 @@ document.addEventListener("DOMContentLoaded", function() {
 
     console.log(`Clicked the following underlying image coordinates: (${imageX}, ${imageY})`);
 
+    setCurrentImageCoordinates(imageX, imageY);
     currentXYIndex = (currentXYIndex + 1) % 3;
     updateDisplay();
   });
-
-
-  // Registration of hi-res map
-  var exampleBoundsFrom_sumOfLeastSquares = [ [60.40908318634827, 5.335459558239961], [60.385976819472006, 5.3720671422118995 ] ];
-  var mapUrl_sumOfLeastSquares_degree = `http://127.0.0.1:5000/transform?angle=3.1975163&border=444`
 
   var map = L.map('registrationMapBrowser').setView(startLatLon, 15);
   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19,
     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
   }).addTo(map);
-
 
   let isDragging = false;
 
@@ -67,11 +78,26 @@ document.addEventListener("DOMContentLoaded", function() {
 
   function onMouseUp(event) {
     if (!isDragging) {
-      console.log("Coordinates lat, lng: " + event.latlng.lat + ", " + event.latlng.lng);
+      let lat = event.latlng.lat;
+      let lng = event.latlng.lng;
+
+      console.log("Coordinates lat, lng: " + lat + ", " + lng);
+
+      setCurrentLatLng(lat, lng);
 
       currentLatLonIndex = (currentLatLonIndex + 1) % 3;
       updateDisplay();
     }
+  }
+
+  function setCurrentLatLng(lat, lng) {
+    coordinates.latLon[currentLatLonIndex].lat = lat;
+    coordinates.latLon[currentLatLonIndex].lon = lng;
+  }
+
+  function setCurrentImageCoordinates(x, y) {
+    coordinates.xy[currentXYIndex].x = x;
+    coordinates.xy[currentXYIndex].y = y;
   }
 
   map.on('mousedown', onMouseDown);
@@ -81,28 +107,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
   window.map = map;
   window.overlayView = overlayView;
-
-
-  // Example coordinate data
-  const coordinates = {
-    latLon: [
-      { lat: 40.7128, lon: -74.0060 },
-      { lat: 34.0522, lon: -118.2437 },
-      { lat: 51.5074, lon: -0.1278 }
-    ],
-    xy: [
-      { x: 100, y: 200 },
-      { x: 150, y: 250 },
-      { x: 200, y: 300 }
-    ]
-  };
-
-  // Function to determine if a coordinate should be bold
-  function isBoldCondition(index) {
-    // Example condition: make the first coordinate bold
-    return index === 0;
-  }
-
 
 
   // Function to determine if a coordinate should be bold
@@ -121,7 +125,7 @@ document.addEventListener("DOMContentLoaded", function() {
       const xyElement = document.getElementById(`xy${i + 1}`);
 
       latLonElement.textContent = `Point ${i+1} - Lat: ${roundToFiveDecimals(coordinates.latLon[i].lat)}, Lon: ${roundToFiveDecimals(coordinates.latLon[i].lon)}`;
-      xyElement.textContent = `Point ${i+1} - X: ${roundToFiveDecimals(coordinates.xy[i].x)}, Y: ${roundToFiveDecimals(coordinates.xy[i].y)}`;
+      xyElement.textContent = `Point ${i+1} - X: ${Math.round(coordinates.xy[i].x)}, Y: ${Math.round(coordinates.xy[i].y)}`;
 
 
       if (isBoldCondition(i, currentLatLonIndex)) {
@@ -140,8 +144,49 @@ document.addEventListener("DOMContentLoaded", function() {
 
   // Event listener for the button
   document.getElementById('processButton').addEventListener('click', () => {
-    const output = document.getElementById('output');
-    output.value = JSON.stringify(coordinates, null, 2);
+
+    let image = document.getElementById('overlayView');
+
+    // Example input parameters
+    // const imageCoords = [[238, 1337.7], [844, 319.7], [414, 403.7]];
+    // const realCoords = [[60.39113388285876, 5.3435611724853525], [60.40450336375729, 5.357653498649598], [60.40313627352001, 5.346728861331941]];
+
+    const imageCoords = coordinates.xy.map(coord => [coord.x, coord.y]);
+    const realCoords = coordinates.latLon.map(coord => [coord.lat, coord.lon]);
+
+    const overlayWidth = image.naturalWidth;
+    const overlayHeight = image.naturalHeight;
+
+    console.log(imageCoords)
+    console.log(realCoords)
+    console.log(overlayWidth)
+    console.log(overlayHeight)
+
+    // Construct the payload
+    const payload = {
+      image_coords: imageCoords,
+      real_coords: realCoords,
+      overlayWidth: overlayWidth,
+      overlayHeight: overlayHeight
+    };
+
+    // Make the POST request
+    fetch("http://127.0.0.1:5000/getOverlayCoordinates", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(payload)
+    })
+      .then(response => response.json())
+      .then(data => {
+        // Print the output in the textarea
+        document.getElementById("output").value = JSON.stringify(data, null, 2);
+      })
+      .catch(error => {
+        console.error("Error:", error);
+        document.getElementById("output").value = "An error occurred: " + error;
+      });
   });
 
   // Initial display update

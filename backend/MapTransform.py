@@ -1,13 +1,17 @@
 from flask import Flask, send_file, request, jsonify
+from flask_cors import CORS
 from PIL import Image, ImageOps, ImageDraw
 import io
 from OptimizeRotation import getOverlayCoordinatesWithOptimalRotation
 
 default_overlay_path = "../maps/floyen-2-cropped.png"
 
-# Munkebotn: http://127.0.0.1:5000/transform?angle=3.22247&border=465&path=../maps/munkebotn_combined.png   w: 2481 h: 3508
+# Munkebotn: http://127.0.0.1:5000/transform?angle=3.225405991892112&border=465&path=../maps/munkebotn_combined.png   w: 2481 h: 3508
 
 app = Flask(__name__)
+
+# Use cross-origin resource sharing in return headers, to tell browser to allow responses from different origin
+CORS(app)
 
 def add_transparent_border(image, border_size):
     # Create a new image with transparent background
@@ -58,20 +62,15 @@ def transform_image():
         return str(e), 500
 
 
-# Example request:
-# http://127.0.0.1:5000/getOverlayCoordinates?image_coords=[(238,1337.7),(844,319.7),(414,403.7)]&real_coords=[(60.39113388285876,5.3435611724853525),(60.40450336375729,5.357653498649598),(60.40313627352001,5.346728861331941)]&overlayWidth=1325&overlayHeight=1709
-@app.route('/getOverlayCoordinates', methods=['GET'])
+@app.route('/getOverlayCoordinates', methods=['POST'])
 def get_overlay_coordinates():
     try:
-        # Parse the required parameters from the request
-        image_coords_str = request.args.get('image_coords')
-        real_coords_str = request.args.get('real_coords')
-        overlay_width = int(request.args.get('overlayWidth'))
-        overlay_height = int(request.args.get('overlayHeight'))
-
-        # Convert the comma-separated string inputs into lists of tuples
-        image_coords = eval(image_coords_str)
-        real_coords = eval(real_coords_str)
+        # Parse the required parameters from the request JSON
+        data = request.get_json()
+        image_coords = data.get('image_coords')
+        real_coords = data.get('real_coords')
+        overlay_width = data.get('overlayWidth')
+        overlay_height = data.get('overlayHeight')
 
         # Ensure inputs are correctly formatted
         if len(image_coords) != 3 or len(real_coords) != 3:
