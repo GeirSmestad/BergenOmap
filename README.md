@@ -37,10 +37,9 @@ Leverer kart-rotasjoner og registrering av et O-kart, basert på 3 x 2 sett matc
 
 ## Navigasjons-app
 
-* Velge hvilke(t) kart man vil se, når det er flere å velge mellom (fx. ikke laste før du klikker på kart-området)
-* Hosting, som eksponerer appen på twerkules.com
-* Flere kart på en gang (generalisert, basert på en liste som kommer som parameter)
-  
+* (X) /Hosting, som eksponerer appen på twerkules.com
+* (X) Flere kart på en gang (generalisert, basert på en liste som kommer som parameter)
+* (X) Velge hvilke(t) kart man vil se, når det er flere å velge mellom (fx. ikke laste før du klikker på kart-området)  
 * (X) GPS-posisjon vises på kartet
 * (X) Visning hvor kart er satt til korrekt posisjon med 0% opacity
 
@@ -57,6 +56,8 @@ Leverer kart-rotasjoner og registrering av et O-kart, basert på 3 x 2 sett matc
 * Få inn merker i tre farger for hvor man har klikket på kart og overlay ved registrering
 * (X) Ikke bruke 'alert' ved feil i mottak av GPS-posisjon; det er veldig in-your-face
 * (X) Lagt til kart over Munkebotn
+* (X) Lagt til kart over Åstveitskogen
+* 
 
 ## Langsiktige ambisjoner
 
@@ -73,3 +74,22 @@ Leverer kart-rotasjoner og registrering av et O-kart, basert på 3 x 2 sett matc
 
 ## Notater
 
+Har custom-innstillinger for cache under Behaviors i CloudFront og Edit Metatada i S3. De er kortlevde.
+
+Handlinger som trengs for å registrere et nytt kart:
+
+* Finn kartfil
+* Hvis PDF, konverter den til PNG i høy oppløsning
+* Putt PNG i en katalog hvor MapTransform.py kan nå den
+* Legg inn URL for kart med null rotasjon i registerMap.html
+* Gjør kartregistrerings-prosessen, generer JSON
+* Lim JSON-datastruktur inn i mapBrowser.js
+* Gjør kall til MapTransform.py og sett inn korrekt rotasjon fra registrerings-JSON
+* Lagre denne kartfilen på en plass hvor webserveren kan servere den
+* Legg inn filnavnet på filen i JSON-datastruktur i mapBrowser.js
+
+Det er litt som må gjøres for å få denne prosessen helt smooth.
+
+Helst burde brukeren få velge kartfil (URL eller drag-and-drop), gjøre registrerings-prosessen,
+fylle ut kartnavn og metadata og trykke "registrer" -> alle data lagres i database som nå er
+umiddelbart tilgjengelig fra maps.html.

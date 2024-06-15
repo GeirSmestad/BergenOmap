@@ -22,6 +22,18 @@ const mapDefinitions = [
       5.3720671422118995
     ],
     "map_filename": "floyen_latest.png"
+  },
+  {
+    "nw_coords": [
+      60.45973869078658,
+      5.296984088280552
+    ],
+    "optimal_rotation_angle": 3.2092814761001986,
+    "se_coords": [
+      60.442877100508994,
+      5.323230560339303
+    ],
+    "map_filename": "2024-astveitskogen-tur-o-rotated.png"
   }
 ];
 

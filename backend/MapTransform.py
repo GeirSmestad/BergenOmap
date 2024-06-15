@@ -7,6 +7,7 @@ from OptimizeRotation import getOverlayCoordinatesWithOptimalRotation
 default_overlay_path = "../maps/floyen-2-cropped.png"
 
 # Munkebotn: http://127.0.0.1:5000/transform?angle=3.225405991892112&border=465&path=../maps/munkebotn_combined.png   w: 2481 h: 3508
+# Åstveitskogen: http://127.0.0.1:5000/transform?angle=0&border=465&path=../maps/png/tur-o-2024/2024-astveitskogen-tur-o.png
 
 app = Flask(__name__)
 

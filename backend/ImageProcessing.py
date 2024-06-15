@@ -131,7 +131,7 @@ def most_common_color(color1, color2, color3):
 
 # Example usage
 #merge_orienteering_maps(output_folder + 'output_image.png', floyen_a_png, floyen_b_png, floyen_c_png)
-merge_orienteering_maps(output_folder + 'output_image.png', munkebotn_a_png, munkebotn_b_png)
+#merge_orienteering_maps(output_folder + 'output_image.png', munkebotn_a_png, munkebotn_b_png)
 
 
 #pdf_to_png(munkebotn_a_pdf, ".", "munkebotn_a")
