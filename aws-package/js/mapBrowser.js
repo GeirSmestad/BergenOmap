@@ -1,36 +1,31 @@
-
-let munkebotnJson = {
-  "nw_coords": [
-    60.4413596226974,
-    5.291421604355309
-  ],
-  "optimal_rotation_angle": 3.225405991892112,
-  "se_coords": [
-    60.416058601946006,
-    5.330736657405209
-  ],
-  "map_filename": "munkebotn_rotated.png"
-}
-
-let floyenJson = {
-  "nw_coords": [
-    60.40908318634827,
-    5.335459558239961
-  ],
-  "optimal_rotation_angle": 3.22247,
-  "se_coords": [
-    60.385976819472006,
-    5.3720671422118995
-  ],
-  "map_filename": "floyen_latest.png"
-}
-
 const mapDefinitions = [
-  munkebotnJson,
-  floyenJson
+  {
+    "nw_coords": [
+      60.4413596226974,
+      5.291421604355309
+    ],
+    "optimal_rotation_angle": 3.225405991892112,
+    "se_coords": [
+      60.416058601946006,
+      5.330736657405209
+    ],
+    "map_filename": "munkebotn_rotated.png"
+  },
+  {
+    "nw_coords": [
+      60.40908318634827,
+      5.335459558239961
+    ],
+    "optimal_rotation_angle": 3.22247,
+    "se_coords": [
+      60.385976819472006,
+      5.3720671422118995
+    ],
+    "map_filename": "floyen_latest.png"
+  }
 ];
 
-const errorOverlayUrl = 'placeholder.webp';
+var errorOverlayUrl = 'https://cdn-icons-png.flaticon.com/512/110/110686.png';
 const placeholderOverlayFile = 'placeholder.webp';
 
 /// Adds a map overlay to the map. Returns the overlay ImageOverlay object that was just added.
@@ -51,11 +46,7 @@ function addOrienteeringMapOverlay(jsonDefinition, map, usePlaceholder=false) {
     alt: '',
     interactive: true
   }).addTo(map);
-
-  // return imageOverlay;
 }
-
-window.addOrienteeringMapOverlay = addOrienteeringMapOverlay;
 
 document.addEventListener("DOMContentLoaded", function() {
 
@@ -63,12 +54,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
   requestWakeLock();
 
-  // Registration of hi-res map
-  var exampleBoundsFrom_sumOfLeastSquares = [ [60.40908318634827, 5.335459558239961], [60.385976819472006, 5.3720671422118995 ] ];
-  var mapUrl_sumOfLeastSquares_degree = `floyen_latest.png`
-
   const allMapOverlays = [];
-  const allMapEventHandlers = [];
 
   var map = L.map('mapBrowser').setView(startLatLon, 15);
   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -77,57 +63,27 @@ document.addEventListener("DOMContentLoaded", function() {
   }).addTo(map);
 
 
+  // Add all overlays in mapDefinitions to main map, but only placeholders at first. 'click' event
+  // handler replaces the placeholder map with the actual map, only using bandwidth for the maps
+  // that are requested.
   for (let i = 0 ; i < mapDefinitions.length; i++) {
-    let thisOverlay = addOrienteeringMapOverlay(mapDefinitions[i], map, true);
-    allMapOverlays.push(thisOverlay);
+    let placeholderOverlay = addOrienteeringMapOverlay(mapDefinitions[i], map, true);
+    allMapOverlays.push(placeholderOverlay);
 
-    let eventListener = function() {
-      console.log("Clicked")
-      thisOverlay.remove();
+    let replacePlaceholderOverlayWithActualMap = function() {
+      placeholderOverlay.remove();
 
-      let overlayWithActualMap = addOrienteeringMapOverlay(mapDefinitions[i], map);
-      replaceAtIndex(allMapOverlays, i, overlayWithActualMap);
+      let actualMapOverlay = addOrienteeringMapOverlay(mapDefinitions[i], map);
+      replaceAtIndex(allMapOverlays, i, actualMapOverlay);
     }
 
-
-    thisOverlay.addEventListener('click', eventListener);
+    placeholderOverlay.addEventListener('click', replacePlaceholderOverlayWithActualMap);
   }
-
-
-
-
-
-
-/*
-  var imageOverlay = L.imageOverlay(mapUrl_sumOfLeastSquares_degree, exampleBoundsFrom_sumOfLeastSquares, { // This is the one I registered with sumOfLeastSquares
-    opacity: 1,
-    errorOverlayUrl: errorOverlayUrl,
-    alt: '',
-    interactive: true
-  }).addTo(map);
-
-  // Munkebotn data, hard-coded
-  // TODO: Extract all maps to data structure later
-  let nw_coords = munkebotnJson.nw_coords;
-  let optimal_rotation_angle = munkebotnJson.optimal_rotation_angle;
-  let se_coords = munkebotnJson.se_coords;
-
-  let overlay_coords = [nw_coords, se_coords]
-  let munkebotn_overlay_file = 'munkebotn_rotated.png'
-
-  var secondOverlay = L.imageOverlay("lll", overlay_coords, {
-    opacity: 1,
-    errorOverlayUrl: errorOverlayUrl,
-    alt: '',
-    interactive: true
-  }).addTo(map);
-*/
-
 
   window.map = map;
   window.allMapOverlays = allMapOverlays;
-  //window.secondOverlay = secondOverlay;
 
+  // **-- Location functionality --** //
   // Function to handle the location found event
   function onLocationFound(e) {
     var radius = e.accuracy / 2;
@@ -140,7 +96,7 @@ document.addEventListener("DOMContentLoaded", function() {
       window.locationCircle.remove();
     }
 
-      // Add a marker at the user's location
+    // Add a marker at the user's location
     window.marker = L.marker(e.latlng).addTo(map);
 
     // Add a circle around the user's location
@@ -162,11 +118,11 @@ document.addEventListener("DOMContentLoaded", function() {
 
   window.simulateLocation = simulateLocation;
 
-// Locate the user
+  // Locate the user
   map.on('locationfound', onLocationFound);
   map.on('locationerror', onLocationError);
 
-// Request location
+  // Request location
   map.locate({watch: true, enableHighAccuracy: true, setView: false, maxZoom: 16});
 
   // simulateLocation(startLatLon[0], startLatLon[1])
@@ -175,6 +131,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
 
 
+  // **-- Functionality for preventing device sleep --** //
   // Request that device does not go to sleep
   let wakeLock = null;
 
@@ -221,7 +178,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
 
 
-  // Helper methods
+  // **-- Helper methods --** //
   function replaceAtIndex(array, index, newValue) {
     if (index >= 0 && index < array.length) {
       array[index] = newValue;
