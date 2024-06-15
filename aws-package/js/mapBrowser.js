@@ -8,8 +8,54 @@ let munkebotnJson = {
   "se_coords": [
     60.416058601946006,
     5.330736657405209
-  ]
+  ],
+  "map_filename": "munkebotn_rotated.png"
 }
+
+let floyenJson = {
+  "nw_coords": [
+    60.40908318634827,
+    5.335459558239961
+  ],
+  "optimal_rotation_angle": 3.22247,
+  "se_coords": [
+    60.385976819472006,
+    5.3720671422118995
+  ],
+  "map_filename": "floyen_latest.png"
+}
+
+const mapDefinitions = [
+  munkebotnJson,
+  floyenJson
+];
+
+const errorOverlayUrl = 'placeholder.webp';
+const placeholderOverlayFile = 'placeholder.webp';
+
+/// Adds a map overlay to the map. Returns the overlay ImageOverlay object that was just added.
+function addOrienteeringMapOverlay(jsonDefinition, map, usePlaceholder=false) {
+  let nw_coords = jsonDefinition.nw_coords;
+  let se_coords = jsonDefinition.se_coords;
+
+  let overlay_coords = [nw_coords, se_coords]
+  let overlay_file = jsonDefinition.map_filename;
+
+  if (usePlaceholder) {
+    overlay_file = placeholderOverlayFile;
+  }
+
+  return L.imageOverlay(overlay_file, overlay_coords, {
+    opacity: 1,
+    errorOverlayUrl: errorOverlayUrl,
+    alt: '',
+    interactive: true
+  }).addTo(map);
+
+  // return imageOverlay;
+}
+
+window.addOrienteeringMapOverlay = addOrienteeringMapOverlay;
 
 document.addEventListener("DOMContentLoaded", function() {
 
@@ -21,7 +67,8 @@ document.addEventListener("DOMContentLoaded", function() {
   var exampleBoundsFrom_sumOfLeastSquares = [ [60.40908318634827, 5.335459558239961], [60.385976819472006, 5.3720671422118995 ] ];
   var mapUrl_sumOfLeastSquares_degree = `floyen_latest.png`
 
-
+  const allMapOverlays = [];
+  const allMapEventHandlers = [];
 
   var map = L.map('mapBrowser').setView(startLatLon, 15);
   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -30,16 +77,34 @@ document.addEventListener("DOMContentLoaded", function() {
   }).addTo(map);
 
 
-  var errorOverlayUrl = 'https://cdn-icons-png.flaticon.com/512/110/110686.png';
-  var altText = 'Orienteringskart Fløyen';
+  for (let i = 0 ; i < mapDefinitions.length; i++) {
+    let thisOverlay = addOrienteeringMapOverlay(mapDefinitions[i], map, true);
+    allMapOverlays.push(thisOverlay);
 
+    let eventListener = function() {
+      console.log("Clicked")
+      thisOverlay.remove();
+
+      let overlayWithActualMap = addOrienteeringMapOverlay(mapDefinitions[i], map);
+      replaceAtIndex(allMapOverlays, i, overlayWithActualMap);
+    }
+
+
+    thisOverlay.addEventListener('click', eventListener);
+  }
+
+
+
+
+
+
+/*
   var imageOverlay = L.imageOverlay(mapUrl_sumOfLeastSquares_degree, exampleBoundsFrom_sumOfLeastSquares, { // This is the one I registered with sumOfLeastSquares
     opacity: 1,
     errorOverlayUrl: errorOverlayUrl,
-    alt: altText,
+    alt: '',
     interactive: true
   }).addTo(map);
-
 
   // Munkebotn data, hard-coded
   // TODO: Extract all maps to data structure later
@@ -50,18 +115,18 @@ document.addEventListener("DOMContentLoaded", function() {
   let overlay_coords = [nw_coords, se_coords]
   let munkebotn_overlay_file = 'munkebotn_rotated.png'
 
-  var secondOverlay = L.imageOverlay(munkebotn_overlay_file, overlay_coords, {
+  var secondOverlay = L.imageOverlay("lll", overlay_coords, {
     opacity: 1,
     errorOverlayUrl: errorOverlayUrl,
-    alt: altText,
+    alt: '',
     interactive: true
   }).addTo(map);
-
+*/
 
 
   window.map = map;
-  window.imageOverlay = imageOverlay;
-  window.secondOverlay = secondOverlay;
+  window.allMapOverlays = allMapOverlays;
+  //window.secondOverlay = secondOverlay;
 
   // Function to handle the location found event
   function onLocationFound(e) {
@@ -154,6 +219,16 @@ document.addEventListener("DOMContentLoaded", function() {
     }
   });
 
+
+
+  // Helper methods
+  function replaceAtIndex(array, index, newValue) {
+    if (index >= 0 && index < array.length) {
+      array[index] = newValue;
+    } else {
+      console.error('Index out of bounds');
+    }
+  }
 
 });
 
