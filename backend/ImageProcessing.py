@@ -136,3 +136,5 @@ def most_common_color(color1, color2, color3):
 
 #pdf_to_png(munkebotn_a_pdf, ".", "munkebotn_a")
 #pdf_to_png(munkebotn_b_pdf, ".", "munkebotn_b")
+
+#pdf_to_png("../maps/pdf/kokstad-2022/kokstad-LoypeA.pdf", ".", "kokstad-2022")

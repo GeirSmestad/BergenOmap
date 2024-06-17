@@ -34,6 +34,18 @@ const mapDefinitions = [
       5.323230560339303
     ],
     "map_filename": "2024-astveitskogen-tur-o-rotated.png"
+  },
+  {
+    "nw_coords": [
+      60.31601104308776,
+      5.233903081840795
+    ],
+    "optimal_rotation_angle": -1.2694235223329742,
+    "se_coords": [
+      60.291277752554805,
+      5.2719673393763
+    ],
+    "map_filename": "kokstad-2024-rotated.png"
   }
 ];
 
@@ -62,7 +74,15 @@ function addOrienteeringMapOverlay(jsonDefinition, map, usePlaceholder=false) {
 
 document.addEventListener("DOMContentLoaded", function() {
 
+
   var startLatLon = [60.4002, 5.3411]; // Bergen
+  
+  const urlParams = new URLSearchParams(window.location.search);
+  const mamsPaps = urlParams.get('MamsPaps');
+
+  if (mamsPaps !== "true") {
+    mapDefinitions.splice(2, 1); // Remove offending map
+  }
 
   requestWakeLock();
 

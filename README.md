@@ -1,6 +1,6 @@
 # BergenOmap
 
-Orienteringskart for Bergen, med GPS..
+Orienteringskart for Bergen, med GPS.
 
 
 # Notater
@@ -37,7 +37,11 @@ Leverer kart-rotasjoner og registrering av et O-kart, basert på 3 x 2 sett matc
 
 ## Navigasjons-app
 
-* (X) /Hosting, som eksponerer appen på twerkules.com
+* Cache Leaflet-filer, orienteringskart og kart-definisjoner lokalt i appen i tilfelle brudd i nettverk
+* Sentrer kartet på brukerens posisjon (knapp)
+* Kartet følger brukerens posisjon (toggle av/på)
+* Kartet orienteres etter retningen man holder mobilen (toggle av/på)
+* (X) Hosting, som eksponerer appen på twerkules.com
 * (X) Flere kart på en gang (generalisert, basert på en liste som kommer som parameter)
 * (X) Velge hvilke(t) kart man vil se, når det er flere å velge mellom (fx. ikke laste før du klikker på kart-området)  
 * (X) GPS-posisjon vises på kartet
@@ -57,17 +61,17 @@ Leverer kart-rotasjoner og registrering av et O-kart, basert på 3 x 2 sett matc
 * (X) Ikke bruke 'alert' ved feil i mottak av GPS-posisjon; det er veldig in-your-face
 * (X) Lagt til kart over Munkebotn
 * (X) Lagt til kart over Åstveitskogen
-* 
+* (X) Lagt inn Storerinden -- litt usikker på registreringen
 
 ## Langsiktige ambisjoner
 
-* Moving map; javascript-event som følger posisjonen din uten å endre zoom. Kanskje med innstilling av/på.
 * Menysystem hvis appen begynner å bli komplisert; ha flere funksjoner
 * Funksjon for å registrere/stemple poster når man er ute og trener på et gammelt kart
 * Automatisk identifikasjon av start/mål og poster, via bildeanalyse med OpenAI, og utregning av GPS-koordinater for disse
 * Vise Strava-track i registrert kart
+* Logge track
 * Et mer ordentlig system for hosting og deploy, når det blir nødvendig
-* Kreditere kart-tegneren
+* Kreditere kart-tegneren, kanskje på placeholder-bildene før kartet lastes
 * Årstall for kart i JSON-format
 
 
@@ -81,7 +85,7 @@ Handlinger som trengs for å registrere et nytt kart:
 * Finn kartfil
 * Hvis PDF, konverter den til PNG i høy oppløsning
 * Putt PNG i en katalog hvor MapTransform.py kan nå den
-* Legg inn URL for kart med null rotasjon i registerMap.html
+* Legg inn URL for kart med marger men null rotasjon i registerMap.html
 * Gjør kartregistrerings-prosessen, generer JSON
 * Lim JSON-datastruktur inn i mapBrowser.js
 * Gjør kall til MapTransform.py og sett inn korrekt rotasjon fra registrerings-JSON
