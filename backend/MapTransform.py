@@ -100,8 +100,6 @@ def process_dropped_image():
     return send_file(img_io, mimetype='image/png')
 
 
-
-
 @app.route('/getOverlayCoordinates', methods=['POST'])
 def get_overlay_coordinates():
     try:
@@ -125,6 +123,22 @@ def get_overlay_coordinates():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+
+
+from Database import Database
+db = Database()
+
+# Database interface. Unsure if you'll actually want to expose them like this, but you have the option.
+@app.route('/dal/insert_map', methods=['POST'])
+def insert_map():
+    map_data = request.json
+    db.insert_map(map_data)
+    return jsonify({'message': 'Map added successfully'}), 201
+
+@app.route('/dal/list_maps', methods=['GET'])
+def list_maps():
+    maps = db.list_maps()
+    return jsonify(maps)
 
 
 

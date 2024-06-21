@@ -76,7 +76,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
 
   var startLatLon = [60.4002, 5.3411]; // Bergen
-  
+
   const urlParams = new URLSearchParams(window.location.search);
   const mamsPaps = urlParams.get('MamsPaps');
 
@@ -218,6 +218,58 @@ document.addEventListener("DOMContentLoaded", function() {
       console.error('Index out of bounds');
     }
   }
+
+
+  // **-- Test database access --** //
+  async function addMap(mapData) {
+    const response = await fetch('http://localhost:5000/dal/insert_map', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(mapData)
+    });
+
+    if (!response.ok) {
+      const message = `An error has occurred: ${response.statusText}`;
+      throw new Error(message);
+    }
+
+    const result = await response.json();
+    console.log(result);
+  }
+
+// Example usage:
+  const newMap = {
+    "map_name": "test_map_entry",
+    "nw_coords": [60.123456, 5.123456],
+    "optimal_rotation_angle": 1.234,
+    "se_coords": [60.654321, 5.654321],
+    "map_filename": "newmap.png"
+  };
+
+  addMap(newMap).catch(error => console.error('Error:', error));
+
+
+  async function getAllMaps() {
+    const response = await fetch('http://localhost:5000/dal/list_maps', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+
+    if (!response.ok) {
+      const message = `An error has occurred: ${response.statusText}`;
+      throw new Error(message);
+    }
+
+    const maps = await response.json();
+    console.log(maps);
+  }
+
+// Example usage:
+  getAllMaps().catch(error => console.error('Error:', error));
 
 });
 
