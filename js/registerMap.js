@@ -193,7 +193,84 @@ document.addEventListener("DOMContentLoaded", function() {
   updateDisplay();
 
 
+
+
+
+
+  // **-- Functionality to allow dragging-and-dropping input images --** //
+  const dropArea = document.getElementById('drop-area');
+  const preview = document.getElementById('preview');
+  const dimensions = document.getElementById('dimensions');
+
+  // Prevent default drag behaviors
+  ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+    dropArea.addEventListener(eventName, preventDefaults, false)
+  });
+
+  function preventDefaults(e) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+
+  // Highlight drop area when item is dragged over it
+  ['dragenter', 'dragover'].forEach(eventName => {
+    dropArea.addEventListener(eventName, () => dropArea.classList.add('highlight'), false)
+  });
+
+  ['dragleave', 'drop'].forEach(eventName => {
+    dropArea.addEventListener(eventName, () => dropArea.classList.remove('highlight'), false)
+  });
+
+  // Handle dropped files
+  dropArea.addEventListener('drop', handleDrop, false);
+
+  function handleDrop(e) {
+    const dt = e.dataTransfer;
+    const files = dt.files;
+    handleFiles(files);
+  }
+
+  function handleFiles(files) {
+    const file = files[0];
+    if (file.type.startsWith('image/')) {
+      /*
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onloadend = () => {
+        preview.src = reader.result;
+        preview.onload = () => {
+          const width = preview.naturalWidth;
+          const height = preview.naturalHeight;
+          dimensions.textContent = `Dimensions: ${width}x${height}`;
+        };
+      };
+      */
+      const formData = new FormData();
+      formData.append('file', file);
+
+      fetch('http://127.0.0.1:5000/processDroppedImage', {
+        method: 'POST',
+        body: formData
+      })
+        .then(response => response.blob())
+        .then(blob => {
+          const url = URL.createObjectURL(blob);
+          //preview.src = url;
+          overlayView.src = url;
+          //preview.onload = () => {
+          //  const width = preview.naturalWidth;
+          //  const height = preview.naturalHeight;
+          //  dimensions.textContent = `Dimensions: ${width}x${height}`;
+          //};
+        })
+        .catch(error => console.error('Error:', error));
+
+    } else {
+      alert('Please drop an image file.');
+    }
+  }
 });
 
 
 
+// processDroppedImage

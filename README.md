@@ -21,6 +21,8 @@ Leverer kart-rotasjoner og registrering av et O-kart, basert på 3 x 2 sett matc
 * Lag programvare for å slå disse kartene sammen til (post-frie) kart man kan bruke i terrenget
 * Ideelt sett mulighet for å lagre dette info om registrering til database, så lagringen av denne infoen går fortere
 
+* Helhetlig integrert grensesnitt for behandling av bildefil og registrering av kart
+
 * (X) Lag grensesnitt for å plassere kartet riktig, basert på algoritme
 * (X) Standardiser marger på overlay som en prosent av lengste dimensjon (13% per side er rimelig)
 * (X) Lag enkel software for å konvertere PDFer og fjerne magenta-linjer
@@ -41,6 +43,7 @@ Leverer kart-rotasjoner og registrering av et O-kart, basert på 3 x 2 sett matc
 * Sentrer kartet på brukerens posisjon (knapp)
 * Kartet følger brukerens posisjon (toggle av/på)
 * Kartet orienteres etter retningen man holder mobilen (toggle av/på)
+* Zoom-innstilling som finner mobil-dimensjoner og setter zoom til å tilsvare kartets målestokk
 * (X) Hosting, som eksponerer appen på twerkules.com
 * (X) Flere kart på en gang (generalisert, basert på en liste som kommer som parameter)
 * (X) Velge hvilke(t) kart man vil se, når det er flere å velge mellom (fx. ikke laste før du klikker på kart-området)  
@@ -58,6 +61,7 @@ Leverer kart-rotasjoner og registrering av et O-kart, basert på 3 x 2 sett matc
 
 * Parameterisert input av hvilket kart man skal registrere i registerMap.html
 * Få inn merker i tre farger for hvor man har klikket på kart og overlay ved registrering
+* Kart-dimensjoner i metadata for kartet, så jeg kan bruke de dataene i appen
 * (X) Ikke bruke 'alert' ved feil i mottak av GPS-posisjon; det er veldig in-your-face
 * (X) Lagt til kart over Munkebotn
 * (X) Lagt til kart over Åstveitskogen
@@ -97,3 +101,20 @@ Det er litt som må gjøres for å få denne prosessen helt smooth.
 Helst burde brukeren få velge kartfil (URL eller drag-and-drop), gjøre registrerings-prosessen,
 fylle ut kartnavn og metadata og trykke "registrer" -> alle data lagres i database som nå er
 umiddelbart tilgjengelig fra maps.html.
+
+Implementasjon så langt:
+
+ * (X) Motta bildefil til server med drag'n'drop
+ * Støtt transformering av PDF
+ * (X) Transformer bildefil på server til kart med gjennomsiktige marginer og null rotasjon
+ * (X) Send respons tilbake til server
+ * (X) Sett dimensjons-velgeren til bildet du har sendt
+ * (la brukeren gjøre registreringsprosessen)
+ * Få opprinnelig bildefil tilbake til server (sånn at den kan roteres til rett vinkel)
+ * Roter opprinnelig bilde til vinkel spesifisert av registreringsprosess
+ * Sett inn bilde-filnavn i JSON-datastruktur
+ * Send JSON-datastruktur til server 
+ * Lagre rotert bilde på server
+ * Sørg for at filnavn og JSON-data kan hentes inn i mapBrowser.js
+ * Eventuelt med kartnavn og annen metadata spesifisert i registrerings-vinduet
+ 

@@ -137,6 +137,17 @@ textarea {
   margin-bottom: 20px;
 }
 
+#drop-area {
+  border: 2px dashed #ccc;
+  width: 300px;
+  height: 200px;
+  line-height: 200px;
+  text-align: center;
+  font-size: 16px;
+  color: #ccc;
+  margin: 50px;
+}
+
 /* ==========================================================================
    Helper classes
    ========================================================================== */

@@ -1,9 +1,10 @@
-from flask import Flask, send_file, request, jsonify
+from flask import Flask, send_file, request, jsonify, make_response
 from flask_cors import CORS
 from PIL import Image, ImageOps, ImageDraw
 import io
 from OptimizeRotation import getOverlayCoordinatesWithOptimalRotation
 
+default_border_percentage = 0.13 # Width of each side border, as percentage of longest dimension
 default_overlay_path = "../maps/floyen-2-cropped.png"
 
 # Munkebotn: http://127.0.0.1:5000/transform?angle=3.225405991892112&border=465&path=../maps/munkebotn_combined.png   w: 2481 h: 3508
@@ -43,6 +44,7 @@ def transform_image():
         # Open an image file
         with Image.open(image_path) as img:
             # Ensure the image has an alpha channel
+            """
             img = img.convert("RGBA")
             
             # Add a transparent border around the image
@@ -50,6 +52,9 @@ def transform_image():
 
             # Rotate the image
             rotated_image = bordered_image.rotate(rotation_angle, expand=False)
+            """
+
+            rotated_image = add_transparent_border_and_rotate_image(img, border_size, rotation_angle)
 
             # Save the transformed image to a BytesIO object
             img_io = io.BytesIO()
@@ -61,6 +66,40 @@ def transform_image():
 
     except Exception as e:
         return str(e), 500
+
+
+@app.route('/processDroppedImage', methods=['POST'])
+def process_dropped_image():
+    # Check if the request contains a file
+    if 'file' not in request.files:
+        return 'No file part', 400
+
+    file = request.files['file']
+
+    # Check if the file is an image
+    if file.filename == '':
+        return 'No selected file', 400
+
+    # Open the image using PIL
+    image = Image.open(file.stream)
+
+    originalWidth, originalHeight = image.width, image.height  
+
+    border_size = int(max(image.width, image.height) * default_border_percentage)
+
+    # Process the image (e.g., convert to grayscale)
+    processed_image = add_transparent_border_and_rotate_image(image, border_size, 0)
+
+    print(f"Transformed image of dimensions ({originalWidth}, {originalHeight}) to image of dimensions ({processed_image.width}, {processed_image.height})")
+
+    # Save the processed image to a BytesIO object
+    img_io = io.BytesIO()
+    processed_image.save(img_io, 'PNG')
+    img_io.seek(0)
+
+    return send_file(img_io, mimetype='image/png')
+
+
 
 
 @app.route('/getOverlayCoordinates', methods=['POST'])
@@ -85,6 +124,21 @@ def get_overlay_coordinates():
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+
+
+
+def add_transparent_border_and_rotate_image(image, border_size, rotation_angle):
+    image = image.convert("RGBA")
+            
+    # Add a transparent border around the image
+    bordered_image = add_transparent_border(image, border_size)
+
+    # Rotate the image
+    rotated_image = bordered_image.rotate(rotation_angle, expand=False)
+
+    return rotated_image
+
 
 
 
