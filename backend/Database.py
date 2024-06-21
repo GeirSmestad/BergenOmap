@@ -1,9 +1,11 @@
 import sqlite3
 import json
 
+database_file_location = '../data/database.db'
+
 class Database:
-    def __init__(self, db_name='maps.db'):
-        self.connection = sqlite3.connect(db_name, check_same_thread=False)
+    def __init__(self, db_name=database_file_location):
+        self.connection = sqlite3.connect(db_name)
         self.cursor = self.connection.cursor()
 
     def create_table(self):

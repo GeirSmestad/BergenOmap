@@ -221,6 +221,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
 
   // **-- Test database access --** //
+  /*
   async function addMap(mapData) {
     const response = await fetch('http://localhost:5000/dal/insert_map', {
       method: 'POST',
@@ -250,7 +251,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
   addMap(newMap).catch(error => console.error('Error:', error));
 
-
   async function getAllMaps() {
     const response = await fetch('http://localhost:5000/dal/list_maps', {
       method: 'GET',
@@ -268,8 +268,10 @@ document.addEventListener("DOMContentLoaded", function() {
     console.log(maps);
   }
 
-// Example usage:
+  // Example usage:
   getAllMaps().catch(error => console.error('Error:', error));
+   */
+  // **-- End test database access --** //
 
 });
 

@@ -1,4 +1,4 @@
-from flask import Flask, send_file, request, jsonify, make_response
+from flask import Flask, send_file, request, jsonify, make_response, g
 from flask_cors import CORS
 from PIL import Image, ImageOps, ImageDraw
 import io
@@ -125,21 +125,37 @@ def get_overlay_coordinates():
 
 
 
-from Database import Database
-db = Database()
 
-# Database interface. Unsure if you'll actually want to expose them like this, but you have the option.
+
+# Database interface. Unsure if you'll actually want to expose them over HTTP like this, but you have the option.
+# I'm thinking I'll most likely access it through other HTTP methods, not exposing the db directly.
+from Database import Database
+
+def get_db():
+    if 'db' not in g:
+        g.db = Database()
+    return g.db
+
+@app.teardown_appcontext
+def close_db(exception):
+    db = g.pop('db', None)
+    if db is not None:
+        db.close()
+
+
 @app.route('/dal/insert_map', methods=['POST'])
 def insert_map():
     map_data = request.json
+    db = get_db()
     db.insert_map(map_data)
     return jsonify({'message': 'Map added successfully'}), 201
 
 @app.route('/dal/list_maps', methods=['GET'])
 def list_maps():
+    db = get_db()
     maps = db.list_maps()
     return jsonify(maps)
-
+# End database interface
 
 
 def add_transparent_border_and_rotate_image(image, border_size, rotation_angle):

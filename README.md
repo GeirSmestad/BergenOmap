@@ -52,16 +52,20 @@ Leverer kart-rotasjoner og registrering av et O-kart, basert på 3 x 2 sett matc
 
 ## Infrastruktur
 
-* Databasesystem for lagring av kart-filer og deres registrerte posisjon. DynamoDB, SQLite eller AWS-SQLdatabase? (Trenger kanskje SQL hvis jeg skal ha relasjoner)
+
+* Database-lagring av kartfiler
 * Strukturere web-kode i moduler
 * Se om det er mulig å komprimere kart-filene og samtidig beholde gjennomsiktige marger. Lossless PNG-filer er veldig store. webp?
+* (X) Database for kart-registreringer (sqlite)
 * (X) Javascript for å be nettleseren ikke sette låse telefonen ved inaktivitet
 
 ## Generelle forbedringer
 
-* Parameterisert input av hvilket kart man skal registrere i registerMap.html
+* Python-script som laster ned alle kartene jeg er ute etter på en høflig måte
+* Rename MapTransform.py til Backend.py; den inneholder nå en webserver som gjør mye forskjellig.
 * Få inn merker i tre farger for hvor man har klikket på kart og overlay ved registrering
-* Kart-dimensjoner i metadata for kartet, så jeg kan bruke de dataene i appen
+* (0) Kart-dimensjoner i metadata for kartet, så jeg kan bruke de dataene i appen [nei, henter dette fra kartfilen]
+* (X) Parameterisert input av hvilket kart man skal registrere i registerMap.html
 * (X) Ikke bruke 'alert' ved feil i mottak av GPS-posisjon; det er veldig in-your-face
 * (X) Lagt til kart over Munkebotn
 * (X) Lagt til kart over Åstveitskogen
@@ -82,7 +86,7 @@ Leverer kart-rotasjoner og registrering av et O-kart, basert på 3 x 2 sett matc
 
 ## Notater
 
-Har custom-innstillinger for cache under Behaviors i CloudFront og Edit Metatada i S3. De er kortlevde.
+Jeg har custom-innstillinger for cache under Behaviors i CloudFront og Edit Metatada i S3. De er kortlevde.
 
 Handlinger som trengs for å registrere et nytt kart:
 
