@@ -90,7 +90,7 @@ def process_dropped_image():
     # Process the image (e.g., convert to grayscale)
     processed_image = add_transparent_border_and_rotate_image(image, border_size, 0)
 
-    print(f"Transformed image of dimensions ({originalWidth}, {originalHeight}) to image of dimensions ({processed_image.width}, {processed_image.height})")
+    print(f"Transformed image of dimensions ({originalWidth}, {originalHeight}) to image of dimensions ({processed_image.width}, {processed_image.height}), border size {border_size}")
 
     # Save the processed image to a BytesIO object
     img_io = io.BytesIO()
@@ -174,4 +174,5 @@ def add_transparent_border_and_rotate_image(image, border_size, rotation_angle):
 
 
 if __name__ == '__main__':
+    print("Example request to transform map: http://127.0.0.1:5000/transform?angle=0&border=465&path=../maps/png/tur-o-2024/2024-astveitskogen-tur-o.png")
     app.run(debug=True)

@@ -46,6 +46,18 @@ const mapDefinitions = [
       5.2719673393763
     ],
     "map_filename": "kokstad-2024-rotated.png"
+  },
+  {
+    "nw_coords": [
+      60.340253651996576,
+      5.287258573334927
+    ],
+    "optimal_rotation_angle": 5.8929554708851155,
+    "se_coords": [
+      60.32621219980405,
+      5.308932248866654
+    ],
+    "map_filename": "bonestoppen-rotated.png"
   }
 ];
 

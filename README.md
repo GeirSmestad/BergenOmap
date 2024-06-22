@@ -79,6 +79,7 @@ Leverer kart-rotasjoner og registrering av et O-kart, basert på 3 x 2 sett matc
 * (X) Lagt til kart over Munkebotn
 * (X) Lagt til kart over Åstveitskogen
 * (X) Lagt inn Storerinden -- litt usikker på registreringen
+* (X) Lagt til sprintkart på Bønes
 
 ## Langsiktige ambisjoner
 
