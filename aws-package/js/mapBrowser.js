@@ -21,7 +21,7 @@ const mapDefinitions = [
       60.385976819472006,
       5.3720671422118995
     ],
-    "map_filename": "floyen_latest.png"
+    "map_filename": "floyen_compressed_70.webp"
   },
   {
     "nw_coords": [

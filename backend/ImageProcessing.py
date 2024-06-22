@@ -35,6 +35,17 @@ def pdf_to_png(pdf_path, output_folder, output_filename, dpi=300):
             img.save(f"{output_folder}/{output_filename}_{page_num + 1}.png", "PNG")
 
 
+
+"""Convert a lossless PNG image to compressed WebP image."""
+def convert_png_to_webp(png_file_path, output_file_path, quality=70):
+
+    image = Image.open(png_file_path).convert("RGBA")
+    image.save(output_file_path, "webp", quality=quality, lossless=(quality == 100))
+
+
+
+"""Input two images of identical dimensions and map content, output image containing
+   only the pixels that are identical in both or all input images."""
 def merge_orienteering_maps(output_path, image1_path, image2_path, image3_path=None):
     # Open the images
     image1 = Image.open(image1_path)

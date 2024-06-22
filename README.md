@@ -61,8 +61,7 @@ Leverer kart-rotasjoner og registrering av et O-kart, basert på 3 x 2 sett matc
 * Må lagre detaljene om de 6 koordinatene i DB ved registrering, så jeg kan rekonstruere registreringen i ettertid
 * Legge til multiline-tekstfelt i database for credits for kart
 
-* Se om det er mulig å komprimere kart-filene og samtidig beholde gjennomsiktige marger. Lossless PNG-filer er veldig store. webp?
-
+* (X) Se om det er mulig å komprimere kart-filene [webp 70% gir 50% mindre fil med OK kvalitetstap. Bør helst gjøres via config.]
 * (X) Database for kart-registreringer (sqlite)
 * (X) Javascript for å be nettleseren ikke sette låse telefonen ved inaktivitet
 
