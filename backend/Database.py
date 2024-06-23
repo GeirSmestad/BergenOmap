@@ -4,7 +4,7 @@ import json
 database_file_location = '../data/database.db'
 
 class Database:
-    def __init__(self, db_name=database_file_location):
+    def __init__(self, db_name='database_file_location'):
         self.connection = sqlite3.connect(db_name)
         self.cursor = self.connection.cursor()
 
@@ -17,9 +17,14 @@ class Database:
             se_coords_lat REAL,
             se_coords_lon REAL,
             optimal_rotation_angle REAL,
+            overlay_width INTEGER,
+            overlay_height INTEGER,
+            attribution TEXT,
+            selected_pixel_coords TEXT,
+            selected_realworld_coords TEXT,
             map_filename TEXT,
             mapfile_original BLOB,
-            mapfile_rotated BLOB
+            mapfile_final BLOB
         )
         '''
         self.cursor.execute(create_table_sql)
@@ -31,8 +36,10 @@ class Database:
             map_name, nw_coords_lat, nw_coords_lon, 
             se_coords_lat, se_coords_lon, 
             optimal_rotation_angle, 
-            map_filename, mapfile_original, mapfile_rotated
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            overlay_width, overlay_height, 
+            attribution, selected_pixel_coords, selected_realworld_coords, 
+            map_filename, mapfile_original, mapfile_final
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         '''
         for item in data:
             # Check if the record already exists
@@ -44,9 +51,13 @@ class Database:
                     item['nw_coords'][0], item['nw_coords'][1],
                     item['se_coords'][0], item['se_coords'][1],
                     item['optimal_rotation_angle'],
+                    item['overlay_width'], item['overlay_height'],
+                    item['attribution'],
+                    json.dumps(item['selected_pixel_coords']),
+                    json.dumps(item['selected_realworld_coords']),
                     item['map_filename'],
                     None,  # Placeholder for mapfile_original
-                    None   # Placeholder for mapfile_rotated
+                    None   # Placeholder for mapfile_final
                 ))
         self.connection.commit()
 
@@ -56,8 +67,10 @@ class Database:
             map_name, nw_coords_lat, nw_coords_lon, 
             se_coords_lat, se_coords_lon, 
             optimal_rotation_angle, 
-            map_filename, mapfile_original, mapfile_rotated
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            overlay_width, overlay_height, 
+            attribution, selected_pixel_coords, selected_realworld_coords, 
+            map_filename, mapfile_original, mapfile_final
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         '''
         self.cursor.execute('SELECT 1 FROM maps WHERE map_name = ?', (map_data['map_name'],))
         if self.cursor.fetchone() is None:
@@ -66,9 +79,13 @@ class Database:
                 map_data['nw_coords'][0], map_data['nw_coords'][1],
                 map_data['se_coords'][0], map_data['se_coords'][1],
                 map_data['optimal_rotation_angle'],
+                map_data['overlay_width'], map_data['overlay_height'],
+                map_data['attribution'],
+                json.dumps(map_data['selected_pixel_coords']),
+                json.dumps(map_data['selected_realworld_coords']),
                 map_data['map_filename'],
                 None,  # Placeholder for mapfile_original
-                None   # Placeholder for mapfile_rotated
+                None   # Placeholder for mapfile_final
             ))
             self.connection.commit()
 
@@ -77,28 +94,44 @@ class Database:
         rows = self.cursor.fetchall()
         maps = []
         for row in rows:
-            map_name, nw_lat, nw_lon, se_lat, se_lon, angle, filename, _, _ = row
+            (map_name, nw_lat, nw_lon, se_lat, se_lon, angle, 
+            overlay_width, overlay_height, attribution, 
+            selected_pixel_coords, selected_realworld_coords, 
+            filename, _, _) = row
             maps.append({
                 "map_name": map_name,
                 "nw_coords": [nw_lat, nw_lon],
                 "se_coords": [se_lat, se_lon],
                 "optimal_rotation_angle": angle,
+                "overlay_width": overlay_width,
+                "overlay_height": overlay_height,
+                "attribution": attribution,
+                "selected_pixel_coords": json.loads(selected_pixel_coords),
+                "selected_realworld_coords": json.loads(selected_realworld_coords),
                 "map_filename": filename
             })
         return maps
-
+    
     def print_all_maps(self):
         self.cursor.execute('SELECT * FROM maps')
         rows = self.cursor.fetchall()
         for row in rows:
-            map_name, nw_lat, nw_lon, se_lat, se_lon, angle, filename, _, _ = row
+            (map_name, nw_lat, nw_lon, se_lat, se_lon, angle, 
+            overlay_width, overlay_height, attribution, 
+            selected_pixel_coords, selected_realworld_coords, 
+            filename, _, _) = row
             print(f"Map Name: {map_name}")
             print(f"  NW Coordinates: ({nw_lat}, {nw_lon})")
             print(f"  SE Coordinates: ({se_lat}, {se_lon})")
             print(f"  Optimal Rotation Angle: {angle}")
+            print(f"  Overlay Width: {overlay_width}")
+            print(f"  Overlay Height: {overlay_height}")
+            print(f"  Attribution: {attribution}")
+            print(f"  Selected Pixel Coordinates: {json.loads(selected_pixel_coords)}")
+            print(f"  Selected Realworld Coordinates: {json.loads(selected_realworld_coords)}")
             print(f"  Filename: {filename}")
             print()
-
+    
 
     def setup_database(self, json_data):
         self.create_table()
@@ -118,6 +151,16 @@ def pretty_format_maps(maps):
         print(f"  NW Coordinates: ({map['nw_coords'][0]}, {map['nw_coords'][1]})")
         print(f"  SE Coordinates: ({map['se_coords'][0]}, {map['se_coords'][1]})")
         print(f"  Optimal Rotation Angle: {map['optimal_rotation_angle']}")
+        print(f"  Overlay Width: {map['overlay_width']}")
+        print(f"  Overlay Height: {map['overlay_height']}")
+        
+        attribution_lines = map['attribution'].split('\n')
+        print(f"  Attribution: {attribution_lines[0]}")
+        for line in attribution_lines[1:]:
+            print(f"               {line}")
+        
+        print(f"  Selected Pixel Coordinates: {map['selected_pixel_coords']}")
+        print(f"  Selected Realworld Coordinates: {map['selected_realworld_coords']}")
         print(f"  Filename: {map['map_filename']}")
         print()
 
