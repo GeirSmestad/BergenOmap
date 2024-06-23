@@ -61,16 +61,33 @@
         <p id="xy3"></p>
       </div>
     </div>
+
+
+  </div>
+  <div id="registrationInput">
+    <div class="inputFields">
+      <label for="mapName">Map name:</label>
+      <input type="text" id="mapName" name="mapName">
+    </div>
+    <div class="inputFields">
+      <label for="filename">Filename:</label>
+      <input type="text" id="filename" name="filename">
+    </div>
+    <div class="inputFields">
+      <label for="attribution">Attribution:</label>
+      <textarea id="attribution" name="attribution"></textarea>
+    </div>
     <button id="processButton">Process</button>
     <textarea id="output"></textarea>
-  </div>
-
-
+</div>
   <!-- TODO: Should probably move border calculation out of rotation and into map file construction later -->
   <!-- <img id="overlayView" src="http://127.0.0.1:5000/transform?angle=0&border=465&path=../maps/munkebotn_combined.png" /> -->
   <!-- <img id="overlayView" src="http://127.0.0.1:5000/transform?angle=0&border=465&path=../maps/png/tur-o-2024/2024-astveitskogen-tur-o.png" /> -->
   <img id="overlayView" src="http://127.0.0.1:5000/transform?angle=0&border=424&path=../maps/png/kokstad-2022/kokstad-2022.png" />
 
+  <p>Output image:</p>
+
+  <img id="outputImage" />
 </body>
 
 </html>

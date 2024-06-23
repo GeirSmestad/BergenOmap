@@ -101,6 +101,43 @@ def process_dropped_image():
     return send_file(img_io, mimetype='image/png')
 
 
+
+@app.route('/transformPostedImage', methods=['POST'])
+def transform_posted_image():
+    # Check if the request contains a file
+    if 'file' not in request.files or 'rotationAngle' not in request.form:
+        return 'No file or rotation angle part', 400
+
+    file = request.files['file']
+    rotation_angle = float(request.form['rotationAngle'])
+
+    # Check if the file is an image
+    if file.filename == '':
+        return 'No selected file', 400
+
+    # Open the image using PIL
+    image = Image.open(file.stream)
+
+    originalWidth, originalHeight = image.width, image.height  
+
+    border_size = int(max(image.width, image.height) * default_border_percentage)
+
+    # Process the image (e.g., convert to grayscale)
+    processed_image = add_transparent_border_and_rotate_image(image, border_size, rotation_angle)
+
+    print(f"Transformed image of dimensions ({originalWidth}, {originalHeight}) to image of dimensions ({processed_image.width}, {processed_image.height}), border size {border_size}")
+
+    # Save the processed image to a BytesIO object
+    img_io = io.BytesIO()
+    processed_image.save(img_io, 'PNG')
+    img_io.seek(0)
+
+    # TODO: Save input and transformed images to database. Can certainly also return it to the client.
+
+    return send_file(img_io, mimetype='image/png')
+
+    
+
 @app.route('/getOverlayCoordinates', methods=['POST'])
 def get_overlay_coordinates():
     try:

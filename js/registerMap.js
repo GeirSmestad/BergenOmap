@@ -30,6 +30,7 @@ function calculateClickedImageCoordinates(event) {
 document.addEventListener("DOMContentLoaded", function() {
 
   var startLatLon = [60.4002, 5.3411]; // Bergen
+  window.droppedImage = null
 
   let currentLatLonIndex = 0;
   let currentXYIndex = 0;
@@ -170,6 +171,8 @@ document.addEventListener("DOMContentLoaded", function() {
       overlayHeight: overlayHeight
     };
 
+
+    /*
     // Make the POST request
     fetch("http://127.0.0.1:5000/getOverlayCoordinates", {
       method: "POST",
@@ -187,6 +190,48 @@ document.addEventListener("DOMContentLoaded", function() {
         console.error("Error:", error);
         document.getElementById("output").value = "An error occurred: " + error;
       });
+      */
+// Make the POST request
+fetch("http://127.0.0.1:5000/getOverlayCoordinates", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify(payload)
+})
+  .then(response => response.json())
+  .then(data => {
+    // Print the output in the textarea
+    document.getElementById("output").value = JSON.stringify(data, null, 2);
+
+    // Get the optimal rotation angle from the response
+    const rotationAngle = data.optimal_rotation_angle;
+
+    // Get the image file reference
+    //const imageFile = document.getElementById('imageInput').files[0];
+    const imageFile = window.droppedImage
+    // Prepare the form data
+    const formData = new FormData();
+    formData.append("file", imageFile);
+    formData.append("rotationAngle", rotationAngle);
+
+    // Make the POST request to upload the image
+    fetch("http://127.0.0.1:5000/transformPostedImage", {
+      method: "POST",
+      body: formData
+    })
+    .then(response => response.blob())
+    .then(blob => {
+      const url = URL.createObjectURL(blob);
+      document.getElementById("outputImage").src = url;
+    })
+    //then(console.log("Sent overlay to back-end for transformation and storage"));
+    // TODO: May update an element on the page with the transformed image at this point, for easy download.
+  })
+  .catch(error => {
+    console.error("Error:", error);
+    document.getElementById("output").value = "An error occurred: " + error;
+  });
   });
 
   // Initial display update
@@ -245,6 +290,8 @@ document.addEventListener("DOMContentLoaded", function() {
         };
       };
       */
+      window.droppedImage = file // Store image for later use
+
       const formData = new FormData();
       formData.append('file', file);
 
