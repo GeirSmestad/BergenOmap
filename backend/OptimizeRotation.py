@@ -247,7 +247,14 @@ def getOverlayCoordinatesWithOptimalRotation(image_coords, real_coords, overlayW
     # Calculate the correct coordinates of overlay corners    
     optimal_rotation_result = rotateAndRegisterOverlay(image_coords, real_coords, optimal_angle, overlayWidth, overlayHeight)
     
-    result = {"nw_coords" : optimal_rotation_result["nw_coords"], "se_coords" : optimal_rotation_result["se_coords"], "optimal_rotation_angle" : optimal_angle}
+    result = {"nw_coords" : optimal_rotation_result["nw_coords"], 
+              "se_coords" : optimal_rotation_result["se_coords"], 
+              "optimal_rotation_angle" : optimal_angle,
+              "selected_pixel_coords": image_coords,
+              "selected_realworld_coords": real_coords,
+              "overlay_width": overlayWidth,
+              "overlay_height": overlayHeight
+              }
 
     return result
 

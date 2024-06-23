@@ -3,6 +3,7 @@ from flask_cors import CORS
 from PIL import Image, ImageOps, ImageDraw
 import io
 from OptimizeRotation import getOverlayCoordinatesWithOptimalRotation
+import json
 
 default_border_percentage = 0.13 # Width of each side border, as percentage of longest dimension
 default_overlay_path = "../maps/floyen-2-cropped.png"
@@ -118,10 +119,13 @@ def get_overlay_coordinates():
         result = getOverlayCoordinatesWithOptimalRotation(image_coords, real_coords, overlay_width, overlay_height)
 
         # Return the result as a JSON response
-        return jsonify(result)
+        return make_response(json.dumps(result, sort_keys=False))
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+
+
 
 
 
