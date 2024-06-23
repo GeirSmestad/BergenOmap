@@ -104,15 +104,21 @@ def process_dropped_image():
 
 @app.route('/transformPostedImage', methods=['POST'])
 def transform_posted_image():
-    # Check if the request contains a file
-    if 'file' not in request.files or 'rotationAngle' not in request.form:
-        return 'Did not receive file or rotation angle', 400
+    # Check if the request contains a file and a data JSON object
+    if 'file' not in request.files or 'imageRegistrationData' not in request.form:
+        return 'Did not receive file or imageRegistrationData', 401
 
     file = request.files['file']
-    rotation_angle = float(request.form['rotationAngle'])
+    imageRegistrationData = request.form['imageRegistrationData']
+
+    try:
+        imageRegistrationData_json = json.loads(imageRegistrationData)
+        rotation_angle = float(imageRegistrationData_json.get('optimal_rotation_angle'))
+    except (ValueError, KeyError, TypeError) as e:
+        return 'Invalid image registration data format or missing optimal_rotation_angle', 402
 
     if file.filename == '':
-        return 'Did not receive file', 400
+        return 'Did not receive file', 403
 
     image = Image.open(file.stream)
 

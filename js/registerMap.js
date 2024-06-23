@@ -179,18 +179,21 @@ document.addEventListener("DOMContentLoaded", function () {
     })
       .then(response => response.json())
       .then(data => {
+        
+        data.mapName = document.getElementById("mapName").value;
+        data.filename = document.getElementById("filename").value;
+        data.attribution = document.getElementById("attribution").value;
+    
         // Print image registration data in text area
         document.getElementById("output").value = JSON.stringify(data, null, 2);
-
-        const rotationAngle = data.optimal_rotation_angle;
-
-        const imageFile = window.droppedImage
-
+    
+        const imageFile = window.droppedImage;
+    
         const formData = new FormData();
         formData.append("file", imageFile);
-        formData.append("rotationAngle", rotationAngle);
-
-        // Send original dropped image, along with caulculated image registration data, to the server for processing
+        formData.append("imageRegistrationData", JSON.stringify(data));
+    
+        // Send original dropped image, along with calculated image registration data, to the server for processing
         fetch("http://127.0.0.1:5000/transformPostedImage", {
           method: "POST",
           body: formData

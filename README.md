@@ -70,6 +70,7 @@ Leverer kart-rotasjoner og registrering av et O-kart, basert på 3 x 2 sett matc
 
 * Rename MapTransform.py til Backend.py; den inneholder nå en webserver som gjør mye forskjellig.
 * Få inn merker i tre farger for hvor man har klikket på kart og overlay ved registrering
+* Mulighet for å lagre kart som webp. Når DB inneholder koordinater, original og live, kan du re-generere live on-demand som webp.
 
 * (X) Last ned alle de historiske kartene fra o-bergen
 * (X) Python-script som laster ned alle kartene jeg er ute etter på en høflig måte
