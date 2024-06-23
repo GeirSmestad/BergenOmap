@@ -19,7 +19,7 @@ Leverer kart-rotasjoner og registrering av et O-kart, basert på 3 x 2 sett matc
 
 
 * Lag programvare for å slå disse kartene sammen til (post-frie) kart man kan bruke i terrenget
-* Ideelt sett mulighet for å lagre dette info om registrering til database, så lagringen av denne infoen går fortere
+* Ideelt sett mulighet for å lagre info om registrering til database, så registrering av nye kart går fortere
 
 * Helhetlig integrert grensesnitt for behandling av bildefil og registrering av kart
 
@@ -87,6 +87,7 @@ Leverer kart-rotasjoner og registrering av et O-kart, basert på 3 x 2 sett matc
 * Menysystem for å velge flere kart, hvis de overlapper i terrenget
 * Kjøre selv-hostet instans av OpenStreetMap i container; la appen hente kart fra denne
 * Funksjon for å registrere/stemple poster når man er ute og trener på et gammelt kart
+* Mobilvennlig layout og funksjonalitet for kart-registrering (omfattense task, inkl. zoom og markører på bilder)
 * Automatisk identifikasjon av start/mål, poster, målestokk, postbeskrivelser, kart-areal via bildeanalyse med AWS, og utregning av GPS-koordinater for poster
 * Vise Strava-track i registrert kart
 * Logge track
@@ -125,10 +126,10 @@ Implementasjon så langt:
  * (X) Transformer bildefil på server til kart med gjennomsiktige marginer og null rotasjon
  * (X) Send respons tilbake til server
  * (X) Sett dimensjons-velgeren til bildet du har sendt
- * (la brukeren gjøre registreringsprosessen)
- * Få opprinnelig bildefil tilbake til server (sånn at den kan roteres til rett vinkel)
- * Roter opprinnelig bilde til vinkel spesifisert av registreringsprosess
- * Sett inn bilde-filnavn i JSON-datastruktur
+ * (X) (la brukeren gjøre registreringsprosessen)
+ * (X) Få opprinnelig bildefil tilbake til server (sånn at den kan roteres til rett vinkel)
+ * (X) Roter opprinnelig bilde til vinkel spesifisert av registreringsprosess
+ * Sett inn bilde-filnavn og andre innhentede data i JSON-datastruktur
  * Send JSON-datastruktur til server 
  * Lagre rotert bilde på server
  * Sørg for at filnavn og JSON-data kan hentes inn i mapBrowser.js

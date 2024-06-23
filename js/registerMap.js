@@ -27,7 +27,7 @@ function calculateClickedImageCoordinates(event) {
 
 
 
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
 
   var startLatLon = [60.4002, 5.3411]; // Bergen
   window.droppedImage = null
@@ -35,7 +35,7 @@ document.addEventListener("DOMContentLoaded", function() {
   let currentLatLonIndex = 0;
   let currentXYIndex = 0;
 
-// Example coordinate data
+  // Example coordinate data
   const coordinates = {
     latLon: [
       { lat: 0, lon: 0 },
@@ -53,8 +53,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
   overlayView.addEventListener('click', function (event) {
     const { imageX, imageY } = calculateClickedImageCoordinates(event);
-
-    console.log(`Clicked the following underlying image coordinates: (${imageX}, ${imageY})`);
 
     setCurrentImageCoordinates(imageX, imageY);
     currentXYIndex = (currentXYIndex + 1) % 3;
@@ -81,8 +79,6 @@ document.addEventListener("DOMContentLoaded", function() {
     if (!isDragging) {
       let lat = event.latlng.lat;
       let lng = event.latlng.lng;
-
-      console.log("Coordinates lat, lng: " + lat + ", " + lng);
 
       setCurrentLatLng(lat, lng);
 
@@ -125,8 +121,8 @@ document.addEventListener("DOMContentLoaded", function() {
       const latLonElement = document.getElementById(`latLon${i + 1}`);
       const xyElement = document.getElementById(`xy${i + 1}`);
 
-      latLonElement.textContent = `Point ${i+1} - Lat: ${roundToFiveDecimals(coordinates.latLon[i].lat)}, Lon: ${roundToFiveDecimals(coordinates.latLon[i].lon)}`;
-      xyElement.textContent = `Point ${i+1} - X: ${Math.round(coordinates.xy[i].x)}, Y: ${Math.round(coordinates.xy[i].y)}`;
+      latLonElement.textContent = `Point ${i + 1} - Lat: ${roundToFiveDecimals(coordinates.latLon[i].lat)}, Lon: ${roundToFiveDecimals(coordinates.latLon[i].lon)}`;
+      xyElement.textContent = `Point ${i + 1} - X: ${Math.round(coordinates.xy[i].x)}, Y: ${Math.round(coordinates.xy[i].y)}`;
 
 
       if (isBoldCondition(i, currentLatLonIndex)) {
@@ -143,7 +139,14 @@ document.addEventListener("DOMContentLoaded", function() {
     }
   }
 
-  // Event listener for the button
+  /* When the process button is presesd, do the following:
+     1. Send the user's registration data to the server
+     2. Receive a JSON of the correct map registration in response
+     3. Output this JSON in a textarea so the user can copy it
+     4. Send the original input image to the server to be bordered and rotated in accordance with the calculated declination
+     5. The server may do additional things at this point; store the image and registration data in a database, for instance
+     6. The bordered and rotated result image is placed in an output <img> tag, for easy access.
+  */
   document.getElementById('processButton').addEventListener('click', () => {
 
     let image = document.getElementById('overlayView');
@@ -158,12 +161,6 @@ document.addEventListener("DOMContentLoaded", function() {
     const overlayWidth = image.naturalWidth;
     const overlayHeight = image.naturalHeight;
 
-    console.log(imageCoords)
-    console.log(realCoords)
-    console.log(overlayWidth)
-    console.log(overlayHeight)
-
-    // Construct the payload
     const payload = {
       image_coords: imageCoords,
       real_coords: realCoords,
@@ -172,7 +169,6 @@ document.addEventListener("DOMContentLoaded", function() {
     };
 
 
-    /*
     // Make the POST request
     fetch("http://127.0.0.1:5000/getOverlayCoordinates", {
       method: "POST",
@@ -183,62 +179,36 @@ document.addEventListener("DOMContentLoaded", function() {
     })
       .then(response => response.json())
       .then(data => {
-        // Print the output in the textarea
+        // Print image registration data in text area
         document.getElementById("output").value = JSON.stringify(data, null, 2);
+
+        const rotationAngle = data.optimal_rotation_angle;
+
+        const imageFile = window.droppedImage
+
+        const formData = new FormData();
+        formData.append("file", imageFile);
+        formData.append("rotationAngle", rotationAngle);
+
+        // Send original dropped image, along with caulculated image registration data, to the server for processing
+        fetch("http://127.0.0.1:5000/transformPostedImage", {
+          method: "POST",
+          body: formData
+        })
+          .then(response => response.blob())
+          .then(blob => {
+            const url = URL.createObjectURL(blob);
+            document.getElementById("outputImage").src = url;
+          })
       })
       .catch(error => {
         console.error("Error:", error);
         document.getElementById("output").value = "An error occurred: " + error;
       });
-      */
-// Make the POST request
-fetch("http://127.0.0.1:5000/getOverlayCoordinates", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json"
-  },
-  body: JSON.stringify(payload)
-})
-  .then(response => response.json())
-  .then(data => {
-    // Print the output in the textarea
-    document.getElementById("output").value = JSON.stringify(data, null, 2);
-
-    // Get the optimal rotation angle from the response
-    const rotationAngle = data.optimal_rotation_angle;
-
-    // Get the image file reference
-    //const imageFile = document.getElementById('imageInput').files[0];
-    const imageFile = window.droppedImage
-    // Prepare the form data
-    const formData = new FormData();
-    formData.append("file", imageFile);
-    formData.append("rotationAngle", rotationAngle);
-
-    // Make the POST request to upload the image
-    fetch("http://127.0.0.1:5000/transformPostedImage", {
-      method: "POST",
-      body: formData
-    })
-    .then(response => response.blob())
-    .then(blob => {
-      const url = URL.createObjectURL(blob);
-      document.getElementById("outputImage").src = url;
-    })
-    //then(console.log("Sent overlay to back-end for transformation and storage"));
-    // TODO: May update an element on the page with the transformed image at this point, for easy download.
-  })
-  .catch(error => {
-    console.error("Error:", error);
-    document.getElementById("output").value = "An error occurred: " + error;
-  });
   });
 
   // Initial display update
   updateDisplay();
-
-
-
 
 
 
@@ -278,18 +248,6 @@ fetch("http://127.0.0.1:5000/getOverlayCoordinates", {
   function handleFiles(files) {
     const file = files[0];
     if (file.type.startsWith('image/')) {
-      /*
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onloadend = () => {
-        preview.src = reader.result;
-        preview.onload = () => {
-          const width = preview.naturalWidth;
-          const height = preview.naturalHeight;
-          dimensions.textContent = `Dimensions: ${width}x${height}`;
-        };
-      };
-      */
       window.droppedImage = file // Store image for later use
 
       const formData = new FormData();
@@ -302,13 +260,7 @@ fetch("http://127.0.0.1:5000/getOverlayCoordinates", {
         .then(response => response.blob())
         .then(blob => {
           const url = URL.createObjectURL(blob);
-          //preview.src = url;
           overlayView.src = url;
-          //preview.onload = () => {
-          //  const width = preview.naturalWidth;
-          //  const height = preview.naturalHeight;
-          //  dimensions.textContent = `Dimensions: ${width}x${height}`;
-          //};
         })
         .catch(error => console.error('Error:', error));
 
@@ -317,7 +269,3 @@ fetch("http://127.0.0.1:5000/getOverlayCoordinates", {
     }
   }
 });
-
-
-
-// processDroppedImage

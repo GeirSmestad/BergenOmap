@@ -257,36 +257,3 @@ def getOverlayCoordinatesWithOptimalRotation(image_coords, real_coords, overlayW
               }
 
     return result
-
-
-# Manually-collected sample input -- must fetch this from the webapp in the future
-image_c = [(238, 1337.7000122070312), (844, 319.6999969482422), (414, 403.6999969482422)]
-real_c = [(60.39113388285876, 5.3435611724853525), (60.40450336375729, 5.357653498649598), (60.40313627352001, 5.346728861331941)]
-
-
-# Dimensions of the overlay image
-w, h = 1325 , 1709
-
-
-# Check that output still makes sense after refactoring
-""" Should be something like
-
-{'nw_coords': (60.40845319707709, 5.33672273549868), 'se_coords': (60.386702210916575, 5.370807726609491), 'optimal_rotation_angle': 3.2224726220246245}
-{'nw_coords': (60.408453197075374, 5.33672273548746), 'se_coords': (60.386702210919736, 5.370807726626327), 'optimal_rotation_angle': 3.2224726466196616}
-"""
-
-print(getOverlayCoordinatesWithOptimalRotation(image_c, real_c, w, h))
-
-
-
-# Data for hi-res Fløyen PNG
-
-
-#img_coords = [(642, 3095) ,(1995, 825) ,(1033, 1011)]
-#rl_coords = [(60.391125401482086, 5.34356385469436), (60.40449276637944, 5.357677638530732), (60.40313627352001, 5.34672349691391)]
-#wdt=3176
-#hgt=4048
-
-#print("Finding coords for new image: ")
-#print(getOverlayCoordinatesWithOptimalRotation(img_coords, rl_coords, wdt, hgt))
-

@@ -106,28 +106,24 @@ def process_dropped_image():
 def transform_posted_image():
     # Check if the request contains a file
     if 'file' not in request.files or 'rotationAngle' not in request.form:
-        return 'No file or rotation angle part', 400
+        return 'Did not receive file or rotation angle', 400
 
     file = request.files['file']
     rotation_angle = float(request.form['rotationAngle'])
 
-    # Check if the file is an image
     if file.filename == '':
-        return 'No selected file', 400
+        return 'Did not receive file', 400
 
-    # Open the image using PIL
     image = Image.open(file.stream)
 
     originalWidth, originalHeight = image.width, image.height  
 
     border_size = int(max(image.width, image.height) * default_border_percentage)
 
-    # Process the image (e.g., convert to grayscale)
     processed_image = add_transparent_border_and_rotate_image(image, border_size, rotation_angle)
 
     print(f"Transformed image of dimensions ({originalWidth}, {originalHeight}) to image of dimensions ({processed_image.width}, {processed_image.height}), border size {border_size}")
 
-    # Save the processed image to a BytesIO object
     img_io = io.BytesIO()
     processed_image.save(img_io, 'PNG')
     img_io.seek(0)
@@ -152,7 +148,6 @@ def get_overlay_coordinates():
         if len(image_coords) != 3 or len(real_coords) != 3:
             return jsonify({'error': 'Invalid input: Must provide exactly 3 image and 3 real coordinates'}), 400
 
-        # Call the function with the provided parameters
         result = getOverlayCoordinatesWithOptimalRotation(image_coords, real_coords, overlay_width, overlay_height)
 
         # Return the result as a JSON response
