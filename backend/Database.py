@@ -112,6 +112,45 @@ class Database:
             })
         return maps
     
+    def insert_mapfile_original(self, map_name, mapfile_original):
+        insert_sql = '''
+        UPDATE maps 
+        SET mapfile_original = ?
+        WHERE map_name = ?
+        '''
+        self.cursor.execute(insert_sql, (mapfile_original, map_name))
+        self.connection.commit()
+
+    def insert_mapfile_final(self, map_name, mapfile_final):
+        insert_sql = '''
+        UPDATE maps 
+        SET mapfile_final = ?
+        WHERE map_name = ?
+        '''
+        self.cursor.execute(insert_sql, (mapfile_final, map_name))
+        self.connection.commit()
+
+    def get_mapfile_original(self, map_name):
+        select_sql = '''
+        SELECT mapfile_original 
+        FROM maps 
+        WHERE map_name = ?
+        '''
+        self.cursor.execute(select_sql, (map_name,))
+        result = self.cursor.fetchone()
+        return result[0] if result else None
+
+    def get_mapfile_final(self, map_name):
+        select_sql = '''
+        SELECT mapfile_final 
+        FROM maps 
+        WHERE map_name = ?
+        '''
+        self.cursor.execute(select_sql, (map_name,))
+        result = self.cursor.fetchone()
+        return result[0] if result else None
+
+
     def print_all_maps(self):
         self.cursor.execute('SELECT * FROM maps')
         rows = self.cursor.fetchall()
