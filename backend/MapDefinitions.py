@@ -141,5 +141,25 @@ map_definitions = [
             "overlay_width": 3108,
             "overlay_height": 3980,
             "attribution": "Multi\nline\ntext\narea"
-        }   
+        },
+        {
+            "map_name": "Midtfjellet-2012",
+            "nw_coords": [ 60.421739083410074, 5.3274284422185305 ],
+            "optimal_rotation_angle": 4.158956295478128,
+            "se_coords": [ 60.39645243335368, 5.364985139792009 ],
+            "map_filename": "Midtfjellet-2012.webp",
+            "selected_pixel_coords": [
+                [ 810.7461579226285, 1009.7650800112057 ],
+                [ 2738.2130365659777, 1308.9077988533604 ],
+                [ 2644.864864864865, 3790.235912589948 ]
+            ],
+            "selected_realworld_coords": [
+                [ 60.415577503329395, 5.335793495178223 ],
+                [ 60.41466642637675, 5.358176529407502 ],
+                [ 60.400432833662734, 5.35932719707489 ]
+            ],
+            "overlay_width": 3262,
+            "overlay_height": 4401,
+            "attribution": ""
+        }  
     ]

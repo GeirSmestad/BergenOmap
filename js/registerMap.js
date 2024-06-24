@@ -180,8 +180,8 @@ document.addEventListener("DOMContentLoaded", function () {
       .then(response => response.json())
       .then(data => {
         
-        data.mapName = document.getElementById("mapName").value;
-        data.filename = document.getElementById("filename").value;
+        data.map_name = document.getElementById("mapName").value;
+        data.map_filename = document.getElementById("filename").value;
         data.attribution = document.getElementById("attribution").value;
     
         // Print image registration data in text area

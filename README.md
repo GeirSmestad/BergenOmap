@@ -23,6 +23,8 @@ Leverer kart-rotasjoner og registrering av et O-kart, basert på 3 x 2 sett matc
 
 * Helhetlig integrert grensesnitt for behandling av bildefil og registrering av kart
 
+* Knapp for å skru av og på forhåndsvisning registrert kart i registrerings-app
+
 * (X) Lag scraper for å hente og sortere alle kartene fra o-bergen
 * (X) Lag grensesnitt for å plassere kartet riktig, basert på algoritme
 * (X) Standardiser marger på overlay som en prosent av lengste dimensjon (13% per side er rimelig)
@@ -54,13 +56,13 @@ Leverer kart-rotasjoner og registrering av et O-kart, basert på 3 x 2 sett matc
 
 ## Infrastruktur
 
-
-* Database-lagring av kartfiler
 * Strukturere web-kode i moduler
 
 * Må lagre detaljene om de 6 koordinatene i DB ved registrering, så jeg kan rekonstruere registreringen i ettertid
-* Legge til multiline-tekstfelt i database for credits for kart
 
+* (X) Legge til multiline-tekstfelt i database for credits for kart
+* (X) Database-lagring av kartfiler
+* (X) Nytt web-grensesnitt for å bla i databasen. Dette kan du sikkert få ut fra én ChatGPT-prompt.
 * (X) Se om det er mulig å komprimere kart-filene [webp 70% gir 50% mindre fil med OK kvalitetstap. Bør helst gjøres via config.]
 * (X) Database for kart-registreringer (sqlite)
 * (X) Javascript for å be nettleseren ikke sette låse telefonen ved inaktivitet
@@ -81,6 +83,11 @@ Leverer kart-rotasjoner og registrering av et O-kart, basert på 3 x 2 sett matc
 * (X) Lagt til kart over Åstveitskogen
 * (X) Lagt inn Storerinden -- litt usikker på registreringen
 * (X) Lagt til sprintkart på Bønes
+* (X) Lagt til gammelt kart (2005-ish?) fra Midtfjellet
+
+## Bugs
+
+* (X) Backend sender nå felt-navnet "filename" i stedet for "map_filename" ved registrering (som gjør at map.html ikke finner den)++
 
 ## Langsiktige ambisjoner
 

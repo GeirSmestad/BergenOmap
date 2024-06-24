@@ -4,7 +4,7 @@ import json
 database_file_location = '../data/database.db'
 
 class Database:
-    def __init__(self, db_name='database_file_location'):
+    def __init__(self, db_name=database_file_location):
         self.connection = sqlite3.connect(db_name)
         self.cursor = self.connection.cursor()
 
@@ -171,6 +171,17 @@ class Database:
             print(f"  Filename: {filename}")
             print()
     
+    """Helper method to load maps from disk into existing map entry"""
+    def insert_mapfile_original_from_local_file(self, map_name, filename):
+        with open(filename, 'rb') as file:
+            mapfile_original = file.read()
+            self.insert_mapfile_original(map_name, mapfile_original)
+
+    """Helper method to load maps from disk into existing map entry"""
+    def insert_mapfile_final_from_local_file(self, map_name, filename):
+        with open(filename, 'rb') as file:
+            mapfile_final = file.read()
+            self.insert_mapfile_final(map_name, mapfile_final)
 
     def setup_database(self, json_data):
         self.create_table()

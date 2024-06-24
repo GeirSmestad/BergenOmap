@@ -1,9 +1,10 @@
-from flask import Flask, send_file, request, jsonify, make_response, g
+from flask import Flask, send_file, request, jsonify, make_response, g, abort, render_template_string
 from flask_cors import CORS
 from PIL import Image, ImageOps, ImageDraw
 import io
 from OptimizeRotation import getOverlayCoordinatesWithOptimalRotation
 import json
+from io import BytesIO
 
 default_border_percentage = 0.13 # Width of each side border, as percentage of longest dimension
 default_overlay_path = "../maps/floyen-2-cropped.png"
@@ -134,7 +135,13 @@ def transform_posted_image():
     processed_image.save(img_io, 'PNG')
     img_io.seek(0)
 
-    # TODO: Save input and transformed images to database. Can certainly also return it to the client.
+    # You can likely do all the following by using the get_db object below. See database prompts from yesterday.
+
+    # TODO: Save input to database
+    # TODO: Save original image to database
+    # TODO: Save transformed image to database
+
+    # TODO: Tror jeg har en bug hvor database-filen blir skrevet til feil plass på disken. database_file_location i backend-katalogen.
 
     return send_file(img_io, mimetype='image/png')
 
@@ -197,8 +204,101 @@ def list_maps():
     db = get_db()
     maps = db.list_maps()
     return jsonify(maps)
+
+@app.route('/dal/mapfile/original/<map_name>', methods=['GET'])
+def get_mapfile_original(map_name):
+    db = get_db()
+    image_data = db.get_mapfile_original(map_name)
+    if image_data is not None:
+        return send_file(BytesIO(image_data), mimetype='image/*')
+    else:
+        abort(404, description="Map not found")
+
+@app.route('/dal/mapfile/final/<map_name>', methods=['GET'])
+def get_mapfile_final(map_name):
+    db = get_db()
+    image_data = db.get_mapfile_final(map_name)
+    if image_data is not None:
+        return send_file(BytesIO(image_data), mimetype='image/*')
 # End database interface
 
+
+# Database visualization
+# To view, query http://127.0.0.1:5000/viewDatabase
+@app.route('/viewDatabase')
+def visualize_database():
+    if not is_local_request():
+        abort(404)
+
+    db = get_db()
+    maps = db.list_maps()
+
+    html = '''
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Maps Database</title>
+        <style>
+            table {
+                width: 100%;
+                border-collapse: collapse;
+            }
+            th, td {
+                border: 1px solid black;
+                padding: 8px;
+                text-align: left;
+            }
+            th {
+                background-color: #f2f2f2;
+            }
+            img {
+                width: 100px;
+                height: auto;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Maps Database</h1>
+        <table>
+            <tr>
+                <th>Map Name</th>
+                <th>NW Coords (Lat, Lon)</th>
+                <th>SE Coords (Lat, Lon)</th>
+                <th>Optimal Rotation Angle</th>
+                <th>Overlay Dimensions (WxH)</th>
+                <th>Attribution</th>
+                <th>Selected Pixel Coords</th>
+                <th>Selected Realworld Coords</th>
+                <th>Map Filename</th>
+                <th>Original Map</th>
+                <th>Final Map</th>
+            </tr>
+            {% for map in maps %}
+            <tr>
+                <td>{{ map.map_name }}</td>
+                <td>{{ map.nw_coords[0] }}, {{ map.nw_coords[1] }}</td>
+                <td>{{ map.se_coords[0] }}, {{ map.se_coords[1] }}</td>
+                <td>{{ map.optimal_rotation_angle }}</td>
+                <td>{{ map.overlay_width }} x {{ map.overlay_height }}</td>
+                <td>{{ map.attribution }}</td>
+                <td>{{ map.selected_pixel_coords }}</td>
+                <td>{{ map.selected_realworld_coords }}</td>
+                <td>{{ map.map_filename }}</td>
+                <td><img src="/dal/mapfile/original/{{ map.map_name }}" alt="Original Map"></td>
+                <td><img src="/dal/mapfile/final/{{ map.map_name }}" alt="Final Map"></td>
+            </tr>
+            {% endfor %}
+        </table>
+    </body>
+    </html>
+    '''
+    return render_template_string(html, maps=maps)
+
+
+
+def is_local_request():
+    return request.remote_addr in ['127.0.0.1', 'localhost']
 
 def add_transparent_border_and_rotate_image(image, border_size, rotation_angle):
     image = image.convert("RGBA")
