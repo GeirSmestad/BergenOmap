@@ -17,14 +17,14 @@ Leverer kart-rotasjoner og registrering av et O-kart, basert på 3 x 2 sett matc
 ## Registrering av kart
 
 
+* Finn en bedre måte å hente registrerte kart ut av database og inn i app. Uten backend på server, innledningsvis.
 
 * Lag programvare for å slå disse kartene sammen til (post-frie) kart man kan bruke i terrenget
-* Ideelt sett mulighet for å lagre info om registrering til database, så registrering av nye kart går fortere
-
-* Helhetlig integrert grensesnitt for behandling av bildefil og registrering av kart
 
 * Knapp for å skru av og på forhåndsvisning registrert kart i registrerings-app
 
+* (X) Helhetlig integrert grensesnitt for behandling av bildefil og registrering av kart
+* (X) Ideelt sett mulighet for å lagre info om registrering til database, så registrering av nye kart går fortere
 * (X) Lag scraper for å hente og sortere alle kartene fra o-bergen
 * (X) Lag grensesnitt for å plassere kartet riktig, basert på algoritme
 * (X) Standardiser marger på overlay som en prosent av lengste dimensjon (13% per side er rimelig)
@@ -69,10 +69,14 @@ Leverer kart-rotasjoner og registrering av et O-kart, basert på 3 x 2 sett matc
 
 ## Generelle forbedringer
 
+* Rydd opp i database-innsetting i MapTransform-py, rename variabler til mer fornuftige navn++
+* Lagre pixel-koordinater fra registerImage.html til DB som int heller enn float; unødvendig å ta med desimalene.
 
 * Rename MapTransform.py til Backend.py; den inneholder nå en webserver som gjør mye forskjellig.
 * Få inn merker i tre farger for hvor man har klikket på kart og overlay ved registrering
 * Mulighet for å lagre kart som webp. Når DB inneholder koordinater, original og live, kan du re-generere live on-demand som webp.
+
+* Registrer kart på nytt, til database, som du nå kan arkivere en lang-levd kopi av
 
 * (X) Last ned alle de historiske kartene fra o-bergen
 * (X) Python-script som laster ned alle kartene jeg er ute etter på en høflig måte
@@ -87,6 +91,7 @@ Leverer kart-rotasjoner og registrering av et O-kart, basert på 3 x 2 sett matc
 
 ## Bugs
 
+* Fiks exceptions som skjer når du åpner database-visning
 * (X) Backend sender nå felt-navnet "filename" i stedet for "map_filename" ved registrering (som gjør at map.html ikke finner den)++
 
 ## Langsiktige ambisjoner
@@ -100,8 +105,8 @@ Leverer kart-rotasjoner og registrering av et O-kart, basert på 3 x 2 sett matc
 * Vise Strava-track i registrert kart
 * Logge track
 * Et mer ordentlig system for hosting og deploy, når det blir nødvendig
-* Kreditere kart-tegneren, kanskje på placeholder-bildene før kartet lastes
-* Årstall for kart i JSON-format
+* Kreditere kart-tegneren i grensesnittet, kanskje på placeholder-bildene før kartet lastes
+* (X) Årstall for kart i JSON-format [dette går i attribution-feltet]
 
 
 
@@ -137,9 +142,11 @@ Implementasjon så langt:
  * (X) (la brukeren gjøre registreringsprosessen)
  * (X) Få opprinnelig bildefil tilbake til server (sånn at den kan roteres til rett vinkel)
  * (X) Roter opprinnelig bilde til vinkel spesifisert av registreringsprosess
- * Sett inn bilde-filnavn og andre innhentede data i JSON-datastruktur
- * Send JSON-datastruktur til server 
- * Lagre rotert bilde på server
- * Sørg for at filnavn og JSON-data kan hentes inn i mapBrowser.js
- * Eventuelt med kartnavn og annen metadata spesifisert i registrerings-vinduet
+ * (X) Sett inn bilde-filnavn og andre innhentede data i JSON-datastruktur
+ * (X) Send JSON-datastruktur til server 
+ * (X) Lagre rotert bilde på server
+ * (X) Eventuelt med kartnavn og annen metadata spesifisert i registrerings-vinduet
+
+ * Sørg for at filer/filnavn og JSON-data kan hentes inn i mapBrowser.js
+ 
  

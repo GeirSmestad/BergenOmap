@@ -137,6 +137,27 @@ def transform_posted_image():
 
     # You can likely do all the following by using the get_db object below. See database prompts from yesterday.
 
+    original_map_binary = file.read()
+
+    original_image_io = io.BytesIO()
+    image.save(original_image_io, 'PNG')
+    original_image_io.seek(0)
+
+    db = get_db()
+
+    print()
+    print(imageRegistrationData)
+    print()
+
+    map_data = json.loads(imageRegistrationData)
+
+    db.insert_map(map_data)
+
+
+    db.insert_mapfile_original(map_data["map_name"], original_image_io.getvalue())
+    #db.insert_mapfile_original(map_data["map_name"], original_map_binary)
+    db.insert_mapfile_final(map_data["map_name"], img_io.getvalue())
+
     # TODO: Save input to database
     # TODO: Save original image to database
     # TODO: Save transformed image to database
