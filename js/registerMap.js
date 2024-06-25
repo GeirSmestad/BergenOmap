@@ -193,8 +193,8 @@ document.addEventListener("DOMContentLoaded", function () {
         formData.append("file", imageFile);
         formData.append("imageRegistrationData", JSON.stringify(data));
     
-        // Send original dropped image, along with calculated image registration data, to the server for processing
-        fetch("http://127.0.0.1:5000/transformPostedImage", {
+        // Send original dropped image and data about its calculated placement to the server for transformation and storage
+        fetch("http://127.0.0.1:5000/transformAndStoreMapData", {
           method: "POST",
           body: formData
         })

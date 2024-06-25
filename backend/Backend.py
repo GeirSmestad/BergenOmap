@@ -102,9 +102,11 @@ def process_dropped_image():
     return send_file(img_io, mimetype='image/png')
 
 
-
-@app.route('/transformPostedImage', methods=['POST'])
-def transform_posted_image():
+"""This endpoint accepts an un-treated image overlay and data about how it should be placed on a real-world map.
+   It then transforms the overlay by adding transparent borders and rotating it to match this data, then
+   stores both the original and transformed overlay, along with the supplied registration data, to the database."""
+@app.route('/transformAndStoreMapData', methods=['POST'])
+def transform_and_store_map():
     # Check if the request contains a file and a data JSON object
     if 'file' not in request.files or 'imageRegistrationData' not in request.form:
         return 'Did not receive file or imageRegistrationData', 401
@@ -123,48 +125,33 @@ def transform_posted_image():
 
     image = Image.open(file.stream)
 
-    originalWidth, originalHeight = image.width, image.height  
+    # originalWidth, originalHeight = image.width, image.height  
 
     border_size = int(max(image.width, image.height) * default_border_percentage)
 
     processed_image = add_transparent_border_and_rotate_image(image, border_size, rotation_angle)
 
-    print(f"Transformed image of dimensions ({originalWidth}, {originalHeight}) to image of dimensions ({processed_image.width}, {processed_image.height}), border size {border_size}")
+    #print(f"Transformed image of dimensions ({originalWidth}, {originalHeight}) to image of dimensions ({processed_image.width}, {processed_image.height}), border size {border_size}")
 
-    img_io = io.BytesIO()
-    processed_image.save(img_io, 'PNG')
-    img_io.seek(0)
+    transformed_map_io = io.BytesIO()
+    processed_image.save(transformed_map_io, 'PNG')
+    transformed_map_io.seek(0)
 
-    # You can likely do all the following by using the get_db object below. See database prompts from yesterday.
-
-    original_map_binary = file.read()
-
-    original_image_io = io.BytesIO()
-    image.save(original_image_io, 'PNG')
-    original_image_io.seek(0)
+    original_map_io = io.BytesIO()
+    image.save(original_map_io, 'PNG')
+    original_map_io.seek(0)
 
     db = get_db()
 
-    print()
-    print(imageRegistrationData)
-    print()
+    map_registration_data = json.loads(imageRegistrationData)
 
-    map_data = json.loads(imageRegistrationData)
+    db.insert_map(map_registration_data)
+    db.insert_mapfile_original(map_registration_data["map_name"], original_map_io.getvalue())
+    db.insert_mapfile_final(map_registration_data["map_name"], transformed_map_io.getvalue())
 
-    db.insert_map(map_data)
+    print(f"Registered map \"{map_registration_data['map_name']}\" added to database.")
 
-
-    db.insert_mapfile_original(map_data["map_name"], original_image_io.getvalue())
-    #db.insert_mapfile_original(map_data["map_name"], original_map_binary)
-    db.insert_mapfile_final(map_data["map_name"], img_io.getvalue())
-
-    # TODO: Save input to database
-    # TODO: Save original image to database
-    # TODO: Save transformed image to database
-
-    # TODO: Tror jeg har en bug hvor database-filen blir skrevet til feil plass på disken. database_file_location i backend-katalogen.
-
-    return send_file(img_io, mimetype='image/png')
+    return send_file(transformed_map_io, mimetype='image/png')
 
     
 
@@ -195,8 +182,6 @@ def get_overlay_coordinates():
 
 
 
-
-
 # Database interface. Unsure if you'll actually want to expose them over HTTP like this, but you have the option.
 # I'm thinking I'll most likely access it through other HTTP methods, not exposing the db directly.
 from Database import Database
@@ -215,6 +200,9 @@ def close_db(exception):
 
 @app.route('/dal/insert_map', methods=['POST'])
 def insert_map():
+    if not is_local_request():
+        abort(404)
+
     map_data = request.json
     db = get_db()
     db.insert_map(map_data)
@@ -228,6 +216,9 @@ def list_maps():
 
 @app.route('/dal/mapfile/original/<map_name>', methods=['GET'])
 def get_mapfile_original(map_name):
+    if not is_local_request():
+        abort(404)
+
     db = get_db()
     image_data = db.get_mapfile_original(map_name)
     if image_data is not None:
@@ -237,10 +228,15 @@ def get_mapfile_original(map_name):
 
 @app.route('/dal/mapfile/final/<map_name>', methods=['GET'])
 def get_mapfile_final(map_name):
+    if not is_local_request():
+        abort(404)
+        
     db = get_db()
     image_data = db.get_mapfile_final(map_name)
     if image_data is not None:
         return send_file(BytesIO(image_data), mimetype='image/*')
+    else:
+        abort(404, description="Map not found")
 # End database interface
 
 
@@ -302,7 +298,7 @@ def visualize_database():
                 <td>{{ map.se_coords[0] }}, {{ map.se_coords[1] }}</td>
                 <td>{{ map.optimal_rotation_angle }}</td>
                 <td>{{ map.overlay_width }} x {{ map.overlay_height }}</td>
-                <td>{{ map.attribution }}</td>
+                <td>{{ map.attribution.replace('\n', '<br>') | safe }}</td>
                 <td>{{ map.selected_pixel_coords }}</td>
                 <td>{{ map.selected_realworld_coords }}</td>
                 <td>{{ map.map_filename }}</td>

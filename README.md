@@ -7,22 +7,20 @@ Orienteringskart for Bergen, med GPS.
 
 For å kjøre server for back-end:
 
-C:\source\O-maps\backend>python MapTransform.py
+C:\source\O-maps\backend>python Backend.py
 
-Leverer kart-rotasjoner og registrering av et O-kart, basert på 3 x 2 sett matchende koordinater.
-
+Denne tjener først og fremst registerMap.html, for å registrere nye kart. Se kildekode for liste med endepunkter.
 
 # TODO
 
 ## Registrering av kart
 
 
-* Finn en bedre måte å hente registrerte kart ut av database og inn i app. Uten backend på server, innledningsvis.
-
-* Lag programvare for å slå disse kartene sammen til (post-frie) kart man kan bruke i terrenget
-
 * Knapp for å skru av og på forhåndsvisning registrert kart i registrerings-app
+* Knapp for å dumpe kartfiler og kart-definisjoner i javascript fra DB til disk
+* Preload Map name og Filename i registrerings-vindu når du drag & dropper en kartfil
 
+* (0) Lag programvare for å slå disse kartene sammen til (post-frie) kart man kan bruke i terrenget
 * (X) Helhetlig integrert grensesnitt for behandling av bildefil og registrering av kart
 * (X) Ideelt sett mulighet for å lagre info om registrering til database, så registrering av nye kart går fortere
 * (X) Lag scraper for å hente og sortere alle kartene fra o-bergen
@@ -56,10 +54,13 @@ Leverer kart-rotasjoner og registrering av et O-kart, basert på 3 x 2 sett matc
 
 ## Infrastruktur
 
+* Finn en bedre måte å hente registrerte kart ut av database og inn i app. Uten backend på server, innledningsvis.
+* Bruke DB uten server: Kommando som dumper definisjoner og kartfiler fra DB -> disk, for rask kopiering til AWS (se under)
+* MapDefinitions.py -> Database (også med kart/bilder) -> kartfiler på disk + mapDefinitions.js som leses av mapBrowser.js
+
 * Strukturere web-kode i moduler
 
-* Må lagre detaljene om de 6 koordinatene i DB ved registrering, så jeg kan rekonstruere registreringen i ettertid
-
+* (X) Må lagre detaljene om de 6 koordinatene i DB ved registrering, så jeg kan rekonstruere registreringen i ettertid
 * (X) Legge til multiline-tekstfelt i database for credits for kart
 * (X) Database-lagring av kartfiler
 * (X) Nytt web-grensesnitt for å bla i databasen. Dette kan du sikkert få ut fra én ChatGPT-prompt.
@@ -69,15 +70,16 @@ Leverer kart-rotasjoner og registrering av et O-kart, basert på 3 x 2 sett matc
 
 ## Generelle forbedringer
 
-* Rydd opp i database-innsetting i MapTransform-py, rename variabler til mer fornuftige navn++
+
 * Lagre pixel-koordinater fra registerImage.html til DB som int heller enn float; unødvendig å ta med desimalene.
 
-* Rename MapTransform.py til Backend.py; den inneholder nå en webserver som gjør mye forskjellig.
 * Få inn merker i tre farger for hvor man har klikket på kart og overlay ved registrering
 * Mulighet for å lagre kart som webp. Når DB inneholder koordinater, original og live, kan du re-generere live on-demand som webp.
 
 * Registrer kart på nytt, til database, som du nå kan arkivere en lang-levd kopi av
 
+* (X) Rename MapTransform.py til Backend.py; den inneholder nå en webserver som gjør mye forskjellig.
+* (X) Rydd opp i database-innsetting i MapTransform-py, rename variabler til mer fornuftige navn++
 * (X) Last ned alle de historiske kartene fra o-bergen
 * (X) Python-script som laster ned alle kartene jeg er ute etter på en høflig måte
 * (0) Kart-dimensjoner i metadata for kartet, så jeg kan bruke de dataene i appen [nei, henter dette fra kartfilen]
@@ -91,7 +93,7 @@ Leverer kart-rotasjoner og registrering av et O-kart, basert på 3 x 2 sett matc
 
 ## Bugs
 
-* Fiks exceptions som skjer når du åpner database-visning
+* (X) Fiks exceptions som skjer når du åpner database-visning
 * (X) Backend sender nå felt-navnet "filename" i stedet for "map_filename" ved registrering (som gjør at map.html ikke finner den)++
 
 ## Langsiktige ambisjoner
@@ -104,7 +106,11 @@ Leverer kart-rotasjoner og registrering av et O-kart, basert på 3 x 2 sett matc
 * Automatisk identifikasjon av start/mål, poster, målestokk, postbeskrivelser, kart-areal via bildeanalyse med AWS, og utregning av GPS-koordinater for poster
 * Vise Strava-track i registrert kart
 * Logge track
+
+* Kjør back-end i container som hostes på ECC og kobles mot S3
 * Et mer ordentlig system for hosting og deploy, når det blir nødvendig
+* Deploy-script som setter opp all infrastuktur med én kommando
+
 * Kreditere kart-tegneren i grensesnittet, kanskje på placeholder-bildene før kartet lastes
 * (X) Årstall for kart i JSON-format [dette går i attribution-feltet]
 
@@ -135,7 +141,9 @@ umiddelbart tilgjengelig fra maps.html.
 Implementasjon så langt:
 
  * (X) Motta bildefil til server med drag'n'drop
+
  * Støtt transformering av PDF
+ 
  * (X) Transformer bildefil på server til kart med gjennomsiktige marginer og null rotasjon
  * (X) Send respons tilbake til server
  * (X) Sett dimensjons-velgeren til bildet du har sendt

@@ -62,32 +62,32 @@ class Database:
         self.connection.commit()
 
     def insert_map(self, map_data):
-        insert_sql = '''
-        INSERT INTO maps (
-            map_name, nw_coords_lat, nw_coords_lon, 
-            se_coords_lat, se_coords_lon, 
-            optimal_rotation_angle, 
-            overlay_width, overlay_height, 
-            attribution, selected_pixel_coords, selected_realworld_coords, 
-            map_filename, mapfile_original, mapfile_final
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        '''
-        self.cursor.execute('SELECT 1 FROM maps WHERE map_name = ?', (map_data['map_name'],))
-        if self.cursor.fetchone() is None:
-            self.cursor.execute(insert_sql, (
-                map_data['map_name'],
-                map_data['nw_coords'][0], map_data['nw_coords'][1],
-                map_data['se_coords'][0], map_data['se_coords'][1],
-                map_data['optimal_rotation_angle'],
-                map_data['overlay_width'], map_data['overlay_height'],
-                map_data['attribution'],
-                json.dumps(map_data['selected_pixel_coords']),
-                json.dumps(map_data['selected_realworld_coords']),
-                map_data['map_filename'],
-                None,  # Placeholder for mapfile_original
-                None   # Placeholder for mapfile_final
-            ))
-            self.connection.commit()
+        insert_or_replace_sql = '''
+            INSERT OR REPLACE INTO maps (
+                map_name, 
+                nw_coords_lat, nw_coords_lon, 
+                se_coords_lat, se_coords_lon, 
+                optimal_rotation_angle, 
+                overlay_width, overlay_height, 
+                attribution, 
+                selected_pixel_coords, selected_realworld_coords, 
+                map_filename 
+                )
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            '''
+        self.cursor.execute(insert_or_replace_sql, (
+            map_data['map_name'],
+            map_data['nw_coords'][0], map_data['nw_coords'][1],
+            map_data['se_coords'][0], map_data['se_coords'][1],
+            map_data['optimal_rotation_angle'],
+            map_data['overlay_width'], map_data['overlay_height'],
+            map_data['attribution'],
+            json.dumps(map_data['selected_pixel_coords']),
+            json.dumps(map_data['selected_realworld_coords']),
+            map_data['map_filename']
+        ))
+        self.connection.commit()
+
 
     def list_maps(self):
         self.cursor.execute('SELECT * FROM maps')
