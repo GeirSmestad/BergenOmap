@@ -155,8 +155,9 @@ document.addEventListener("DOMContentLoaded", function () {
     // const imageCoords = [[238, 1337.7], [844, 319.7], [414, 403.7]];
     // const realCoords = [[60.39113388285876, 5.3435611724853525], [60.40450336375729, 5.357653498649598], [60.40313627352001, 5.346728861331941]];
 
-    const imageCoords = coordinates.xy.map(coord => [coord.x, coord.y]);
-    const realCoords = coordinates.latLon.map(coord => [coord.lat, coord.lon]);
+    // Pixel coordinates are whole numbers, 6 decimal spaces yields <0.1 meter accuracy.
+    const imageCoords = coordinates.xy.map(coord => [Math.round(coord.x), Math.round(coord.y)]);
+    const realCoords = coordinates.latLon.map(coord => [parseFloat(coord.lat.toFixed(6)), parseFloat(coord.lon.toFixed(6))]);
 
     const overlayWidth = image.naturalWidth;
     const overlayHeight = image.naturalHeight;

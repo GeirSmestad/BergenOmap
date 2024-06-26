@@ -71,13 +71,16 @@ Denne tjener først og fremst registerMap.html, for å registrere nye kart. Se k
 ## Generelle forbedringer
 
 
-* Lagre pixel-koordinater fra registerImage.html til DB som int heller enn float; unødvendig å ta med desimalene.
+
 
 * Få inn merker i tre farger for hvor man har klikket på kart og overlay ved registrering
 * Mulighet for å lagre kart som webp. Når DB inneholder koordinater, original og live, kan du re-generere live on-demand som webp.
 
 * Registrer kart på nytt, til database, som du nå kan arkivere en lang-levd kopi av
+* Funksjon for å re-generere final-bilder i database som webp
+* Støtt transformering av PDF til PNG ved drag-and-drop
 
+* (X) Lagre pixel-koordinater fra registerImage.html til DB som int heller enn float; unødvendig å ta med desimalene.
 * (X) Rename MapTransform.py til Backend.py; den inneholder nå en webserver som gjør mye forskjellig.
 * (X) Rydd opp i database-innsetting i MapTransform-py, rename variabler til mer fornuftige navn++
 * (X) Last ned alle de historiske kartene fra o-bergen
