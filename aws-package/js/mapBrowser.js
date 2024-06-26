@@ -102,6 +102,50 @@ const mapDefinitions = [
     "map_name": "Midtfjellet-2012",
     "map_filename": "Midtfjellet-2012.webp",
     "attribution": ""
+  },
+  {
+    "nw_coords": [
+      60.421505975167136,
+      5.336727549279205
+    ],
+    "se_coords": [
+      60.389417606168365,
+      5.385452992220802
+    ],
+    "optimal_rotation_angle": 3.871134458807134,
+    "selected_pixel_coords": [
+      [
+        998.2745098039215,
+        1597.29761995851
+      ],
+      [
+        2472.078431372549,
+        1509.5865331296375
+      ],
+      [
+        927.4509803921569,
+        3063.0848210025506
+      ]
+    ],
+    "selected_realworld_coords": [
+      [
+        60.40930936048743,
+        5.351457595825196
+      ],
+      [
+        60.41070135538684,
+        5.373883545398713
+      ],
+      [
+        60.398364696295786,
+        5.3519806265831
+      ]
+    ],
+    "overlay_width": 3182,
+    "overlay_height": 4311,
+    "map_name": "blamannen-10k",
+    "map_filename": "blamannen-10k.webp",
+    "attribution": ""
   }
 ];
 

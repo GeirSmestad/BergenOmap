@@ -93,6 +93,7 @@ Denne tjener først og fremst registerMap.html, for å registrere nye kart. Se k
 * (X) Lagt inn Storerinden -- litt usikker på registreringen
 * (X) Lagt til sprintkart på Bønes
 * (X) Lagt til gammelt kart (2005-ish?) fra Midtfjellet
+* (X) Lagt til Blåmannen
 
 ## Bugs
 
