@@ -35,7 +35,6 @@ document.addEventListener("DOMContentLoaded", function () {
   let currentLatLonIndex = 0;
   let currentXYIndex = 0;
 
-  // Example coordinate data
   const coordinates = {
     latLon: [
       { lat: 0, lon: 0 },
@@ -47,6 +46,13 @@ document.addEventListener("DOMContentLoaded", function () {
       { x: 0, y: 0 },
       { x: 0, y: 0 }
     ]
+  };
+
+  let registrationPreviewData = {
+    preview : null,
+    showOverlayPreview : false,
+    currentRegistrationData : {},
+    currentOverlayImageUrl : null
   };
 
   const overlayView = document.getElementById('overlayView');
@@ -170,7 +176,6 @@ document.addEventListener("DOMContentLoaded", function () {
     };
 
 
-    // Make the POST request
     fetch("http://127.0.0.1:5000/getOverlayCoordinates", {
       method: "POST",
       headers: {
@@ -181,6 +186,8 @@ document.addEventListener("DOMContentLoaded", function () {
       .then(response => response.json())
       .then(data => {
         
+        registrationPreviewData.currentRegistrationData = data;
+
         data.map_name = document.getElementById("mapName").value;
         data.map_filename = document.getElementById("filename").value;
         data.attribution = document.getElementById("attribution").value;
@@ -203,6 +210,8 @@ document.addEventListener("DOMContentLoaded", function () {
           .then(blob => {
             const url = URL.createObjectURL(blob);
             document.getElementById("outputImage").src = url;
+
+            registrationPreviewData.currentOverlayImageUrl = url;
           })
       })
       .catch(error => {
@@ -272,4 +281,61 @@ document.addEventListener("DOMContentLoaded", function () {
       alert('Please drop an image file.');
     }
   }
+
+
+
+
+
+  // **-- Functionality for handling additional feature buttons  --**
+
+// To be used to display registration preview; identical to function in the main map view.
+function addOrienteeringMapOverlay(jsonDefinition, map, usePlaceholder=false) {
+  let nw_coords = jsonDefinition.nw_coords;
+  let se_coords = jsonDefinition.se_coords;
+
+  let overlay_coords = [nw_coords, se_coords]
+  let overlay_file = jsonDefinition.map_filename;
+
+  if (usePlaceholder) {
+    overlay_file = placeholderOverlayFile;
+  }
+
+  return L.imageOverlay(overlay_file, overlay_coords, {
+    opacity: 1,
+    alt: '',
+    interactive: true
+  }).addTo(map);
+}
+
+  let toggleDisplayRegistrationPreview = function() {
+    let previewRegistrationJson = {
+      nw_coords : registrationPreviewData.currentRegistrationData.nw_coords,
+      se_coords : registrationPreviewData.currentRegistrationData.se_coords,
+      map_filename : registrationPreviewData.currentOverlayImageUrl
+    };
+
+
+    if (registrationPreviewData.showOverlayPreview) {
+      if (registrationPreviewData.preview != null) {
+        registrationPreviewData.preview.remove()
+      }
+      registrationPreviewData.showOverlayPreview = false;
+    }
+    else {
+      if (registrationPreviewData.preview != null) {
+        registrationPreviewData.preview.remove()
+      }
+      registrationPreviewData.preview = addOrienteeringMapOverlay(previewRegistrationJson, map);
+      registrationPreviewData.preview.setOpacity(0.35)
+      
+      registrationPreviewData.showOverlayPreview = true;
+
+      window.registrationPreviewData = registrationPreviewData;
+    }
+
+  }
+
+  document.getElementById('registrationPreviewButton').addEventListener('click', toggleDisplayRegistrationPreview);
+  
+
 });

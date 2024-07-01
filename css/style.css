@@ -176,6 +176,11 @@ textarea {
   max-width: 1024px;
 }
 
+.registrationButton {
+  margin-right: 10px;
+  padding:5px;
+}
+
 
 /* ==========================================================================
    Helper classes

@@ -16,10 +16,12 @@ Denne tjener først og fremst registerMap.html, for å registrere nye kart. Se k
 ## Registrering av kart
 
 
-* Knapp for å skru av og på forhåndsvisning registrert kart i registrerings-app
+
 * Knapp for å dumpe kartfiler og kart-definisjoner i javascript fra DB til disk
+* Støtt transformering av PDF til PNG når du drag-and-dropper en PDF i registreringsvinduet
 * Preload Map name og Filename i registrerings-vindu når du drag & dropper en kartfil
 
+* (X) Knapp for å skru av og på forhåndsvisning registrert kart i registrerings-app
 * (0) Lag programvare for å slå disse kartene sammen til (post-frie) kart man kan bruke i terrenget
 * (X) Helhetlig integrert grensesnitt for behandling av bildefil og registrering av kart
 * (X) Ideelt sett mulighet for å lagre info om registrering til database, så registrering av nye kart går fortere
@@ -57,6 +59,7 @@ Denne tjener først og fremst registerMap.html, for å registrere nye kart. Se k
 * Finn en bedre måte å hente registrerte kart ut av database og inn i app. Uten backend på server, innledningsvis.
 * Bruke DB uten server: Kommando som dumper definisjoner og kartfiler fra DB -> disk, for rask kopiering til AWS (se under)
 * MapDefinitions.py -> Database (også med kart/bilder) -> kartfiler på disk + mapDefinitions.js som leses av mapBrowser.js
+* Deploy-skript som genererer kart og kopierer filer til S3. Alternativ for å overskrive eksisterende kart.
 
 * Strukturere web-kode i moduler
 
@@ -78,7 +81,8 @@ Denne tjener først og fremst registerMap.html, for å registrere nye kart. Se k
 
 * Registrer kart på nytt, til database, som du nå kan arkivere en lang-levd kopi av
 * Funksjon for å re-generere final-bilder i database som webp
-* Støtt transformering av PDF til PNG ved drag-and-drop
+
+* Beskjed i registrerings-grensesnitt om framdrift ved registrering ("Beregner registrering / overfører bilder / ferdig")
 
 * (X) Lagre pixel-koordinater fra registerImage.html til DB som int heller enn float; unødvendig å ta med desimalene.
 * (X) Rename MapTransform.py til Backend.py; den inneholder nå en webserver som gjør mye forskjellig.
@@ -97,6 +101,8 @@ Denne tjener først og fremst registerMap.html, for å registrere nye kart. Se k
 
 ## Bugs
 
+* Blåmannen-kartet "Blamannen-10k-rotates-weirdly.png" får rar rotasjon med følgende valg av koordinater: pixel [[774, 801.1508060817264], [2241.0588235294117, 2521.637535001242], [868.4313725490196, 3591.038093645571]], realworld [[60.41528220065873, 5.347149968147278], [60.403055906622484, 5.371466875076295], [60.3942598294791, 5.351312756538392]].
+
 * (X) Fiks exceptions som skjer når du åpner database-visning
 * (X) Backend sender nå felt-navnet "filename" i stedet for "map_filename" ved registrering (som gjør at map.html ikke finner den)++
 
@@ -106,12 +112,13 @@ Denne tjener først og fremst registerMap.html, for å registrere nye kart. Se k
 * Menysystem for å velge flere kart, hvis de overlapper i terrenget
 * Kjøre selv-hostet instans av OpenStreetMap i container; la appen hente kart fra denne
 * Funksjon for å registrere/stemple poster når man er ute og trener på et gammelt kart
-* Mobilvennlig layout og funksjonalitet for kart-registrering (omfattense task, inkl. zoom og markører på bilder)
+* Mobilvennlig layout og funksjonalitet for kart-registrering (omfattende task, inkl. zoom og markører på bilder + mobilvennlig layout & navigasjon)
 * Automatisk identifikasjon av start/mål, poster, målestokk, postbeskrivelser, kart-areal via bildeanalyse med AWS, og utregning av GPS-koordinater for poster
 * Vise Strava-track i registrert kart
 * Logge track
 
 * Kjør back-end i container som hostes på ECC og kobles mot S3
+* Støtt direkte kobling mellom kartvisning og database i container
 * Et mer ordentlig system for hosting og deploy, når det blir nødvendig
 * Deploy-script som setter opp all infrastuktur med én kommando
 
