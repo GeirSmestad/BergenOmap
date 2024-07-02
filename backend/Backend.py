@@ -5,6 +5,7 @@ import io
 from OptimizeRotation import getOverlayCoordinatesWithOptimalRotation
 import json
 from io import BytesIO
+import traceback
 
 default_border_percentage = 0.13 # Width of each side border, as percentage of longest dimension
 default_overlay_path = "../maps/floyen-2-cropped.png"
@@ -237,6 +238,29 @@ def get_mapfile_final(map_name):
         return send_file(BytesIO(image_data), mimetype='image/*')
     else:
         abort(404, description="Map not found")
+
+
+@app.route('/dal/export_database', methods=['POST'])
+def export_database():
+    data = request.get_json()
+
+    js_output_dir = data.get('js_output_dir')
+    final_maps_output_dir = data.get('final_maps_output_dir')
+    original_maps_output_dir = data.get('original_maps_output_dir')
+    include_original = False
+    overwrite = False
+
+    if not (js_output_dir and final_maps_output_dir and (include_original is False or original_maps_output_dir)):
+        return jsonify({"error": "Missing required parameters"}), 400
+
+    try:
+        db = get_db()
+        db.output_map_data_to_disk(js_output_dir, final_maps_output_dir, original_maps_output_dir, include_original, overwrite)
+        return jsonify({"message": "Database exported successfully"}), 200
+    except Exception as e:
+        traceback.print_exc()
+        return jsonify({"error": str(e)}), 500
+
 # End database interface
 
 

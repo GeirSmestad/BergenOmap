@@ -338,4 +338,44 @@ function addOrienteeringMapOverlay(jsonDefinition, map, usePlaceholder=false) {
   document.getElementById('registrationPreviewButton').addEventListener('click', toggleDisplayRegistrationPreview);
   
 
+
+  document.getElementById('outputDatabaseButton').addEventListener('click', async () => {
+    const url = 'http://127.0.0.1:5000/dal/export_database';
+    const payload = {
+        js_output_dir: 'output/js',
+        final_maps_output_dir: 'output/final',
+        original_maps_output_dir: 'output/original',
+        include_original: true,
+        overwrite: true
+    };
+
+    try {
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log('Success:', data);
+    } catch (error) {
+        console.error('Error:', error);
+    }
+  });
+
+
+  document.getElementById('registerFromJsonButton').addEventListener('click', () => {
+    alert("Register from JSON")
+
+  });
+
+
+
+
 });

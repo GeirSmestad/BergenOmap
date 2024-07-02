@@ -1,5 +1,6 @@
 import sqlite3
 import json
+import os 
 
 database_file_location = '../data/database.db'
 
@@ -150,6 +151,54 @@ class Database:
         result = self.cursor.fetchone()
         return result[0] if result else None
 
+    def output_map_data_to_disk(self, js_output_dir, final_maps_output_dir, original_maps_output_dir, include_original=False, overwrite=False):
+        # Ensure the output directories exist
+        os.makedirs(js_output_dir, exist_ok=True)
+        os.makedirs(final_maps_output_dir, exist_ok=True)
+        if include_original:
+            os.makedirs(original_maps_output_dir, exist_ok=True)
+        
+        # Fetch map data
+        maps = self.list_maps()
+        
+        # Prepare the data for the JSON file
+        map_definitions = []
+        for map_entry in maps:
+            if map_entry["map_name"] == '':
+                continue
+
+            map_def = {
+                "nw_coords": map_entry["nw_coords"],
+                "se_coords": map_entry["se_coords"],
+                "map_name": map_entry["map_name"],
+                "map_filename": map_entry["map_filename"],
+                "attribution": map_entry["attribution"]
+            }
+            map_definitions.append(map_def)
+            
+            # Write the final map image
+            final_image_blob = self.get_mapfile_final(map_entry["map_name"])
+            final_image_filename = os.path.join(final_maps_output_dir, map_entry["map_filename"])
+
+            if (final_image_blob is not None) and (overwrite or not os.path.exists(final_image_filename)):
+                with open(final_image_filename, 'wb') as f:
+                    f.write(final_image_blob)
+            
+            # Optionally write the original map image
+            if include_original:
+                original_image_blob = self.get_mapfile_original(map_entry["map_name"])
+                if original_image_blob:
+                    original_image_filename = os.path.join(original_maps_output_dir, f"Original_{map_entry['map_filename']}")
+                    if overwrite or not os.path.exists(original_image_filename):
+                        with open(original_image_filename, 'wb') as f:
+                            f.write(original_image_blob)
+    
+        # Write the map definitions to a JS file
+        map_definitions_js = "const mapDefinitions = " + json.dumps(map_definitions, indent=2) + ";"
+        js_filepath = os.path.join(js_output_dir, 'mapDefinitions.js')
+        
+        with open(js_filepath, 'w') as f:
+            f.write(map_definitions_js)
 
     def print_all_maps(self):
         self.cursor.execute('SELECT * FROM maps')

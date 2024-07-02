@@ -17,10 +17,10 @@ Denne tjener først og fremst registerMap.html, for å registrere nye kart. Se k
 
 
 
-* Knapp for å dumpe kartfiler og kart-definisjoner i javascript fra DB til disk
 * Støtt transformering av PDF til PNG når du drag-and-dropper en PDF i registreringsvinduet
 * Preload Map name og Filename i registrerings-vindu når du drag & dropper en kartfil
 
+* (X) Knapp for å dumpe kartfiler og kart-definisjoner i javascript fra DB til disk
 * (X) Knapp for å skru av og på forhåndsvisning registrert kart i registrerings-app
 * (0) Lag programvare for å slå disse kartene sammen til (post-frie) kart man kan bruke i terrenget
 * (X) Helhetlig integrert grensesnitt for behandling av bildefil og registrering av kart
@@ -56,13 +56,14 @@ Denne tjener først og fremst registerMap.html, for å registrere nye kart. Se k
 
 ## Infrastruktur
 
-* Finn en bedre måte å hente registrerte kart ut av database og inn i app. Uten backend på server, innledningsvis.
-* Bruke DB uten server: Kommando som dumper definisjoner og kartfiler fra DB -> disk, for rask kopiering til AWS (se under)
-* MapDefinitions.py -> Database (også med kart/bilder) -> kartfiler på disk + mapDefinitions.js som leses av mapBrowser.js
+* Koble på og justere "dump database-funksjon" så filene kommer inn i AWS-katalogen og brukes direkte av kart-appen/
+
 * Deploy-skript som genererer kart og kopierer filer til S3. Alternativ for å overskrive eksisterende kart.
 
 * Strukturere web-kode i moduler
 
+* (X) Bruke DB uten server: Kommando som dumper definisjoner og kartfiler fra DB -> disk, for rask kopiering til AWS (se under)
+* (X) MapDefinitions.py -> Database (også med kart/bilder) -> kartfiler på disk + mapDefinitions.js som leses av mapBrowser.js
 * (X) Må lagre detaljene om de 6 koordinatene i DB ved registrering, så jeg kan rekonstruere registreringen i ettertid
 * (X) Legge til multiline-tekstfelt i database for credits for kart
 * (X) Database-lagring av kartfiler
@@ -74,7 +75,7 @@ Denne tjener først og fremst registerMap.html, for å registrere nye kart. Se k
 ## Generelle forbedringer
 
 
-
+* Refaktorere katalogene for database-eksport som lett-tilgjengelige konstanter øverst i Backend.py
 
 * Få inn merker i tre farger for hvor man har klikket på kart og overlay ved registrering
 * Mulighet for å lagre kart som webp. Når DB inneholder koordinater, original og live, kan du re-generere live on-demand som webp.
