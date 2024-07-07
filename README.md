@@ -56,12 +56,11 @@ Denne tjener først og fremst registerMap.html, for å registrere nye kart. Se k
 
 ## Infrastruktur
 
-* Koble på og justere "dump database-funksjon" så filene kommer inn i AWS-katalogen og brukes direkte av kart-appen/
-
 * Deploy-skript som genererer kart og kopierer filer til S3. Alternativ for å overskrive eksisterende kart.
 
 * Strukturere web-kode i moduler
 
+* (X) Koble på og justere "dump database-funksjon" så filene kommer inn i AWS-katalogen og brukes direkte av kart-appen
 * (X) Bruke DB uten server: Kommando som dumper definisjoner og kartfiler fra DB -> disk, for rask kopiering til AWS (se under)
 * (X) MapDefinitions.py -> Database (også med kart/bilder) -> kartfiler på disk + mapDefinitions.js som leses av mapBrowser.js
 * (X) Må lagre detaljene om de 6 koordinatene i DB ved registrering, så jeg kan rekonstruere registreringen i ettertid
@@ -74,17 +73,17 @@ Denne tjener først og fremst registerMap.html, for å registrere nye kart. Se k
 
 ## Generelle forbedringer
 
-
-* Refaktorere katalogene for database-eksport som lett-tilgjengelige konstanter øverst i Backend.py
+* Lagre kun 6 desimaler i koordinater i DB ved registrering
 
 * Få inn merker i tre farger for hvor man har klikket på kart og overlay ved registrering
+* Funksjon for å re-generere final-bilder i database som webp
 * Mulighet for å lagre kart som webp. Når DB inneholder koordinater, original og live, kan du re-generere live on-demand som webp.
 
 * Registrer kart på nytt, til database, som du nå kan arkivere en lang-levd kopi av
-* Funksjon for å re-generere final-bilder i database som webp
 
 * Beskjed i registrerings-grensesnitt om framdrift ved registrering ("Beregner registrering / overfører bilder / ferdig")
 
+* (X) Refaktorere katalogene for database-eksport som lett-tilgjengelige konstanter øverst i Backend.py
 * (X) Lagre pixel-koordinater fra registerImage.html til DB som int heller enn float; unødvendig å ta med desimalene.
 * (X) Rename MapTransform.py til Backend.py; den inneholder nå en webserver som gjør mye forskjellig.
 * (X) Rydd opp i database-innsetting i MapTransform-py, rename variabler til mer fornuftige navn++
@@ -166,7 +165,6 @@ Implementasjon så langt:
  * (X) Send JSON-datastruktur til server 
  * (X) Lagre rotert bilde på server
  * (X) Eventuelt med kartnavn og annen metadata spesifisert i registrerings-vinduet
-
- * Sørg for at filer/filnavn og JSON-data kan hentes inn i mapBrowser.js
+ * (X) Sørg for at filer/filnavn og JSON-data kan hentes inn i mapBrowser.js
  
  

@@ -342,9 +342,6 @@ function addOrienteeringMapOverlay(jsonDefinition, map, usePlaceholder=false) {
   document.getElementById('outputDatabaseButton').addEventListener('click', async () => {
     const url = 'http://127.0.0.1:5000/dal/export_database';
     const payload = {
-        js_output_dir: '../aws-package/js',
-        final_maps_output_dir: '../aws-package/map-files',
-        original_maps_output_dir: '../maps/registered_maps_originals',
         include_original: true,
         overwrite: true
     };

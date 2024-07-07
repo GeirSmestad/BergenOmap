@@ -7,8 +7,13 @@ import json
 from io import BytesIO
 import traceback
 
+
+# Constants
 default_border_percentage = 0.13 # Width of each side border, as percentage of longest dimension
 default_overlay_path = "../maps/floyen-2-cropped.png"
+database_export_js_output_dir = '../aws-package/js'
+database_export_final_maps_output_dir = '../aws-package/map-files'
+database_export_original_maps_output_dir = '../maps/registered_maps_originals'
 
 # Munkebotn: http://127.0.0.1:5000/transform?angle=3.225405991892112&border=465&path=../maps/munkebotn_combined.png   w: 2481 h: 3508
 # Åstveitskogen: http://127.0.0.1:5000/transform?angle=0&border=465&path=../maps/png/tur-o-2024/2024-astveitskogen-tur-o.png
@@ -244,9 +249,9 @@ def get_mapfile_final(map_name):
 def export_database():
     data = request.get_json()
 
-    js_output_dir = data.get('js_output_dir')
-    final_maps_output_dir = data.get('final_maps_output_dir')
-    original_maps_output_dir = data.get('original_maps_output_dir')
+    js_output_dir = database_export_js_output_dir
+    final_maps_output_dir = database_export_final_maps_output_dir
+    original_maps_output_dir = database_export_original_maps_output_dir
     include_original = False
     overwrite = False
 
