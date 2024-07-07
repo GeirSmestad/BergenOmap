@@ -194,10 +194,10 @@ class Database:
                             f.write(original_image_blob)
     
         # Write the map definitions to a JS file
-        map_definitions_js = "const mapDefinitions = " + json.dumps(map_definitions, indent=2) + ";"
+        map_definitions_js = "const mapDefinitions = " + json.dumps(map_definitions, indent=2, ensure_ascii=False) + ";"
         js_filepath = os.path.join(js_output_dir, 'mapDefinitions.js')
         
-        with open(js_filepath, 'w') as f:
+        with open(js_filepath, 'w', encoding='utf-8') as f:
             f.write(map_definitions_js)
 
     def print_all_maps(self):

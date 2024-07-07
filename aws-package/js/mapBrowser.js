@@ -1,158 +1,8 @@
 // const mapDefinitions = [...] loaded from js/mapDefinitions.js.
 
-/*const mapDefinitions = [
-  {
-    "nw_coords": [
-      60.4413596226974,
-      5.291421604355309
-    ],
-    "optimal_rotation_angle": 3.225405991892112,
-    "se_coords": [
-      60.416058601946006,
-      5.330736657405209
-    ],
-    "map_filename": "munkebotn_rotated.png"
-  },
-  {
-    "nw_coords": [
-      60.40908318634827,
-      5.335459558239961
-    ],
-    "optimal_rotation_angle": 3.22247,
-    "se_coords": [
-      60.385976819472006,
-      5.3720671422118995
-    ],
-    "map_filename": "floyen_compressed_70.webp"
-  },
-  {
-    "nw_coords": [
-      60.45973869078658,
-      5.296984088280552
-    ],
-    "optimal_rotation_angle": 3.2092814761001986,
-    "se_coords": [
-      60.442877100508994,
-      5.323230560339303
-    ],
-    "map_filename": "2024-astveitskogen-tur-o-rotated.png"
-  },
-  {
-    "nw_coords": [
-      60.31601104308776,
-      5.233903081840795
-    ],
-    "optimal_rotation_angle": -1.2694235223329742,
-    "se_coords": [
-      60.291277752554805,
-      5.2719673393763
-    ],
-    "map_filename": "kokstad-2024-rotated.png"
-  },
-  {
-    "nw_coords": [
-      60.340253651996576,
-      5.287258573334927
-    ],
-    "optimal_rotation_angle": 5.8929554708851155,
-    "se_coords": [
-      60.32621219980405,
-      5.308932248866654
-    ],
-    "map_filename": "bonestoppen-rotated.png"
-  },
-  {
-    "nw_coords": [
-      60.421739083410074,
-      5.3274284422185305
-    ],
-    "se_coords": [
-      60.39645243335368,
-      5.364985139792009
-    ],
-    "optimal_rotation_angle": 4.158956295478128,
-    "selected_pixel_coords": [
-      [
-        810.7461579226285,
-        1009.7650800112057
-      ],
-      [
-        2738.2130365659777,
-        1308.9077988533604
-      ],
-      [
-        2644.864864864865,
-        3790.235912589948
-      ]
-    ],
-    "selected_realworld_coords": [
-      [
-        60.415577503329395,
-        5.335793495178223
-      ],
-      [
-        60.41466642637675,
-        5.358176529407502
-      ],
-      [
-        60.400432833662734,
-        5.35932719707489
-      ]
-    ],
-    "overlay_width": 3262,
-    "overlay_height": 4401,
-    "map_name": "Midtfjellet-2012",
-    "map_filename": "Midtfjellet-2012.webp",
-    "attribution": ""
-  },
-  {
-    "nw_coords": [
-      60.421505975167136,
-      5.336727549279205
-    ],
-    "se_coords": [
-      60.389417606168365,
-      5.385452992220802
-    ],
-    "optimal_rotation_angle": 3.871134458807134,
-    "selected_pixel_coords": [
-      [
-        998.2745098039215,
-        1597.29761995851
-      ],
-      [
-        2472.078431372549,
-        1509.5865331296375
-      ],
-      [
-        927.4509803921569,
-        3063.0848210025506
-      ]
-    ],
-    "selected_realworld_coords": [
-      [
-        60.40930936048743,
-        5.351457595825196
-      ],
-      [
-        60.41070135538684,
-        5.373883545398713
-      ],
-      [
-        60.398364696295786,
-        5.3519806265831
-      ]
-    ],
-    "overlay_width": 3182,
-    "overlay_height": 4311,
-    "map_name": "blamannen-10k",
-    "map_filename": "blamannen-10k.webp",
-    "attribution": ""
-  }
-];*/
-
 var errorOverlayUrl = 'https://cdn-icons-png.flaticon.com/512/110/110686.png';
 const placeholderOverlayFile = 'placeholder.webp';
+const mapRootDir = 'map-files/'
 
 /// Adds a map overlay to the map. Returns the overlay ImageOverlay object that was just added.
 function addOrienteeringMapOverlay(jsonDefinition, map, usePlaceholder=false) {
@@ -160,7 +10,7 @@ function addOrienteeringMapOverlay(jsonDefinition, map, usePlaceholder=false) {
   let se_coords = jsonDefinition.se_coords;
 
   let overlay_coords = [nw_coords, se_coords]
-  let overlay_file = jsonDefinition.map_filename;
+  let overlay_file = mapRootDir + jsonDefinition.map_filename;
 
   if (usePlaceholder) {
     overlay_file = placeholderOverlayFile;

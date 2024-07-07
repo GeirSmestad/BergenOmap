@@ -41,6 +41,9 @@
 #         }   
 #     ]
 
+# This file is largely deprecated by now. It can be used as a source to re-build the databse from disk.
+# I don't consider it canonical any longer, though.
+
 map_definitions = [
   {
     "nw_coords": [
