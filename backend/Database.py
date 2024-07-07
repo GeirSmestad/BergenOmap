@@ -52,10 +52,10 @@ class Database:
                     item['nw_coords'][0], item['nw_coords'][1],
                     item['se_coords'][0], item['se_coords'][1],
                     item['optimal_rotation_angle'],
-                    item['overlay_width'], item['overlay_height'],
-                    item['attribution'],
-                    json.dumps(item['selected_pixel_coords']),
-                    json.dumps(item['selected_realworld_coords']),
+                    item.get('overlay_width', ''), item.get('overlay_height', ''),
+                    item.get('attribution', ''),
+                    json.dumps(item.get('selected_pixel_coords', '')),
+                    json.dumps(item.get('selected_realworld_coords', '')),
                     item['map_filename'],
                     None,  # Placeholder for mapfile_original
                     None   # Placeholder for mapfile_final

@@ -1,4 +1,6 @@
-const mapDefinitions = [
+// const mapDefinitions = [...] loaded from js/mapDefinitions.js.
+
+/*const mapDefinitions = [
   {
     "nw_coords": [
       60.4413596226974,
@@ -147,7 +149,7 @@ const mapDefinitions = [
     "map_filename": "blamannen-10k.webp",
     "attribution": ""
   }
-];
+];*/
 
 var errorOverlayUrl = 'https://cdn-icons-png.flaticon.com/512/110/110686.png';
 const placeholderOverlayFile = 'placeholder.webp';
