@@ -19,6 +19,7 @@ Denne tjener først og fremst registerMap.html, for å registrere nye kart. Se k
 
 * Støtt transformering av PDF til PNG når du drag-and-dropper en PDF i registreringsvinduet
 * Preload Map name og Filename i registrerings-vindu når du drag & dropper en kartfil
+* Må få inn JSON med metadata for kart: Dato, område, event, løype, kart-tegner, kart-klubb, løypelegger
 
 * (X) Knapp for å dumpe kartfiler og kart-definisjoner i javascript fra DB til disk
 * (X) Knapp for å skru av og på forhåndsvisning registrert kart i registrerings-app
@@ -57,6 +58,7 @@ Denne tjener først og fremst registerMap.html, for å registrere nye kart. Se k
 ## Infrastruktur
 
 * Deploy-skript som genererer kart og kopierer filer til S3. Alternativ for å overskrive eksisterende kart.
+* Serving av kart via DB-grensesnitt, så man slipper å tenke på filsystem
 
 * Strukturere web-kode i moduler
 
@@ -168,3 +170,11 @@ Implementasjon så langt:
  * (X) Sørg for at filer/filnavn og JSON-data kan hentes inn i mapBrowser.js
  
  
+
+ ## Python-pakker jeg bruker:
+
+ * flask
+ * flask_cors
+ * pillow
+ * numpy
+ * scipy

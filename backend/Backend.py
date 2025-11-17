@@ -236,11 +236,11 @@ def get_mapfile_original(map_name):
 def get_mapfile_final(map_name):
     if not is_local_request():
         abort(404)
-        
+
     db = get_db()
     image_data = db.get_mapfile_final(map_name)
     if image_data is not None:
-        return send_file(BytesIO(image_data), mimetype='image/*')
+        return send_file(BytesIO(image_data), mimetype='image/*', as_attachment=False, download_name=f"{map_name}.webp",)
     else:
         abort(404, description="Map not found")
 
