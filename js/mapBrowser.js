@@ -39,9 +39,9 @@ document.addEventListener("DOMContentLoaded", async function() {
   const allMapOverlays = [];
 
   var map = L.map('mapBrowser').setView(startLatLon, 15);
-  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 19,
-    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+  L.tileLayer('https://cache.kartverket.no/v1/wmts/1.0.0/topo/default/webmercator/{z}/{y}/{x}.png', {
+    maxZoom: 18,
+    attribution: '&copy; <a href="http://www.kartverket.no/">Kartverket</a>'
   }).addTo(map);
 
   // Fetch map definitions from backend API
