@@ -57,11 +57,10 @@ Denne tjener først og fremst registerMap.html, for å registrere nye kart. Se k
 
 ## Infrastruktur
 
-* Deploy-skript som genererer kart og kopierer filer til S3. Alternativ for å overskrive eksisterende kart.
-* Serving av kart via DB-grensesnitt, så man slipper å tenke på filsystem
-
 * Strukturere web-kode i moduler
 
+* (0) Deploy-skript som genererer kart og kopierer filer til S3. Alternativ for å overskrive eksisterende kart.
+* (X) Serving av kart via DB-grensesnitt, så man slipper å tenke på filsystem
 * (X) Koble på og justere "dump database-funksjon" så filene kommer inn i AWS-katalogen og brukes direkte av kart-appen
 * (X) Bruke DB uten server: Kommando som dumper definisjoner og kartfiler fra DB -> disk, for rask kopiering til AWS (se under)
 * (X) MapDefinitions.py -> Database (også med kart/bilder) -> kartfiler på disk + mapDefinitions.js som leses av mapBrowser.js
@@ -85,6 +84,7 @@ Denne tjener først og fremst registerMap.html, for å registrere nye kart. Se k
 
 * Beskjed i registrerings-grensesnitt om framdrift ved registrering ("Beregner registrering / overfører bilder / ferdig")
 
+* (X) Slette filer som ikke er i bruk lenger, restrukturere appen så det relevante ligger i rot-katalogen
 * (X) Refaktorere katalogene for database-eksport som lett-tilgjengelige konstanter øverst i Backend.py
 * (X) Lagre pixel-koordinater fra registerImage.html til DB som int heller enn float; unødvendig å ta med desimalene.
 * (X) Rename MapTransform.py til Backend.py; den inneholder nå en webserver som gjør mye forskjellig.
@@ -103,7 +103,7 @@ Denne tjener først og fremst registerMap.html, for å registrere nye kart. Se k
 
 ## Bugs
 
-* Blåmannen-kartet "Blamannen-10k-rotates-weirdly.png" får rar rotasjon med følgende valg av koordinater: pixel [[774, 801.1508060817264], [2241.0588235294117, 2521.637535001242], [868.4313725490196, 3591.038093645571]], realworld [[60.41528220065873, 5.347149968147278], [60.403055906622484, 5.371466875076295], [60.3942598294791, 5.351312756538392]].
+* Blåmannen-kartet "Blamannen-10k-rotates-weirdly.png" får rar rotasjon med følgende valg av koordinater: pixel [[774, 801.1508060817264], [2241.0588235294117, 2521.637535001242], [868.4313725490196, 3591.038093645571]], realworld [[60.41528220065873, 5.347149968147278], [60.403055906622484, 5.371466875076295], [60.3942598294791, 5.351312756538392]]. Se documentation-mappen.
 
 * (X) Fiks exceptions som skjer når du åpner database-visning
 * (X) Backend sender nå felt-navnet "filename" i stedet for "map_filename" ved registrering (som gjør at map.html ikke finner den)++
