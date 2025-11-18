@@ -43,7 +43,8 @@ Denne tjener først og fremst registerMap.html, for å registrere nye kart. Se k
 
 ## Navigasjons-app
 
-* Cache Leaflet-filer, orienteringskart og kart-definisjoner lokalt i appen i tilfelle brudd i nettverk
+* Cache Leaflet-filer, orienteringskart og kart-definisjoner lokalt i appen i tilfelle brudd i nettverk (Cache Storage API?)
+
 * Sentrer kartet på brukerens posisjon (knapp)
 * Kartet følger brukerens posisjon (toggle av/på)
 * Kartet orienteres etter retningen man holder mobilen (toggle av/på)
@@ -80,10 +81,9 @@ Denne tjener først og fremst registerMap.html, for å registrere nye kart. Se k
 * Funksjon for å re-generere final-bilder i database som webp
 * Mulighet for å lagre kart som webp. Når DB inneholder koordinater, original og live, kan du re-generere live on-demand som webp.
 
-* Registrer kart på nytt, til database, som du nå kan arkivere en lang-levd kopi av
-
 * Beskjed i registrerings-grensesnitt om framdrift ved registrering ("Beregner registrering / overfører bilder / ferdig")
 
+* (X) Registrer kart på nytt, til database, som du nå kan arkivere en lang-levd kopi av
 * (X) Slette filer som ikke er i bruk lenger, restrukturere appen så det relevante ligger i rot-katalogen
 * (X) Refaktorere katalogene for database-eksport som lett-tilgjengelige konstanter øverst i Backend.py
 * (X) Lagre pixel-koordinater fra registerImage.html til DB som int heller enn float; unødvendig å ta med desimalene.
@@ -112,19 +112,21 @@ Denne tjener først og fremst registerMap.html, for å registrere nye kart. Se k
 
 * Menysystem hvis appen begynner å bli komplisert; ha flere funksjoner
 * Menysystem for å velge flere kart, hvis de overlapper i terrenget
-* Kjøre selv-hostet instans av OpenStreetMap i container; la appen hente kart fra denne
+
 * Funksjon for å registrere/stemple poster når man er ute og trener på et gammelt kart
 * Mobilvennlig layout og funksjonalitet for kart-registrering (omfattende task, inkl. zoom og markører på bilder + mobilvennlig layout & navigasjon)
 * Automatisk identifikasjon av start/mål, poster, målestokk, postbeskrivelser, kart-areal via bildeanalyse med AWS, og utregning av GPS-koordinater for poster
 * Vise Strava-track i registrert kart
 * Logge track
 
-* Kjør back-end i container som hostes på ECC og kobles mot S3
-* Støtt direkte kobling mellom kartvisning og database i container
 * Et mer ordentlig system for hosting og deploy, når det blir nødvendig
 * Deploy-script som setter opp all infrastuktur med én kommando
 
 * Kreditere kart-tegneren i grensesnittet, kanskje på placeholder-bildene før kartet lastes
+
+* (0) Kjør back-end i container som hostes på ECC og kobles mot S3 [dette skal jeg gjøre på en mer pragmatisk måte]
+* (0) Støtt direkte kobling mellom kartvisning og database i container [løst ved å la back-end serve kart rett fra DB]
+* (0) Kjøre selv-hostet instans av OpenStreetMap i container; la appen hente kart fra denne [løst med Kartverkets server]
 * (X) Årstall for kart i JSON-format [dette går i attribution-feltet]
 
 
