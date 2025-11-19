@@ -286,6 +286,11 @@ document.addEventListener("DOMContentLoaded", function () {
     if (file.type.startsWith('image/')) {
       window.droppedImage = file // Store image for later use
 
+      // Pre-populate fields with filename on drop, since these will almost always match
+      const filename = file.name || '';
+      document.getElementById('mapName').value = filename;
+      document.getElementById('filename').value = filename;
+
       const formData = new FormData();
       formData.append('file', file);
 
