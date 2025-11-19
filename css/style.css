@@ -99,7 +99,12 @@ textarea {
   height: auto;
 }
 
+/* Styles for the Leaflet plugin */
 
+#registrationMapBrowser,
+#registrationMapBrowser .leaflet-container {
+  cursor: pointer;
+}
 
 /* Styles for map registration */
 

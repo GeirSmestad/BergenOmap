@@ -18,8 +18,9 @@ Denne tjener først og fremst registerMap.html, for å registrere nye kart. Se k
 
 
 * Støtt transformering av PDF til PNG når du drag-and-dropper en PDF i registreringsvinduet
-* Preload Map name og Filename i registrerings-vindu når du drag & dropper en kartfil
 
+* (X) Mer presis muspeker i Leaflet-kart, for presis registrering
+* (X) Preload Map name og Filename i registrerings-vindu når du drag & dropper en kartfil
 * (X) Må få inn JSON med metadata for kart: Dato, område, event, løype, kart-tegner, kart-klubb, løypelegger
 * (X) Knapp for å dumpe kartfiler og kart-definisjoner i javascript fra DB til disk
 * (X) Knapp for å skru av og på forhåndsvisning registrert kart i registrerings-app
