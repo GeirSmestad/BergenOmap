@@ -128,16 +128,33 @@ class Database:
 
 
     def list_maps(self):
-        self.cursor.execute('SELECT * FROM maps')
+        self.cursor.execute('''
+            SELECT
+                map_name,
+                nw_coords_lat, nw_coords_lon,
+                se_coords_lat, se_coords_lon,
+                optimal_rotation_angle,
+                overlay_width, overlay_height,
+                attribution,
+                selected_pixel_coords, selected_realworld_coords,
+                map_filename,
+                map_area, map_event, map_date, map_course,
+                map_club, map_course_planner, map_attribution
+            FROM maps
+        ''')
         rows = self.cursor.fetchall()
         maps = []
         for row in rows:
-            (map_name, nw_lat, nw_lon, se_lat, se_lon, angle, 
-            overlay_width, overlay_height, attribution, 
+            (map_name, 
+            nw_lat, nw_lon, 
+            se_lat, se_lon, 
+            angle, 
+            overlay_width, overlay_height, 
+            attribution, 
             selected_pixel_coords, selected_realworld_coords, 
-            filename, map_area, map_event, map_date, map_course,
-            map_club, map_course_planner, map_attribution,
-            _, _) = row
+            filename, 
+            map_area, map_event, map_date, map_course,
+            map_club, map_course_planner, map_attribution) = row
             maps.append({
                 "map_name": map_name,
                 "nw_coords": [nw_lat, nw_lon],

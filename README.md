@@ -85,8 +85,7 @@ Denne tjener først og fremst registerMap.html, for å registrere nye kart. Se k
 
 * Beskjed i registrerings-grensesnitt om framdrift ved registrering ("Beregner registrering / overfører bilder / ferdig")
 
-* Det burde gå an å one-shotte en justering i registrerings-grensesnittet sånn at jeg lett kan putte inn de nye feltene jeg ønsker å lagre i databasen.
-
+* (X) Det burde gå an å one-shotte en justering i registrerings-grensesnittet sånn at jeg lett kan putte inn de nye feltene jeg ønsker å lagre i databasen.
 * (X) Lagre kun 6 desimaler i koordinater i DB ved registrering
 * (X) Registrer kart på nytt, til database, som du nå kan arkivere en lang-levd kopi av
 * (X) Slette filer som ikke er i bruk lenger, restrukturere appen så det relevante ligger i rot-katalogen
