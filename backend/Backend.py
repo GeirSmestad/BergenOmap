@@ -313,10 +313,8 @@ def visualize_database():
                 <th>SE Coords (Lat, Lon)</th>
                 <th>Optimal Rotation Angle</th>
                 <th>Overlay Dimensions (WxH)</th>
-                <th>Attribution</th>
                 <th>Selected Pixel Coords</th>
                 <th>Selected Realworld Coords</th>
-                <th>Map Filename</th>
                 <th>Original Map</th>
                 <th>Final Map</th>
             </tr>
@@ -327,10 +325,8 @@ def visualize_database():
                 <td>{{ map.se_coords[0] }}, {{ map.se_coords[1] }}</td>
                 <td>{{ map.optimal_rotation_angle }}</td>
                 <td>{{ map.overlay_width }} x {{ map.overlay_height }}</td>
-                <td>{{ map.attribution.replace('\n', '<br>') | safe }}</td>
                 <td>{{ map.selected_pixel_coords }}</td>
                 <td>{{ map.selected_realworld_coords }}</td>
-                <td>{{ map.map_filename }}</td>
                 <td><img src="/dal/mapfile/original/{{ map.map_name }}" alt="Original Map"></td>
                 <td><img src="/dal/mapfile/final/{{ map.map_name }}" alt="Final Map"></td>
             </tr>

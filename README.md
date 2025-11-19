@@ -16,7 +16,8 @@ Denne tjener først og fremst registerMap.html, for å registrere nye kart. Se k
 ## Registrering av kart
 
 
-
+* Bedre ergonomi ved velging av 3+3 punkter, helst ved å både kunne se orienteringskart og Leaflet ved siden av hverandre
+* Mer pålitelig algoritme for å registrere kart, må også ta høyde for "forstørr-og-roter"-behovet som kommer fra Leaflet
 * Støtt transformering av PDF til PNG når du drag-and-dropper en PDF i registreringsvinduet
 
 * (X) Mer presis muspeker i Leaflet-kart, for presis registrering
@@ -61,6 +62,7 @@ Denne tjener først og fremst registerMap.html, for å registrere nye kart. Se k
 ## Infrastruktur
 
 * Strukturere web-kode i moduler
+* På et tidspunkt vil jeg kanskje ha en indeks-primærnøkkel heller enn å bruke kartnavnet, pga. mange kart i samme område
 
 * (0) Deploy-skript som genererer kart og kopierer filer til S3. Alternativ for å overskrive eksisterende kart.
 * (X) Serving av kart via DB-grensesnitt, så man slipper å tenke på filsystem
@@ -85,6 +87,7 @@ Denne tjener først og fremst registerMap.html, for å registrere nye kart. Se k
 
 * Beskjed i registrerings-grensesnitt om framdrift ved registrering ("Beregner registrering / overfører bilder / ferdig")
 
+* (X) Fjern filnavnet fra viewDatabase-funksjonen; jeg trenger det ikke. Fjern også Attribution-feltet.
 * (X) Det burde gå an å one-shotte en justering i registrerings-grensesnittet sånn at jeg lett kan putte inn de nye feltene jeg ønsker å lagre i databasen.
 * (X) Lagre kun 6 desimaler i koordinater i DB ved registrering
 * (X) Registrer kart på nytt, til database, som du nå kan arkivere en lang-levd kopi av
