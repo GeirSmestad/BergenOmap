@@ -24,6 +24,13 @@ class Database:
             selected_pixel_coords TEXT,
             selected_realworld_coords TEXT,
             map_filename TEXT,
+            map_area TEXT,
+            map_event TEXT,
+            map_date TEXT,
+            map_course TEXT,
+            map_club TEXT,
+            map_course_planner TEXT,
+            map_attribution TEXT,
             mapfile_original BLOB,
             mapfile_final BLOB
         )
@@ -39,8 +46,10 @@ class Database:
             optimal_rotation_angle, 
             overlay_width, overlay_height, 
             attribution, selected_pixel_coords, selected_realworld_coords, 
-            map_filename, mapfile_original, mapfile_final
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            map_filename, map_area, map_event, map_date, map_course,
+            map_club, map_course_planner, map_attribution,
+            mapfile_original, mapfile_final
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         '''
         for item in data:
             # Check if the record already exists
@@ -57,6 +66,13 @@ class Database:
                     json.dumps(item.get('selected_pixel_coords', '')),
                     json.dumps(item.get('selected_realworld_coords', '')),
                     item['map_filename'],
+                    item.get('map_area', ''),
+                    item.get('map_event', ''),
+                    item.get('map_date', ''),
+                    item.get('map_course', ''),
+                    item.get('map_club', ''),
+                    item.get('map_course_planner', ''),
+                    item.get('map_attribution', ''),
                     None,  # Placeholder for mapfile_original
                     None   # Placeholder for mapfile_final
                 ))
@@ -79,9 +95,16 @@ class Database:
                 overlay_width, overlay_height, 
                 attribution, 
                 selected_pixel_coords, selected_realworld_coords, 
-                map_filename 
+                map_filename,
+                map_area,
+                map_event,
+                map_date,
+                map_course,
+                map_club,
+                map_course_planner,
+                map_attribution
                 )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             '''
         self.cursor.execute(insert_or_replace_sql, (
             map_data['map_name'],
@@ -92,7 +115,14 @@ class Database:
             map_data['attribution'],
             json.dumps([[int(x), int(y)] for (x, y) in map_data['selected_pixel_coords']]),
             json.dumps([[round(lat, 6), round(lon, 6)] for (lat, lon) in map_data['selected_realworld_coords']]),
-            map_data['map_filename']
+            map_data['map_filename'],
+            map_data.get('map_area', ''),
+            map_data.get('map_event', ''),
+            map_data.get('map_date', ''),
+            map_data.get('map_course', ''),
+            map_data.get('map_club', ''),
+            map_data.get('map_course_planner', ''),
+            map_data.get('map_attribution', '')
         ))
         self.connection.commit()
 
@@ -105,7 +135,9 @@ class Database:
             (map_name, nw_lat, nw_lon, se_lat, se_lon, angle, 
             overlay_width, overlay_height, attribution, 
             selected_pixel_coords, selected_realworld_coords, 
-            filename, _, _) = row
+            filename, map_area, map_event, map_date, map_course,
+            map_club, map_course_planner, map_attribution,
+            _, _) = row
             maps.append({
                 "map_name": map_name,
                 "nw_coords": [nw_lat, nw_lon],
@@ -116,7 +148,14 @@ class Database:
                 "attribution": attribution,
                 "selected_pixel_coords": json.loads(selected_pixel_coords),
                 "selected_realworld_coords": json.loads(selected_realworld_coords),
-                "map_filename": filename
+                "map_filename": filename,
+                "map_area": map_area,
+                "map_event": map_event,
+                "map_date": map_date,
+                "map_course": map_course,
+                "map_club": map_club,
+                "map_course_planner": map_course_planner,
+                "map_attribution": map_attribution
             })
         return maps
     
@@ -179,7 +218,14 @@ class Database:
                 "se_coords": map_entry["se_coords"],
                 "map_name": map_entry["map_name"],
                 "map_filename": map_entry["map_filename"],
-                "attribution": map_entry["attribution"]
+                "attribution": map_entry["attribution"],
+                "map_area": map_entry["map_area"],
+                "map_event": map_entry["map_event"],
+                "map_date": map_entry["map_date"],
+                "map_course": map_entry["map_course"],
+                "map_club": map_entry["map_club"],
+                "map_course_planner": map_entry["map_course_planner"],
+                "map_attribution": map_entry["map_attribution"]
             }
             map_definitions.append(map_def)
             
@@ -214,7 +260,9 @@ class Database:
             (map_name, nw_lat, nw_lon, se_lat, se_lon, angle, 
             overlay_width, overlay_height, attribution, 
             selected_pixel_coords, selected_realworld_coords, 
-            filename, _, _) = row
+            filename, map_area, map_event, map_date, map_course,
+            map_club, map_course_planner, map_attribution,
+            _, _) = row
             print(f"Map Name: {map_name}")
             print(f"  NW Coordinates: ({nw_lat}, {nw_lon})")
             print(f"  SE Coordinates: ({se_lat}, {se_lon})")
@@ -222,6 +270,7 @@ class Database:
             print(f"  Overlay Width: {overlay_width}")
             print(f"  Overlay Height: {overlay_height}")
             print(f"  Attribution: {attribution}")
+            print(f"  Metadata: area={map_area}, event={map_event}, date={map_date}, course={map_course}, club={map_club}, planner={map_course_planner}, map_attr={map_attribution}")
             print(f"  Selected Pixel Coordinates: {json.loads(selected_pixel_coords)}")
             print(f"  Selected Realworld Coordinates: {json.loads(selected_realworld_coords)}")
             print(f"  Filename: {filename}")
@@ -264,6 +313,17 @@ def pretty_format_maps(maps):
         print(f"  Attribution: {attribution_lines[0]}")
         for line in attribution_lines[1:]:
             print(f"               {line}")
+        
+        metadata_summary = ", ".join([
+            f"area={map.get('map_area', '')}",
+            f"event={map.get('map_event', '')}",
+            f"date={map.get('map_date', '')}",
+            f"course={map.get('map_course', '')}",
+            f"club={map.get('map_club', '')}",
+            f"planner={map.get('map_course_planner', '')}",
+            f"map_attr={map.get('map_attribution', '')}"
+        ])
+        print(f"  Metadata: {metadata_summary}")
         
         print(f"  Selected Pixel Coordinates: {map['selected_pixel_coords']}")
         print(f"  Selected Realworld Coordinates: {map['selected_realworld_coords']}")

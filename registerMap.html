@@ -64,6 +64,10 @@
 
 
   </div>
+  
+  <img id="overlayView" />
+
+
   <div id="registrationInput">
     <div class="inputFields">
       <label for="mapName">Map name:</label>
@@ -77,6 +81,34 @@
       <label for="attribution">Attribution:</label>
       <textarea id="attribution" name="attribution"></textarea>
     </div>
+    <div class="inputFields">
+      <label for="mapArea">Map area:</label>
+      <input type="text" id="mapArea" name="mapArea">
+    </div>
+    <div class="inputFields">
+      <label for="mapEvent">Map event:</label>
+      <input type="text" id="mapEvent" name="mapEvent">
+    </div>
+    <div class="inputFields">
+      <label for="mapDate">Map date:</label>
+      <input type="text" id="mapDate" name="mapDate">
+    </div>
+    <div class="inputFields">
+      <label for="mapCourse">Map course:</label>
+      <input type="text" id="mapCourse" name="mapCourse">
+    </div>
+    <div class="inputFields">
+      <label for="mapClub">Map club:</label>
+      <input type="text" id="mapClub" name="mapClub">
+    </div>
+    <div class="inputFields">
+      <label for="mapCoursePlanner">Map course planner:</label>
+      <input type="text" id="mapCoursePlanner" name="mapCoursePlanner">
+    </div>
+    <div class="inputFields">
+      <label for="mapAttribution">Map attribution:</label>
+      <input type="text" id="mapAttribution" name="mapAttribution">
+    </div>
     <div>
       <button id="processButton" class="registrationButton">Process selected registration</button>
       <button id="registerFromJsonButton" class="registrationButton">Register from pasted JSON</button>
@@ -84,9 +116,9 @@
       <button id="outputDatabaseButton" class="registrationButton">Output map database to disk</button>
     </div>
     <textarea id="output"></textarea>
-</div>
-  
-  <img id="overlayView" />
+  </div>
+
+
 
   <p>Output image:</p>
 

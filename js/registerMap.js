@@ -203,6 +203,17 @@ document.addEventListener("DOMContentLoaded", function () {
         data.map_name = document.getElementById("mapName").value;
         data.map_filename = document.getElementById("filename").value;
         data.attribution = document.getElementById("attribution").value;
+        const mapMetadata = {
+          map_area: document.getElementById("mapArea").value,
+          map_event: document.getElementById("mapEvent").value,
+          map_date: document.getElementById("mapDate").value,
+          map_course: document.getElementById("mapCourse").value,
+          map_club: document.getElementById("mapClub").value,
+          map_course_planner: document.getElementById("mapCoursePlanner").value,
+          map_attribution: document.getElementById("mapAttribution").value
+        };
+
+        Object.assign(data, mapMetadata);
     
         // Print image registration data in text area
         document.getElementById("output").value = JSON.stringify(data, null, 2);

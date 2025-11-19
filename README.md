@@ -19,8 +19,8 @@ Denne tjener først og fremst registerMap.html, for å registrere nye kart. Se k
 
 * Støtt transformering av PDF til PNG når du drag-and-dropper en PDF i registreringsvinduet
 * Preload Map name og Filename i registrerings-vindu når du drag & dropper en kartfil
-* Må få inn JSON med metadata for kart: Dato, område, event, løype, kart-tegner, kart-klubb, løypelegger
 
+* (X) Må få inn JSON med metadata for kart: Dato, område, event, løype, kart-tegner, kart-klubb, løypelegger
 * (X) Knapp for å dumpe kartfiler og kart-definisjoner i javascript fra DB til disk
 * (X) Knapp for å skru av og på forhåndsvisning registrert kart i registrerings-app
 * (0) Lag programvare for å slå disse kartene sammen til (post-frie) kart man kan bruke i terrenget
@@ -40,65 +40,6 @@ Denne tjener først og fremst registerMap.html, for å registrere nye kart. Se k
 * (X) Fiks system for å rotere kart
 * (X) Regn ut koordinater for kart basert på dimensjon og målestokk for A4-kart
 * (X) Bytt checkboks til å resize kart og beholde forhold mellom X- og Y-dimensjon
-
-
-
-
-Registrer følgende i database, og få inn detalj-feltene men skjul dem i database-visningen:
-
-{
-  "nw_coords": [
-    60.17000233507277,
-    5.36760176623957
-  ],
-  "se_coords": [
-    60.14536607982585,
-    5.406233067509316
-  ],
-  "optimal_rotation_angle": 2.1217025934653035,
-  "selected_pixel_coords": [
-    [
-      667,
-      702
-    ],
-    [
-      1997,
-      1278
-    ],
-    [
-      1361,
-      1886
-    ]
-  ],
-  "selected_realworld_coords": [
-    [
-      60.165782,
-      5.374632
-    ],
-    [
-      60.162783,
-      5.390103
-    ],
-    [
-      60.159171,
-      5.383059
-    ]
-  ],
-  "overlay_width": 3372,
-  "overlay_height": 4324,
-  "map_name": "Lepsøy-Nattcup-2025-A",
-  "map_filename": "nattcup-22-10-25.png",
-  "map_area": "Lepsøy",
-  "map_event": "Nattcup-2",
-  "map_date": "2025-10-22",
-  "map_course": "A",
-  "map_club": "Os Orienteringsklubb",
-  "map_course_planner": "",
-  "map_attribution": "Steinar Danielsen",
-  "map_course": "A",
-}
-
-
 
 
 ## Navigasjons-app
