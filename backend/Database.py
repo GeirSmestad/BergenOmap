@@ -63,6 +63,13 @@ class Database:
         self.connection.commit()
 
     def insert_map(self, map_data):
+
+        nw_lat = round(map_data['nw_coords'][0], 6)
+        nw_lon = round(map_data['nw_coords'][1], 6)
+        se_lat = round(map_data['se_coords'][0], 6)
+        se_lon = round(map_data['se_coords'][1], 6)
+        angle = round(map_data['optimal_rotation_angle'], 2)
+
         insert_or_replace_sql = '''
             INSERT OR REPLACE INTO maps (
                 map_name, 
@@ -78,13 +85,13 @@ class Database:
             '''
         self.cursor.execute(insert_or_replace_sql, (
             map_data['map_name'],
-            map_data['nw_coords'][0], map_data['nw_coords'][1],
-            map_data['se_coords'][0], map_data['se_coords'][1],
-            map_data['optimal_rotation_angle'],
+            nw_lat, nw_lon,
+            se_lat, se_lon,
+            angle,
             map_data['overlay_width'], map_data['overlay_height'],
             map_data['attribution'],
-            json.dumps(map_data['selected_pixel_coords']),
-            json.dumps(map_data['selected_realworld_coords']),
+            json.dumps([[int(x), int(y)] for (x, y) in map_data['selected_pixel_coords']]),
+            json.dumps([[round(lat, 6), round(lon, 6)] for (lat, lon) in map_data['selected_realworld_coords']]),
             map_data['map_filename']
         ))
         self.connection.commit()

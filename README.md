@@ -41,6 +41,66 @@ Denne tjener først og fremst registerMap.html, for å registrere nye kart. Se k
 * (X) Regn ut koordinater for kart basert på dimensjon og målestokk for A4-kart
 * (X) Bytt checkboks til å resize kart og beholde forhold mellom X- og Y-dimensjon
 
+
+
+
+Registrer følgende i database, og få inn detalj-feltene men skjul dem i database-visningen:
+
+{
+  "nw_coords": [
+    60.17000233507277,
+    5.36760176623957
+  ],
+  "se_coords": [
+    60.14536607982585,
+    5.406233067509316
+  ],
+  "optimal_rotation_angle": 2.1217025934653035,
+  "selected_pixel_coords": [
+    [
+      667,
+      702
+    ],
+    [
+      1997,
+      1278
+    ],
+    [
+      1361,
+      1886
+    ]
+  ],
+  "selected_realworld_coords": [
+    [
+      60.165782,
+      5.374632
+    ],
+    [
+      60.162783,
+      5.390103
+    ],
+    [
+      60.159171,
+      5.383059
+    ]
+  ],
+  "overlay_width": 3372,
+  "overlay_height": 4324,
+  "map_name": "Lepsøy-Nattcup-2025-A",
+  "map_filename": "nattcup-22-10-25.png",
+  "map_area": "Lepsøy",
+  "map_event": "Nattcup-2",
+  "map_date": "2025-10-22",
+  "map_course": "A",
+  "map_club": "Os Orienteringsklubb",
+  "map_course_planner": "",
+  "map_attribution": "Steinar Danielsen",
+  "map_course": "A",
+}
+
+
+
+
 ## Navigasjons-app
 
 * Cache Leaflet-filer, orienteringskart og kart-definisjoner lokalt i appen i tilfelle brudd i nettverk (Cache Storage API?)
@@ -75,7 +135,7 @@ Denne tjener først og fremst registerMap.html, for å registrere nye kart. Se k
 
 ## Generelle forbedringer
 
-* Lagre kun 6 desimaler i koordinater i DB ved registrering
+
 
 * Få inn merker i tre farger for hvor man har klikket på kart og overlay ved registrering
 * Funksjon for å re-generere final-bilder i database som webp
@@ -83,6 +143,9 @@ Denne tjener først og fremst registerMap.html, for å registrere nye kart. Se k
 
 * Beskjed i registrerings-grensesnitt om framdrift ved registrering ("Beregner registrering / overfører bilder / ferdig")
 
+* Det burde gå an å one-shotte en justering i registrerings-grensesnittet sånn at jeg lett kan putte inn de nye feltene jeg ønsker å lagre i databasen.
+
+* (X) Lagre kun 6 desimaler i koordinater i DB ved registrering
 * (X) Registrer kart på nytt, til database, som du nå kan arkivere en lang-levd kopi av
 * (X) Slette filer som ikke er i bruk lenger, restrukturere appen så det relevante ligger i rot-katalogen
 * (X) Refaktorere katalogene for database-eksport som lett-tilgjengelige konstanter øverst i Backend.py
