@@ -2,7 +2,7 @@ from flask import Flask, send_file, request, jsonify, make_response, g, abort, r
 from flask_cors import CORS
 from PIL import Image, ImageOps, ImageDraw
 import io
-from OptimizeRotation import getOverlayCoordinatesWithOptimalRotation
+from OptimizeRotation import getOverlayCoordinatesWithOptimalRotation, compute_rotated_corners_latlon, georeference_three_points, my_compute_rotated_corners_latlon
 import json
 from io import BytesIO
 import traceback
@@ -175,12 +175,43 @@ def get_overlay_coordinates():
         if len(image_coords) != 3 or len(real_coords) != 3:
             return jsonify({'error': 'Invalid input: Must provide exactly 3 image and 3 real coordinates'}), 400
 
-        result = getOverlayCoordinatesWithOptimalRotation(image_coords, real_coords, overlay_width, overlay_height)
+        #result = getOverlayCoordinatesWithOptimalRotation(image_coords, real_coords, overlay_width, overlay_height)
+
+        georeferenceTransform = georeference_three_points(image_coords, real_coords, overlay_width, overlay_height)
+
+        print(f"Calculated georeference transform: {georeferenceTransform}")
+
+        rotationAngle = georeferenceTransform["rotation_deg"]
+
+        print(f"Rotation angle is {rotationAngle} degrees")
+
+        control_points = [(image_coords[0][0], image_coords[0][1], real_coords[0][0], real_coords[0][1]), 
+            (image_coords[1][0], image_coords[1][1], real_coords[1][0], real_coords[1][1]), 
+            (image_coords[2][0], image_coords[2][1], real_coords[2][0], real_coords[2][1])]
+
+        print(f"Image coords: {image_coords}")
+        print(f"Real coords: {real_coords}")
+
+        #rotatedCorners = compute_rotated_corners_latlon(overlay_width, overlay_height, rotationAngle, control_points)
+        rotatedCorners = my_compute_rotated_corners_latlon(overlay_width, overlay_height, rotationAngle, image_coords, real_coords)
+
+        print(f"Rotated corners: {rotatedCorners}")
+
+        result = {"nw_coords" : rotatedCorners["nw"], 
+            "se_coords" : rotatedCorners["se"], 
+            "optimal_rotation_angle" : rotationAngle,
+            "selected_pixel_coords": image_coords,
+            "selected_realworld_coords": real_coords,
+            "overlay_width": overlay_width,
+            "overlay_height": overlay_height
+            }
+
 
         # Return the result as a JSON response
         return make_response(json.dumps(result, sort_keys=False))
 
     except Exception as e:
+        print(e)
         return jsonify({'error': str(e)}), 500
 
 
