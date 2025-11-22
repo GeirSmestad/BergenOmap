@@ -203,23 +203,13 @@ document.addEventListener("DOMContentLoaded", function () {
         data.map_name = document.getElementById("mapName").value;
         data.map_filename = document.getElementById("filename").value;
         data.attribution = document.getElementById("attribution").value;
-        const mapMetadata = {
-          map_area: document.getElementById("mapArea").value,
-          map_event: document.getElementById("mapEvent").value,
-          map_date: document.getElementById("mapDate").value,
-          map_course: document.getElementById("mapCourse").value,
-          map_club: document.getElementById("mapClub").value,
-          map_course_planner: document.getElementById("mapCoursePlanner").value,
-          map_attribution: document.getElementById("mapAttribution").value
-        };
-
-        Object.assign(data, mapMetadata);
+//
     
         // Print image registration data in text area
         document.getElementById("output").value = JSON.stringify(data, null, 2);
     
         const imageFile = window.droppedImage;
-    
+            
         const formData = new FormData();
         formData.append("file", imageFile);
         formData.append("imageRegistrationData", JSON.stringify(data));
@@ -359,6 +349,8 @@ function addOrienteeringMapOverlay(jsonDefinition, map, usePlaceholder=false) {
       registrationPreviewData.showOverlayPreview = true;
 
       window.registrationPreviewData = registrationPreviewData;
+
+      console.log("Showing preview with NW=" + registrationPreviewData.currentRegistrationData.nw_coords + " and SE=" + registrationPreviewData.currentRegistrationData.se_coords)
     }
 
   }
@@ -395,10 +387,64 @@ function addOrienteeringMapOverlay(jsonDefinition, map, usePlaceholder=false) {
   });
 
 
+  /// Helper function to register an image from the posted JSON and not clicked coordinates
   document.getElementById('registerFromJsonButton').addEventListener('click', () => {
-    alert("Register from JSON")
+    pastedJson = JSON.parse(document.getElementById("output").value);
+
+    const imageCoords = pastedJson["selected_pixel_coords"]
+    const realCoords = pastedJson["selected_realworld_coords"]
+    const overlayWidth = pastedJson["overlay_width"]
+    const overlayHeight = pastedJson["overlay_height"]
+    const optimalRotationAngle = pastedJson["optimal_rotation_angle"]
+
+    const payload = {
+      image_coords: imageCoords,
+      real_coords: realCoords,
+      overlayWidth: overlayWidth,
+      overlayHeight: overlayHeight,
+    };
+
+    fetch("http://127.0.0.1:5000/getOverlayCoordinates", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(payload)
+    })
+      .then(response => response.json())
+      .then(data => {
+        
+        payload.optimal_rotation_angle = optimalRotationAngle;
+        registrationPreviewData.currentRegistrationData = data;
+        console.log("getOverlayCoordinates returned with response: ", data)
+        
+        // Print image registration data in text area
+        document.getElementById("output").value = JSON.stringify(data, null, 2);
+      }).then(() => {
+
+        const imageFile = window.droppedImage;
+    
+        const formData = new FormData();
+        formData.append("file", imageFile);
+        formData.append("imageRegistrationData", JSON.stringify(payload));
+
+        // Send original dropped image and data about its calculated placement to the server for transformation
+        fetch("http://127.0.0.1:5000/transformMap", {
+          method: "POST",
+          body: formData
+        })
+          .then(response => response.blob())
+          .then(blob => {
+            const url = URL.createObjectURL(blob);
+            document.getElementById("outputImage").src = url;
+
+            registrationPreviewData.currentOverlayImageUrl = url;
+          })
+
 
   });
+  });
+  
 
 
 

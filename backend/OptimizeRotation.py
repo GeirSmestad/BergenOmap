@@ -257,3 +257,219 @@ def getOverlayCoordinatesWithOptimalRotation(image_coords, real_coords, overlayW
               }
 
     return result
+
+
+
+
+
+
+"""This endpoint uses a novel way of calculating the rotation and position of the overlay based on
+   three sets of matching pixel and geo coordinates"""
+def compute_rotation_and_bounds(width, height, pixel_points, geo_points):
+    """
+    width, height: enlarged image size in pixels
+    pixel_points: [(x, y), ...] in pixels, origin top-left, y down
+    geo_points: [(lat_deg, lon_deg), ...] in degrees, same length as pixel_points
+
+    Returns dict with:
+      theta_deg: rotation angle (CCW, math coords)
+      nw: (lat_deg, lon_deg) of north-west corner of rotated image
+      se: (lat_deg, lon_deg) of south-east corner of rotated image
+      scale: meters per pixel-unit in centered coordinates
+      rms_deg_error: RMS error between fitted and input control lat/lon
+    """
+    W, H = float(width), float(height)
+    pixel_points = np.asarray(pixel_points, dtype=float)
+    geo_points = np.asarray(geo_points, dtype=float)  # (lat, lon)
+    if pixel_points.shape[0] != geo_points.shape[0] or pixel_points.shape[0] < 3:
+        raise ValueError("Need at least 3 matching pixel and geo points")
+
+    # --- 1) Pixels (top-left, y-down) -> centered, y-up coordinates s = (sx, sy)
+    # s_x = x - W/2, s_y = H/2 - y
+    s_pts = np.empty_like(pixel_points)
+    s_pts[:, 0] = pixel_points[:, 0] - W / 2.0
+    s_pts[:, 1] = H / 2.0 - pixel_points[:, 1]
+
+    # --- 2) Lat/lon -> local flat XY (meters) via equirectangular around mean
+    lats = geo_points[:, 0]
+    lons = geo_points[:, 1]
+    lat0 = float(np.mean(lats))
+    lon0 = float(np.mean(lons))
+    R_earth = 6371000.0
+    lat0_rad = math.radians(lat0)
+
+    x = (np.radians(lons - lon0)) * math.cos(lat0_rad) * R_earth
+    y = np.radians(lats - lat0) * R_earth
+    r_pts = np.column_stack([x, y])
+
+    # --- 3) Similarity transform s -> r using Procrustes / Kabsch
+    # We want r ≈ scale * R_mat @ s + t_vec
+    P = s_pts.T  # 2 x n
+    Q = r_pts.T  # 2 x n
+    mu_P = P.mean(axis=1, keepdims=True)
+    mu_Q = Q.mean(axis=1, keepdims=True)
+    X = P - mu_P
+    Y = Q - mu_Q
+
+    Hm = X @ Y.T
+    U, Svals, Vt = np.linalg.svd(Hm)
+    R_mat = Vt.T @ U.T
+    # Enforce proper rotation (determinant +1)
+    if np.linalg.det(R_mat) < 0:
+        Vt[1, :] *= -1
+        R_mat = Vt.T @ U.T
+
+    var_P = np.sum(X ** 2)
+    scale = float(np.sum(Svals) / var_P)
+    t_vec = (mu_Q - scale * R_mat @ mu_P).reshape(2)
+
+    # Rotation angle, CCW, in degrees
+    theta_rad = math.atan2(R_mat[1, 0], R_mat[0, 0])
+    theta_deg = math.degrees(theta_rad)
+
+    # --- 4) Rotate full image rectangle corners in s-space
+    # s-corners: (-W/2,-H/2), (W/2,-H/2), (W/2,H/2), (-W/2,H/2)
+    corners_s = np.array([
+        [-W / 2.0, -H / 2.0],
+        [ W / 2.0, -H / 2.0],
+        [ W / 2.0,  H / 2.0],
+        [-W / 2.0,  H / 2.0],
+    ])
+    s_rot = (R_mat @ corners_s.T).T
+    xs = s_rot[:, 0]
+    ys = s_rot[:, 1]
+    minx, maxx = float(xs.min()), float(xs.max())
+    miny, maxy = float(ys.min()), float(ys.max())
+
+    # --- 5) NW and SE in local XY
+    # NW: (minx, maxy), SE: (maxx, miny)
+    r_NW = scale * np.array([minx, maxy]) + t_vec
+    r_SE = scale * np.array([maxx, miny]) + t_vec
+
+    # --- 6) Convert back to lat/lon
+    lat_NW = lat0 + math.degrees(r_NW[1] / R_earth)
+    lon_NW = lon0 + math.degrees(r_NW[0] / (R_earth * math.cos(lat0_rad)))
+    lat_SE = lat0 + math.degrees(r_SE[1] / R_earth)
+    lon_SE = lon0 + math.degrees(r_SE[0] / (R_earth * math.cos(lat0_rad)))
+
+    # --- 7) Fit error (useful sanity check)
+    r_est = (scale * (R_mat @ s_pts.T)).T + t_vec
+    lat_est = lat0 + np.degrees(r_est[:, 1] / R_earth)
+    lon_est = lon0 + np.degrees(
+        r_est[:, 0] / (R_earth * math.cos(lat0_rad))
+    )
+    residuals = np.sqrt((lat_est - lats) ** 2 + (lon_est - lons) ** 2)
+    rms_deg_error = float(np.sqrt(np.mean(residuals ** 2)))
+
+    return {
+        "theta_deg": theta_deg,
+        "nw": (lat_NW, lon_NW),
+        "se": (lat_SE, lon_SE),
+        "scale": scale,
+        "rms_deg_error": rms_deg_error,
+    }
+
+
+
+
+
+
+
+
+R_EARTH = 6378137.0  # WGS84
+
+def latlon_to_webmerc(lat_deg, lon_deg):
+    lat = math.radians(lat_deg)
+    lon = math.radians(lon_deg)
+    x = R_EARTH * lon
+    y = R_EARTH * math.log(math.tan(math.pi/4 + lat/2))
+    return x, y
+
+def webmerc_to_latlon(x, y):
+    lon = x / R_EARTH
+    lat = 2 * math.atan(math.exp(y / R_EARTH)) - math.pi/2
+    return math.degrees(lat), math.degrees(lon)
+
+
+"""This endpoint uses a DIFFERENT novel way of calculating the rotation and position of the overlay based on
+   three sets of matching pixel and geo coordinates"""
+def georeference_three_points_webmerc(image_coords, real_coords, overlay_width, overlay_height):
+    """
+    image_coords: list of 3 (x, y) pixel coords in the EXACT image Leaflet will draw (bordered etc.), y down.
+    real_coords:  list of 3 (lat, lon) WGS84 coords for those pixels.
+    overlay_width, overlay_height: dimensions of that same image in pixels.
+
+    Returns: dict with nw_coords, se_coords, rotation_deg, rmse_meters, ...
+    """
+
+    # --- 1) Prepare numpy arrays ---
+    img = np.array(image_coords, dtype=float)       # (3,2)
+    lats = np.array([lat for (lat, lon) in real_coords], dtype=float)
+    lons = np.array([lon for (lat, lon) in real_coords], dtype=float)
+
+    # Convert y to "up" for the math
+    img_yup = img.copy()
+    img_yup[:, 1] = -img_yup[:, 1]
+
+    # --- 2) Lat/lon -> Web Mercator (Leaflet's CRS) ---
+    wx, wy = [], []
+    for lat, lon in zip(lats, lons):
+        x, y = latlon_to_webmerc(lat, lon)
+        wx.append(x)
+        wy.append(y)
+    world = np.stack([wx, wy], axis=1)  # (3,2)
+
+    # --- 3) Solve similarity transform w = s * R * p + t ---
+    src = img_yup
+    dst = world
+    n = src.shape[0]
+
+    mu_src = src.mean(axis=0)
+    mu_dst = dst.mean(axis=0)
+    src_c = src - mu_src
+    dst_c = dst - mu_dst
+
+    var_src = (src_c**2).sum() / n
+    Sigma = (dst_c.T @ src_c) / n
+
+    U, D, Vt = np.linalg.svd(Sigma)
+    S = np.eye(2)
+    if np.linalg.det(U) * np.linalg.det(Vt) < 0:
+        S[-1, -1] = -1
+
+    Rmat = U @ S @ Vt
+    s = np.trace(np.diag(D) @ S) / var_src
+    t = mu_dst - s * (Rmat @ mu_src)
+
+    # --- 4) RMS reprojection error in meters (in Web Mercator) ---
+    world_pred = (s * (Rmat @ src.T)).T + t
+    residuals = world - world_pred
+    rmse_m = math.sqrt((residuals**2).sum() / n)
+
+    # --- 5) Map corners of this image in y-up pixels ---
+    W = float(overlay_width)
+    H = float(overlay_height)
+    p_nw = np.array([0.0, 0.0])
+    p_se = np.array([W, -H])
+
+    w_nw = s * (Rmat @ p_nw) + t
+    w_se = s * (Rmat @ p_se) + t
+
+    # --- 6) Back to lat/lon for Leaflet bounds ---
+    lat_nw, lon_nw = webmerc_to_latlon(w_nw[0], w_nw[1])
+    lat_se, lon_se = webmerc_to_latlon(w_se[0], w_se[1])
+
+    # --- 7) Rotation angle (diagnostic) ---
+    theta_rad = math.atan2(Rmat[1, 0], Rmat[0, 0])
+    theta_deg = theta_rad * 180.0 / math.pi
+
+    return {
+        "nw_coords": (lat_nw, lon_nw),
+        "se_coords": (lat_se, lon_se),
+        "rotation_deg": theta_deg,
+        "rmse_meters": rmse_m,
+        "selected_pixel_coords": image_coords,
+        "selected_realworld_coords": real_coords,
+        "overlay_width": overlay_width,
+        "overlay_height": overlay_height,
+    }

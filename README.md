@@ -63,6 +63,8 @@ Denne tjener først og fremst registerMap.html, for å registrere nye kart. Se k
 
 * Strukturere web-kode i moduler
 * På et tidspunkt vil jeg kanskje ha en indeks-primærnøkkel heller enn å bruke kartnavnet, pga. mange kart i samme område
+* Scanne alle O-kartene mine som ikke er fra bedriftscup
+* Laste ned 2025-kartene fra bedriftscup (bruk script)
 
 * (0) Deploy-skript som genererer kart og kopierer filer til S3. Alternativ for å overskrive eksisterende kart.
 * (X) Serving av kart via DB-grensesnitt, så man slipper å tenke på filsystem

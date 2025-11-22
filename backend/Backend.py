@@ -2,7 +2,7 @@ from flask import Flask, send_file, request, jsonify, make_response, g, abort, r
 from flask_cors import CORS
 from PIL import Image, ImageOps, ImageDraw
 import io
-from OptimizeRotation import getOverlayCoordinatesWithOptimalRotation
+from OptimizeRotation import getOverlayCoordinatesWithOptimalRotation, compute_rotation_and_bounds, georeference_three_points_webmerc
 import json
 from io import BytesIO
 import traceback
@@ -137,7 +137,7 @@ def transform_and_store_map():
 
     processed_image = add_transparent_border_and_rotate_image(image, border_size, rotation_angle)
 
-    #print(f"Transformed image of dimensions ({originalWidth}, {originalHeight}) to image of dimensions ({processed_image.width}, {processed_image.height}), border size {border_size}")
+    print(f"Transformed image of dimensions ({originalWidth}, {originalHeight}) to image of dimensions ({processed_image.width}, {processed_image.height}), border size {border_size}")
 
     transformed_map_io = io.BytesIO()
     processed_image.save(transformed_map_io, 'PNG')
@@ -159,7 +159,47 @@ def transform_and_store_map():
 
     return send_file(transformed_map_io, mimetype='image/png')
 
-    
+
+
+"""This endpoint will add margins and rotate the original image, and return the result. No DB storage."""
+@app.route('/transformMap', methods=['POST'])
+def transform_map():
+    # Check if the request contains a file and a data JSON object
+    if 'file' not in request.files or 'imageRegistrationData' not in request.form:
+        return 'Did not receive file or imageRegistrationData', 401
+
+    file = request.files['file']
+    imageRegistrationData = request.form['imageRegistrationData']
+
+    try:
+        print(f"Image registration data for transform_map is: {imageRegistrationData}")
+        imageRegistrationData_json = json.loads(imageRegistrationData)
+        rotation_angle = float(imageRegistrationData_json.get('optimal_rotation_angle'))
+    except (ValueError, KeyError, TypeError) as e:
+        return 'Invalid image registration data format or missing optimal_rotation_angle', 402
+
+    if file.filename == '':
+        return 'Did not receive file', 403
+
+    image = Image.open(file.stream)
+
+    # originalWidth = image.width
+    # originalHeight = image.height
+
+    border_size = int(max(image.width, image.height) * default_border_percentage)
+
+    processed_image = add_transparent_border_and_rotate_image(image, border_size, rotation_angle)
+
+    print(f"Transformed image of dimensions ({image.width}, {image.height}) to image of dimensions ({processed_image.width}, {processed_image.height}), border size {border_size}")
+
+    transformed_map_io = io.BytesIO()
+    processed_image.save(transformed_map_io, 'PNG')
+    transformed_map_io.seek(0)
+
+    map_registration_data = json.loads(imageRegistrationData)
+
+    return send_file(transformed_map_io, mimetype='image/png')
+
 
 @app.route('/getOverlayCoordinates', methods=['POST'])
 def get_overlay_coordinates():
@@ -171,16 +211,34 @@ def get_overlay_coordinates():
         overlay_width = data.get('overlayWidth')
         overlay_height = data.get('overlayHeight')
 
+        print(f"Received request to calculate registration with parameters: {data}")
+
         # Ensure inputs are correctly formatted
         if len(image_coords) != 3 or len(real_coords) != 3:
             return jsonify({'error': 'Invalid input: Must provide exactly 3 image and 3 real coordinates'}), 400
 
-        result = getOverlayCoordinatesWithOptimalRotation(image_coords, real_coords, overlay_width, overlay_height)
+        #result = getOverlayCoordinatesWithOptimalRotation(image_coords, real_coords, overlay_width, overlay_height)
+
+        #rotationAndBounds = compute_rotation_and_bounds(overlay_width, overlay_height, image_coords, real_coords)
+        rotationAndBounds = georeference_three_points_webmerc(image_coords, real_coords, overlay_width, overlay_height, )
+
+        print(f"Calculated rotation, result with web mercator is: {rotationAndBounds}")
+
+        result = {"nw_coords" : rotationAndBounds["nw_coords"], 
+              "se_coords" : rotationAndBounds["se_coords"], 
+              "optimal_rotation_angle" : rotationAndBounds["rotation_deg"],
+              "selected_pixel_coords": image_coords,
+              "selected_realworld_coords": real_coords,
+              "overlay_width": overlay_width,
+              "overlay_height": overlay_height
+              }
+        print(f"Result is: {result}")
 
         # Return the result as a JSON response
         return make_response(json.dumps(result, sort_keys=False))
 
     except Exception as e:
+        print(e)
         return jsonify({'error': str(e)}), 500
 
 
@@ -352,6 +410,60 @@ def add_transparent_border_and_rotate_image(image, border_size, rotation_angle):
     rotated_image = bordered_image.rotate(rotation_angle, expand=False)
 
     return rotated_image
+
+
+
+"""Haversine distance in meters"""
+def haversine(lat1, lon1, lat2, lon2):
+    R = 6371000
+    phi1, phi2 = math.radians(lat1), math.radians(lat2)
+    dphi = math.radians(lat2 - lat1)
+    dlambda = math.radians(lon2 - lon1)
+
+    a = math.sin(dphi/2)**2 + math.cos(phi1)*math.cos(phi2)*math.sin(dlambda/2)**2
+    return 2 * R * math.asin(math.sqrt(a))
+
+"""Helper function to estimate the number of meters per pixel from a list of pixel coordinates and
+   their associated latitudes and longitudes."""
+def meters_per_pixel(pixel_pts, geo_pts):
+
+    ratios = []
+    n = len(pixel_pts)
+
+    for i in range(n):
+        for j in range(i+1, n):
+            (x1, y1), (x2, y2) = pixel_pts[i], pixel_pts[j]
+            px_dist = math.hypot(x2 - x1, y2 - y1)
+
+            lat1, lon1 = geo_pts[i]
+            lat2, lon2 = geo_pts[j]
+            m_dist = haversine(lat1, lon1, lat2, lon2)
+
+            if px_dist > 0:
+                ratios.append(m_dist / px_dist)
+
+    return sum(ratios) / len(ratios)
+
+
+
+"""Helper function to calculate the area between the rectangle encompassed by a latitude and longitude"""
+def rectangular_area_from_bounds(nw_corner, se_corner):
+    """
+    nw_corner = [lat, lon] of north-west corner
+    se_corner = [lat, lon] of south-east corner
+    Returns area in m².
+    """
+    nw_lat, nw_lon = nw_corner
+    se_lat, se_lon = se_corner
+
+    # North–south distance: longitude fixed at NW
+    ns_dist = haversine(nw_lat, nw_lon, se_lat, nw_lon)
+
+    # East–west distance: at mid-latitude for accuracy
+    mid_lat = (nw_lat + se_lat) / 2
+    ew_dist = haversine(mid_lat, nw_lon, mid_lat, se_lon)
+
+    return ns_dist * ew_dist
 
 
 
