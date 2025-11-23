@@ -45,11 +45,28 @@
   </div>
 
   <div class="registration-map-section">
-    <div class="registration-map-controls">
-      <button id="processButton" class="registrationButton">Process selected registration</button>
-      <button id="registerFromJsonButton" class="registrationButton">Register from pasted JSON</button>
-      <button id="registrationPreviewButton" class="registrationButton">Toggle registration preview</button>
-      <button id="outputDatabaseButton" class="registrationButton">Output map database to disk</button>
+    <div class="registration-map-header">
+      <div class="registration-map-controls">
+        <button id="processButton" class="registrationButton">Process selected registration</button>
+        <button id="registerFromJsonButton" class="registrationButton">Register from pasted JSON</button>
+        <button id="registrationPreviewButton" class="registrationButton">Toggle registration preview</button>
+        <button id="outputDatabaseButton" class="registrationButton">Output map database to disk</button>
+      </div>
+      <div id="registrationData">
+        <p>Please mark three points in the terrain and their corresponding location on the map below.</p>
+        <div class="coordinates">
+          <div>
+            <p id="latLon1"></p>
+            <p id="latLon2"></p>
+            <p id="latLon3"></p>
+          </div>
+          <div>
+            <p id="xy1"></p>
+            <p id="xy2"></p>
+            <p id="xy3"></p>
+          </div>
+        </div>
+      </div>
     </div>
     <div class="registration-map-views">
       <div class="registration-map-views__panel">
@@ -59,25 +76,6 @@
         <img id="overlayView" alt="Overlay map preview"/>
       </div>
     </div>
-  </div>
-
-  <div id="registrationData">
-    <p>Map registration</p>
-    <p>Please mark three points in the terrain and their corresponding location on the map below.</p>
-    <div class="coordinates">
-      <div>
-        <p id="latLon1"></p>
-        <p id="latLon2"></p>
-        <p id="latLon3"></p>
-      </div>
-      <div>
-        <p id="xy1"></p>
-        <p id="xy2"></p>
-        <p id="xy3"></p>
-      </div>
-    </div>
-
-
   </div>
 
   <div id="registrationInput">

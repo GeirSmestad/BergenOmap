@@ -115,17 +115,23 @@ textarea {
   margin: 20px 0;
 }
 
-.registration-map-controls {
+.registration-map-header {
   position: sticky;
   top: 0;
   z-index: 1000;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 0.75rem 0.25rem;
+  border-bottom: 1px solid #ddd;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.registration-map-controls {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
   align-items: center;
-  background: rgba(255, 255, 255, 0.95);
-  padding: 0.75rem 0.25rem;
-  border-bottom: 1px solid #ddd;
 }
 
 .registration-map-views {
@@ -167,14 +173,16 @@ textarea {
 #registrationData {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  width: 1024px;
+  align-items: flex-start;
+  align-self: flex-start;
+  width: 100%;
+  max-width: 600px;
+  margin: 0;
 }
 .coordinates {
   display: flex;
   justify-content: space-between;
   width: 100%;
-  margin: 10px 0;
 }
 .coordinates div {
   flex: 1;
