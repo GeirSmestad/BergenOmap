@@ -44,12 +44,20 @@
     <div id="dimensions"></div>
   </div>
 
-  <div class="registration-map-views">
-    <div class="registration-map-views__panel">
-      <div id="registrationMapBrowser"></div>
+  <div class="registration-map-section">
+    <div class="registration-map-controls">
+      <button id="processButton" class="registrationButton">Process selected registration</button>
+      <button id="registerFromJsonButton" class="registrationButton">Register from pasted JSON</button>
+      <button id="registrationPreviewButton" class="registrationButton">Toggle registration preview</button>
+      <button id="outputDatabaseButton" class="registrationButton">Output map database to disk</button>
     </div>
-    <div class="registration-map-views__panel registration-map-views__panel--overlay">
-      <img id="overlayView" alt="Overlay map preview"/>
+    <div class="registration-map-views">
+      <div class="registration-map-views__panel">
+        <div id="registrationMapBrowser"></div>
+      </div>
+      <div class="registration-map-views__panel registration-map-views__panel--overlay">
+        <img id="overlayView" alt="Overlay map preview"/>
+      </div>
     </div>
   </div>
 
@@ -112,12 +120,6 @@
     <div class="inputFields">
       <label for="mapAttribution">Map attribution:</label>
       <input type="text" id="mapAttribution" name="mapAttribution">
-    </div>
-    <div>
-      <button id="processButton" class="registrationButton">Process selected registration</button>
-      <button id="registerFromJsonButton" class="registrationButton">Register from pasted JSON</button>
-      <button id="registrationPreviewButton" class="registrationButton">Toggle registration preview</button>
-      <button id="outputDatabaseButton" class="registrationButton">Output map database to disk</button>
     </div>
     <textarea id="output"></textarea>
   </div>
