@@ -6,7 +6,7 @@ from OptimizeRotation import getOverlayCoordinatesWithOptimalRotation, compute_r
 import json
 from io import BytesIO
 import traceback
-
+import math
 
 # Constants
 default_border_percentage = 0.13 # Width of each side border, as percentage of longest dimension
@@ -217,16 +217,30 @@ def get_overlay_coordinates():
         if len(image_coords) != 3 or len(real_coords) != 3:
             return jsonify({'error': 'Invalid input: Must provide exactly 3 image and 3 real coordinates'}), 400
 
-        #result = getOverlayCoordinatesWithOptimalRotation(image_coords, real_coords, overlay_width, overlay_height)
+        # result = getOverlayCoordinatesWithOptimalRotation(image_coords, real_coords, overlay_width, overlay_height) # This is my original registration algorithm
+        #rotationAndBounds = getOverlayCoordinatesWithOptimalRotation(image_coords, real_coords, overlay_width, overlay_height) # This is my original registration algorithm
 
-        #rotationAndBounds = compute_rotation_and_bounds(overlay_width, overlay_height, image_coords, real_coords)
-        rotationAndBounds = georeference_three_points_webmerc(image_coords, real_coords, overlay_width, overlay_height, )
+        rotationAndBounds = compute_rotation_and_bounds(overlay_width, overlay_height, image_coords, real_coords) # This is ChatGPT's initial implementation
+        #rotationAndBounds = georeference_three_points_webmerc(image_coords, real_coords, overlay_width, overlay_height) # This is ChatGPT's web mercator implementation
 
-        print(f"Calculated rotation, result with web mercator is: {rotationAndBounds}")
+        print(f"Calculated required map rotation, result is: {rotationAndBounds}")
+
+        metersPerPixel = meters_per_pixel_xy(image_coords, real_coords)
+        areaOfRegisteredArea = rectangular_area_from_bounds(rotationAndBounds["nw_coords"], rotationAndBounds["se_coords"])
+
+        pixelWidthEstimate = metersPerPixel[0]*overlay_width
+        pixelHeightEstimate = metersPerPixel[1]*overlay_height
+
+        print(f"Meters per pixel in x and y is {metersPerPixel[0]:.4f} and {metersPerPixel[1]:.4f}.")
+        print(f"By this measure, the area of the un-rotated map rectangle is {pixelWidthEstimate:.1f}x{pixelHeightEstimate:.1f} meters = " + \
+           f"{pixelWidthEstimate*pixelHeightEstimate/1000000.0:.4f} square kilometers.")
+        print(f"By the latitude and longitude of our calculated north-eastern and south-western corner of the rotated map rectangle, " + \
+            f"its area is {areaOfRegisteredArea:.4f} square kilometers.")
+        print(f"(These numbers should obviously be quite similar)")
 
         result = {"nw_coords" : rotationAndBounds["nw_coords"], 
               "se_coords" : rotationAndBounds["se_coords"], 
-              "optimal_rotation_angle" : rotationAndBounds["rotation_deg"],
+              "optimal_rotation_angle" : rotationAndBounds["optimal_rotation_angle"],
               "selected_pixel_coords": image_coords,
               "selected_realworld_coords": real_coords,
               "overlay_width": overlay_width,
@@ -423,26 +437,55 @@ def haversine(lat1, lon1, lat2, lon2):
     a = math.sin(dphi/2)**2 + math.cos(phi1)*math.cos(phi2)*math.sin(dlambda/2)**2
     return 2 * R * math.asin(math.sqrt(a))
 
+def latlon_to_local_xy(lat, lon, lat0, lon0):
+    """
+    Convert lat/lon to local tangent-plane x/y meters.
+    lat0/lon0 is the reference origin.
+    """
+    R = 6371000
+    dlat = math.radians(lat - lat0)
+    dlon = math.radians(lon - lon0)
+    x = R * dlon * math.cos(math.radians(lat0))
+    y = R * dlat
+    return x, y
+
 """Helper function to estimate the number of meters per pixel from a list of pixel coordinates and
    their associated latitudes and longitudes."""
-def meters_per_pixel(pixel_pts, geo_pts):
+def meters_per_pixel_xy(pixel_pts, geo_pts):
+    # Use the first real-world point as local origin
+    lat0, lon0 = geo_pts[0]
 
-    ratios = []
+    # Convert all geo points to local meter coordinates
+    xy = [latlon_to_local_xy(lat, lon, lat0, lon0) for lat, lon in geo_pts]
+
+    ratios_x = []
+    ratios_y = []
+
     n = len(pixel_pts)
 
     for i in range(n):
         for j in range(i+1, n):
-            (x1, y1), (x2, y2) = pixel_pts[i], pixel_pts[j]
-            px_dist = math.hypot(x2 - x1, y2 - y1)
+            (px1, py1), (px2, py2) = pixel_pts[i], pixel_pts[j]
 
-            lat1, lon1 = geo_pts[i]
-            lat2, lon2 = geo_pts[j]
-            m_dist = haversine(lat1, lon1, lat2, lon2)
+            dx_px = px2 - px1
+            dy_px = py2 - py1
 
-            if px_dist > 0:
-                ratios.append(m_dist / px_dist)
+            x1, y1 = xy[i]
+            x2, y2 = xy[j]
 
-    return sum(ratios) / len(ratios)
+            dx_m = x2 - x1
+            dy_m = y2 - y1
+
+            # Only compute ratios when movement exists in that axis
+            if dx_px != 0:
+                ratios_x.append(dx_m / dx_px)
+            if dy_px != 0:
+                ratios_y.append(dy_m / dy_px)
+
+    m_per_px_x = sum(ratios_x) / len(ratios_x)
+    m_per_px_y = sum(ratios_y) / len(ratios_y)
+
+    return abs(m_per_px_x), abs(m_per_px_y)
 
 
 
@@ -463,7 +506,7 @@ def rectangular_area_from_bounds(nw_corner, se_corner):
     mid_lat = (nw_lat + se_lat) / 2
     ew_dist = haversine(mid_lat, nw_lon, mid_lat, se_lon)
 
-    return ns_dist * ew_dist
+    return (ns_dist * ew_dist) / 1000000.0 # Return unit: Square kilometers
 
 
 

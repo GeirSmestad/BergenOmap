@@ -362,9 +362,9 @@ def compute_rotation_and_bounds(width, height, pixel_points, geo_points):
     rms_deg_error = float(np.sqrt(np.mean(residuals ** 2)))
 
     return {
-        "theta_deg": theta_deg,
-        "nw": (lat_NW, lon_NW),
-        "se": (lat_SE, lon_SE),
+        "optimal_rotation_angle": theta_deg,
+        "nw_coords": (lat_NW, lon_NW),
+        "se_coords": (lat_SE, lon_SE),
         "scale": scale,
         "rms_deg_error": rms_deg_error,
     }
@@ -391,7 +391,7 @@ def webmerc_to_latlon(x, y):
     return math.degrees(lat), math.degrees(lon)
 
 
-"""This endpoint uses a DIFFERENT novel way of calculating the rotation and position of the overlay based on
+"""This endpoint uses a DIFFERENTnovel way of calculating the rotation and position of the overlay based on
    three sets of matching pixel and geo coordinates"""
 def georeference_three_points_webmerc(image_coords, real_coords, overlay_width, overlay_height):
     """
@@ -466,7 +466,7 @@ def georeference_three_points_webmerc(image_coords, real_coords, overlay_width, 
     return {
         "nw_coords": (lat_nw, lon_nw),
         "se_coords": (lat_se, lon_se),
-        "rotation_deg": theta_deg,
+        "optimal_rotation_angle": theta_deg,
         "rmse_meters": rmse_m,
         "selected_pixel_coords": image_coords,
         "selected_realworld_coords": real_coords,

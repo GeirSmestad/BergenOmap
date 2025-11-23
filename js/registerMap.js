@@ -395,7 +395,6 @@ function addOrienteeringMapOverlay(jsonDefinition, map, usePlaceholder=false) {
     const realCoords = pastedJson["selected_realworld_coords"]
     const overlayWidth = pastedJson["overlay_width"]
     const overlayHeight = pastedJson["overlay_height"]
-    const optimalRotationAngle = pastedJson["optimal_rotation_angle"]
 
     const payload = {
       image_coords: imageCoords,
@@ -414,9 +413,9 @@ function addOrienteeringMapOverlay(jsonDefinition, map, usePlaceholder=false) {
       .then(response => response.json())
       .then(data => {
         
-        payload.optimal_rotation_angle = optimalRotationAngle;
+        payload.optimal_rotation_angle = data["optimal_rotation_angle"]
         registrationPreviewData.currentRegistrationData = data;
-        console.log("getOverlayCoordinates returned with response: ", data)
+        console.log("getOverlayCoordinates returned with response: ", data, " and payload is now ", payload)
         
         // Print image registration data in text area
         document.getElementById("output").value = JSON.stringify(data, null, 2);
