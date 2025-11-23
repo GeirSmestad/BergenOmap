@@ -16,6 +16,7 @@ Denne tjener først og fremst registerMap.html, for å registrere nye kart. Se k
 ## Registrering av kart
 
 
+* Legg inn knapp for å bytte mellom satellittfoto og Norgeskart i Leaflet
 * Bedre ergonomi ved velging av 3+3 punkter, helst ved å både kunne se orienteringskart og Leaflet ved siden av hverandre
 * Legg til checkbox som lar deg registrere kartet til database hvis du leser inn registreringen fra JSON
 

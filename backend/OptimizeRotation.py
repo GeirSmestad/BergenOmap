@@ -2,6 +2,125 @@ import numpy as np
 import math
 from scipy.optimize import minimize_scalar
 
+"""Given three sets of pixel coordinates on an orienteering map overlay
+   [(x1, y1), (x2, y2), (x3, y3)]
+
+   and three sets of real-world (lat, lon) coordinates matching their location
+   [(lat1, lon1), (lat2, lon2), (lat3, lon3)],
+
+   and the pixel dimensions of the overlay,
+
+   return the coordinates 
+   
+   (lat_nw, lon_nw); north-west corner,
+   (lat_se, lon_se); south-east corner, 
+   the counter-clockwise map rotation in degrees
+   
+   that most closely register the overlay onto real-world terrain.
+
+   We need to do this because orienteering maps are oriented to magnetic north (which varies by
+   location and date of map creation), while the reference map we're using for determining position
+   is oriented to geographic north.
+
+   For best results, the three points should be close to different map edges, form a triangle
+   with significant angles and be accurately placed.
+"""
+def getOverlayCoordinatesWithOptimalRotation(image_coords, real_coords, overlayWidth, overlayHeight):
+    """
+    Algorithm overview:
+    - Receive original orienterring map overlay
+    - Receive control points that have been registered on a version of this overlay that is padded with extra margins
+    - Use least-squares similarity (Procrustes) registration to find optimal rotation to geographic north
+    - Pad the orienteering map overlay with transparent margins, then rotate it (discarding overflowing pixels)
+    - Use least-squares to find the best fit for north-west corner and scale factors matching control points
+    - Return the required lat/lon of the north-western and south-eastern corner of the overlay to match this fit
+    """
+
+    similarity_transform = compute_rotation_and_bounds(overlayWidth, overlayHeight, image_coords, real_coords)
+    optimal_angle = similarity_transform["optimal_rotation_angle"] # The rotation is correct with ChatGPT's also, but nothing else
+
+    # Calculate the correct coordinates of overlay corners    
+    optimal_rotation_result = rotateAndRegisterOverlay(image_coords, real_coords, optimal_angle, overlayWidth, overlayHeight)
+    
+    result = {"nw_coords" : optimal_rotation_result["nw_coords"], 
+              "se_coords" : optimal_rotation_result["se_coords"], 
+              "optimal_rotation_angle" : optimal_angle,
+              "selected_pixel_coords": image_coords,
+              "selected_realworld_coords": real_coords,
+              "overlay_width": overlayWidth,
+              "overlay_height": overlayHeight,
+              "least_squares_error": optimal_rotation_result["error"]
+              }
+
+    return result
+
+"""Given three sets of pixel coordinates on an orienteering map overlay
+   [(x1, y1), (x2, y2), (x3, y3)]
+
+   and three sets of real-world (lat, lon) coordinates matching their location
+   [(lat1, lon1), (lat2, lon2), (lat3, lon3)],
+
+   and an angle of counter-clockwise rotation,
+
+   find the best rotation to geographic north, then register the pixel coordinates onto
+   real-world coordinates by least-squares fitting the north-western corner and the scale
+   factors of latitude and longitude required to make the control points fit.
+
+   Return the northwest and southeast (lat, lon) coordinates of this registration,
+   and the error.
+"""
+def rotateAndRegisterOverlay(image_coords, real_coords, angle_degrees, overlayWidth, overlayHeight):
+    # 1. Rotate control points
+    pointsAfterRotating = rotate_points(image_coords, overlayWidth, overlayHeight, angle_degrees)
+
+    # Extract arrays for LS fit
+    xs = np.array([p[0] for p in pointsAfterRotating], dtype=float)
+    ys = np.array([p[1] for p in pointsAfterRotating], dtype=float)
+    lats = np.array([p[0] for p in real_coords], dtype=float)
+    lons = np.array([p[1] for p in real_coords], dtype=float)
+
+    # 2. Fit lat = a + b * y  (a = lat_nw, b = scale_lat)
+    y_mean = ys.mean()
+    lat_mean = lats.mean()
+    denom_y = np.sum((ys - y_mean) ** 2)
+    if denom_y == 0:
+        raise ValueError("Cannot determine vertical scale: all y are equal")
+
+    scale_lat = np.sum((ys - y_mean) * (lats - lat_mean)) / denom_y
+    lat_nw = lat_mean - scale_lat * y_mean
+
+    # 3. Fit lon = c + d * x  (c = lon_nw, d = scale_lon)
+    x_mean = xs.mean()
+    lon_mean = lons.mean()
+    denom_x = np.sum((xs - x_mean) ** 2)
+    if denom_x == 0:
+        raise ValueError("Cannot determine horizontal scale: all x are equal")
+
+    scale_lon = np.sum((xs - x_mean) * (lons - lon_mean)) / denom_x
+    lon_nw = lon_mean - scale_lon * x_mean
+
+    # 4. Compute overlay corners from NW + scales
+    nw = (lat_nw, lon_nw)
+    se = (
+        lat_nw + overlayHeight * scale_lat,
+        lon_nw + overlayWidth * scale_lon,
+    )
+
+    # 5. Compute error: how well do we hit the three control points?
+    #    (using squared Euclidean in lat/lon space)
+    errors_sq = []
+    for xi, yi, (lat_true, lon_true) in zip(xs, ys, real_coords):
+        lat_pred = lat_nw + yi * scale_lat
+        lon_pred = lon_nw + xi * scale_lon
+        err = euclidean_distance((lat_pred, lon_pred), (lat_true, lon_true))
+        errors_sq.append(err ** 2)
+
+    # Mean squared error
+    error = sum(errors_sq) / len(errors_sq)
+
+    result = {"nw_coords": nw, "se_coords": se, "error": error}
+    return result
+
 
 """
 Rotate points about the center of the image.
@@ -145,133 +264,11 @@ def euclidean_distance(coord1, coord2):
     return math.sqrt((x2 - x1)**2 + (y2 - y1)**2)
 
 
-"""Given three sets of pixel coordinates on an orienteering map overlay
-   [(x1, y1), (x2, y2), (x3, y3)]
-
-   and three sets of real-world (lat, lon) coordinates matching their location
-   [(lat1, lon1), (lat2, lon2), (lat3, lon3)],
-
-   and an angle of counter-clockwise rotation,
-
-   find the best rotation to geographic north, then register the pixel coordinates onto
-   real-world coordinates by least-squares fitting the north-western corner and the scale
-   factors of latitude and longitude required to make the control points fit.
-
-   Return the northwest and southeast (lat, lon) coordinates of this registration,
-   and the error.
-"""
-def rotateAndRegisterOverlay(image_coords, real_coords, angle_degrees, overlayWidth, overlayHeight):
-    # 1. Rotate control points
-    pointsAfterRotating = rotate_points(image_coords, overlayWidth, overlayHeight, angle_degrees)
-
-    # Extract arrays for LS fit
-    xs = np.array([p[0] for p in pointsAfterRotating], dtype=float)
-    ys = np.array([p[1] for p in pointsAfterRotating], dtype=float)
-    lats = np.array([p[0] for p in real_coords], dtype=float)
-    lons = np.array([p[1] for p in real_coords], dtype=float)
-
-    # 2. Fit lat = a + b * y  (a = lat_nw, b = scale_lat)
-    y_mean = ys.mean()
-    lat_mean = lats.mean()
-    denom_y = np.sum((ys - y_mean) ** 2)
-    if denom_y == 0:
-        raise ValueError("Cannot determine vertical scale: all y are equal")
-
-    scale_lat = np.sum((ys - y_mean) * (lats - lat_mean)) / denom_y
-    lat_nw = lat_mean - scale_lat * y_mean
-
-    # 3. Fit lon = c + d * x  (c = lon_nw, d = scale_lon)
-    x_mean = xs.mean()
-    lon_mean = lons.mean()
-    denom_x = np.sum((xs - x_mean) ** 2)
-    if denom_x == 0:
-        raise ValueError("Cannot determine horizontal scale: all x are equal")
-
-    scale_lon = np.sum((xs - x_mean) * (lons - lon_mean)) / denom_x
-    lon_nw = lon_mean - scale_lon * x_mean
-
-    # 4. Compute overlay corners from NW + scales
-    nw = (lat_nw, lon_nw)
-    se = (
-        lat_nw + overlayHeight * scale_lat,
-        lon_nw + overlayWidth * scale_lon,
-    )
-
-    # 5. Compute error: how well do we hit the three control points?
-    #    (using squared Euclidean in lat/lon space)
-    errors_sq = []
-    for xi, yi, (lat_true, lon_true) in zip(xs, ys, real_coords):
-        lat_pred = lat_nw + yi * scale_lat
-        lon_pred = lon_nw + xi * scale_lon
-        err = euclidean_distance((lat_pred, lon_pred), (lat_true, lon_true))
-        errors_sq.append(err ** 2)
-
-    # Mean squared error
-    error = sum(errors_sq) / len(errors_sq)
-
-    result = {"nw_coords": nw, "se_coords": se, "error": error}
-    return result
-
-
-"""Given three sets of pixel coordinates on an orienteering map overlay
-   [(x1, y1), (x2, y2), (x3, y3)]
-
-   and three sets of real-world (lat, lon) coordinates matching their location
-   [(lat1, lon1), (lat2, lon2), (lat3, lon3)],
-
-   and the pixel dimensions of the overlay,
-
-   return the coordinates 
+"""Calculate rotation and geographical corners of map overlay, using Least-squares
+   similarity (Procrustes) registration on a local equirectangular map.
    
-   (lat_nw, lon_nw); north-west corner,
-   (lat_se, lon_se); south-east corner, 
-   the counter-clockwise map rotation in degrees
-   
-   that most closely register the overlay onto real-world terrain.
-
-   We need to do this because orienteering maps are oriented to magnetic north (which varies by
-   location and date of map creation), while the reference map we're using for determining position
-   is oriented to geographic north.
-
-   For best results, the three points should be close to different map edges, form a triangle
-   with significant angles and be accurately placed.
-"""
-def getOverlayCoordinatesWithOptimalRotation(image_coords, real_coords, overlayWidth, overlayHeight):
-    """
-    Algorithm overview:
-    - Receive original orienterring map overlay
-    - Receive control points that have been registered on a version of this overlay that is padded with extra margins
-    - Use least-squares similarity (Procrustes) registration to find optimal rotation to geographic north
-    - Pad the orienteering map overlay with transparent margins, then rotate it (discarding overflowing pixels)
-    - Use least-squares to find the best fit for north-west corner and scale factors matching control points
-    - Return the required lat/lon of the north-western and south-eastern corner of the overlay to match this fit
-    """
-
-    similarity_transform = compute_rotation_and_bounds(overlayWidth, overlayHeight, image_coords, real_coords)
-    optimal_angle = similarity_transform["optimal_rotation_angle"] # The rotation is correct with ChatGPT's also, but nothing else
-
-    # Calculate the correct coordinates of overlay corners    
-    optimal_rotation_result = rotateAndRegisterOverlay(image_coords, real_coords, optimal_angle, overlayWidth, overlayHeight)
-    
-    result = {"nw_coords" : optimal_rotation_result["nw_coords"], 
-              "se_coords" : optimal_rotation_result["se_coords"], 
-              "optimal_rotation_angle" : optimal_angle,
-              "selected_pixel_coords": image_coords,
-              "selected_realworld_coords": real_coords,
-              "overlay_width": overlayWidth,
-              "overlay_height": overlayHeight,
-              "least_squares_error": optimal_rotation_result["error"]
-              }
-
-    return result
-
-
-
-
-
-
-"""This endpoint uses a novel way of calculating the rotation and position of the overlay based on
-   three sets of matching pixel and geo coordinates"""
+   Note that this does not fit well with Leaflet's model for drawing image overlays
+   on its Mercator projection, but it does get the rotation right."""
 def compute_rotation_and_bounds(width, height, pixel_points, geo_points):
     """
     width, height: enlarged image size in pixels
@@ -374,109 +371,4 @@ def compute_rotation_and_bounds(width, height, pixel_points, geo_points):
         "se_coords": (lat_SE, lon_SE),
         "scale": scale,
         "rms_deg_error": rms_deg_error,
-    }
-
-
-
-
-
-
-
-
-R_EARTH = 6378137.0  # WGS84
-
-def latlon_to_webmerc(lat_deg, lon_deg):
-    lat = math.radians(lat_deg)
-    lon = math.radians(lon_deg)
-    x = R_EARTH * lon
-    y = R_EARTH * math.log(math.tan(math.pi/4 + lat/2))
-    return x, y
-
-def webmerc_to_latlon(x, y):
-    lon = x / R_EARTH
-    lat = 2 * math.atan(math.exp(y / R_EARTH)) - math.pi/2
-    return math.degrees(lat), math.degrees(lon)
-
-
-"""This endpoint uses a DIFFERENT novel way of calculating the rotation and position of the overlay based on
-   three sets of matching pixel and geo coordinates"""
-def georeference_three_points_webmerc(image_coords, real_coords, overlay_width, overlay_height):
-    """
-    image_coords: list of 3 (x, y) pixel coords in the EXACT image Leaflet will draw (bordered etc.), y down.
-    real_coords:  list of 3 (lat, lon) WGS84 coords for those pixels.
-    overlay_width, overlay_height: dimensions of that same image in pixels.
-
-    Returns: dict with nw_coords, se_coords, rotation_deg, rmse_meters, ...
-    """
-
-    # --- 1) Prepare numpy arrays ---
-    img = np.array(image_coords, dtype=float)       # (3,2)
-    lats = np.array([lat for (lat, lon) in real_coords], dtype=float)
-    lons = np.array([lon for (lat, lon) in real_coords], dtype=float)
-
-    # Convert y to "up" for the math
-    img_yup = img.copy()
-    img_yup[:, 1] = -img_yup[:, 1]
-
-    # --- 2) Lat/lon -> Web Mercator (Leaflet's CRS) ---
-    wx, wy = [], []
-    for lat, lon in zip(lats, lons):
-        x, y = latlon_to_webmerc(lat, lon)
-        wx.append(x)
-        wy.append(y)
-    world = np.stack([wx, wy], axis=1)  # (3,2)
-
-    # --- 3) Solve similarity transform w = s * R * p + t ---
-    src = img_yup
-    dst = world
-    n = src.shape[0]
-
-    mu_src = src.mean(axis=0)
-    mu_dst = dst.mean(axis=0)
-    src_c = src - mu_src
-    dst_c = dst - mu_dst
-
-    var_src = (src_c**2).sum() / n
-    Sigma = (dst_c.T @ src_c) / n
-
-    U, D, Vt = np.linalg.svd(Sigma)
-    S = np.eye(2)
-    if np.linalg.det(U) * np.linalg.det(Vt) < 0:
-        S[-1, -1] = -1
-
-    Rmat = U @ S @ Vt
-    s = np.trace(np.diag(D) @ S) / var_src
-    t = mu_dst - s * (Rmat @ mu_src)
-
-    # --- 4) RMS reprojection error in meters (in Web Mercator) ---
-    world_pred = (s * (Rmat @ src.T)).T + t
-    residuals = world - world_pred
-    rmse_m = math.sqrt((residuals**2).sum() / n)
-
-    # --- 5) Map corners of this image in y-up pixels ---
-    W = float(overlay_width)
-    H = float(overlay_height)
-    p_nw = np.array([0.0, 0.0])
-    p_se = np.array([W, -H])
-
-    w_nw = s * (Rmat @ p_nw) + t
-    w_se = s * (Rmat @ p_se) + t
-
-    # --- 6) Back to lat/lon for Leaflet bounds ---
-    lat_nw, lon_nw = webmerc_to_latlon(w_nw[0], w_nw[1])
-    lat_se, lon_se = webmerc_to_latlon(w_se[0], w_se[1])
-
-    # --- 7) Rotation angle (diagnostic) ---
-    theta_rad = math.atan2(Rmat[1, 0], Rmat[0, 0])
-    theta_deg = theta_rad * 180.0 / math.pi
-
-    return {
-        "nw_coords": (lat_nw, lon_nw),
-        "se_coords": (lat_se, lon_se),
-        "optimal_rotation_angle": theta_deg,
-        "rmse_meters": rmse_m,
-        "selected_pixel_coords": image_coords,
-        "selected_realworld_coords": real_coords,
-        "overlay_width": overlay_width,
-        "overlay_height": overlay_height,
     }

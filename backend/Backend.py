@@ -2,7 +2,7 @@ from flask import Flask, send_file, request, jsonify, make_response, g, abort, r
 from flask_cors import CORS
 from PIL import Image, ImageOps, ImageDraw
 import io
-from OptimizeRotation import getOverlayCoordinatesWithOptimalRotation, compute_rotation_and_bounds, georeference_three_points_webmerc
+from OptimizeRotation import getOverlayCoordinatesWithOptimalRotation
 import json
 from io import BytesIO
 import traceback
@@ -183,9 +183,6 @@ def transform_map():
 
     image = Image.open(file.stream)
 
-    # originalWidth = image.width
-    # originalHeight = image.height
-
     border_size = int(max(image.width, image.height) * default_border_percentage)
 
     processed_image = add_transparent_border_and_rotate_image(image, border_size, rotation_angle)
@@ -217,11 +214,7 @@ def get_overlay_coordinates():
         if len(image_coords) != 3 or len(real_coords) != 3:
             return jsonify({'error': 'Invalid input: Must provide exactly 3 image and 3 real coordinates'}), 400
 
-        # result = getOverlayCoordinatesWithOptimalRotation(image_coords, real_coords, overlay_width, overlay_height) # This is my original registration algorithm
-        rotationAndBounds = getOverlayCoordinatesWithOptimalRotation(image_coords, real_coords, overlay_width, overlay_height) # This is my original registration algorithm
-
-        #rotationAndBounds = compute_rotation_and_bounds(overlay_width, overlay_height, image_coords, real_coords) # This is ChatGPT's initial implementation
-        #rotationAndBounds = georeference_three_points_webmerc(image_coords, real_coords, overlay_width, overlay_height) # This is ChatGPT's web mercator implementation
+        rotationAndBounds = getOverlayCoordinatesWithOptimalRotation(image_coords, real_coords, overlay_width, overlay_height)
 
         print(f"Calculated required map rotation, result is: {rotationAndBounds}")
 
