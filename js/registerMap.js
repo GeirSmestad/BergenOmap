@@ -65,23 +65,17 @@ document.addEventListener("DOMContentLoaded", function () {
     updateDisplay();
   });
 
-  // var map = L.map('registrationMapBrowser').setView(startLatLon, 15);
-  // L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-  //   maxZoom: 19,
-  //   attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-  // }).addTo(map);
-
   var map = L.map('registrationMapBrowser').setView(startLatLon, 15);
   L.tileLayer('https://cache.kartverket.no/v1/wmts/1.0.0/topo/default/webmercator/{z}/{y}/{x}.png', {
     maxZoom: 18,
     attribution: '&copy; <a href="http://www.kartverket.no/">Kartverket</a>'
   }).addTo(map);
 
-  // var map = L.map('map').setView([60.14,10.25],9); 
-  // L.tileLayer('https://cache.kartverket.no/v1/wmts/1.0.0/topo/default/webmercator/{z}/{y}/{x}.png', {
-  //   attribution: '&copy; <a href="http://www.kartverket.no/">Kartverket</a>'
-  //   }).addTo(map);
 
+  window.addEventListener('resize', () => {
+    // Leaflet must be notified to redraw when the window is resized
+    map.invalidateSize();
+  });
 
   let isDragging = false;
 
@@ -290,6 +284,12 @@ document.addEventListener("DOMContentLoaded", function () {
       })
         .then(response => response.blob())
         .then(blob => {
+
+          overlayView.addEventListener("load", () => {
+            // Add a single-use event listener to notify Leaflet that a resize might have happened, after the new map image has loaded
+            map.invalidateSize();
+          }, { once: true });
+
           const url = URL.createObjectURL(blob);
           overlayView.src = url;
         })
