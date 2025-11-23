@@ -53,12 +53,16 @@ Denne tjener først og fremst registerMap.html, for å registrere nye kart. Se k
 
 ## Navigasjons-app
 
+* Legge inn "månedens kart november" på Skage, hvor jeg og C gikk lørdagstur
 * Cache Leaflet-filer, orienteringskart og kart-definisjoner lokalt i appen i tilfelle brudd i nettverk (Cache Storage API?)
 
 * Sentrer kartet på brukerens posisjon (knapp)
 * Kartet følger brukerens posisjon (toggle av/på)
 * Kartet orienteres etter retningen man holder mobilen (toggle av/på)
 * Zoom-innstilling som finner mobil-dimensjoner og setter zoom til å tilsvare kartets målestokk
+
+* Mulighet for å vise Strava-track
+* Database-integrasjon for å samle en brukers informasjon (fx. GPX-filer fra Strava)
 
 * (X) Hosting, som eksponerer appen på twerkules.com
 * (X) Flere kart på en gang (generalisert, basert på en liste som kommer som parameter)
@@ -68,6 +72,8 @@ Denne tjener først og fremst registerMap.html, for å registrere nye kart. Se k
 
 ## Infrastruktur
 
+
+* Deployment på EC2/Lightsail
 * Strukturere web-kode i moduler
 * På et tidspunkt vil jeg kanskje ha en indeks-primærnøkkel heller enn å bruke kartnavnet, pga. mange kart i samme område
 * Scanne alle O-kartene mine som ikke er fra bedriftscup
