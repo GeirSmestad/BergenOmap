@@ -131,7 +131,7 @@ def transform_and_store_map():
 
     image = Image.open(file.stream)
 
-    # originalWidth, originalHeight = image.width, image.height  
+    originalWidth, originalHeight = image.width, image.height
 
     border_size = int(max(image.width, image.height) * default_border_percentage)
 
@@ -218,9 +218,9 @@ def get_overlay_coordinates():
             return jsonify({'error': 'Invalid input: Must provide exactly 3 image and 3 real coordinates'}), 400
 
         # result = getOverlayCoordinatesWithOptimalRotation(image_coords, real_coords, overlay_width, overlay_height) # This is my original registration algorithm
-        #rotationAndBounds = getOverlayCoordinatesWithOptimalRotation(image_coords, real_coords, overlay_width, overlay_height) # This is my original registration algorithm
+        rotationAndBounds = getOverlayCoordinatesWithOptimalRotation(image_coords, real_coords, overlay_width, overlay_height) # This is my original registration algorithm
 
-        rotationAndBounds = compute_rotation_and_bounds(overlay_width, overlay_height, image_coords, real_coords) # This is ChatGPT's initial implementation
+        #rotationAndBounds = compute_rotation_and_bounds(overlay_width, overlay_height, image_coords, real_coords) # This is ChatGPT's initial implementation
         #rotationAndBounds = georeference_three_points_webmerc(image_coords, real_coords, overlay_width, overlay_height) # This is ChatGPT's web mercator implementation
 
         print(f"Calculated required map rotation, result is: {rotationAndBounds}")

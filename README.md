@@ -17,9 +17,15 @@ Denne tjener først og fremst registerMap.html, for å registrere nye kart. Se k
 
 
 * Bedre ergonomi ved velging av 3+3 punkter, helst ved å både kunne se orienteringskart og Leaflet ved siden av hverandre
-* Mer pålitelig algoritme for å registrere kart, må også ta høyde for "forstørr-og-roter"-behovet som kommer fra Leaflet
-* Støtt transformering av PDF til PNG når du drag-and-dropper en PDF i registreringsvinduet
+* Legg til checkbox som lar deg registrere kartet til database hvis du leser inn registreringen fra JSON
 
+* Støtt transformering av PDF til PNG når du drag-and-dropper en PDF i registreringsvinduet
+* Grensesnitt for å redigere metadata i databasen uten å røre kart-registreringen
+
+* (X) Koble den nye algoritmen opp til knappen som registrerer alt i databasen; her er det en bug
+* (X) Mer pålitelig algoritme for å registrere kart, må også ta høyde for "forstørr-og-roter"-behovet som kommer fra Leaflet
+* (X) Output hvilken feil algoritmen regnet ved registrering
+* (0) Du kan gjerne putte denne i databasen ved registrering
 * (X) Mer presis muspeker i Leaflet-kart, for presis registrering
 * (X) Preload Map name og Filename i registrerings-vindu når du drag & dropper en kartfil
 * (X) Må få inn JSON med metadata for kart: Dato, område, event, løype, kart-tegner, kart-klubb, løypelegger
