@@ -1,6 +1,6 @@
 # BergenOmap
 
-Orienteringskart for Bergen, med GPS.
+Orienteringskart for Bergen, med GPS-støtte for oppdagelsesferd i fremmed skog.
 
 
 # Notater
@@ -9,20 +9,18 @@ For å kjøre server for back-end:
 
 C:\source\O-maps\backend>python Backend.py
 
-Denne tjener først og fremst registerMap.html, for å registrere nye kart. Se kildekode for liste med endepunkter.
-
 # TODO
 
 ## Registrering av kart
 
-
 * Legg inn knapp for å bytte mellom satellittfoto og Norgeskart i Leaflet
-* Bedre ergonomi ved velging av 3+3 punkter, helst ved å både kunne se orienteringskart og Leaflet ved siden av hverandre
 * Legg til checkbox som lar deg registrere kartet til database hvis du leser inn registreringen fra JSON
 
 * Støtt transformering av PDF til PNG når du drag-and-dropper en PDF i registreringsvinduet
 * Grensesnitt for å redigere metadata i databasen uten å røre kart-registreringen
 
+* (X) Milepæl, registrering av kart er nå ganske enkelt! Kommet langt siden jeg måtte sjonglere filer og JS-definisjoner :)
+* (X) Bedre ergonomi ved velging av 3+3 punkter, helst ved å både kunne se orienteringskart og Leaflet ved siden av hverandre
 * (X) Koble den nye algoritmen opp til knappen som registrerer alt i databasen; her er det en bug
 * (X) Mer pålitelig algoritme for å registrere kart, må også ta høyde for "forstørr-og-roter"-behovet som kommer fra Leaflet
 * (X) Output hvilken feil algoritmen regnet ved registrering
@@ -49,11 +47,22 @@ Denne tjener først og fremst registerMap.html, for å registrere nye kart. Se k
 * (X) Fiks system for å rotere kart
 * (X) Regn ut koordinater for kart basert på dimensjon og målestokk for A4-kart
 * (X) Bytt checkboks til å resize kart og beholde forhold mellom X- og Y-dimensjon
+* (X) Motta bildefil til server med drag'n'drop
+* (X) Transformer bildefil på server til kart med gjennomsiktige marginer og null rotasjon
+* (X) Send respons tilbake til server
+* (X) Sett dimensjons-velgeren til bildet du har sendt
+* (X) (la brukeren gjøre registreringsprosessen)
+* (X) Få opprinnelig bildefil tilbake til server (sånn at den kan roteres til rett vinkel)
+* (X) Roter opprinnelig bilde til vinkel spesifisert av registreringsprosess
+* (X) Sett inn bilde-filnavn og andre innhentede data i JSON-datastruktur
+* (X) Send JSON-datastruktur til server 
+* (X) Lagre rotert bilde på server
+* (X) Eventuelt med kartnavn og annen metadata spesifisert i registrerings-vinduet
+* (X) Sørg for at filer/filnavn og JSON-data kan hentes inn i mapBrowser.js
 
 
 ## Navigasjons-app
 
-* Legge inn "månedens kart november" på Skage, hvor jeg og C gikk lørdagstur
 * Cache Leaflet-filer, orienteringskart og kart-definisjoner lokalt i appen i tilfelle brudd i nettverk (Cache Storage API?)
 
 * Sentrer kartet på brukerens posisjon (knapp)
@@ -63,6 +72,8 @@ Denne tjener først og fremst registerMap.html, for å registrere nye kart. Se k
 
 * Mulighet for å vise Strava-track
 * Database-integrasjon for å samle en brukers informasjon (fx. GPX-filer fra Strava)
+
+* Bedre grensesnitt for valg av kart. Full liste, sorter på avstand, vis kartene for nåværende posisjon, rask toggle mellom dem.
 
 * (X) Hosting, som eksponerer appen på twerkules.com
 * (X) Flere kart på en gang (generalisert, basert på en liste som kommer som parameter)
@@ -77,8 +88,8 @@ Denne tjener først og fremst registerMap.html, for å registrere nye kart. Se k
 * Strukturere web-kode i moduler
 * På et tidspunkt vil jeg kanskje ha en indeks-primærnøkkel heller enn å bruke kartnavnet, pga. mange kart i samme område
 * Scanne alle O-kartene mine som ikke er fra bedriftscup
-* Laste ned 2025-kartene fra bedriftscup (bruk script)
 
+* (X) Laste ned 2025-kartene fra bedriftscup (bruk script)
 * (0) Deploy-skript som genererer kart og kopierer filer til S3. Alternativ for å overskrive eksisterende kart.
 * (X) Serving av kart via DB-grensesnitt, så man slipper å tenke på filsystem
 * (X) Koble på og justere "dump database-funksjon" så filene kommer inn i AWS-katalogen og brukes direkte av kart-appen
@@ -92,15 +103,20 @@ Denne tjener først og fremst registerMap.html, for å registrere nye kart. Se k
 * (X) Database for kart-registreringer (sqlite)
 * (X) Javascript for å be nettleseren ikke sette låse telefonen ved inaktivitet
 
+## Scanning og registrering av spesifikke kart
+
+* Legge inn "månedens kart november" på Skage, hvor jeg og C gikk lørdagstur
+* Scanne alle kart fra løp som ikke er bedriftscuppen, så jeg kan legge dem inn
+* Registrere flere kart fra mange ulike områder, for support til personlige skogsturer og ekskursjoner
+
+
 ## Generelle forbedringer
-
-
 
 * Få inn merker i tre farger for hvor man har klikket på kart og overlay ved registrering
 * Funksjon for å re-generere final-bilder i database som webp
 * Mulighet for å lagre kart som webp. Når DB inneholder koordinater, original og live, kan du re-generere live on-demand som webp.
 
-* Beskjed i registrerings-grensesnitt om framdrift ved registrering ("Beregner registrering / overfører bilder / ferdig")
+* Beskjed i registrerings-grensesnitt om framdrift ved registrering ("Beregner registrering / overfører bilder / ferdig"), kanskje en sticky status-bar
 
 * (X) Fjern filnavnet fra viewDatabase-funksjonen; jeg trenger det ikke. Fjern også Attribution-feltet.
 * (X) Det burde gå an å one-shotte en justering i registrerings-grensesnittet sånn at jeg lett kan putte inn de nye feltene jeg ønsker å lagre i databasen.
@@ -123,10 +139,65 @@ Denne tjener først og fremst registerMap.html, for å registrere nye kart. Se k
 * (X) Lagt til gammelt kart (2005-ish?) fra Midtfjellet
 * (X) Lagt til Blåmannen
 
+
+
+## Kart-kilder -- flyfoto og topografiske kart
+
+Den Kartverket-tjenesten jeg har benyttet meg av, støtter følgende kilder:
+
+https://cache.kartverket.no/v1/wmts/1.0.0/europaForenklet/default/webmercator/{z}/{y}/{x}.png - grovt Europa-kart
+https://cache.kartverket.no/v1/wmts/1.0.0/toporaster/default/webmercator/{z}/{y}/{x}.png - høy-kontrast raster
+https://cache.kartverket.no/v1/wmts/1.0.0/topo/default/webmercator/{z}/{y}/{x}.png - detaljert topografisk (min standard)
+https://cache.kartverket.no/v1/wmts/1.0.0/sjokartraster/default/webmercator/{z}/{y}/{x}.png - sjøkart-raster
+https://cache.kartverket.no/v1/wmts/1.0.0/topograatone/default/webmercator/{z}/{y}/{x}.png - svart-hvitt topografisk
+
+Usikker på om dette lar seg implementere i Leaflet på en måte som er kompatibel med det jeg har bygget til nå, men det ville være dritfett:
+Å kunne switche mellom flyfoto og topografisk kart ville gjøre manuell registrering enklere.
+
+Se diskusjon med chatbotten: https://chatgpt.com/share/69239302-0f0c-8000-a610-abdb9d3be08e
+
+Kartverket / Norge i bilder tilbyr web service for flyfoto til ikke-kommersiell bruk. Se spesifikasjoner her:
+
+https://kartkatalog.geonorge.no/metadata/norge-i-bilder-wmts-euref89-utm33/072662f8-41c9-4e9a-a55a-343dee0c3f84 - Euref89 UTM33 (Østlandet)
+https://kartkatalog.geonorge.no/metadata/norge-i-bilder-wmts-euref89-utm32/2222a1d6-3225-43d7-806c-2c61a8328229 - Euref89 UTM32 (Vestlandet)
+https://kartkatalog.geonorge.no/metadata/norge-i-bilder-wmts-mercator/d639038c-a75b-446a-ad0c-16301cabfd21 - Mercator
+
+XML-spesifikasjoner er henholdsvis:
+
+http://opencache.statkart.no/gatekeeper/gk/gk.open_nib_utm33_wmts_v2?SERVICE=WMTS&REQUEST=GetCapabilities
+https://opencache.statkart.no/gatekeeper/gk/gk.open_nib_utm32_wmts_v2?SERVICE=WMTS&REQUEST=GetCapabilities
+https://opencache.statkart.no/gatekeeper/gk/gk.open_nib_web_mercator_wmts_v2?SERVICE=WMTS&REQUEST=GetCapabilities
+
+ChatGPT påstår at Leaflet støtter CRS (coordinate reference system) for UTM hvis jeg bruker pakkene Proj4Leaflet og WMTS (Web Map Tile Service).
+
+Ha! Amazing!! Jeg kan bruke Mercator-tjenesten (nederst) og den gir et fungerende kart av flyfoto. Usikker på registreringen. 
+Slik legger du den til i min Leaflet-plugin:
+
+var map = L.map('registrationMapBrowser').setView(startLatLon, 15);
+L.tileLayer(
+  'https://opencache{s}.statkart.no/gatekeeper/gk/gk.open_nib_web_mercator_wmts_v2' +
+  '?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0' +
+  '&LAYER=Nibcache_web_mercator_v2' +
+  '&STYLE=default' +
+  '&FORMAT=image/jpgpng' +
+  '&tileMatrixSet=default028mm' +
+  '&tileMatrix={z}&tileRow={y}&tileCol={x}',
+  {
+    subdomains: ['', '2', '3'],
+    attribution: '© Norge i bilder / Kartverket, Geovekst m.fl.',
+    maxZoom: 19
+  }).addTo(map);
+
+Credit til ChatGPT for å ha foreslått å snakke med tjenesten på den måten.
+
+En dag kan du sende en melding til teknisk og faglig kontakt i Kartverket og takke for at dette er tilgjengelig.
+Faglig kontakt - hardy.buller@kartverket.no
+Teknisk kontakt - trond.ola.ulvolden@kartverket.no 
+
+
 ## Bugs
 
-* Blåmannen-kartet "Blamannen-10k-rotates-weirdly.png" får rar rotasjon med følgende valg av koordinater: pixel [[774, 801.1508060817264], [2241.0588235294117, 2521.637535001242], [868.4313725490196, 3591.038093645571]], realworld [[60.41528220065873, 5.347149968147278], [60.403055906622484, 5.371466875076295], [60.3942598294791, 5.351312756538392]]. Se documentation-mappen.
-
+* (X) Blåmannen-kartet "Blamannen-10k-rotates-weirdly.png" får rar rotasjon [løst med ny algoritme]
 * (X) Fiks exceptions som skjer når du åpner database-visning
 * (X) Backend sender nå felt-navnet "filename" i stedet for "map_filename" ved registrering (som gjør at map.html ikke finner den)++
 
@@ -136,16 +207,19 @@ Denne tjener først og fremst registerMap.html, for å registrere nye kart. Se k
 * Menysystem for å velge flere kart, hvis de overlapper i terrenget
 
 * Funksjon for å registrere/stemple poster når man er ute og trener på et gammelt kart
+* Maskinlærings-system for å identifisere post-posisjoner på registrerte kart og regne disse om til ekte koordinater
+* Databasetabell for å støtte post-plasseringer på kart og posisjonene deres i virkeligheten
+
 * Mobilvennlig layout og funksjonalitet for kart-registrering (omfattende task, inkl. zoom og markører på bilder + mobilvennlig layout & navigasjon)
-* Automatisk identifikasjon av start/mål, poster, målestokk, postbeskrivelser, kart-areal via bildeanalyse med AWS, og utregning av GPS-koordinater for poster
 * Vise Strava-track i registrert kart
 * Logge track
 
 * Et mer ordentlig system for hosting og deploy, når det blir nødvendig
-* Deploy-script som setter opp all infrastuktur med én kommando
+* Deploy-script som setter opp all infrastuktur med én kommando (se https://chatgpt.com/g/g-p-68ee3678848c8191b3018884adb6cf75/c/692311b6-37c8-8326-a173-8d095bda9f39)
 
 * Kreditere kart-tegneren i grensesnittet, kanskje på placeholder-bildene før kartet lastes
 
+* (0) Automatisk identifikasjon av start/mål, poster, målestokk, postbeskrivelser, kart-areal via bildeanalyse med AWS, og utregning av GPS-koordinater for poster
 * (0) Kjør back-end i container som hostes på ECC og kobles mot S3 [dette skal jeg gjøre på en mer pragmatisk måte]
 * (0) Støtt direkte kobling mellom kartvisning og database i container [løst ved å la back-end serve kart rett fra DB]
 * (0) Kjøre selv-hostet instans av OpenStreetMap i container; la appen hente kart fra denne [løst med Kartverkets server]
@@ -157,41 +231,6 @@ Denne tjener først og fremst registerMap.html, for å registrere nye kart. Se k
 
 Jeg har custom-innstillinger for cache under Behaviors i CloudFront og Edit Metatada i S3. De er kortlevde.
 
-Handlinger som trengs for å registrere et nytt kart:
-
-* Finn kartfil
-* Hvis PDF, konverter den til PNG i høy oppløsning
-* Putt PNG i en katalog hvor MapTransform.py kan nå den
-* Legg inn URL for kart med marger men null rotasjon i registerMap.html
-* Gjør kartregistrerings-prosessen, generer JSON
-* Lim JSON-datastruktur inn i mapBrowser.js
-* Gjør kall til MapTransform.py og sett inn korrekt rotasjon fra registrerings-JSON
-* Lagre denne kartfilen på en plass hvor webserveren kan servere den
-* Legg inn filnavnet på filen i JSON-datastruktur i mapBrowser.js
-
-Det er litt som må gjøres for å få denne prosessen helt smooth.
-
-Helst burde brukeren få velge kartfil (URL eller drag-and-drop), gjøre registrerings-prosessen,
-fylle ut kartnavn og metadata og trykke "registrer" -> alle data lagres i database som nå er
-umiddelbart tilgjengelig fra maps.html.
-
-Implementasjon så langt:
-
- * (X) Motta bildefil til server med drag'n'drop
-
- * Støtt transformering av PDF
- 
- * (X) Transformer bildefil på server til kart med gjennomsiktige marginer og null rotasjon
- * (X) Send respons tilbake til server
- * (X) Sett dimensjons-velgeren til bildet du har sendt
- * (X) (la brukeren gjøre registreringsprosessen)
- * (X) Få opprinnelig bildefil tilbake til server (sånn at den kan roteres til rett vinkel)
- * (X) Roter opprinnelig bilde til vinkel spesifisert av registreringsprosess
- * (X) Sett inn bilde-filnavn og andre innhentede data i JSON-datastruktur
- * (X) Send JSON-datastruktur til server 
- * (X) Lagre rotert bilde på server
- * (X) Eventuelt med kartnavn og annen metadata spesifisert i registrerings-vinduet
- * (X) Sørg for at filer/filnavn og JSON-data kan hentes inn i mapBrowser.js
  
  
 
@@ -202,3 +241,4 @@ Implementasjon så langt:
  * pillow
  * numpy
  * scipy
+ * traceback
