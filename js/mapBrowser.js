@@ -2,7 +2,15 @@
 
 var errorOverlayUrl = 'https://cdn-icons-png.flaticon.com/512/110/110686.png';
 const placeholderOverlayFile = 'placeholder.webp';
-const backendBaseUrl = 'http://localhost:5000'; // Backend API base URL
+
+const isLocal =
+window.location.hostname === 'localhost' ||
+window.location.hostname === '127.0.0.1' ||
+window.location.hostname === '';
+
+const backendBaseUrl = isLocal ? 'http://127.0.0.1:5000' : '';  // '' = same origin in prod
+
+//const backendBaseUrl = 'http://localhost:5000'; // Backend API base URL
 
 /// Adds a map overlay to the map. Returns the overlay ImageOverlay object that was just added.
 function addOrienteeringMapOverlay(jsonDefinition, map, usePlaceholder=false) {

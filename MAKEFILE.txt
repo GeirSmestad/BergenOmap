@@ -1,0 +1,38 @@
+# Assumptions:
+# You have bootstrap.sh in the repo root (C:\Source\BergenOmap\bootstrap.sh).
+# Your SSH config has a host alias bergenomap pointing to the instance.
+# You run make from Git Bash on Windows and from Terminal on macOS.
+
+# Remote server and paths
+SERVER      = bergenomap
+REMOTE_DIR  = /srv/bergenomap
+SERVICE     = bergenomap
+
+# 1) Bootstrap a fresh server (packages, venv, nginx, systemd unit)
+bootstrap:
+	scp bootstrap.sh $(SERVER):~/bootstrap.sh
+	ssh $(SERVER) "chmod +x ~/bootstrap.sh && ./bootstrap.sh"
+
+# 1b) Convenience: full fresh setup + first deploy
+bootstrap-and-deploy: bootstrap deploy
+
+# 2) Regular code deploy (without the big SQLite DB)
+deploy:
+	rsync -avz --exclude "data/database.db" ./ $(SERVER):$(REMOTE_DIR)/
+	ssh $(SERVER) "cd $(REMOTE_DIR) && /srv/bergenomap/venv/bin/pip install -r requirements.txt || true"
+	ssh $(SERVER) "sudo systemctl restart $(SERVICE)"
+
+# 3) Deploy ONLY the database (when you explicitly want to update it)
+deploy-db:
+	rsync -avz data/database.db $(SERVER):$(REMOTE_DIR)/data/
+
+# 4) Logs: Flask/Gunicorn via systemd
+logs:
+	ssh $(SERVER) "journalctl -u $(SERVICE) -f"
+
+# 5) Logs: Nginx access and error
+logs-nginx:
+	ssh $(SERVER) "sudo tail -f /var/log/nginx/access.log"
+
+logs-nginx-error:
+	ssh $(SERVER) "sudo tail -f /var/log/nginx/error.log"

@@ -155,7 +155,44 @@ C:\source\O-maps\backend>python Backend.py
 
 ## Deployment
 
-Koble til med: ssh -i ~/.ssh/LightsailDefaultKey-eu-west-1.pem ubuntu@18.201.25.5
+Sett opp SSH-config i ~\.ssh\config, med følgende innhold (og ha pem-nøkkel i samme mappe):
+
+Host bergenomap
+    HostName 18.201.25.5
+    User ubuntu
+    IdentityFile ~/.ssh/LightsailDefaultKey-eu-west-1.pem
+
+
+Koble til web-server:
+  ssh -i ~/.ssh/LightsailDefaultKey-eu-west-1.pem ubuntu@18.201.25.5
+Kopier bootstrap-script:
+  scp -i ~/.ssh/LightsailDefaultKey-eu-west-1.pem .\bootstrap.sh ubuntu@18.201.25.5:~
+Kjør bootstrap-script (merk: må ha LF line-endings):
+  chmod +x ~/bootstrap.sh
+  ./bootstrap.sh
+
+Kopier app til server:
+  cd C:\Source\BergenOmap
+  scp -r * bergenomap:/srv/bergenomap/
+
+Installer Python-pakker på server:
+  cd /srv/bergenomap
+  /srv/bergenomap/venv/bin/pip install -r requirements.txt
+
+Start backend-server:
+  sudo systemctl start bergenomap
+
+Sjekk i loggene at appen starter opp:
+  journalctl -u bergenomap -f
+
+Se etter web-feil i logger:
+  sudo tail -f /var/log/nginx/access.log
+  sudo tail -f /var/log/nginx/error.log
+
+Re-deploy app når du har endret kode:
+rsync -avz --exclude data/database.db ./ bergenomap:/srv/bergenomap/
+ssh bergenomap "sudo systemctl restart bergenomap"
+
 
 
 ## Kart-kilder -- flyfoto og topografiske kart

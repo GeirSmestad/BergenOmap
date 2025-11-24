@@ -1,3 +1,10 @@
+const isLocal =
+window.location.hostname === 'localhost' ||
+window.location.hostname === '127.0.0.1' ||
+window.location.hostname === '';
+
+const API_BASE = isLocal ? 'http://127.0.0.1:5000' : '';  // '' = same origin in prod
+
 function calculateClickedImageCoordinates(event) {
   const img = event.target;
 
@@ -184,7 +191,7 @@ document.addEventListener("DOMContentLoaded", function () {
     };
 
 
-    fetch("http://127.0.0.1:5000/getOverlayCoordinates", {
+    fetch(`${API_BASE}/getOverlayCoordinates`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -211,7 +218,7 @@ document.addEventListener("DOMContentLoaded", function () {
         formData.append("imageRegistrationData", JSON.stringify(data));
     
         // Send original dropped image and data about its calculated placement to the server for transformation and storage
-        fetch("http://127.0.0.1:5000/transformAndStoreMapData", {
+        fetch(`${API_BASE}/transformAndStoreMapData`, {
           method: "POST",
           body: formData
         })
@@ -280,7 +287,7 @@ document.addEventListener("DOMContentLoaded", function () {
       const formData = new FormData();
       formData.append('file', file);
 
-      fetch('http://127.0.0.1:5000/processDroppedImage', {
+      fetch(`${API_BASE}/processDroppedImage`, {
         method: 'POST',
         body: formData
       })
@@ -362,7 +369,7 @@ function addOrienteeringMapOverlay(jsonDefinition, map, usePlaceholder=false) {
 
 
   document.getElementById('outputDatabaseButton').addEventListener('click', async () => {
-    const url = 'http://127.0.0.1:5000/dal/export_database';
+    const url = `${API_BASE}/dal/export_database`;
     const payload = {
         include_original: true,
         overwrite: true
@@ -405,7 +412,7 @@ function addOrienteeringMapOverlay(jsonDefinition, map, usePlaceholder=false) {
       overlayHeight: overlayHeight,
     };
 
-    fetch("http://127.0.0.1:5000/getOverlayCoordinates", {
+    fetch(`${API_BASE}/getOverlayCoordinates`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -430,7 +437,7 @@ function addOrienteeringMapOverlay(jsonDefinition, map, usePlaceholder=false) {
         formData.append("imageRegistrationData", JSON.stringify(payload));
 
         // Send original dropped image and data about its calculated placement to the server for transformation
-        fetch("http://127.0.0.1:5000/transformMap", {
+        fetch(`${API_BASE}/transformMap`, {
           method: "POST",
           body: formData
         })

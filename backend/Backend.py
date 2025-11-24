@@ -34,7 +34,7 @@ def add_transparent_border(image, border_size):
 
 # Example request:
 # http://127.0.0.1:5000/transform?angle=3.22247&border=150
-@app.route('/transform', methods=['GET'])
+@app.route('/api/transform', methods=['GET'])
 def transform_image():
     image_path = request.args.get('path')  # Path to the image file
     if image_path == None:
@@ -76,7 +76,7 @@ def transform_image():
         return str(e), 500
 
 
-@app.route('/processDroppedImage', methods=['POST'])
+@app.route('/api/processDroppedImage', methods=['POST'])
 def process_dropped_image():
     # Check if the request contains a file
     if 'file' not in request.files:
