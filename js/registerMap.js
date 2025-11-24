@@ -29,7 +29,9 @@ function calculateClickedImageCoordinates(event) {
 
 document.addEventListener("DOMContentLoaded", function () {
 
-  var startLatLon = [60.4002, 5.3411]; // Bergen
+  //var startLatLon = [60.4002, 5.3411]; // Bergen
+  var startLatLon =[60.3368, 5.33669] // Sør i Bergensdalen 
+
   window.droppedImage = null
 
   let currentLatLonIndex = 0;
@@ -65,7 +67,7 @@ document.addEventListener("DOMContentLoaded", function () {
     updateDisplay();
   });
 
-  var map = L.map('registrationMapBrowser').setView(startLatLon, 15);
+  var map = L.map('registrationMapBrowser').setView(startLatLon, 10);
   L.tileLayer('https://cache.kartverket.no/v1/wmts/1.0.0/topo/default/webmercator/{z}/{y}/{x}.png', {
     maxZoom: 18,
     attribution: '&copy; <a href="http://www.kartverket.no/">Kartverket</a>'

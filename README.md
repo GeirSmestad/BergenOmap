@@ -153,6 +153,10 @@ C:\source\O-maps\backend>python Backend.py
 * (X) Lagt til Blåmannen
 
 
+## Deployment
+
+Koble til med: ssh -i ~/.ssh/LightsailDefaultKey-eu-west-1.pem ubuntu@18.201.25.5
+
 
 ## Kart-kilder -- flyfoto og topografiske kart
 
