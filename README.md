@@ -16,8 +16,11 @@ C:\source\O-maps\backend>python Backend.py
 * Legg inn knapp for å bytte mellom satellittfoto og Norgeskart i Leaflet
 * Legg til checkbox som lar deg registrere kartet til database hvis du leser inn registreringen fra JSON
 
-* Støtt transformering av PDF til PNG når du drag-and-dropper en PDF i registreringsvinduet
 * Grensesnitt for å redigere metadata i databasen uten å røre kart-registreringen
+
+* Støtt transformering av PDF til PNG når du drag-and-dropper en PDF i registreringsvinduet
+* For registrering i bedriftscuppen, bør jeg ha et verktøy som raskt lar meg sette samme registrering på identiske kart
+* + lagre metadata fra mappestruktur. Trenger bare å få det ustrukturert inn i databasen; kan ta detaljene med AI-modell senere.
 
 * (X) Milepæl, registrering av kart er nå ganske enkelt! Kommet langt siden jeg måtte sjonglere filer og JS-definisjoner :)
 * (X) Bedre ergonomi ved velging av 3+3 punkter, helst ved å både kunne se orienteringskart og Leaflet ved siden av hverandre
@@ -87,8 +90,8 @@ C:\source\O-maps\backend>python Backend.py
 * Deployment på EC2/Lightsail
 * Strukturere web-kode i moduler
 * På et tidspunkt vil jeg kanskje ha en indeks-primærnøkkel heller enn å bruke kartnavnet, pga. mange kart i samme område
-* Scanne alle O-kartene mine som ikke er fra bedriftscup
 
+* (X) Scanne alle O-kartene mine som ikke er fra bedriftscup
 * (X) Laste ned 2025-kartene fra bedriftscup (bruk script)
 * (0) Deploy-skript som genererer kart og kopierer filer til S3. Alternativ for å overskrive eksisterende kart.
 * (X) Serving av kart via DB-grensesnitt, så man slipper å tenke på filsystem
@@ -105,14 +108,16 @@ C:\source\O-maps\backend>python Backend.py
 
 ## Scanning og registrering av spesifikke kart
 
-* Legge inn "månedens kart november" på Skage, hvor jeg og C gikk lørdagstur
-
-* Jeg mangler løpene fra Dyreparken i 2024, vet ikke hvor de kartene har blitt av.
-* Registrere flere kart fra mange ulike områder, for support til personlige skogsturer og ekskursjoner
-* Spor opp alle de gamle turorienterings-kartene dine, og få dem på listen over kart å registrere. Se på Gmail & Downloads
 
 * Registrere alle kartene som ikke er fra bedriftscuppen (mappe O-kart under Scans)
+* Registrere alle tur-orienteringskartene
 
+* Registrere bedriftscup-kart 2025
+* Registrere resten av bedriftscup-kart
+
+* (X) Jeg mangler løpene fra Dyreparken i 2024, vet ikke hvor de kartene har blitt av.
+* (X) Spor opp alle de gamle turorienterings-kartene dine, og få dem på listen over kart å registrere. Se på Gmail & Downloads
+* (X) Legge inn "månedens kart november" på Skage, hvor jeg og C gikk lørdagstur
 * (X) Scanne alle kart fra løp som ikke er bedriftscuppen, så jeg kan legge dem inn
 * (X) Gamle turorienteringskart som kan lastes ned fra turorientering.no
 * (X)Legge inn mine kart fra løp som mangler fra bedriftscuppens nettside i perioden jeg har løpt
@@ -214,12 +219,13 @@ Teknisk kontakt - trond.ola.ulvolden@kartverket.no
 * Menysystem hvis appen begynner å bli komplisert; ha flere funksjoner
 * Menysystem for å velge flere kart, hvis de overlapper i terrenget
 
+* Innsending av database-kart + kjente metadata til AI-modell for setting av metadata i database
 * Funksjon for å registrere/stemple poster når man er ute og trener på et gammelt kart
 * Maskinlærings-system for å identifisere post-posisjoner på registrerte kart og regne disse om til ekte koordinater
 * Databasetabell for å støtte post-plasseringer på kart og posisjonene deres i virkeligheten
 
 * Mobilvennlig layout og funksjonalitet for kart-registrering (omfattende task, inkl. zoom og markører på bilder + mobilvennlig layout & navigasjon)
-* Vise Strava-track i registrert kart
+* Vise Strava-track fra GPX-fil i registrert kart
 * Logge track
 
 * Et mer ordentlig system for hosting og deploy, når det blir nødvendig
