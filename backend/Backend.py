@@ -111,7 +111,7 @@ def process_dropped_image():
 """This endpoint accepts an un-treated image overlay and data about how it should be placed on a real-world map.
    It then transforms the overlay by adding transparent borders and rotating it to match this data, then
    stores both the original and transformed overlay, along with the supplied registration data, to the database."""
-@app.route('/transformAndStoreMapData', methods=['POST'])
+@app.route('/api/transformAndStoreMapData', methods=['POST'])
 def transform_and_store_map():
     # Check if the request contains a file and a data JSON object
     if 'file' not in request.files or 'imageRegistrationData' not in request.form:
@@ -162,7 +162,7 @@ def transform_and_store_map():
 
 
 """This endpoint will add margins and rotate the original image, and return the result. No DB storage."""
-@app.route('/transformMap', methods=['POST'])
+@app.route('/api/transformMap', methods=['POST'])
 def transform_map():
     # Check if the request contains a file and a data JSON object
     if 'file' not in request.files or 'imageRegistrationData' not in request.form:
@@ -198,7 +198,7 @@ def transform_map():
     return send_file(transformed_map_io, mimetype='image/png')
 
 
-@app.route('/getOverlayCoordinates', methods=['POST'])
+@app.route('/api/getOverlayCoordinates', methods=['POST'])
 def get_overlay_coordinates():
     try:
         # Parse the required parameters from the request JSON
@@ -269,7 +269,7 @@ def close_db(exception):
         db.close()
 
 
-@app.route('/dal/insert_map', methods=['POST'])
+@app.route('/api/dal/insert_map', methods=['POST'])
 def insert_map():
     if not is_local_request():
         abort(404)
@@ -279,13 +279,13 @@ def insert_map():
     db.insert_map(map_data)
     return jsonify({'message': 'Map added successfully'}), 201
 
-@app.route('/dal/list_maps', methods=['GET'])
+@app.route('/api/dal/list_maps', methods=['GET'])
 def list_maps():
     db = get_db()
     maps = db.list_maps()
     return jsonify(maps)
 
-@app.route('/dal/mapfile/original/<map_name>', methods=['GET'])
+@app.route('/api/dal/mapfile/original/<map_name>', methods=['GET'])
 def get_mapfile_original(map_name):
     if not is_local_request():
         abort(404)
@@ -297,7 +297,7 @@ def get_mapfile_original(map_name):
     else:
         abort(404, description="Map not found")
 
-@app.route('/dal/mapfile/final/<map_name>', methods=['GET'])
+@app.route('/api/dal/mapfile/final/<map_name>', methods=['GET'])
 def get_mapfile_final(map_name):
     if not is_local_request():
         abort(404)
@@ -310,7 +310,7 @@ def get_mapfile_final(map_name):
         abort(404, description="Map not found")
 
 
-@app.route('/dal/export_database', methods=['POST'])
+@app.route('/api/dal/export_database', methods=['POST'])
 def export_database():
     data = request.get_json()
 
@@ -336,7 +336,7 @@ def export_database():
 
 # Database visualization
 # To view, query http://127.0.0.1:5000/viewDatabase
-@app.route('/viewDatabase')
+@app.route('/api/viewDatabase')
 def visualize_database():
     if not is_local_request():
         abort(404)
@@ -392,8 +392,8 @@ def visualize_database():
                 <td>{{ map.overlay_width }} x {{ map.overlay_height }}</td>
                 <td>{{ map.selected_pixel_coords }}</td>
                 <td>{{ map.selected_realworld_coords }}</td>
-                <td><img src="/dal/mapfile/original/{{ map.map_name }}" alt="Original Map"></td>
-                <td><img src="/dal/mapfile/final/{{ map.map_name }}" alt="Final Map"></td>
+                <td><img src="dal/mapfile/original/{{ map.map_name }}" alt="Original Map"></td>
+                <td><img src="dal/mapfile/final/{{ map.map_name }}" alt="Final Map"></td>
             </tr>
             {% endfor %}
         </table>

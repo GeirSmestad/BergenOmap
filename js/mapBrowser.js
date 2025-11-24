@@ -24,7 +24,7 @@ function addOrienteeringMapOverlay(jsonDefinition, map, usePlaceholder=false) {
     overlay_file = placeholderOverlayFile;
   } else {
     // Use backend API endpoint to get the map file
-    overlay_file = `${backendBaseUrl}/dal/mapfile/final/${encodeURIComponent(jsonDefinition.map_name)}`;
+    overlay_file = `${backendBaseUrl}/api/dal/mapfile/final/${encodeURIComponent(jsonDefinition.map_name)}`;
   }
 
   return L.imageOverlay(overlay_file, overlay_coords, {
@@ -52,7 +52,7 @@ document.addEventListener("DOMContentLoaded", async function() {
   // Fetch map definitions from backend API
   let mapDefinitions = [];
   try {
-    const response = await fetch(`${backendBaseUrl}/dal/list_maps`, {
+    const response = await fetch(`${backendBaseUrl}/api/dal/list_maps`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json'

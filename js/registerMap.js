@@ -191,7 +191,7 @@ document.addEventListener("DOMContentLoaded", function () {
     };
 
 
-    fetch(`${API_BASE}/getOverlayCoordinates`, {
+    fetch(`${API_BASE}/api/getOverlayCoordinates`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -218,7 +218,7 @@ document.addEventListener("DOMContentLoaded", function () {
         formData.append("imageRegistrationData", JSON.stringify(data));
     
         // Send original dropped image and data about its calculated placement to the server for transformation and storage
-        fetch(`${API_BASE}/transformAndStoreMapData`, {
+        fetch(`${API_BASE}/api/transformAndStoreMapData`, {
           method: "POST",
           body: formData
         })
@@ -287,7 +287,7 @@ document.addEventListener("DOMContentLoaded", function () {
       const formData = new FormData();
       formData.append('file', file);
 
-      fetch(`${API_BASE}/processDroppedImage`, {
+      fetch(`${API_BASE}/api/processDroppedImage`, {
         method: 'POST',
         body: formData
       })
@@ -369,7 +369,7 @@ function addOrienteeringMapOverlay(jsonDefinition, map, usePlaceholder=false) {
 
 
   document.getElementById('outputDatabaseButton').addEventListener('click', async () => {
-    const url = `${API_BASE}/dal/export_database`;
+    const url = `${API_BASE}/api/dal/export_database`;
     const payload = {
         include_original: true,
         overwrite: true
@@ -412,7 +412,7 @@ function addOrienteeringMapOverlay(jsonDefinition, map, usePlaceholder=false) {
       overlayHeight: overlayHeight,
     };
 
-    fetch(`${API_BASE}/getOverlayCoordinates`, {
+    fetch(`${API_BASE}/api/getOverlayCoordinates`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -437,7 +437,7 @@ function addOrienteeringMapOverlay(jsonDefinition, map, usePlaceholder=false) {
         formData.append("imageRegistrationData", JSON.stringify(payload));
 
         // Send original dropped image and data about its calculated placement to the server for transformation
-        fetch(`${API_BASE}/transformMap`, {
+        fetch(`${API_BASE}/api/transformMap`, {
           method: "POST",
           body: formData
         })
