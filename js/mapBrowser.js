@@ -31,9 +31,6 @@ document.addEventListener("DOMContentLoaded", async function() {
 
   var startLatLon = [60.4002, 5.3411]; // Bergen
 
-  const urlParams = new URLSearchParams(window.location.search);
-  const mamsPaps = urlParams.get('MamsPaps');
-
   requestWakeLock();
 
   const allMapOverlays = [];
@@ -61,14 +58,6 @@ document.addEventListener("DOMContentLoaded", async function() {
     mapDefinitions = await response.json();
     console.log(`Loaded ${mapDefinitions.length} maps from backend`);
 
-    // Filter out offending map if MamsPaps parameter is not set
-    if (mamsPaps !== "true") {
-      // Remove the map at index 2 (assuming it's still the same map)
-      // You may want to filter by map_name instead for more reliability
-      if (mapDefinitions.length > 2) {
-        mapDefinitions.splice(2, 1);
-      }
-    }
   } catch (error) {
     console.error('Error fetching map definitions:', error);
     // Continue with empty mapDefinitions array - map will still be initialized
