@@ -106,8 +106,16 @@ C:\source\O-maps\backend>python Backend.py
 ## Scanning og registrering av spesifikke kart
 
 * Legge inn "månedens kart november" på Skage, hvor jeg og C gikk lørdagstur
-* Scanne alle kart fra løp som ikke er bedriftscuppen, så jeg kan legge dem inn
+
+* Jeg mangler løpene fra Dyreparken i 2024, vet ikke hvor de kartene har blitt av.
 * Registrere flere kart fra mange ulike områder, for support til personlige skogsturer og ekskursjoner
+* Spor opp alle de gamle turorienterings-kartene dine, og få dem på listen over kart å registrere. Se på Gmail & Downloads
+
+* Registrere alle kartene som ikke er fra bedriftscuppen (mappe O-kart under Scans)
+
+* (X) Scanne alle kart fra løp som ikke er bedriftscuppen, så jeg kan legge dem inn
+* (X) Gamle turorienteringskart som kan lastes ned fra turorientering.no
+* (X)Legge inn mine kart fra løp som mangler fra bedriftscuppens nettside i perioden jeg har løpt
 
 
 ## Generelle forbedringer
