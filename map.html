@@ -34,11 +34,17 @@
 
 <body>
 
-  <!-- Add your site or application content here -->
-  <script src="js/mapBrowser.js"></script>
-
   <div id="mapBrowser"></div>
+  <button id="mapSelectorToggle" class="map-selector-toggle" type="button"
+          aria-controls="mapSelectorPanel" aria-expanded="false">
+    Select map
+  </button>
+  <div id="mapSelectorPanel" class="map-selector-panel" aria-hidden="true">
+    <div class="map-selector-panel__header">Maps nearby</div>
+    <ul id="mapSelectorList" class="map-selector-list"></ul>
+  </div>
 
+  <script src="js/mapBrowser.js"></script>
 
 </body>
 

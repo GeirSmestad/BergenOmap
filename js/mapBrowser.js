@@ -1,7 +1,5 @@
-// Map definitions are now loaded from the backend API instead of mapDefinitions.js
 
 var errorOverlayUrl = 'https://cdn-icons-png.flaticon.com/512/110/110686.png';
-const placeholderOverlayFile = 'placeholder.webp';
 
 const isLocal =
 window.location.hostname === 'localhost' ||
@@ -10,24 +8,13 @@ window.location.hostname === '';
 
 const backendBaseUrl = isLocal ? 'http://127.0.0.1:5000' : '';  // '' = same origin in prod
 
-//const backendBaseUrl = 'http://localhost:5000'; // Backend API base URL
 
 /// Adds a map overlay to the map. Returns the overlay ImageOverlay object that was just added.
-function addOrienteeringMapOverlay(jsonDefinition, map, usePlaceholder=false) {
-  let nw_coords = jsonDefinition.nw_coords;
-  let se_coords = jsonDefinition.se_coords;
+function addOrienteeringMapOverlay(jsonDefinition, map) {
+  const overlayCoords = [jsonDefinition.nw_coords, jsonDefinition.se_coords];
+  const overlayFile = `${backendBaseUrl}/api/dal/mapfile/final/${encodeURIComponent(jsonDefinition.map_name)}`;
 
-  let overlay_coords = [nw_coords, se_coords]
-  let overlay_file;
-
-  if (usePlaceholder) {
-    overlay_file = placeholderOverlayFile;
-  } else {
-    // Use backend API endpoint to get the map file
-    overlay_file = `${backendBaseUrl}/api/dal/mapfile/final/${encodeURIComponent(jsonDefinition.map_name)}`;
-  }
-
-  return L.imageOverlay(overlay_file, overlay_coords, {
+  return L.imageOverlay(overlayFile, overlayCoords, {
     opacity: 1,
     errorOverlayUrl: errorOverlayUrl,
     alt: '',
@@ -41,7 +28,14 @@ document.addEventListener("DOMContentLoaded", async function() {
 
   requestWakeLock();
 
-  const allMapOverlays = [];
+  let mapDefinitions = [];
+  let currentOverlay = null;
+  let selectedMapName = null;
+  let lastKnownLocation = null;
+
+  const mapSelectorToggle = document.getElementById('mapSelectorToggle');
+  const mapSelectorPanel = document.getElementById('mapSelectorPanel');
+  const mapSelectorList = document.getElementById('mapSelectorList');
 
   var map = L.map('mapBrowser').setView(startLatLon, 15);
   L.tileLayer('https://cache.kartverket.no/v1/wmts/1.0.0/topo/default/webmercator/{z}/{y}/{x}.png', {
@@ -50,7 +44,6 @@ document.addEventListener("DOMContentLoaded", async function() {
   }).addTo(map);
 
   // Fetch map definitions from backend API
-  let mapDefinitions = [];
   try {
     const response = await fetch(`${backendBaseUrl}/api/dal/list_maps`, {
       method: 'GET',
@@ -71,25 +64,109 @@ document.addEventListener("DOMContentLoaded", async function() {
     // Continue with empty mapDefinitions array - map will still be initialized
   }
 
-  // Add all overlays in mapDefinitions to main map, but only placeholders at first. 'click' event
-  // handler replaces the placeholder map with the actual map, only using bandwidth for the maps
-  // that are requested.
-  for (let i = 0 ; i < mapDefinitions.length; i++) {
-    let placeholderOverlay = addOrienteeringMapOverlay(mapDefinitions[i], map, true);
-    allMapOverlays.push(placeholderOverlay);
-
-    let replacePlaceholderOverlayWithActualMap = function() {
-      placeholderOverlay.remove();
-
-      let actualMapOverlay = addOrienteeringMapOverlay(mapDefinitions[i], map);
-      replaceAtIndex(allMapOverlays, i, actualMapOverlay);
+  function setSelectorVisibility(shouldShow) {
+    if (shouldShow) {
+      renderMapSelectionList();
     }
 
-    placeholderOverlay.addEventListener('click', replacePlaceholderOverlayWithActualMap);
+    mapSelectorPanel.classList.toggle('is-visible', shouldShow);
+    mapSelectorPanel.setAttribute('aria-hidden', (!shouldShow).toString());
+    mapSelectorToggle.setAttribute('aria-expanded', shouldShow ? 'true' : 'false');
+    mapSelectorToggle.textContent = shouldShow ? 'Hide maps' : 'Select map';
   }
 
+  function renderMapSelectionList() {
+    const locationSnapshot = lastKnownLocation
+      ? { lat: lastKnownLocation.lat, lng: lastKnownLocation.lng }
+      : null;
+
+    const entries = mapDefinitions.map((definition) => {
+      const center = getMapCenterCoords(definition);
+      const distance = locationSnapshot ? calculateDistanceMeters(locationSnapshot, center) : null;
+      return { definition, distance };
+    });
+
+    entries.sort((a, b) => {
+      if (a.distance === null && b.distance === null) {
+        return a.definition.map_name.localeCompare(b.definition.map_name);
+      }
+      if (a.distance === null) {
+        return 1;
+      }
+      if (b.distance === null) {
+        return -1;
+      }
+      return a.distance - b.distance;
+    });
+
+    const fragment = document.createDocumentFragment();
+
+    if (entries.length === 0) {
+      const emptyItem = document.createElement('li');
+      emptyItem.className = 'map-selector-empty';
+      emptyItem.textContent = 'No map overlays available';
+      fragment.appendChild(emptyItem);
+    } else {
+      entries.forEach(({ definition, distance }) => {
+        const listItem = document.createElement('li');
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'map-selector-item';
+        button.dataset.mapName = definition.map_name;
+
+        if (definition.map_name === selectedMapName) {
+          button.classList.add('selected');
+        }
+
+        const nameEl = document.createElement('span');
+        nameEl.className = 'map-selector-item__name';
+        nameEl.textContent = definition.map_name;
+
+        const distanceEl = document.createElement('span');
+        distanceEl.className = 'map-selector-item__distance';
+        distanceEl.textContent = formatDistanceLabel(distance);
+
+        button.appendChild(nameEl);
+        button.appendChild(distanceEl);
+
+        button.addEventListener('click', () => {
+          handleMapSelection(definition);
+        });
+
+        listItem.appendChild(button);
+        fragment.appendChild(listItem);
+      });
+    }
+
+    mapSelectorList.innerHTML = '';
+    mapSelectorList.appendChild(fragment);
+  }
+
+  function handleMapSelection(definition) {
+    if (currentOverlay) {
+      currentOverlay.remove();
+      currentOverlay = null;
+    }
+
+    currentOverlay = addOrienteeringMapOverlay(definition, map);
+    selectedMapName = definition.map_name;
+    highlightSelectedListItem();
+  }
+
+  function highlightSelectedListItem() {
+    const buttons = mapSelectorList.querySelectorAll('.map-selector-item');
+    buttons.forEach((button) => {
+      const isSelected = button.dataset.mapName === selectedMapName;
+      button.classList.toggle('selected', isSelected);
+    });
+  }
+
+  mapSelectorToggle.addEventListener('click', () => {
+    const willShow = !mapSelectorPanel.classList.contains('is-visible');
+    setSelectorVisibility(willShow);
+  });
+
   window.map = map;
-  window.allMapOverlays = allMapOverlays;
 
   // **-- Location functionality --** //
   // Function to handle the location found event
@@ -109,6 +186,8 @@ document.addEventListener("DOMContentLoaded", async function() {
 
     // Add a circle around the user's location
     window.locationCircle = L.circle(e.latlng, radius).addTo(map);
+
+    lastKnownLocation = e.latlng;
   }
 
 // Function to handle the location error event
@@ -184,12 +263,38 @@ document.addEventListener("DOMContentLoaded", async function() {
 
 
   // **-- Helper methods --** //
-  function replaceAtIndex(array, index, newValue) {
-    if (index >= 0 && index < array.length) {
-      array[index] = newValue;
-    } else {
-      console.error('Index out of bounds');
+  function getMapCenterCoords(definition) {
+    const lat = (definition.nw_coords[0] + definition.se_coords[0]) / 2;
+    const lng = (definition.nw_coords[1] + definition.se_coords[1]) / 2;
+    return { lat, lng };
+  }
+
+  function calculateDistanceMeters(pointA, pointB) {
+    const toRad = (value) => value * Math.PI / 180;
+    const earthRadius = 6371000; // meters
+    const dLat = toRad(pointB.lat - pointA.lat);
+    const dLon = toRad(pointB.lng - pointA.lng);
+    const lat1 = toRad(pointA.lat);
+    const lat2 = toRad(pointB.lat);
+
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.sin(dLon / 2) * Math.sin(dLon / 2) * Math.cos(lat1) * Math.cos(lat2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+    return earthRadius * c;
+  }
+
+  function formatDistanceLabel(distanceInMeters) {
+    if (distanceInMeters === null || typeof distanceInMeters === 'undefined') {
+      return 'Distance unavailable';
     }
+
+    if (distanceInMeters < 1000) {
+      return `${Math.round(distanceInMeters)} m`;
+    }
+
+    return `${(distanceInMeters / 1000).toFixed(1)} km`;
   }
 
 
