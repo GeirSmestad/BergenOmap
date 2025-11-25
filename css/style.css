@@ -187,6 +187,7 @@ textarea {
   padding: 0.85rem 0.5rem;
   color: rgba(255, 255, 255, 0.75);
   transition: background 160ms ease, color 160ms ease;
+  font-family: "Calibri";
 }
 
 .map-selector-mode:last-child {
