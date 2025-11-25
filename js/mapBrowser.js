@@ -28,16 +28,25 @@ document.addEventListener("DOMContentLoaded", async function() {
 
   requestWakeLock();
 
-  let mapDefinitions = [];
-  let currentOverlay = null;
-  let selectedMapName = null;
-  let lastKnownLocation = null;
+  const mapState = {
+    mapDefinitions: [],
+    currentOverlay: null,
+    selectedMapName: null,
+    lastKnownLocation: null,
+    userHasInteractedWithMap: false,
+    hasReceivedInitialLocation: false
+  };
 
   const mapSelectorToggle = document.getElementById('mapSelectorToggle');
   const mapSelectorPanel = document.getElementById('mapSelectorPanel');
   const mapSelectorList = document.getElementById('mapSelectorList');
 
   var map = L.map('mapBrowser').setView(startLatLon, 15);
+  
+  map.once('mousedown', () => {
+    mapState.userHasInteractedWithMap = true;
+  });
+
   L.tileLayer('https://cache.kartverket.no/v1/wmts/1.0.0/topo/default/webmercator/{z}/{y}/{x}.png', {
     maxZoom: 18,
     attribution: '&copy; <a href="http://www.kartverket.no/">Kartverket</a>'
@@ -56,12 +65,12 @@ document.addEventListener("DOMContentLoaded", async function() {
       throw new Error(`Failed to fetch maps: ${response.statusText}`);
     }
 
-    mapDefinitions = await response.json();
-    console.log(`Loaded ${mapDefinitions.length} maps from backend`);
+    mapState.mapDefinitions = await response.json();
+    console.log(`Loaded ${mapState.mapDefinitions.length} maps from backend`);
 
   } catch (error) {
     console.error('Error fetching map definitions:', error);
-    // Continue with empty mapDefinitions array - map will still be initialized
+    // Continue with empty map definition array - map will still be initialized
   }
 
   function setSelectorVisibility(shouldShow) {
@@ -76,11 +85,11 @@ document.addEventListener("DOMContentLoaded", async function() {
   }
 
   function renderMapSelectionList() {
-    const locationSnapshot = lastKnownLocation
-      ? { lat: lastKnownLocation.lat, lng: lastKnownLocation.lng }
+    const locationSnapshot = mapState.lastKnownLocation
+      ? { lat: mapState.lastKnownLocation.lat, lng: mapState.lastKnownLocation.lng }
       : null;
 
-    const entries = mapDefinitions.map((definition) => {
+    const entries = mapState.mapDefinitions.map((definition) => {
       const center = getMapCenterCoords(definition);
       const distance = locationSnapshot ? calculateDistanceMeters(locationSnapshot, center) : null;
       return { definition, distance };
@@ -114,7 +123,7 @@ document.addEventListener("DOMContentLoaded", async function() {
         button.className = 'map-selector-item';
         button.dataset.mapName = definition.map_name;
 
-        if (definition.map_name === selectedMapName) {
+        if (definition.map_name === mapState.selectedMapName) {
           button.classList.add('selected');
         }
 
@@ -143,20 +152,20 @@ document.addEventListener("DOMContentLoaded", async function() {
   }
 
   function handleMapSelection(definition) {
-    if (currentOverlay) {
-      currentOverlay.remove();
-      currentOverlay = null;
+    if (mapState.currentOverlay) {
+      mapState.currentOverlay.remove();
+      mapState.currentOverlay = null;
     }
 
-    currentOverlay = addOrienteeringMapOverlay(definition, map);
-    selectedMapName = definition.map_name;
+    mapState.currentOverlay = addOrienteeringMapOverlay(definition, map);
+    mapState.selectedMapName = definition.map_name;
     highlightSelectedListItem();
   }
 
   function highlightSelectedListItem() {
     const buttons = mapSelectorList.querySelectorAll('.map-selector-item');
     buttons.forEach((button) => {
-      const isSelected = button.dataset.mapName === selectedMapName;
+      const isSelected = button.dataset.mapName === mapState.selectedMapName;
       button.classList.toggle('selected', isSelected);
     });
   }
@@ -169,7 +178,6 @@ document.addEventListener("DOMContentLoaded", async function() {
   window.map = map;
 
   // **-- Location functionality --** //
-  // Function to handle the location found event
   function onLocationFound(e) {
     var radius = e.accuracy / 2;
 
@@ -187,7 +195,14 @@ document.addEventListener("DOMContentLoaded", async function() {
     // Add a circle around the user's location
     window.locationCircle = L.circle(e.latlng, radius).addTo(map);
 
-    lastKnownLocation = e.latlng;
+    mapState.lastKnownLocation = e.latlng;
+
+    if (!mapState.hasReceivedInitialLocation) {
+      if (!mapState.userHasInteractedWithMap) {
+        map.setView(e.latlng, map.getZoom());
+      }
+      mapState.hasReceivedInitialLocation = true;
+    }
   }
 
 // Function to handle the location error event

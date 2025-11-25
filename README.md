@@ -76,8 +76,17 @@ C:\source\O-maps\backend>python Backend.py
 * Mulighet for å vise Strava-track
 * Database-integrasjon for å samle en brukers informasjon (fx. GPX-filer fra Strava)
 
-* Bedre grensesnitt for valg av kart. Full liste, sorter på avstand, vis kartene for nåværende posisjon, rask toggle mellom dem.
 
+* Kanskje med en toggle-knapp øverst for å følge posisjonen til brukeren?
+
+* Kanskje prøve ut om det finnes en måte å vise på oversiktskartet hvilke kart som er tilgjengelige.
+* Vise en liste over alle kart som er tilgjengelige på posisjonen kartet er satt
+
+* Skru av live oppdatering av posisjons-visning når du simulerer posisjon, ellers spretter den tilbake
+* Kanskje en debug-mode som gjør det lettere å velge simulert posisjon på kartet?
+
+* (X) Prøv med sentrering på nåværende posisjon første gang du laster siden.
+* (X)Bedre grensesnitt for valg av kart. Full liste, sorter på avstand, vis kartene for nåværende posisjon, rask toggle mellom dem.
 * (X) Hosting, som eksponerer appen på twerkules.com
 * (X) Flere kart på en gang (generalisert, basert på en liste som kommer som parameter)
 * (X) Velge hvilke(t) kart man vil se, når det er flere å velge mellom (fx. ikke laste før du klikker på kart-området)  
