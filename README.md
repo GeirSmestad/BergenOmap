@@ -87,10 +87,11 @@ C:\source\O-maps\backend>python Backend.py
 ## Infrastruktur
 
 
-* Deployment på EC2/Lightsail
 * Strukturere web-kode i moduler
 * På et tidspunkt vil jeg kanskje ha en indeks-primærnøkkel heller enn å bruke kartnavnet, pga. mange kart i samme område
+* Database-nøkkel som gir versjonen av et bestemt kart, slik at jeg kan cache i nettleseren til brukeren
 
+* (X) Deployment på EC2/Lightsail
 * (X) Scanne alle O-kartene mine som ikke er fra bedriftscup
 * (X) Laste ned 2025-kartene fra bedriftscup (bruk script)
 * (0) Deploy-skript som genererer kart og kopierer filer til S3. Alternativ for å overskrive eksisterende kart.
@@ -155,18 +156,19 @@ C:\source\O-maps\backend>python Backend.py
 
 ## Deployment
 
+Opprett Lightsail-server med statisk IP. Legg til firewall-regel for å tillate port 443 (HTTPS)
+
 Sett opp SSH-config i ~\.ssh\config, med følgende innhold (og ha pem-nøkkel i samme mappe):
 
 Host bergenomap
-    HostName 18.201.25.5
+    HostName 54.220.213.9
     User ubuntu
     IdentityFile ~/.ssh/LightsailDefaultKey-eu-west-1.pem
 
-
 Koble til web-server:
-  ssh -i ~/.ssh/LightsailDefaultKey-eu-west-1.pem ubuntu@18.201.25.5
+  ssh -i ~/.ssh/LightsailDefaultKey-eu-west-1.pem ubuntu@54.220.213.9
 Kopier bootstrap-script:
-  scp -i ~/.ssh/LightsailDefaultKey-eu-west-1.pem .\bootstrap.sh ubuntu@18.201.25.5:~
+  scp -i ~/.ssh/LightsailDefaultKey-eu-west-1.pem .\bootstrap.sh ubuntu@54.220.213.9:~
 Kjør bootstrap-script (merk: må ha LF line-endings):
   chmod +x ~/bootstrap.sh
   ./bootstrap.sh
@@ -190,9 +192,17 @@ Se etter web-feil i logger:
   sudo tail -f /var/log/nginx/error.log
 
 Re-deploy app når du har endret kode:
-rsync -avz --exclude data/database.db ./ bergenomap:/srv/bergenomap/
-ssh bergenomap "sudo systemctl restart bergenomap"
+  rsync -avz --exclude data/database.db ./ bergenomap:/srv/bergenomap/
+  ssh bergenomap "sudo systemctl restart bergenomap"
 
+Hvis du ikke får rsync til å fungere, deploy filene og mappene du trenger med scp:
+  scp -i ~/.ssh/LightsailDefaultKey-eu-west-1.pem -r `
+    *.html `
+    js `
+    css `
+    backend `
+    ubuntu@54.220.213.9:/srv/bergenomap/
+  ssh bergenomap "sudo systemctl restart bergenomap"
 
 
 ## Kart-kilder -- flyfoto og topografiske kart
@@ -253,7 +263,7 @@ Teknisk kontakt - trond.ola.ulvolden@kartverket.no
 
 * (X) Blåmannen-kartet "Blamannen-10k-rotates-weirdly.png" får rar rotasjon [løst med ny algoritme]
 * (X) Fiks exceptions som skjer når du åpner database-visning
-* (X) Backend sender nå felt-navnet "filename" i stedet for "map_filename" ved registrering (som gjør at map.html ikke finner den)++
+* (X) Backend sender nå felt-navnet "filename" i stedet for "map_filename" ved registrering (som gjør at map.html ikke finner den)
 
 ## Langsiktige ambisjoner
 
@@ -269,11 +279,10 @@ Teknisk kontakt - trond.ola.ulvolden@kartverket.no
 * Vise Strava-track fra GPX-fil i registrert kart
 * Logge track
 
-* Et mer ordentlig system for hosting og deploy, når det blir nødvendig
-* Deploy-script som setter opp all infrastuktur med én kommando (se https://chatgpt.com/g/g-p-68ee3678848c8191b3018884adb6cf75/c/692311b6-37c8-8326-a173-8d095bda9f39)
-
 * Kreditere kart-tegneren i grensesnittet, kanskje på placeholder-bildene før kartet lastes
 
+* (X) Et mer ordentlig system for hosting og deploy, når det blir nødvendig
+* (X) Deploy-script som setter opp all infrastuktur med én kommando [nært nok med bootstrap + scp]
 * (0) Automatisk identifikasjon av start/mål, poster, målestokk, postbeskrivelser, kart-areal via bildeanalyse med AWS, og utregning av GPS-koordinater for poster
 * (0) Kjør back-end i container som hostes på ECC og kobles mot S3 [dette skal jeg gjøre på en mer pragmatisk måte]
 * (0) Støtt direkte kobling mellom kartvisning og database i container [løst ved å la back-end serve kart rett fra DB]

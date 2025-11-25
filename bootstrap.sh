@@ -1,9 +1,11 @@
 #!/bin/bash
 set -e
 
+DOMAIN="omaps.twerkules.com"
+
 # Update OS and install base packages
 sudo apt update
-sudo apt install -y python3 python3-venv python3-pip nginx
+sudo apt install -y python3 python3-venv python3-pip nginx rsync certbot python3-certbot-nginx
 
 # App directory
 sudo mkdir -p /srv/bergenomap
