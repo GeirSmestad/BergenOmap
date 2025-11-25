@@ -7,6 +7,7 @@ window.location.hostname === '127.0.0.1' ||
 window.location.hostname === '';
 
 const backendBaseUrl = isLocal ? 'http://127.0.0.1:5000' : '';  // '' = same origin in prod
+const ONLY_FOLLOW_WHEN_ACCURACY_IS_BETTER_THAN = 100;
 
 
 /// Adds a map overlay to the map. Returns the overlay ImageOverlay object that was just added.
@@ -33,13 +34,18 @@ document.addEventListener("DOMContentLoaded", async function() {
     currentOverlay: null,
     selectedMapName: null,
     lastKnownLocation: null,
+    lastKnownAccuracy: null,
     userHasInteractedWithMap: false,
-    hasReceivedInitialLocation: false
+    hasReceivedInitialLocation: false,
+    toggleButtons: {
+      followPosition: false
+    }
   };
 
   const mapSelectorToggle = document.getElementById('mapSelectorToggle');
   const mapSelectorPanel = document.getElementById('mapSelectorPanel');
   const mapSelectorList = document.getElementById('mapSelectorList');
+  const followPositionToggle = document.getElementById('followPositionToggle');
 
   var map = L.map('mapBrowser').setView(startLatLon, 15);
   
@@ -170,10 +176,31 @@ document.addEventListener("DOMContentLoaded", async function() {
     });
   }
 
+  function updateFollowPositionButtonUI() {
+    const isEnabled = mapState.toggleButtons.followPosition;
+    followPositionToggle.classList.toggle('is-active', isEnabled);
+    followPositionToggle.setAttribute('aria-pressed', isEnabled ? 'true' : 'false');
+  }
+
   mapSelectorToggle.addEventListener('click', () => {
     const willShow = !mapSelectorPanel.classList.contains('is-visible');
     setSelectorVisibility(willShow);
   });
+
+  followPositionToggle.addEventListener('click', () => {
+    mapState.toggleButtons.followPosition = !mapState.toggleButtons.followPosition;
+    updateFollowPositionButtonUI();
+
+    if (
+      mapState.toggleButtons.followPosition &&
+      mapState.lastKnownLocation &&
+      isAccuracyAcceptable(mapState.lastKnownAccuracy)
+    ) {
+      map.setView(mapState.lastKnownLocation, map.getZoom());
+    }
+  });
+
+  updateFollowPositionButtonUI();
 
   window.map = map;
 
@@ -196,12 +223,17 @@ document.addEventListener("DOMContentLoaded", async function() {
     window.locationCircle = L.circle(e.latlng, radius).addTo(map);
 
     mapState.lastKnownLocation = e.latlng;
+    mapState.lastKnownAccuracy = e.accuracy;
 
     if (!mapState.hasReceivedInitialLocation) {
       if (!mapState.userHasInteractedWithMap) {
         map.setView(e.latlng, map.getZoom());
       }
       mapState.hasReceivedInitialLocation = true;
+    }
+
+    if (mapState.toggleButtons.followPosition && isAccuracyAcceptable(e.accuracy)) {
+      map.setView(e.latlng, map.getZoom());
     }
   }
 
@@ -310,6 +342,14 @@ document.addEventListener("DOMContentLoaded", async function() {
     }
 
     return `${(distanceInMeters / 1000).toFixed(1)} km`;
+  }
+
+  function isAccuracyAcceptable(accuracyInMeters) {
+    if (typeof accuracyInMeters !== 'number') {
+      return false;
+    }
+
+    return accuracyInMeters <= ONLY_FOLLOW_WHEN_ACCURACY_IS_BETTER_THAN;
   }
 
 

@@ -100,11 +100,19 @@ textarea {
   width: 100vw;
 }
 
-.map-selector-toggle {
+.map-controls {
   position: fixed;
   top: 1rem;
-  right: 1rem;
+  left: 3.5rem;
   z-index: 1200;
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+}
+
+.map-control-button {
   border: none;
   border-radius: 999px;
   padding: 0.65rem 1.25rem;
@@ -114,10 +122,28 @@ textarea {
   color: #fff;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.35);
   cursor: pointer;
+  transition: transform 120ms ease, background 160ms ease, color 160ms ease;
 }
 
-.map-selector-toggle:active {
+.map-control-button:active {
   transform: scale(0.98);
+}
+
+.map-control-button.is-active {
+  background: rgba(255, 255, 255, 0.9);
+  color: #111;
+}
+
+.map-selector-toggle {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 1200;
+  min-width: 120px;
+}
+
+.follow-position-toggle {
+  min-width: 140px;
 }
 
 .map-selector-panel {

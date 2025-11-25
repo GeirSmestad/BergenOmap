@@ -35,7 +35,13 @@
 <body>
 
   <div id="mapBrowser"></div>
-  <button id="mapSelectorToggle" class="map-selector-toggle" type="button"
+  <div class="map-controls">
+    <button id="followPositionToggle" class="map-control-button follow-position-toggle"
+            type="button" aria-pressed="false">
+      Følg posisjon
+    </button>
+  </div>
+  <button id="mapSelectorToggle" class="map-control-button map-selector-toggle" type="button"
           aria-controls="mapSelectorPanel" aria-expanded="false">
     Velg kart
   </button>
