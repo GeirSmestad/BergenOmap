@@ -53,6 +53,8 @@ document.addEventListener("DOMContentLoaded", async function() {
   const mapSelectorList = document.getElementById('mapSelectorList');
   const mapSelectorModeNearMeInput = document.getElementById('mapSelectorModeNearMe');
   const mapSelectorModeNearViewportInput = document.getElementById('mapSelectorModeNearViewport');
+  const mapSelectorModeNearMeLabel = mapSelectorModeNearMeInput.closest('.map-selector-mode');
+  const mapSelectorModeNearViewportLabel = mapSelectorModeNearViewportInput.closest('.map-selector-mode');
   const followPositionToggle = document.getElementById('followPositionToggle');
 
   var map = L.map('mapBrowser').setView(startLatLon, 15);
@@ -197,8 +199,18 @@ document.addEventListener("DOMContentLoaded", async function() {
 
   function updateSelectorModeUI() {
     const currentSource = mapState.mapListSource;
-    mapSelectorModeNearMeInput.checked = currentSource === MAP_LIST_SOURCE.NEAR_ME;
-    mapSelectorModeNearViewportInput.checked = currentSource === MAP_LIST_SOURCE.NEAR_VIEWPORT;
+    const isNearMe = currentSource === MAP_LIST_SOURCE.NEAR_ME;
+    const isNearViewport = currentSource === MAP_LIST_SOURCE.NEAR_VIEWPORT;
+
+    mapSelectorModeNearMeInput.checked = isNearMe;
+    mapSelectorModeNearViewportInput.checked = isNearViewport;
+
+    if (mapSelectorModeNearMeLabel) {
+      mapSelectorModeNearMeLabel.classList.toggle('is-active', isNearMe);
+    }
+    if (mapSelectorModeNearViewportLabel) {
+      mapSelectorModeNearViewportLabel.classList.toggle('is-active', isNearViewport);
+    }
   }
 
   function handleMapSelectorModeChange(nextMode) {

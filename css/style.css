@@ -171,49 +171,43 @@ textarea {
   padding: 1rem 1.25rem;
   border-bottom: 1px solid rgba(130, 130, 130, 0.17);
   display: flex;
-  align-items: center;
+  align-items: stretch;
   justify-content: space-between;
   gap: 1rem;
 }
 
 .map-selector-mode {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.45rem;
-  cursor: pointer;
-  font-weight: 600;
-  letter-spacing: 0.01em;
-}
-
-.map-selector-mode input[type="radio"] {
-  appearance: none;
-  width: 1rem;
-  height: 1rem;
-  border-radius: 50%;
-  border: 2px solid rgba(255, 255, 255, 0.6);
+  position: relative;
+  flex: 1;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  position: relative;
-  transition: border-color 160ms ease, background 160ms ease;
+  cursor: pointer;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 999px;
+  padding: 0.4rem 0.75rem;
+  color: rgba(255, 255, 255, 0.8);
+  transition: background 160ms ease, color 160ms ease, border-color 160ms ease;
 }
 
-.map-selector-mode input[type="radio"]::after {
-  content: '';
-  width: 0.45rem;
-  height: 0.45rem;
-  border-radius: 50%;
-  background: transparent;
-  transition: background 160ms ease;
+.map-selector-mode span {
+  width: 100%;
+  text-align: center;
 }
 
-.map-selector-mode input[type="radio"]:checked {
-  border-color: #fff;
-  background: rgba(255, 255, 255, 0.15);
+.map-selector-mode input[type="radio"] {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
 }
 
-.map-selector-mode input[type="radio"]:checked::after {
-  background: #fff;
+.map-selector-mode.is-active {
+  background: rgba(255, 255, 255, 0.9);
+  color: #111;
+  border-color: rgba(255, 255, 255, 0.9);
 }
 
 .map-selector-list {
