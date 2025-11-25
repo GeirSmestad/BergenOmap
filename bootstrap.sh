@@ -17,7 +17,7 @@ python3 -m venv /srv/bergenomap/venv
 /srv/bergenomap/venv/bin/pip install gunicorn
 
 # systemd service for your Flask app
-sudo tee /etc/systemd/system/bergenomap.service > /dev/null << 'EOF'
+sudo tee /etc/systemd/system/bergenomap.service > /dev/null << EOF
 [Unit]
 Description=BergenOmap Flask app via gunicorn
 After=network.target
@@ -36,25 +36,23 @@ EOF
 
 sudo systemctl enable bergenomap
 
-# Nginx config
-sudo tee /etc/nginx/sites-available/bergenomap > /dev/null << 'EOF'
+# Nginx config (HTTP only for now; Certbot will add HTTPS)
+sudo tee /etc/nginx/sites-available/bergenomap > /dev/null << EOF
 server {
     listen 80;
-    server_name _;
+    server_name ${DOMAIN};
 
     root /srv/bergenomap;
     index map.html;
 
-    # Proxy API/backend to gunicorn/Flask
     location /api {
         proxy_pass http://127.0.0.1:5000;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
     }
 
-    # Static files and HTML (map.html, registermap.html, JS, CSS, etc.)
     location / {
-        try_files $uri $uri/ =404;
+        try_files \$uri \$uri/ =404;
     }
 }
 EOF
@@ -64,4 +62,15 @@ sudo rm -f /etc/nginx/sites-enabled/default
 sudo nginx -t
 sudo systemctl reload nginx
 
-echo "Bootstrap complete. Now upload your app into /srv/bergenomap and install requirements."
+echo "Nginx HTTP config ready for ${DOMAIN}."
+
+# Issue Let's Encrypt certificate and configure HTTPS + redirect automatically
+# --register-unsafely-without-email avoids interactive email prompt
+sudo certbot --nginx \
+  -d "${DOMAIN}" \
+  --non-interactive \
+  --agree-tos \
+  --register-unsafely-without-email \
+  --redirect
+
+echo "Bootstrap complete with HTTPS enabled for https://${DOMAIN}"
