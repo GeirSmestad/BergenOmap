@@ -46,7 +46,16 @@
     Velg kart
   </button>
   <div id="mapSelectorPanel" class="map-selector-panel" aria-hidden="true">
-    <div class="map-selector-panel__header">Kart i nærheten</div>
+    <div class="map-selector-panel__header">
+      <label class="map-selector-mode">
+        <input type="radio" id="mapSelectorModeNearMe" name="mapSelectorMode" value="nearMe" checked>
+        <span>Nær meg</span>
+      </label>
+      <label class="map-selector-mode">
+        <input type="radio" id="mapSelectorModeNearViewport" name="mapSelectorMode" value="nearViewport">
+        <span>Nær kartvindu</span>
+      </label>
+    </div>
     <ul id="mapSelectorList" class="map-selector-list"></ul>
   </div>
 

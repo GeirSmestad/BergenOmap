@@ -7,6 +7,11 @@ window.location.hostname === '127.0.0.1' ||
 window.location.hostname === '';
 
 const backendBaseUrl = isLocal ? 'http://127.0.0.1:5000' : '';  // '' = same origin in prod
+
+const MAP_LIST_SOURCE = {
+  NEAR_ME: 'nearMe',
+  NEAR_VIEWPORT: 'nearViewport'
+};
 const ONLY_FOLLOW_WHEN_ACCURACY_IS_BETTER_THAN = 100;
 
 
@@ -37,6 +42,7 @@ document.addEventListener("DOMContentLoaded", async function() {
     lastKnownAccuracy: null,
     userHasInteractedWithMap: false,
     hasReceivedInitialLocation: false,
+    mapListSource: MAP_LIST_SOURCE.NEAR_ME,
     toggleButtons: {
       followPosition: false
     }
@@ -45,12 +51,20 @@ document.addEventListener("DOMContentLoaded", async function() {
   const mapSelectorToggle = document.getElementById('mapSelectorToggle');
   const mapSelectorPanel = document.getElementById('mapSelectorPanel');
   const mapSelectorList = document.getElementById('mapSelectorList');
+  const mapSelectorModeNearMeInput = document.getElementById('mapSelectorModeNearMe');
+  const mapSelectorModeNearViewportInput = document.getElementById('mapSelectorModeNearViewport');
   const followPositionToggle = document.getElementById('followPositionToggle');
 
   var map = L.map('mapBrowser').setView(startLatLon, 15);
   
   map.once('mousedown', () => {
     mapState.userHasInteractedWithMap = true;
+  });
+
+  map.on('moveend', () => {
+    if (mapState.mapListSource === MAP_LIST_SOURCE.NEAR_VIEWPORT) {
+      renderMapSelectionListIfVisible();
+    }
   });
 
   L.tileLayer('https://cache.kartverket.no/v1/wmts/1.0.0/topo/default/webmercator/{z}/{y}/{x}.png', {
@@ -81,6 +95,7 @@ document.addEventListener("DOMContentLoaded", async function() {
 
   function setSelectorVisibility(shouldShow) {
     if (shouldShow) {
+      updateSelectorModeUI();
       renderMapSelectionList();
     }
 
@@ -91,13 +106,11 @@ document.addEventListener("DOMContentLoaded", async function() {
   }
 
   function renderMapSelectionList() {
-    const locationSnapshot = mapState.lastKnownLocation
-      ? { lat: mapState.lastKnownLocation.lat, lng: mapState.lastKnownLocation.lng }
-      : null;
+    const referencePoint = getReferencePointForMapList();
 
     const entries = mapState.mapDefinitions.map((definition) => {
       const center = getMapCenterCoords(definition);
-      const distance = locationSnapshot ? calculateDistanceMeters(locationSnapshot, center) : null;
+      const distance = referencePoint ? calculateDistanceMeters(referencePoint, center) : null;
       return { definition, distance };
     });
 
@@ -182,6 +195,46 @@ document.addEventListener("DOMContentLoaded", async function() {
     followPositionToggle.setAttribute('aria-pressed', isEnabled ? 'true' : 'false');
   }
 
+  function updateSelectorModeUI() {
+    const currentSource = mapState.mapListSource;
+    mapSelectorModeNearMeInput.checked = currentSource === MAP_LIST_SOURCE.NEAR_ME;
+    mapSelectorModeNearViewportInput.checked = currentSource === MAP_LIST_SOURCE.NEAR_VIEWPORT;
+  }
+
+  function handleMapSelectorModeChange(nextMode) {
+    if (mapState.mapListSource === nextMode) {
+      // Still force a re-render in case distances changed
+      renderMapSelectionListIfVisible();
+      return;
+    }
+
+    mapState.mapListSource = nextMode;
+    updateSelectorModeUI();
+    renderMapSelectionListIfVisible();
+  }
+
+  function renderMapSelectionListIfVisible() {
+    if (mapSelectorPanel.classList.contains('is-visible')) {
+      renderMapSelectionList();
+    }
+  }
+
+  function getReferencePointForMapList() {
+    if (mapState.mapListSource === MAP_LIST_SOURCE.NEAR_VIEWPORT) {
+      const boundsCenter = map.getBounds().getCenter();
+      return { lat: boundsCenter.lat, lng: boundsCenter.lng };
+    }
+
+    if (mapState.lastKnownLocation) {
+      return {
+        lat: mapState.lastKnownLocation.lat,
+        lng: mapState.lastKnownLocation.lng
+      };
+    }
+
+    return null;
+  }
+
   mapSelectorToggle.addEventListener('click', () => {
     const willShow = !mapSelectorPanel.classList.contains('is-visible');
     setSelectorVisibility(willShow);
@@ -200,7 +253,20 @@ document.addEventListener("DOMContentLoaded", async function() {
     }
   });
 
+  mapSelectorModeNearMeInput.addEventListener('change', (event) => {
+    if (event.target.checked) {
+      handleMapSelectorModeChange(MAP_LIST_SOURCE.NEAR_ME);
+    }
+  });
+
+  mapSelectorModeNearViewportInput.addEventListener('change', (event) => {
+    if (event.target.checked) {
+      handleMapSelectorModeChange(MAP_LIST_SOURCE.NEAR_VIEWPORT);
+    }
+  });
+
   updateFollowPositionButtonUI();
+  updateSelectorModeUI();
 
   window.map = map;
 
@@ -234,6 +300,10 @@ document.addEventListener("DOMContentLoaded", async function() {
 
     if (mapState.toggleButtons.followPosition && isAccuracyAcceptable(e.accuracy)) {
       map.setView(e.latlng, map.getZoom());
+    }
+
+    if (mapState.mapListSource === MAP_LIST_SOURCE.NEAR_ME) {
+      renderMapSelectionListIfVisible();
     }
   }
 

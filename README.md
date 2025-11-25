@@ -66,25 +66,23 @@ C:\source\O-maps\backend>python Backend.py
 
 ## Navigasjons-app
 
-* Cache Leaflet-filer, orienteringskart og kart-definisjoner lokalt i appen i tilfelle brudd i nettverk (Cache Storage API?)
+* Cache Leaflet-filer, orienteringskart, og kart-definisjoner lokalt i appen i tilfelle brudd i nettverk (Cache Storage API?)
 
-* Sentrer kartet på brukerens posisjon (knapp)
-* Kartet følger brukerens posisjon (toggle av/på)
+
 * Kartet orienteres etter retningen man holder mobilen (toggle av/på)
 * Zoom-innstilling som finner mobil-dimensjoner og setter zoom til å tilsvare kartets målestokk
 
 * Mulighet for å vise Strava-track
 * Database-integrasjon for å samle en brukers informasjon (fx. GPX-filer fra Strava)
 
-
-* Kanskje med en toggle-knapp øverst for å følge posisjonen til brukeren?
-
-* Kanskje prøve ut om det finnes en måte å vise på oversiktskartet hvilke kart som er tilgjengelige.
-* Vise en liste over alle kart som er tilgjengelige på posisjonen kartet er satt
-
 * Skru av live oppdatering av posisjons-visning når du simulerer posisjon, ellers spretter den tilbake
 * Kanskje en debug-mode som gjør det lettere å velge simulert posisjon på kartet?
 
+* (X) Sentrer kartet på brukerens posisjon (knapp)
+* (X) Kartet følger brukerens posisjon (toggle av/på)
+* (X) Kanskje med en toggle-knapp øverst for å følge posisjonen til brukeren?
+* (X) Kanskje prøve ut om det finnes en måte å vise på oversiktskartet hvilke kart som er tilgjengelige.
+* (X) Vise en liste over alle kart som er tilgjengelige på posisjonen kartet er satt
 * (X) Prøv med sentrering på nåværende posisjon første gang du laster siden.
 * (X)Bedre grensesnitt for valg av kart. Full liste, sorter på avstand, vis kartene for nåværende posisjon, rask toggle mellom dem.
 * (X) Hosting, som eksponerer appen på twerkules.com
@@ -135,8 +133,11 @@ C:\source\O-maps\backend>python Backend.py
 
 ## Generelle forbedringer
 
+* Kan hende jeg må refaktorere kart-visningen på et tidspunkt, så koden blir mer oversiktlig. Spør AIen om det.
+
 * Få inn merker i tre farger for hvor man har klikket på kart og overlay ved registrering
 * Funksjon for å re-generere final-bilder i database som webp
+* Kjøre gjennom database og re-generer roterte bilder med gjennomsiktige områder på alle steder som er utenfor selve kartet
 * Mulighet for å lagre kart som webp. Når DB inneholder koordinater, original og live, kan du re-generere live on-demand som webp.
 
 * Beskjed i registrerings-grensesnitt om framdrift ved registrering ("Beregner registrering / overfører bilder / ferdig"), kanskje en sticky status-bar
@@ -163,7 +164,7 @@ C:\source\O-maps\backend>python Backend.py
 * (X) Lagt til Blåmannen
 
 
-## Deployment
+## Deployment - hvordan kjøre deploy av appen
 
 Opprett Lightsail-server med statisk IP. Legg til firewall-regel for å tillate port 443 (HTTPS)
 
@@ -277,7 +278,7 @@ Teknisk kontakt - trond.ola.ulvolden@kartverket.no
 ## Langsiktige ambisjoner
 
 * Menysystem hvis appen begynner å bli komplisert; ha flere funksjoner
-* Menysystem for å velge flere kart, hvis de overlapper i terrenget
+
 
 * Innsending av database-kart + kjente metadata til AI-modell for setting av metadata i database
 * Funksjon for å registrere/stemple poster når man er ute og trener på et gammelt kart
@@ -290,6 +291,7 @@ Teknisk kontakt - trond.ola.ulvolden@kartverket.no
 
 * Kreditere kart-tegneren i grensesnittet, kanskje på placeholder-bildene før kartet lastes
 
+* (X) Menysystem for å velge flere kart, hvis de overlapper i terrenget
 * (X) Et mer ordentlig system for hosting og deploy, når det blir nødvendig
 * (X) Deploy-script som setter opp all infrastuktur med én kommando [nært nok med bootstrap + scp]
 * (0) Automatisk identifikasjon av start/mål, poster, målestokk, postbeskrivelser, kart-areal via bildeanalyse med AWS, og utregning av GPS-koordinater for poster

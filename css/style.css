@@ -170,8 +170,50 @@ textarea {
 .map-selector-panel__header {
   padding: 1rem 1.25rem;
   border-bottom: 1px solid rgba(130, 130, 130, 0.17);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.map-selector-mode {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  cursor: pointer;
   font-weight: 600;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.01em;
+}
+
+.map-selector-mode input[type="radio"] {
+  appearance: none;
+  width: 1rem;
+  height: 1rem;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.6);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  transition: border-color 160ms ease, background 160ms ease;
+}
+
+.map-selector-mode input[type="radio"]::after {
+  content: '';
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 50%;
+  background: transparent;
+  transition: background 160ms ease;
+}
+
+.map-selector-mode input[type="radio"]:checked {
+  border-color: #fff;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.map-selector-mode input[type="radio"]:checked::after {
+  background: #fff;
 }
 
 .map-selector-list {
