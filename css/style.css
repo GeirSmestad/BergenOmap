@@ -262,11 +262,11 @@ textarea {
 
 @media (min-width: 1024px) {
   .map-selector-panel {
-    top: 1rem;
+    top: calc(1rem + 3.5rem);
     right: 1rem;
     left: auto;
     transform: none;
-    height: calc(100% - 2rem);
+    height: calc(100% - (1rem + 3.5rem) - 1rem);
     width: 360px;
   }
 }
