@@ -217,18 +217,27 @@ document.addEventListener("DOMContentLoaded", async function() {
     if (mapState.mapListSource === nextMode) {
       // Still force a re-render in case distances changed
       renderMapSelectionListIfVisible();
+      scrollMapSelectorListToTop();
       return;
     }
 
     mapState.mapListSource = nextMode;
     updateMapSelectorModeUI();
     renderMapSelectionListIfVisible();
+    scrollMapSelectorListToTop();
   }
 
   function renderMapSelectionListIfVisible() {
     if (mapSelectorPanel.classList.contains('is-visible')) {
       renderMapSelectionList();
     }
+  }
+
+  function scrollMapSelectorListToTop() {
+    if (!mapSelectorList) {
+      return;
+    }
+    mapSelectorList.scrollTop = 0;
   }
 
   function getReferencePointForMapList() {

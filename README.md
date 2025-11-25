@@ -67,17 +67,18 @@ C:\source\O-maps\backend>python Backend.py
 ## Navigasjons-app
 
 * Cache Leaflet-filer, orienteringskart, og kart-definisjoner lokalt i appen i tilfelle brudd i nettverk (Cache Storage API?)
-
+* Vise en slags highlight i det brukeren har valgt å laste et kart, sånn at de forstår at det skjer noe i bakgrunnen
 
 * Kartet orienteres etter retningen man holder mobilen (toggle av/på)
 * Zoom-innstilling som finner mobil-dimensjoner og setter zoom til å tilsvare kartets målestokk
 
-* Mulighet for å vise Strava-track
+* Mulighet for å vise Strava-track fra tidligere løp på et orienteringskart (kanskje i helt separat view)
 * Database-integrasjon for å samle en brukers informasjon (fx. GPX-filer fra Strava)
 
 * Skru av live oppdatering av posisjons-visning når du simulerer posisjon, ellers spretter den tilbake
 * Kanskje en debug-mode som gjør det lettere å velge simulert posisjon på kartet?
 
+* (X) Visuelt fine segmented controls for å velge modus på kart-velgeren (nær meg eller nær kart-sentrum)
 * (X) Sentrer kartet på brukerens posisjon (knapp)
 * (X) Kartet følger brukerens posisjon (toggle av/på)
 * (X) Kanskje med en toggle-knapp øverst for å følge posisjonen til brukeren?
@@ -97,6 +98,8 @@ C:\source\O-maps\backend>python Backend.py
 * Strukturere web-kode i moduler
 * På et tidspunkt vil jeg kanskje ha en indeks-primærnøkkel heller enn å bruke kartnavnet, pga. mange kart i samme område
 * Database-nøkkel som gir versjonen av et bestemt kart, slik at jeg kan cache i nettleseren til brukeren
+* Autentisering, hvis jeg vil gjøre appen mindre tilgjengelig for Gud og hvermann
+* Landingsside
 
 * (X) Deployment på EC2/Lightsail
 * (X) Scanne alle O-kartene mine som ikke er fra bedriftscup
@@ -133,7 +136,6 @@ C:\source\O-maps\backend>python Backend.py
 
 ## Generelle forbedringer
 
-* Kan hende jeg må refaktorere kart-visningen på et tidspunkt, så koden blir mer oversiktlig. Spør AIen om det.
 
 * Få inn merker i tre farger for hvor man har klikket på kart og overlay ved registrering
 * Funksjon for å re-generere final-bilder i database som webp
@@ -162,6 +164,49 @@ C:\source\O-maps\backend>python Backend.py
 * (X) Lagt til sprintkart på Bønes
 * (X) Lagt til gammelt kart (2005-ish?) fra Midtfjellet
 * (X) Lagt til Blåmannen
+
+
+## Bugs
+
+* (X) Blåmannen-kartet "Blamannen-10k-rotates-weirdly.png" får rar rotasjon [løst med ny algoritme]
+* (X) Fiks exceptions som skjer når du åpner database-visning
+* (X) Backend sender nå felt-navnet "filename" i stedet for "map_filename" ved registrering (som gjør at map.html ikke finner den)
+
+## Langsiktige ambisjoner
+
+* Menysystem hvis appen begynner å bli komplisert
+
+* Innsending av database-kart + kjente metadata til AI-modell for setting av metadata i database
+* Funksjon for å registrere/stemple poster når man er ute og trener på et gammelt kart
+* Maskinlærings-system for å identifisere post-posisjoner på registrerte kart og regne disse om til ekte koordinater
+* Databasetabell for å støtte post-plasseringer på kart og posisjonene deres i virkeligheten
+* Kan velge å fjerne original-bildene fra prod-databasen for å spare båndbredde, de vil pr. nå aldri bli brukt der
+
+* Mobilvennlig layout og funksjonalitet for kart-registrering (omfattende task, inkl. zoom og markører på bilder + mobilvennlig layout & navigasjon)
+* Vise Strava-track fra GPX-fil i registrert kart (i en helt ny visning kanskje? dårlig match for nav-appen)
+* Logge track på turen du har gått så langt
+
+* Kreditere kart-tegneren i grensesnittet, kanskje på placeholder-bildene før kartet lastes
+* Ta ned gamle kart.twerkules.com, den nye appen er mye bedre
+
+* (X) Menysystem for å velge flere kart, hvis de overlapper i terrenget
+* (X) Et mer ordentlig system for hosting og deploy, når det blir nødvendig
+* (X) Deploy-script som setter opp all infrastuktur med én kommando [nært nok med bootstrap + scp]
+* (0) Automatisk identifikasjon av start/mål, poster, målestokk, postbeskrivelser, kart-areal via bildeanalyse med AWS, og utregning av GPS-koordinater for poster
+* (0) Kjør back-end i container som hostes på ECC og kobles mot S3 [dette skal jeg gjøre på en mer pragmatisk måte]
+* (0) Støtt direkte kobling mellom kartvisning og database i container [løst ved å la back-end serve kart rett fra DB]
+* (0) Kjøre selv-hostet instans av OpenStreetMap i container; la appen hente kart fra denne [løst med Kartverkets server]
+* (X) Årstall for kart i JSON-format [dette går i attribution-feltet]
+
+
+## Refaktorering
+
+* Kan hende jeg må refaktorere kart-visningen på et tidspunkt. Flere steg her.
+* Refaktorere CSS til å bli separat mellom ulike sider
+* Bruke ecmascript-moduler?
+* Trekke felles kode ut i felles moduler?
+* Felles environment-config på tvers av sider?
+
 
 
 ## Deployment - hvordan kjøre deploy av appen
@@ -269,51 +314,8 @@ Faglig kontakt - hardy.buller@kartverket.no
 Teknisk kontakt - trond.ola.ulvolden@kartverket.no 
 
 
-## Bugs
-
-* (X) Blåmannen-kartet "Blamannen-10k-rotates-weirdly.png" får rar rotasjon [løst med ny algoritme]
-* (X) Fiks exceptions som skjer når du åpner database-visning
-* (X) Backend sender nå felt-navnet "filename" i stedet for "map_filename" ved registrering (som gjør at map.html ikke finner den)
-
-## Langsiktige ambisjoner
-
-* Menysystem hvis appen begynner å bli komplisert; ha flere funksjoner
-
-
-* Innsending av database-kart + kjente metadata til AI-modell for setting av metadata i database
-* Funksjon for å registrere/stemple poster når man er ute og trener på et gammelt kart
-* Maskinlærings-system for å identifisere post-posisjoner på registrerte kart og regne disse om til ekte koordinater
-* Databasetabell for å støtte post-plasseringer på kart og posisjonene deres i virkeligheten
-
-* Mobilvennlig layout og funksjonalitet for kart-registrering (omfattende task, inkl. zoom og markører på bilder + mobilvennlig layout & navigasjon)
-* Vise Strava-track fra GPX-fil i registrert kart
-* Logge track
-
-* Kreditere kart-tegneren i grensesnittet, kanskje på placeholder-bildene før kartet lastes
-
-* (X) Menysystem for å velge flere kart, hvis de overlapper i terrenget
-* (X) Et mer ordentlig system for hosting og deploy, når det blir nødvendig
-* (X) Deploy-script som setter opp all infrastuktur med én kommando [nært nok med bootstrap + scp]
-* (0) Automatisk identifikasjon av start/mål, poster, målestokk, postbeskrivelser, kart-areal via bildeanalyse med AWS, og utregning av GPS-koordinater for poster
-* (0) Kjør back-end i container som hostes på ECC og kobles mot S3 [dette skal jeg gjøre på en mer pragmatisk måte]
-* (0) Støtt direkte kobling mellom kartvisning og database i container [løst ved å la back-end serve kart rett fra DB]
-* (0) Kjøre selv-hostet instans av OpenStreetMap i container; la appen hente kart fra denne [løst med Kartverkets server]
-* (X) Årstall for kart i JSON-format [dette går i attribution-feltet]
-
 
 
 ## Notater
 
 Jeg har custom-innstillinger for cache under Behaviors i CloudFront og Edit Metatada i S3. De er kortlevde.
-
- 
- 
-
- ## Python-pakker jeg bruker:
-
- * flask
- * flask_cors
- * pillow
- * numpy
- * scipy
- * traceback
