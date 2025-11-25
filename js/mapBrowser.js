@@ -173,14 +173,26 @@ document.addEventListener("DOMContentLoaded", async function() {
   }
 
   function handleMapSelection(definition) {
+    const userClickedCurrentlySelectedMap = mapState.selectedMapName === definition.map_name;
+
+    if (userClickedCurrentlySelectedMap) {
+      removeCurrentOverlay();
+      mapState.selectedMapName = null;
+      highlightSelectedListItem();
+      return;
+    }
+
+    removeCurrentOverlay();
+    mapState.currentOverlay = addOrienteeringMapOverlay(definition, map);
+    mapState.selectedMapName = definition.map_name;
+    highlightSelectedListItem();
+  }
+
+  function removeCurrentOverlay() {
     if (mapState.currentOverlay) {
       mapState.currentOverlay.remove();
       mapState.currentOverlay = null;
     }
-
-    mapState.currentOverlay = addOrienteeringMapOverlay(definition, map);
-    mapState.selectedMapName = definition.map_name;
-    highlightSelectedListItem();
   }
 
   function highlightSelectedListItem() {
