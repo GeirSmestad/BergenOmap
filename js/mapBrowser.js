@@ -133,14 +133,11 @@ document.addEventListener("DOMContentLoaded", async function() {
   // Request location
   map.locate({watch: true, enableHighAccuracy: true, setView: false, maxZoom: 16});
 
-  // simulateLocation(startLatLon[0], startLatLon[1])
-
-
+  // simulateLocation(startLatLon[0], startLatLon[1]) // Simulate GPS location, for dev environment with no GPS
 
 
 
   // **-- Functionality for preventing device sleep --** //
-  // Request that device does not go to sleep
   let wakeLock = null;
 
   async function requestWakeLock() {
@@ -195,59 +192,6 @@ document.addEventListener("DOMContentLoaded", async function() {
     }
   }
 
-
-  // **-- Test database access --** //
-  /*
-  async function addMap(mapData) {
-    const response = await fetch('http://localhost:5000/dal/insert_map', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(mapData)
-    });
-
-    if (!response.ok) {
-      const message = `An error has occurred: ${response.statusText}`;
-      throw new Error(message);
-    }
-
-    const result = await response.json();
-    console.log(result);
-  }
-
-// Example usage:
-  const newMap = {
-    "map_name": "test_map_entry",
-    "nw_coords": [60.123456, 5.123456],
-    "optimal_rotation_angle": 1.234,
-    "se_coords": [60.654321, 5.654321],
-    "map_filename": "newmap.png"
-  };
-
-  addMap(newMap).catch(error => console.error('Error:', error));
-
-  async function getAllMaps() {
-    const response = await fetch('http://localhost:5000/dal/list_maps', {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
-
-    if (!response.ok) {
-      const message = `An error has occurred: ${response.statusText}`;
-      throw new Error(message);
-    }
-
-    const maps = await response.json();
-    console.log(maps);
-  }
-
-  // Example usage:
-  getAllMaps().catch(error => console.error('Error:', error));
-   */
-  // **-- End test database access --** //
 
 });
 
