@@ -36,20 +36,20 @@ def getOverlayCoordinatesWithOptimalRotation(image_coords, real_coords, overlayW
     - Return the required lat/lon of the north-western and south-eastern corner of the overlay to match this fit
     """
 
-    similarity_transform = compute_rotation_and_bounds(overlayWidth, overlayHeight, image_coords, real_coords)
+    similarity_transform = compute_procrustes_registration(overlayWidth, overlayHeight, image_coords, real_coords)
     optimal_angle = similarity_transform["optimal_rotation_angle"] # The rotation is correct with ChatGPT's also, but nothing else
 
     # Calculate the correct coordinates of overlay corners    
-    optimal_rotation_result = rotateAndRegisterOverlay(image_coords, real_coords, optimal_angle, overlayWidth, overlayHeight)
+    optimal_overlay_boundaries = rotateAndRegisterOverlay(image_coords, real_coords, optimal_angle, overlayWidth, overlayHeight)
     
-    result = {"nw_coords" : optimal_rotation_result["nw_coords"], 
-              "se_coords" : optimal_rotation_result["se_coords"], 
+    result = {"nw_coords" : optimal_overlay_boundaries["nw_coords"], 
+              "se_coords" : optimal_overlay_boundaries["se_coords"], 
               "optimal_rotation_angle" : optimal_angle,
               "selected_pixel_coords": image_coords,
               "selected_realworld_coords": real_coords,
               "overlay_width": overlayWidth,
               "overlay_height": overlayHeight,
-              "least_squares_error": optimal_rotation_result["error"]
+              "least_squares_error": optimal_overlay_boundaries["error"]
               }
 
     return result
@@ -269,7 +269,7 @@ def euclidean_distance(coord1, coord2):
    
    Note that this does not fit well with Leaflet's model for drawing image overlays
    on its Mercator projection, but it does get the rotation right."""
-def compute_rotation_and_bounds(width, height, pixel_points, geo_points):
+def compute_procrustes_registration(width, height, pixel_points, geo_points):
     """
     width, height: enlarged image size in pixels
     pixel_points: [(x, y), ...] in pixels, origin top-left, y down
