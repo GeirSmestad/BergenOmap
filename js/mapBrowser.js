@@ -72,7 +72,7 @@ document.addEventListener("DOMContentLoaded", async function() {
     mapSelectorPanel.classList.toggle('is-visible', shouldShow);
     mapSelectorPanel.setAttribute('aria-hidden', (!shouldShow).toString());
     mapSelectorToggle.setAttribute('aria-expanded', shouldShow ? 'true' : 'false');
-    mapSelectorToggle.textContent = shouldShow ? 'Hide maps' : 'Select map';
+    mapSelectorToggle.textContent = shouldShow ? 'Lukk' : 'Velg kart';
   }
 
   function renderMapSelectionList() {
@@ -287,7 +287,7 @@ document.addEventListener("DOMContentLoaded", async function() {
 
   function formatDistanceLabel(distanceInMeters) {
     if (distanceInMeters === null || typeof distanceInMeters === 'undefined') {
-      return 'Distance unavailable';
+      return 'Ukjent avstand';
     }
 
     if (distanceInMeters < 1000) {
