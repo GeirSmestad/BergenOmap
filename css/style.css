@@ -127,12 +127,12 @@ textarea {
   transform: translate(-50%, -50%);
   width: min(90vw, 420px);
   height: 60vh;
-  background: rgba(20, 20, 20, 0.85);
+  background: rgba(21, 21, 21, 0.71);
   color: #fff;
   border-radius: 20px;
   z-index: 1100;
   box-shadow: 0 32px 60px rgba(0, 0, 0, 0.35);
-  backdrop-filter: blur(12px);
+  backdrop-filter: blur(3px);
   display: none;
   flex-direction: column;
 }
@@ -143,7 +143,7 @@ textarea {
 
 .map-selector-panel__header {
   padding: 1rem 1.25rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+  border-bottom: 1px solid rgba(130, 130, 130, 0.17);
   font-weight: 600;
   letter-spacing: 0.02em;
 }
@@ -163,7 +163,7 @@ textarea {
   color: inherit;
   text-align: left;
   padding: 0.9rem 1.25rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid rgba(130, 130, 130, 0.17);
   cursor: pointer;
   display: flex;
   flex-direction: column;
