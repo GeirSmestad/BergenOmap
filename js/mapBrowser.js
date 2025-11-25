@@ -97,7 +97,7 @@ document.addEventListener("DOMContentLoaded", async function() {
 
   function setSelectorVisibility(shouldShow) {
     if (shouldShow) {
-      updateSelectorModeUI();
+      updateMapSelectorModeUI();
       renderMapSelectionList();
     }
 
@@ -197,7 +197,7 @@ document.addEventListener("DOMContentLoaded", async function() {
     followPositionToggle.setAttribute('aria-pressed', isEnabled ? 'true' : 'false');
   }
 
-  function updateSelectorModeUI() {
+  function updateMapSelectorModeUI() {
     const currentSource = mapState.mapListSource;
     const isNearMe = currentSource === MAP_LIST_SOURCE.NEAR_ME;
     const isNearViewport = currentSource === MAP_LIST_SOURCE.NEAR_VIEWPORT;
@@ -221,7 +221,7 @@ document.addEventListener("DOMContentLoaded", async function() {
     }
 
     mapState.mapListSource = nextMode;
-    updateSelectorModeUI();
+    updateMapSelectorModeUI();
     renderMapSelectionListIfVisible();
   }
 
@@ -278,7 +278,7 @@ document.addEventListener("DOMContentLoaded", async function() {
   });
 
   updateFollowPositionButtonUI();
-  updateSelectorModeUI();
+  updateMapSelectorModeUI();
 
   window.map = map;
 
