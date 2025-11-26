@@ -133,6 +133,21 @@ document.addEventListener("DOMContentLoaded", function () {
   window.overlayView = overlayView;
 
 
+  function getRegistrationMetadata() {
+    return {
+      map_name: document.getElementById("mapName").value,
+      map_filename: document.getElementById("filename").value,
+      attribution: document.getElementById("attribution").value,
+      map_area: document.getElementById("mapArea").value,
+      map_event: document.getElementById("mapEvent").value,
+      map_date: document.getElementById("mapDate").value,
+      map_course: document.getElementById("mapCourse").value,
+      map_club: document.getElementById("mapClub").value,
+      map_course_planner: document.getElementById("mapCoursePlanner").value,
+      map_attribution: document.getElementById("mapAttribution").value
+    };
+  }
+
   // Function to determine if a coordinate should be bold
   function isBoldCondition(index, currentIndex) {
     return index === currentIndex;
@@ -207,11 +222,9 @@ document.addEventListener("DOMContentLoaded", function () {
       .then(response => response.json())
       .then(data => {
         
+        const metadata = getRegistrationMetadata();
+        Object.assign(data, metadata);
         registrationPreviewData.currentRegistrationData = data;
-
-        data.map_name = document.getElementById("mapName").value;
-        data.map_filename = document.getElementById("filename").value;
-        data.attribution = document.getElementById("attribution").value;
 //
     
         // Print image registration data in text area
