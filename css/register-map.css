@@ -131,6 +131,11 @@ canvas {
   overflow: hidden;
 }
 
+#registrationMapBrowser,
+#registrationMapBrowser .leaflet-container {
+  cursor: pointer;
+}
+
 #overlayView {
   width: 100%;
   border-radius: 12px;

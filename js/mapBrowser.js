@@ -63,6 +63,10 @@ document.addEventListener("DOMContentLoaded", async function() {
     mapState.userHasInteractedWithMap = true;
   });
 
+  map.once('movestart', () => {
+    mapState.userHasInteractedWithMap = true;
+  });
+
   map.on('moveend', () => {
     if (mapState.mapListSource === MAP_LIST_SOURCE.NEAR_VIEWPORT) {
       renderMapSelectionListIfVisible();

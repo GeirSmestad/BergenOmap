@@ -13,6 +13,8 @@ C:\source\O-maps\backend>python Backend.py
 
 ## Registrering av kart
 
+* Ser ikke ut som metadata-egenskapene flyttes inn i databasen fra registrerings-browser; fiks det.
+
 * Legg inn knapp for å bytte mellom satellittfoto og Norgeskart i Leaflet
 * Legg til checkbox som lar deg registrere kartet til database hvis du leser inn registreringen fra JSON
 
