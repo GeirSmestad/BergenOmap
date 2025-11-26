@@ -151,12 +151,12 @@ canvas {
 
 .coordinates {
   display: flex;
+  gap: 0.75rem;
   flex-wrap: wrap;
-  gap: 0.5rem;
 }
 
 .coordinates div {
-  flex: 1 1 160px;
+  flex: 0 0 350px;
   background: #f4f6fb;
   border-radius: 10px;
   padding: 0.75rem;
@@ -231,7 +231,9 @@ textarea {
   body {
     padding: 1rem;
   }
-
+  .coordinates div {
+    flex: 1 1 200px;
+  }
   .registration-map-header {
     position: static;
   }
