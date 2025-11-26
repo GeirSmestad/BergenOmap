@@ -86,6 +86,12 @@ document.addEventListener("DOMContentLoaded", function () {
     map.invalidateSize();
   });
 
+  if (overlayView) {
+    overlayView.addEventListener('load', () => {
+      // An implicit resize of the map happens when a new overlay is loaded, of which Leaflet must be notified
+      map.invalidateSize();
+    });
+  }
   let isDragging = false;
 
   function onMouseDown() {
@@ -337,12 +343,6 @@ document.addEventListener("DOMContentLoaded", function () {
     })
       .then(response => response.blob())
       .then(blob => {
-
-        overlayView.addEventListener("load", () => {
-          // Add a single-use event listener to notify Leaflet that a resize might have happened, after the new map image has loaded
-          map.invalidateSize();
-        }, { once: true });
-
         const url = URL.createObjectURL(blob);
         overlayView.src = url;
       })

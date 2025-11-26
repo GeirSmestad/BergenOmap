@@ -1,0 +1,243 @@
+:root {
+  color-scheme: light;
+}
+
+html {
+  font-size: 16px;
+  line-height: 1.5;
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  padding: 1.5rem;
+  font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  color: #1c1c1c;
+  background: #f5f6fa;
+  min-height: 100vh;
+  overflow-y: auto;
+}
+
+img,
+canvas {
+  max-width: 100%;
+}
+
+#imageInput {
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid #dcdfe6;
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 8px 24px rgba(16, 24, 40, 0.06);
+}
+
+#drop-area {
+  border: 2px dashed #c5ccd6;
+  border-radius: 12px;
+  width: min(360px, 100%);
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: #8c95a3;
+  margin-top: 1rem;
+  transition: border-color 140ms ease, color 140ms ease, background 140ms ease;
+}
+
+#drop-area.highlight {
+  border-color: #1b5ad1;
+  background: rgba(27, 90, 209, 0.05);
+  color: #1b5ad1;
+}
+
+.registration-map-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin: 2rem 0;
+}
+
+.registration-map-header {
+  position: sticky;
+  top: 0;
+  z-index: 1500;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 1rem;
+  border-radius: 12px;
+  border: 1px solid #e4e7ec;
+  box-shadow: 0 10px 40px rgba(15, 23, 42, 0.08);
+  backdrop-filter: blur(6px);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.registration-map-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.registrationButton {
+  appearance: none;
+  border: none;
+  border-radius: 999px;
+  padding: 0.55rem 1rem;
+  font-weight: 600;
+  font-size: 0.95rem;
+  background: #1c64f2;
+  color: #fff;
+  cursor: pointer;
+  transition: transform 120ms ease, box-shadow 160ms ease, background 160ms ease;
+  box-shadow: 0 10px 24px rgba(28, 100, 242, 0.35);
+}
+
+.registrationButton:active {
+  transform: translateY(1px);
+  box-shadow: 0 6px 18px rgba(28, 100, 242, 0.3);
+}
+
+.registration-map-views {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  align-items: stretch;
+}
+
+.registration-map-views__panel {
+  flex: 1 1 420px;
+  min-width: 280px;
+  display: flex;
+  background: #fff;
+  border-radius: 16px;
+  border: 1px solid #e4e7ec;
+  box-shadow: 0 14px 45px rgba(15, 23, 42, 0.1);
+  padding: 0.5rem;
+}
+
+.registration-map-views__panel--overlay {
+  align-self: flex-start;
+}
+
+#registrationMapBrowser {
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  min-height: 320px;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+#overlayView {
+  width: 100%;
+  border-radius: 12px;
+  object-fit: contain;
+  border: 1px solid #d7dce5;
+}
+
+#registrationData {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.coordinates {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.coordinates div {
+  flex: 1 1 160px;
+  background: #f4f6fb;
+  border-radius: 10px;
+  padding: 0.75rem;
+}
+
+.coordinates p {
+  margin: 0.2rem 0;
+  font-family: "Consolas", "SFMono-Regular", "Menlo", monospace;
+}
+
+#registrationInput {
+  background: #fff;
+  border-radius: 16px;
+  border: 1px solid #e4e7ec;
+  padding: 1.25rem;
+  box-shadow: 0 14px 45px rgba(15, 23, 42, 0.08);
+  max-width: 960px;
+}
+
+.inputFields {
+  margin-bottom: 1rem;
+}
+
+label {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #3a3f4b;
+  display: block;
+}
+
+input[type="text"],
+textarea {
+  width: 100%;
+  border-radius: 8px;
+  border: 1px solid #cfd5e3;
+  padding: 0.6rem 0.75rem;
+  margin-top: 0.35rem;
+  font-size: 0.95rem;
+  transition: border-color 120ms ease, box-shadow 120ms ease;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+input[type="text"]:focus,
+textarea:focus {
+  outline: none;
+  border-color: #1c64f2;
+  box-shadow: 0 0 0 3px rgba(28, 100, 242, 0.15);
+}
+
+textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+#output {
+  margin-top: 1.5rem;
+  width: 100%;
+  min-height: 220px;
+}
+
+#outputImage {
+  display: block;
+  margin-top: 1rem;
+  border-radius: 12px;
+  border: 1px solid #d7dce5;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+  max-width: 960px;
+}
+
+@media (max-width: 600px) {
+  body {
+    padding: 1rem;
+  }
+
+  .registration-map-header {
+    position: static;
+  }
+
+  .registration-map-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  #registrationMapBrowser {
+    min-height: 260px;
+  }
+}
+
