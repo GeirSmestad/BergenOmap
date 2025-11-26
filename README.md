@@ -94,8 +94,6 @@ C:\source\O-maps\backend>python Backend.py
 
 ## Infrastruktur
 
-
-* Strukturere web-kode i moduler
 * På et tidspunkt vil jeg kanskje ha en indeks-primærnøkkel heller enn å bruke kartnavnet, pga. mange kart i samme område
 * Database-nøkkel som gir versjonen av et bestemt kart, slik at jeg kan cache i nettleseren til brukeren
 * Autentisering, hvis jeg vil gjøre appen mindre tilgjengelig for Gud og hvermann
@@ -182,11 +180,12 @@ C:\source\O-maps\backend>python Backend.py
 * Databasetabell for å støtte post-plasseringer på kart og posisjonene deres i virkeligheten
 * Kan velge å fjerne original-bildene fra prod-databasen for å spare båndbredde, de vil pr. nå aldri bli brukt der
 
-* Mobilvennlig layout og funksjonalitet for kart-registrering (omfattende task, inkl. zoom og markører på bilder + mobilvennlig layout & navigasjon)
+* Mobilvennlig layout og funksjonalitet for kart-registrering (omfattende task, inkl. zoom og markører på bilder + mobilvennlig layout & navigasjon, unødvendig pr. nå siden bøygen er å registrere mine eksisterende kart)
 * Vise Strava-track fra GPX-fil i registrert kart (i en helt ny visning kanskje? dårlig match for nav-appen)
 * Logge track på turen du har gått så langt
 
 * Kreditere kart-tegneren i grensesnittet, kanskje på placeholder-bildene før kartet lastes
+* Når jeg får veldig mange kart, må jeg kanskje ha et avansert filter for kart, som lar meg filtrere på metadata.
 * Ta ned gamle kart.twerkules.com, den nye appen er mye bedre
 
 * (X) Menysystem for å velge flere kart, hvis de overlapper i terrenget

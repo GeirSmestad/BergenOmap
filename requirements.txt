@@ -5,3 +5,4 @@ numpy
 scipy
 traceback2
 gunicorn
+pymupdf

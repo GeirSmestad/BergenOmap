@@ -7,6 +7,7 @@ import json
 from io import BytesIO
 import traceback
 import math
+import fitz
 
 # Constants
 default_border_percentage = 0.13 # Width of each side border, as percentage of longest dimension
@@ -106,6 +107,29 @@ def process_dropped_image():
     img_io.seek(0)
 
     return send_file(img_io, mimetype='image/png')
+
+
+@app.route('/api/convertPdfToImage', methods=['POST'])
+def convert_pdf_to_image():
+    if 'file' not in request.files:
+        return 'No file part', 400
+
+    file = request.files['file']
+    if file.filename == '':
+        return 'No selected file', 400
+
+    try:
+        pdf_bytes = file.read()
+        if not pdf_bytes:
+            return 'Empty PDF file', 400
+
+        png_io = pdf_bytes_to_png(pdf_bytes)
+    except Exception as e:
+        traceback.print_exc()
+        return str(e), 500
+
+    png_io.seek(0)
+    return send_file(png_io, mimetype='image/png')
 
 
 """This endpoint accepts an un-treated image overlay and data about how it should be placed on a real-world map.
@@ -417,6 +441,22 @@ def add_transparent_border_and_rotate_image(image, border_size, rotation_angle):
     rotated_image = bordered_image.rotate(rotation_angle, expand=False)
 
     return rotated_image
+
+
+def pdf_bytes_to_png(pdf_bytes, scale=2.0):
+    with fitz.open(stream=pdf_bytes, filetype="pdf") as pdf_document:
+        if pdf_document.page_count == 0:
+            raise ValueError("PDF contains no pages.")
+
+        if pdf_document.page_count > 1:
+            app.logger.info(f"convertPdfToImage received multi-page PDF with {pdf_document.page_count} pages; using only the first page.")
+
+        page = pdf_document.load_page(0)
+        matrix = fitz.Matrix(scale, scale)
+        pix = page.get_pixmap(matrix=matrix, alpha=False)
+        png_bytes = pix.tobytes("png")
+
+    return BytesIO(png_bytes)
 
 
 

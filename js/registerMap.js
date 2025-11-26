@@ -268,45 +268,85 @@ document.addEventListener("DOMContentLoaded", function () {
   // Handle dropped files
   dropArea.addEventListener('drop', handleDrop, false);
 
-  function handleDrop(e) {
+  async function handleDrop(e) {
     const dt = e.dataTransfer;
     const files = dt.files;
-    handleFiles(files);
+    await handleFiles(files);
   }
 
-  function handleFiles(files) {
+  async function handleFiles(files) {
     const file = files[0];
-    if (file.type.startsWith('image/')) {
-      window.droppedImage = file // Store image for later use
-
-      // Pre-populate fields with filename on drop, since these will almost always match
-      const filename = file.name || '';
-      document.getElementById('mapName').value = filename;
-      document.getElementById('filename').value = filename;
-
-      const formData = new FormData();
-      formData.append('file', file);
-
-      fetch(`${API_BASE}/api/processDroppedImage`, {
-        method: 'POST',
-        body: formData
-      })
-        .then(response => response.blob())
-        .then(blob => {
-
-          overlayView.addEventListener("load", () => {
-            // Add a single-use event listener to notify Leaflet that a resize might have happened, after the new map image has loaded
-            map.invalidateSize();
-          }, { once: true });
-
-          const url = URL.createObjectURL(blob);
-          overlayView.src = url;
-        })
-        .catch(error => console.error('Error:', error));
-
-    } else {
-      alert('Please drop an image file.');
+    if (!file) {
+      return;
     }
+
+    if (file.type === 'application/pdf') {
+      try {
+        const convertedFile = await convertPdfFileToImage(file);
+        processImageFile(convertedFile);
+      } catch (error) {
+        console.error('Error converting PDF to image:', error);
+        alert('Unable to convert PDF to image. Please try another file.');
+      }
+      return;
+    }
+
+    if (file.type.startsWith('image/')) {
+      processImageFile(file);
+    } else {
+      alert('Please drop an image or PDF file.');
+    }
+  }
+
+  async function convertPdfFileToImage(pdfFile) {
+    const formData = new FormData();
+    formData.append('file', pdfFile);
+
+    const response = await fetch(`${API_BASE}/api/convertPdfToImage`, {
+      method: 'POST',
+      body: formData
+    });
+
+    if (!response.ok) {
+      throw new Error(`PDF conversion failed with status ${response.status}`);
+    }
+
+    const blob = await response.blob();
+    const pngName = pdfFile.name.replace(/\.pdf$/i, '.png');
+    return new File([blob], pngName, { type: 'image/png' });
+  }
+
+  function processImageFile(imageFile) {
+    window.droppedImage = imageFile; // Store image for later use
+
+    // Pre-populate fields with filename on drop, since these will almost always match
+    const filename = imageFile.name || '';
+    document.getElementById('mapName').value = filename;
+    document.getElementById('filename').value = filename;
+
+    uploadAndPreviewImage(imageFile);
+  }
+
+  function uploadAndPreviewImage(imageFile) {
+    const formData = new FormData();
+    formData.append('file', imageFile);
+
+    fetch(`${API_BASE}/api/processDroppedImage`, {
+      method: 'POST',
+      body: formData
+    })
+      .then(response => response.blob())
+      .then(blob => {
+
+        overlayView.addEventListener("load", () => {
+          // Add a single-use event listener to notify Leaflet that a resize might have happened, after the new map image has loaded
+          map.invalidateSize();
+        }, { once: true });
+
+        const url = URL.createObjectURL(blob);
+        overlayView.src = url;
+      })
+      .catch(error => console.error('Error:', error));
   }
 
 
