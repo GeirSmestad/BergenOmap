@@ -12,7 +12,8 @@ class Database:
     def create_table(self):
         create_table_sql = '''
         CREATE TABLE IF NOT EXISTS maps (
-            map_name TEXT PRIMARY KEY,
+            map_id INTEGER PRIMARY KEY AUTOINCREMENT,
+            map_name TEXT NOT NULL,
             nw_coords_lat REAL,
             nw_coords_lon REAL,
             se_coords_lat REAL,
@@ -79,34 +80,13 @@ class Database:
         self.connection.commit()
 
     def insert_map(self, map_data):
-
         nw_lat = round(map_data['nw_coords'][0], 6)
         nw_lon = round(map_data['nw_coords'][1], 6)
         se_lat = round(map_data['se_coords'][0], 6)
         se_lon = round(map_data['se_coords'][1], 6)
         angle = round(map_data['optimal_rotation_angle'], 2)
 
-        insert_or_replace_sql = '''
-            INSERT OR REPLACE INTO maps (
-                map_name, 
-                nw_coords_lat, nw_coords_lon, 
-                se_coords_lat, se_coords_lon, 
-                optimal_rotation_angle, 
-                overlay_width, overlay_height, 
-                attribution, 
-                selected_pixel_coords, selected_realworld_coords, 
-                map_filename,
-                map_area,
-                map_event,
-                map_date,
-                map_course,
-                map_club,
-                map_course_planner,
-                map_attribution
-                )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            '''
-        self.cursor.execute(insert_or_replace_sql, (
+        common_values = (
             map_data['map_name'],
             nw_lat, nw_lon,
             se_lat, se_lon,
@@ -123,13 +103,67 @@ class Database:
             map_data.get('map_club', ''),
             map_data.get('map_course_planner', ''),
             map_data.get('map_attribution', '')
-        ))
+        )
+
+        map_id = map_data.get('map_id')
+        if map_id is None:
+            insert_sql = '''
+                INSERT INTO maps (
+                    map_name,
+                    nw_coords_lat, nw_coords_lon,
+                    se_coords_lat, se_coords_lon,
+                    optimal_rotation_angle,
+                    overlay_width, overlay_height,
+                    attribution,
+                    selected_pixel_coords, selected_realworld_coords,
+                    map_filename,
+                    map_area,
+                    map_event,
+                    map_date,
+                    map_course,
+                    map_club,
+                    map_course_planner,
+                    map_attribution
+                )
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            '''
+            self.cursor.execute(insert_sql, common_values)
+            map_id = self.cursor.lastrowid
+        else:
+            update_sql = '''
+                UPDATE maps
+                SET
+                    map_name = ?,
+                    nw_coords_lat = ?,
+                    nw_coords_lon = ?,
+                    se_coords_lat = ?,
+                    se_coords_lon = ?,
+                    optimal_rotation_angle = ?,
+                    overlay_width = ?,
+                    overlay_height = ?,
+                    attribution = ?,
+                    selected_pixel_coords = ?,
+                    selected_realworld_coords = ?,
+                    map_filename = ?,
+                    map_area = ?,
+                    map_event = ?,
+                    map_date = ?,
+                    map_course = ?,
+                    map_club = ?,
+                    map_course_planner = ?,
+                    map_attribution = ?
+                WHERE map_id = ?
+            '''
+            self.cursor.execute(update_sql, common_values + (map_id,))
+
         self.connection.commit()
+        return map_id
 
 
     def list_maps(self):
         self.cursor.execute('''
             SELECT
+                map_id,
                 map_name,
                 nw_coords_lat, nw_coords_lon,
                 se_coords_lat, se_coords_lon,
@@ -145,7 +179,8 @@ class Database:
         rows = self.cursor.fetchall()
         maps = []
         for row in rows:
-            (map_name, 
+            (map_id,
+            map_name, 
             nw_lat, nw_lon, 
             se_lat, se_lon, 
             angle, 
@@ -156,6 +191,7 @@ class Database:
             map_area, map_event, map_date, map_course,
             map_club, map_course_planner, map_attribution) = row
             maps.append({
+                "map_id": map_id,
                 "map_name": map_name,
                 "nw_coords": [nw_lat, nw_lon],
                 "se_coords": [se_lat, se_lon],
@@ -176,22 +212,22 @@ class Database:
             })
         return maps
     
-    def insert_mapfile_original(self, map_name, mapfile_original):
+    def insert_mapfile_original(self, map_id, mapfile_original):
         insert_sql = '''
         UPDATE maps 
         SET mapfile_original = ?
-        WHERE map_name = ?
+        WHERE map_id = ?
         '''
-        self.cursor.execute(insert_sql, (mapfile_original, map_name))
+        self.cursor.execute(insert_sql, (mapfile_original, map_id))
         self.connection.commit()
 
-    def insert_mapfile_final(self, map_name, mapfile_final):
+    def insert_mapfile_final(self, map_id, mapfile_final):
         insert_sql = '''
         UPDATE maps 
         SET mapfile_final = ?
-        WHERE map_name = ?
+        WHERE map_id = ?
         '''
-        self.cursor.execute(insert_sql, (mapfile_final, map_name))
+        self.cursor.execute(insert_sql, (mapfile_final, map_id))
         self.connection.commit()
 
     def get_mapfile_original(self, map_name):
@@ -209,6 +245,17 @@ class Database:
         SELECT mapfile_final 
         FROM maps 
         WHERE map_name = ?
+        '''
+        self.cursor.execute(select_sql, (map_name,))
+        result = self.cursor.fetchone()
+        return result[0] if result else None
+
+    def get_map_id_by_name(self, map_name):
+        select_sql = '''
+        SELECT map_id
+        FROM maps
+        WHERE map_name = ?
+        LIMIT 1
         '''
         self.cursor.execute(select_sql, (map_name,))
         result = self.cursor.fetchone()
@@ -270,16 +317,18 @@ class Database:
         with open(js_filepath, 'w', encoding='utf-8') as f:
             f.write(map_definitions_js)
 
+    """Note: This looks up maps by name, and will only get the first if there are duplicate names."""
     def print_all_maps(self):
         self.cursor.execute('SELECT * FROM maps')
         rows = self.cursor.fetchall()
         for row in rows:
-            (map_name, nw_lat, nw_lon, se_lat, se_lon, angle, 
+            (map_id, map_name, nw_lat, nw_lon, se_lat, se_lon, angle, 
             overlay_width, overlay_height, attribution, 
             selected_pixel_coords, selected_realworld_coords, 
             filename, map_area, map_event, map_date, map_course,
             map_club, map_course_planner, map_attribution,
             _, _) = row
+            print(f"Map ID: {map_id}")
             print(f"Map Name: {map_name}")
             print(f"  NW Coordinates: ({nw_lat}, {nw_lon})")
             print(f"  SE Coordinates: ({se_lat}, {se_lon})")
@@ -295,15 +344,21 @@ class Database:
     
     """Helper method to load maps from disk into existing map entry"""
     def insert_mapfile_original_from_local_file(self, map_name, filename):
+        map_id = self.get_map_id_by_name(map_name)
+        if map_id is None:
+            raise ValueError(f"Map named '{map_name}' was not found in the database.")
         with open(filename, 'rb') as file:
             mapfile_original = file.read()
-            self.insert_mapfile_original(map_name, mapfile_original)
+            self.insert_mapfile_original(map_id, mapfile_original)
 
     """Helper method to load maps from disk into existing map entry"""
     def insert_mapfile_final_from_local_file(self, map_name, filename):
+        map_id = self.get_map_id_by_name(map_name)
+        if map_id is None:
+            raise ValueError(f"Map named '{map_name}' was not found in the database.")
         with open(filename, 'rb') as file:
             mapfile_final = file.read()
-            self.insert_mapfile_final(map_name, mapfile_final)
+            self.insert_mapfile_final(map_id, mapfile_final)
 
     def setup_database(self, json_data):
         self.create_table()

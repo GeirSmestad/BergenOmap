@@ -175,11 +175,11 @@ def transform_and_store_map():
 
     map_registration_data = json.loads(imageRegistrationData)
 
-    db.insert_map(map_registration_data)
-    db.insert_mapfile_original(map_registration_data["map_name"], original_map_io.getvalue())
-    db.insert_mapfile_final(map_registration_data["map_name"], transformed_map_io.getvalue())
+    map_id = db.insert_map(map_registration_data)
+    db.insert_mapfile_original(map_id, original_map_io.getvalue())
+    db.insert_mapfile_final(map_id, transformed_map_io.getvalue())
 
-    print(f"Registered map \"{map_registration_data['map_name']}\" added to database.")
+    print(f"Registered map \"{map_registration_data['map_name']}\" added to database with id {map_id}.")
 
     return send_file(transformed_map_io, mimetype='image/png')
 
@@ -300,8 +300,8 @@ def insert_map():
 
     map_data = request.json
     db = get_db()
-    db.insert_map(map_data)
-    return jsonify({'message': 'Map added successfully'}), 201
+    map_id = db.insert_map(map_data)
+    return jsonify({'message': 'Map added successfully', 'map_id': map_id}), 201
 
 @app.route('/api/dal/list_maps', methods=['GET'])
 def list_maps():
