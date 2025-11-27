@@ -10,7 +10,7 @@ class Database:
         self.cursor = self.connection.cursor()
 
     def create_table(self):
-        create_table_sql = '''
+        create_maps_sql = '''
         CREATE TABLE IF NOT EXISTS maps (
             map_id INTEGER PRIMARY KEY AUTOINCREMENT,
             map_name TEXT NOT NULL,
@@ -31,12 +31,19 @@ class Database:
             map_course TEXT,
             map_club TEXT,
             map_course_planner TEXT,
-            map_attribution TEXT,
-            mapfile_original BLOB,
-            mapfile_final BLOB
+            map_attribution TEXT
         )
         '''
-        self.cursor.execute(create_table_sql)
+        create_map_files_sql = '''
+        CREATE TABLE IF NOT EXISTS map_files (
+            map_id INTEGER PRIMARY KEY,
+            mapfile_original BLOB,
+            mapfile_final BLOB,
+            FOREIGN KEY (map_id) REFERENCES maps(map_id) ON DELETE CASCADE
+        )
+        '''
+        self.cursor.execute(create_maps_sql)
+        self.cursor.execute(create_map_files_sql)
         self.connection.commit()
 
     def insert_data(self, data):
@@ -48,9 +55,8 @@ class Database:
             overlay_width, overlay_height, 
             attribution, selected_pixel_coords, selected_realworld_coords, 
             map_filename, map_area, map_event, map_date, map_course,
-            map_club, map_course_planner, map_attribution,
-            mapfile_original, mapfile_final
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            map_club, map_course_planner, map_attribution
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         '''
         for item in data:
             # Check if the record already exists
@@ -73,9 +79,7 @@ class Database:
                     item.get('map_course', ''),
                     item.get('map_club', ''),
                     item.get('map_course_planner', ''),
-                    item.get('map_attribution', ''),
-                    None,  # Placeholder for mapfile_original
-                    None   # Placeholder for mapfile_final
+                    item.get('map_attribution', '')
                 ))
         self.connection.commit()
 
@@ -214,41 +218,53 @@ class Database:
     
     def insert_mapfile_original(self, map_id, mapfile_original):
         insert_sql = '''
-        UPDATE maps 
-        SET mapfile_original = ?
-        WHERE map_id = ?
+        INSERT INTO map_files (map_id, mapfile_original)
+        VALUES (?, ?)
+        ON CONFLICT(map_id) DO UPDATE SET mapfile_original = excluded.mapfile_original
         '''
-        self.cursor.execute(insert_sql, (mapfile_original, map_id))
+        self.cursor.execute(insert_sql, (map_id, mapfile_original))
         self.connection.commit()
 
     def insert_mapfile_final(self, map_id, mapfile_final):
         insert_sql = '''
-        UPDATE maps 
-        SET mapfile_final = ?
-        WHERE map_id = ?
+        INSERT INTO map_files (map_id, mapfile_final)
+        VALUES (?, ?)
+        ON CONFLICT(map_id) DO UPDATE SET mapfile_final = excluded.mapfile_final
         '''
-        self.cursor.execute(insert_sql, (mapfile_final, map_id))
+        self.cursor.execute(insert_sql, (map_id, mapfile_final))
         self.connection.commit()
 
-    def get_mapfile_original(self, map_name):
+    def get_mapfile_original_by_id(self, map_id):
         select_sql = '''
         SELECT mapfile_original 
-        FROM maps 
-        WHERE map_name = ?
+        FROM map_files 
+        WHERE map_id = ?
         '''
-        self.cursor.execute(select_sql, (map_name,))
+        self.cursor.execute(select_sql, (map_id,))
         result = self.cursor.fetchone()
         return result[0] if result else None
 
-    def get_mapfile_final(self, map_name):
+    def get_mapfile_final_by_id(self, map_id):
         select_sql = '''
         SELECT mapfile_final 
-        FROM maps 
-        WHERE map_name = ?
+        FROM map_files 
+        WHERE map_id = ?
         '''
-        self.cursor.execute(select_sql, (map_name,))
+        self.cursor.execute(select_sql, (map_id,))
         result = self.cursor.fetchone()
         return result[0] if result else None
+
+    def get_mapfile_original(self, map_name):
+        map_id = self.get_map_id_by_name(map_name)
+        if map_id is None:
+            return None
+        return self.get_mapfile_original_by_id(map_id)
+
+    def get_mapfile_final(self, map_name):
+        map_id = self.get_map_id_by_name(map_name)
+        if map_id is None:
+            return None
+        return self.get_mapfile_final_by_id(map_id)
 
     def get_map_id_by_name(self, map_name):
         select_sql = '''
@@ -294,7 +310,7 @@ class Database:
             map_definitions.append(map_def)
             
             # Write the final map image
-            final_image_blob = self.get_mapfile_final(map_entry["map_name"])
+            final_image_blob = self.get_mapfile_final_by_id(map_entry["map_id"])
             final_image_filename = os.path.join(final_maps_output_dir, map_entry["map_filename"])
 
             if (final_image_blob is not None) and (overwrite or not os.path.exists(final_image_filename)):
@@ -303,7 +319,7 @@ class Database:
             
             # Optionally write the original map image
             if include_original:
-                original_image_blob = self.get_mapfile_original(map_entry["map_name"])
+                original_image_blob = self.get_mapfile_original_by_id(map_entry["map_id"])
                 if original_image_blob:
                     original_image_filename = os.path.join(original_maps_output_dir, f"Original_{map_entry['map_filename']}")
                     if overwrite or not os.path.exists(original_image_filename):
@@ -319,15 +335,22 @@ class Database:
 
     """Note: This looks up maps by name, and will only get the first if there are duplicate names."""
     def print_all_maps(self):
-        self.cursor.execute('SELECT * FROM maps')
+        self.cursor.execute('''
+            SELECT map_id, map_name, nw_coords_lat, nw_coords_lon,
+                   se_coords_lat, se_coords_lon, optimal_rotation_angle,
+                   overlay_width, overlay_height, attribution,
+                   selected_pixel_coords, selected_realworld_coords,
+                   map_filename, map_area, map_event, map_date, map_course,
+                   map_club, map_course_planner, map_attribution
+            FROM maps
+        ''')
         rows = self.cursor.fetchall()
         for row in rows:
-            (map_id, map_name, nw_lat, nw_lon, se_lat, se_lon, angle, 
-            overlay_width, overlay_height, attribution, 
-            selected_pixel_coords, selected_realworld_coords, 
+            (map_id, map_name, nw_lat, nw_lon, se_lat, se_lon, angle,
+            overlay_width, overlay_height, attribution,
+            selected_pixel_coords, selected_realworld_coords,
             filename, map_area, map_event, map_date, map_course,
-            map_club, map_course_planner, map_attribution,
-            _, _) = row
+            map_club, map_course_planner, map_attribution) = row
             print(f"Map ID: {map_id}")
             print(f"Map Name: {map_name}")
             print(f"  NW Coordinates: ({nw_lat}, {nw_lon})")

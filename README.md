@@ -169,6 +169,7 @@ Shortlist for neste punkter: cache, låse zoom og snurre etter kompass. Registre
 
 ## Bugs
 
+* Hvis man trykker process registration flere ganger, får du nå duplikater i stedet for overskriving. Jeg må fjerne muligheten for å ha flere kart med samme navn.
 * list_maps-spørringen tar 7 sekunder. Den må optimiseres, skal bare ta et øyeblikk.
 * Serveren krasjer innimellom. ChatGPT har forslag til hva jeg kan sjekke etter reboot.
 * (X) Blåmannen-kartet "Blamannen-10k-rotates-weirdly.png" får rar rotasjon [løst med ny algoritme]
