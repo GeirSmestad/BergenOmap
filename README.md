@@ -11,14 +11,11 @@ C:\source\O-maps\backend>python Backend.py
 
 # TODO
 
-Shortlist for neste punkter: cache, låse zoom og snurre etter kompass. Registrere flere kart.
+Shortlist for neste punkter: cache API-kall, låse zoom og snurre etter kompass. Registrere flere kart.
 
 ## Registrering av kart
 
 
-* Ser ikke ut som metadata-egenskapene flyttes inn i databasen fra registrerings-browser; fiks det.
-
-* Legg inn knapp for å bytte mellom satellittfoto og Norgeskart i Leaflet
 * Legg til checkbox som lar deg registrere kartet til database hvis du leser inn registreringen fra JSON
 
 * Grensesnitt for å redigere metadata i databasen uten å røre kart-registreringen
@@ -26,11 +23,14 @@ Shortlist for neste punkter: cache, låse zoom og snurre etter kompass. Registre
 * Få inn merker i tre farger for hvor man har klikket på kart og overlay ved registrering, kanskje la brukeren dra dem rundt
 * Mistenker at det er lurt å refaktorere kode til moduler først, for etter dette vil JS-filen ha veldig mye state-håndtering
 
-* Støtt transformering av PDF til PNG når du drag-and-dropper en PDF i registreringsvinduet
 * For registrering i bedriftscuppen, bør jeg ha et verktøy som raskt lar meg sette samme registrering på identiske kart
 * + lagre metadata fra mappestruktur. Trenger bare å få det ustrukturert inn i databasen; kan ta detaljene med AI-modell senere.
 
-~
+<del>
+
+* (X) Støtt transformering av PDF til PNG når du drag-and-dropper en PDF i registreringsvinduet
+* (X) Legg inn knapp for å bytte mellom satellittfoto og Norgeskart i Leaflet
+* (X) Ser ikke ut som metadata-egenskapene flyttes inn i databasen fra registrerings-browser; fiks det.
 * (X) Bytte mellom flyfoto og raster-kart under registrering
 * (X) Milepæl, registrering av kart er nå ganske enkelt! Kommet langt siden jeg måtte sjonglere filer og JS-definisjoner :)
 * (X) Bedre ergonomi ved velging av 3+3 punkter, helst ved å både kunne se orienteringskart og Leaflet ved siden av hverandre
@@ -72,9 +72,11 @@ Shortlist for neste punkter: cache, låse zoom og snurre etter kompass. Registre
 * (X) Lagre rotert bilde på server
 * (X) Eventuelt med kartnavn og annen metadata spesifisert i registrerings-vinduet
 * (X) Sørg for at filer/filnavn og JSON-data kan hentes inn i mapBrowser.js
-~
+</del>
 
 ## Navigasjons-app
+
+
 
 * Cache Leaflet-filer, orienteringskart, og kart-definisjoner lokalt i appen i tilfelle brudd i nettverk (Cache Storage API?)
 * Vise en slags highlight i det brukeren har valgt å laste et kart, sånn at de forstår at det skjer noe i bakgrunnen
@@ -85,7 +87,8 @@ Shortlist for neste punkter: cache, låse zoom og snurre etter kompass. Registre
 * Mulighet for å vise Strava-track fra tidligere løp på et orienteringskart (kanskje i helt separat view)
 * Database-integrasjon for å samle en brukers informasjon (fx. GPX-filer fra Strava)
 
-~
+
+<del>
 * (0) Skru av live oppdatering av posisjons-visning når du simulerer posisjon, ellers spretter den tilbake
 * (0) Kanskje en debug-mode som gjør det lettere å velge simulert posisjon på kartet? [trenger det ikke]
 * (X) Visuelt fine segmented controls for å velge modus på kart-velgeren (nær meg eller nær kart-sentrum)
@@ -101,7 +104,7 @@ Shortlist for neste punkter: cache, låse zoom og snurre etter kompass. Registre
 * (X) Velge hvilke(t) kart man vil se, når det er flere å velge mellom (fx. ikke laste før du klikker på kart-området)  
 * (X) GPS-posisjon vises på kartet
 * (X) Visning hvor kart er satt til korrekt posisjon med 0% opacity
-~
+</del>
 
 ## Infrastruktur
 
@@ -110,7 +113,7 @@ Shortlist for neste punkter: cache, låse zoom og snurre etter kompass. Registre
 * Autentisering, hvis jeg vil gjøre appen mindre tilgjengelig for Gud og hvermann. Auth med navn?
 * Landingsside
 
-~
+<del>
 * (X) På et tidspunkt vil jeg kanskje ha en indeks-primærnøkkel heller enn å bruke kartnavnet, pga. mange kart i samme område
 * (X) Deployment på EC2/Lightsail
 * (X) Scanne alle O-kartene mine som ikke er fra bedriftscup
@@ -127,7 +130,7 @@ Shortlist for neste punkter: cache, låse zoom og snurre etter kompass. Registre
 * (X) Se om det er mulig å komprimere kart-filene [webp 70% gir 50% mindre fil med OK kvalitetstap. Bør helst gjøres via config.]
 * (X) Database for kart-registreringer (sqlite)
 * (X) Javascript for å be nettleseren ikke sette låse telefonen ved inaktivitet
-~
+</del>
 
 ## Scanning og registrering av spesifikke kart
 
@@ -137,14 +140,14 @@ Shortlist for neste punkter: cache, låse zoom og snurre etter kompass. Registre
 * Registrere bedriftscup-kart 2025
 * Registrere resten av bedriftscup-kart
 
-~
+<del>
 * (X) Jeg mangler løpene fra Dyreparken i 2024, vet ikke hvor de kartene har blitt av.
 * (X) Spor opp alle de gamle turorienterings-kartene dine, og få dem på listen over kart å registrere. Se på Gmail & Downloads
 * (X) Legge inn "månedens kart november" på Skage, hvor jeg og C gikk lørdagstur
 * (X) Scanne alle kart fra løp som ikke er bedriftscuppen, så jeg kan legge dem inn
 * (X) Gamle turorienteringskart som kan lastes ned fra turorientering.no
 * (X)Legge inn mine kart fra løp som mangler fra bedriftscuppens nettside i perioden jeg har løpt
-~
+</del>
 
 ## Generelle forbedringer
 
@@ -155,7 +158,7 @@ Shortlist for neste punkter: cache, låse zoom og snurre etter kompass. Registre
 
 * Beskjed i registrerings-grensesnitt om framdrift ved registrering ("Beregner registrering / overfører bilder / ferdig"), kanskje en sticky status-bar
 
-~
+<del>
 * (X) Fjern filnavnet fra viewDatabase-funksjonen; jeg trenger det ikke. Fjern også Attribution-feltet.
 * (X) Det burde gå an å one-shotte en justering i registrerings-grensesnittet sånn at jeg lett kan putte inn de nye feltene jeg ønsker å lagre i databasen.
 * (X) Lagre kun 6 desimaler i koordinater i DB ved registrering
@@ -176,19 +179,19 @@ Shortlist for neste punkter: cache, låse zoom og snurre etter kompass. Registre
 * (X) Lagt til sprintkart på Bønes
 * (X) Lagt til gammelt kart (2005-ish?) fra Midtfjellet
 * (X) Lagt til Blåmannen
-~
+</del>
 
 ## Bugs
 
 * Serveren krasjer innimellom. ChatGPT har forslag til hva jeg kan sjekke etter reboot.
 
-~
+<del>
 * (X) Hvis man trykker process registration flere ganger, får du nå duplikater i stedet for overskriving.
 * (X) list_maps-spørringen tar 7 sekunder. Den må optimiseres, skal bare ta et øyeblikk.
 * (X) Blåmannen-kartet "Blamannen-10k-rotates-weirdly.png" får rar rotasjon [løst med ny algoritme]
 * (X) Fiks exceptions som skjer når du åpner database-visning
 * (X) Backend sender nå felt-navnet "filename" i stedet for "map_filename" ved registrering (som gjør at map.html ikke finner den)
-~
+</del>
 
 ## Langsiktige ambisjoner
 
@@ -208,7 +211,7 @@ Shortlist for neste punkter: cache, låse zoom og snurre etter kompass. Registre
 * Når jeg får veldig mange kart, må jeg kanskje ha et avansert filter for kart, som lar meg filtrere på metadata.
 * Ta ned gamle kart.twerkules.com, den nye appen er mye bedre
 
-~
+<del>
 * (X) Menysystem for å velge flere kart, hvis de overlapper i terrenget
 * (X) Et mer ordentlig system for hosting og deploy, når det blir nødvendig
 * (X) Deploy-script som setter opp all infrastuktur med én kommando [nært nok med bootstrap + scp]
@@ -217,7 +220,7 @@ Shortlist for neste punkter: cache, låse zoom og snurre etter kompass. Registre
 * (0) Støtt direkte kobling mellom kartvisning og database i container [løst ved å la back-end serve kart rett fra DB]
 * (0) Kjøre selv-hostet instans av OpenStreetMap i container; la appen hente kart fra denne [løst med Kartverkets server]
 * (X) Årstall for kart i JSON-format [dette går i attribution-feltet]
-~
+</del>
 
 ## Refaktorering
 
@@ -227,9 +230,15 @@ Shortlist for neste punkter: cache, låse zoom og snurre etter kompass. Registre
 * Trekke felles kode ut i felles moduler?
 * Felles environment-config på tvers av sider?
 
-~
+<del>
 * (X) Refaktorere CSS til å bli separat mellom ulike sider
-~
+</del>
+
+## Løse idéer som jeg er usikker på
+
+* Animasjon med "flash" langs outline av kart før det lastes, for å gi brukeren en indikasjon på framdriften
+* Gjøre det mulig å raskt fokusere på sentrum av valgt kart, hvis brukeren ønsker det (men vanskelig å få UXen bra)
+
 
 ## Deployment - hvordan kjøre deploy av appen
 
