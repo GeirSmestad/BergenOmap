@@ -13,7 +13,7 @@ class Database:
         create_maps_sql = '''
         CREATE TABLE IF NOT EXISTS maps (
             map_id INTEGER PRIMARY KEY AUTOINCREMENT,
-            map_name TEXT NOT NULL,
+            map_name TEXT NOT NULL UNIQUE,
             nw_coords_lat REAL,
             nw_coords_lon REAL,
             se_coords_lat REAL,
@@ -130,9 +130,28 @@ class Database:
                     map_attribution
                 )
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ON CONFLICT(map_name) DO UPDATE SET
+                    nw_coords_lat = excluded.nw_coords_lat,
+                    nw_coords_lon = excluded.nw_coords_lon,
+                    se_coords_lat = excluded.se_coords_lat,
+                    se_coords_lon = excluded.se_coords_lon,
+                    optimal_rotation_angle = excluded.optimal_rotation_angle,
+                    overlay_width = excluded.overlay_width,
+                    overlay_height = excluded.overlay_height,
+                    attribution = excluded.attribution,
+                    selected_pixel_coords = excluded.selected_pixel_coords,
+                    selected_realworld_coords = excluded.selected_realworld_coords,
+                    map_filename = excluded.map_filename,
+                    map_area = excluded.map_area,
+                    map_event = excluded.map_event,
+                    map_date = excluded.map_date,
+                    map_course = excluded.map_course,
+                    map_club = excluded.map_club,
+                    map_course_planner = excluded.map_course_planner,
+                    map_attribution = excluded.map_attribution
             '''
             self.cursor.execute(insert_sql, common_values)
-            map_id = self.cursor.lastrowid
+            map_id = self.get_map_id_by_name(map_data['map_name'])
         else:
             update_sql = '''
                 UPDATE maps
@@ -333,7 +352,6 @@ class Database:
         with open(js_filepath, 'w', encoding='utf-8') as f:
             f.write(map_definitions_js)
 
-    """Note: This looks up maps by name, and will only get the first if there are duplicate names."""
     def print_all_maps(self):
         self.cursor.execute('''
             SELECT map_id, map_name, nw_coords_lat, nw_coords_lon,

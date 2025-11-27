@@ -252,7 +252,7 @@ Se etter web-feil i logger:
   sudo tail -f /var/log/nginx/error.log
 
 Re-deploy app når du har endret kode:
-  rsync -avz --exclude data/database.db ./ bergenomap:/srv/bergenomap/
+  (kopier alle filer som er endret tli server, med SCP. Se under)
   ssh bergenomap "sudo systemctl restart bergenomap"
 
 Hvis du ikke får rsync til å fungere, deploy filene og mappene du trenger med scp:
@@ -263,6 +263,26 @@ Hvis du ikke får rsync til å fungere, deploy filene og mappene du trenger med 
     backend `
     ubuntu@54.220.213.9:/srv/bergenomap/
   ssh bergenomap "sudo systemctl restart bergenomap"
+
+Eller også inkludert database:
+
+  scp -i ~/.ssh/LightsailDefaultKey-eu-west-1.pem -r `
+    *.html `
+    js `
+    css `
+    backend `
+    data `
+    ubuntu@54.220.213.9:/srv/bergenomap/
+  ssh bergenomap "sudo systemctl restart bergenomap"
+
+Eller BARE databasen:
+
+  scp -i ~/.ssh/LightsailDefaultKey-eu-west-1.pem -r `
+    data `
+    ubuntu@54.220.213.9:/srv/bergenomap/
+  ssh bergenomap "sudo systemctl restart bergenomap"
+
+
 
 
 ## Kart-kilder -- flyfoto og topografiske kart
