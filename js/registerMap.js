@@ -338,10 +338,18 @@ document.addEventListener("DOMContentLoaded", function () {
   function processImageFile(imageFile) {
     window.droppedImage = imageFile; // Store image for later use
 
-    // Pre-populate fields with filename on drop, since these will almost always match
+    // Pre-populate fields with filename on drop, unless the user already typed something
     const filename = imageFile.name || '';
-    document.getElementById('mapName').value = filename;
-    document.getElementById('filename').value = filename;
+    const mapNameInput = document.getElementById('mapName');
+    const filenameInput = document.getElementById('filename');
+
+    if (mapNameInput && mapNameInput.value.trim() === '') {
+      mapNameInput.value = filename;
+    }
+
+    if (filenameInput && filenameInput.value.trim() === '') {
+      filenameInput.value = filename;
+    }
 
     uploadAndPreviewImage(imageFile);
   }
