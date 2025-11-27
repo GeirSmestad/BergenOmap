@@ -11,6 +11,8 @@ C:\source\O-maps\backend>python Backend.py
 
 # TODO
 
+Shortlist for neste punkter: cache, låse zoom og snurre etter kompass. Registrere flere kart.
+
 ## Registrering av kart
 
 * Ser ikke ut som metadata-egenskapene flyttes inn i databasen fra registrerings-browser; fiks det.
@@ -24,6 +26,7 @@ C:\source\O-maps\backend>python Backend.py
 * For registrering i bedriftscuppen, bør jeg ha et verktøy som raskt lar meg sette samme registrering på identiske kart
 * + lagre metadata fra mappestruktur. Trenger bare å få det ustrukturert inn i databasen; kan ta detaljene med AI-modell senere.
 
+* (X) Bytte mellom flyfoto og raster-kart under registrering
 * (X) Milepæl, registrering av kart er nå ganske enkelt! Kommet langt siden jeg måtte sjonglere filer og JS-definisjoner :)
 * (X) Bedre ergonomi ved velging av 3+3 punkter, helst ved å både kunne se orienteringskart og Leaflet ved siden av hverandre
 * (X) Koble den nye algoritmen opp til knappen som registrerer alt i databasen; her er det en bug
@@ -72,14 +75,13 @@ C:\source\O-maps\backend>python Backend.py
 * Vise en slags highlight i det brukeren har valgt å laste et kart, sånn at de forstår at det skjer noe i bakgrunnen
 
 * Kartet orienteres etter retningen man holder mobilen (toggle av/på)
-* Zoom-innstilling som finner mobil-dimensjoner og setter zoom til å tilsvare kartets målestokk
+* Zoom-innstilling som finner mobil-dimensjoner og setter zoom til å tilsvare kartets målestokk (1:7500 inntil videre)
 
 * Mulighet for å vise Strava-track fra tidligere løp på et orienteringskart (kanskje i helt separat view)
 * Database-integrasjon for å samle en brukers informasjon (fx. GPX-filer fra Strava)
 
-* Skru av live oppdatering av posisjons-visning når du simulerer posisjon, ellers spretter den tilbake
-* Kanskje en debug-mode som gjør det lettere å velge simulert posisjon på kartet?
-
+* (0) Skru av live oppdatering av posisjons-visning når du simulerer posisjon, ellers spretter den tilbake
+* (0) Kanskje en debug-mode som gjør det lettere å velge simulert posisjon på kartet? [trenger det ikke]
 * (X) Visuelt fine segmented controls for å velge modus på kart-velgeren (nær meg eller nær kart-sentrum)
 * (X) Sentrer kartet på brukerens posisjon (knapp)
 * (X) Kartet følger brukerens posisjon (toggle av/på)
@@ -98,7 +100,7 @@ C:\source\O-maps\backend>python Backend.py
 
 * På et tidspunkt vil jeg kanskje ha en indeks-primærnøkkel heller enn å bruke kartnavnet, pga. mange kart i samme område
 * Database-nøkkel som gir versjonen av et bestemt kart, slik at jeg kan cache i nettleseren til brukeren
-* Autentisering, hvis jeg vil gjøre appen mindre tilgjengelig for Gud og hvermann
+* Autentisering, hvis jeg vil gjøre appen mindre tilgjengelig for Gud og hvermann. Auth med navn?
 * Landingsside
 
 * (X) Deployment på EC2/Lightsail
@@ -118,7 +120,6 @@ C:\source\O-maps\backend>python Backend.py
 * (X) Javascript for å be nettleseren ikke sette låse telefonen ved inaktivitet
 
 ## Scanning og registrering av spesifikke kart
-
 
 * Registrere alle kartene som ikke er fra bedriftscuppen (mappe O-kart under Scans)
 * Registrere alle tur-orienteringskartene
@@ -168,6 +169,8 @@ C:\source\O-maps\backend>python Backend.py
 
 ## Bugs
 
+* list_maps-spørringen tar 7 sekunder. Den må optimiseres, skal bare ta et øyeblikk.
+* Serveren krasjer innimellom. ChatGPT har forslag til hva jeg kan sjekke etter reboot.
 * (X) Blåmannen-kartet "Blamannen-10k-rotates-weirdly.png" får rar rotasjon [løst med ny algoritme]
 * (X) Fiks exceptions som skjer når du åpner database-visning
 * (X) Backend sender nå felt-navnet "filename" i stedet for "map_filename" ved registrering (som gjør at map.html ikke finner den)
@@ -203,12 +206,12 @@ C:\source\O-maps\backend>python Backend.py
 ## Refaktorering
 
 * Kan hende jeg må refaktorere kart-visningen på et tidspunkt. Flere steg her.
-* Refaktorere CSS til å bli separat mellom ulike sider
+* Rename CSS-fil for kartvisning slik at den matcher etter refaktoreringen
 * Bruke ecmascript-moduler?
 * Trekke felles kode ut i felles moduler?
 * Felles environment-config på tvers av sider?
 
-
+* (X) Refaktorere CSS til å bli separat mellom ulike sider
 
 ## Deployment - hvordan kjøre deploy av appen
 
