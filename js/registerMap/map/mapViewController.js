@@ -1,6 +1,6 @@
 import { DEFAULT_MAP_ZOOM, START_LAT_LON } from '../config.js';
 
-export function createMapView({
+export function createMapViewController({
   coordinateStore,
   basemapToggleButton
 }) {

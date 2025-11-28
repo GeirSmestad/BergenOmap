@@ -1,6 +1,6 @@
 import { CoordinateStore } from './state/coordinateStore.js';
 import { RegistrationStore } from './state/registrationStore.js';
-import { createMapView } from './map/mapView.js';
+import { createMapViewController } from './map/mapViewController.js';
 import { createOverlayController } from './overlay/overlayController.js';
 import { initCoordinatePanel } from './ui/coordinatePanel.js';
 import { createPreviewController } from './preview/previewController.js';
@@ -12,14 +12,14 @@ document.addEventListener('DOMContentLoaded', () => {
   const registrationStore = new RegistrationStore();
 
   const basemapToggleButton = document.getElementById('basemapToggleButton');
-  const mapView = createMapView({ coordinateStore, basemapToggleButton });
+  const mapViewController = createMapViewController({ coordinateStore, basemapToggleButton });
 
   const overlayController = createOverlayController({
     coordinateStore,
-    onOverlayLoaded: () => mapView.map.invalidateSize()
+    onOverlayLoaded: () => mapViewController.map.invalidateSize()
   });
 
-  window.map = mapView.map;
+  window.map = mapViewController.map;
 
   initCoordinatePanel({
     coordinateStore,
@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   const previewController = createPreviewController({
-    map: mapView.map,
+    map: mapViewController.map,
     registrationStore
   });
 
