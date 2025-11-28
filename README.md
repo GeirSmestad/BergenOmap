@@ -357,3 +357,11 @@ Teknisk kontakt - trond.ola.ulvolden@kartverket.no
 ## Notater
 
 Jeg har custom-innstillinger for cache under Behaviors i CloudFront og Edit Metatada i S3. De er kortlevde.
+
+For å be server liste første tidspunkt for alle unike IPer som har bedt om et kart:
+
+zgrep -h "/api/dal/mapfile/final/" /var/log/nginx/access.log* \
+  | awk '{ip=$1; ts=$4; gsub(/^\[/,"",ts); print ts, ip}' \
+  | sort \
+  | awk '{ts=$1; ip=$2; if(!(ip in first)){first[ip]=ts}} END{for(ip in first) print first[ip], ip}' \
+  | sort
