@@ -3,18 +3,17 @@
 Orienteringskart for Bergen, med GPS-støtte for oppdagelsesferd i fremmed skog.
 
 
-# Notater
+# Utviklingsmiljø
 
-For å kjøre server for back-end:
+For å kjøre servere for utvikling:
 
-C:\source\O-maps\backend>python Backend.py
+cd C:\Source\BergenOmap\backend; python .\Backend.py
+cd C:\Source\BergenOmap; python -m http.server 8000
 
 # TODO
 
-Shortlist for neste punkter: cache API-kall, låse zoom og snurre etter kompass. Registrere flere kart.
 
 ## Registrering av kart
-
 
 * Grensesnitt for å redigere metadata i databasen uten å røre kart-registreringen
 
