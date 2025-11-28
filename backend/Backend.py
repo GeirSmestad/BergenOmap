@@ -1,17 +1,4 @@
-from flask import (
-    Flask,
-    send_file,
-    send_from_directory,
-    request,
-    jsonify,
-    make_response,
-    g,
-    abort,
-    render_template_string,
-    session,
-    redirect,
-    url_for,
-)
+from flask import Flask, send_file, request, jsonify, make_response, g, abort, render_template_string
 from flask_cors import CORS
 from PIL import Image, ImageOps, ImageDraw
 import io
@@ -21,8 +8,6 @@ from io import BytesIO
 import traceback
 import math
 import fitz
-from datetime import timedelta
-import os
 
 # Constants
 default_border_percentage = 0.13 # Width of each side border, as percentage of longest dimension
@@ -34,74 +19,10 @@ database_export_original_maps_output_dir = '../maps/registered_maps_originals'
 # Munkebotn: http://127.0.0.1:5000/transform?angle=3.225405991892112&border=465&path=../maps/munkebotn_combined.png   w: 2481 h: 3508
 # Åstveitskogen: http://127.0.0.1:5000/transform?angle=0&border=465&path=../maps/png/tur-o-2024/2024-astveitskogen-tur-o.png
 
-PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-
 app = Flask(__name__)
-app.secret_key = os.environ.get('BO_APP_SECRET', 'change-this-secret')
-app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=365)
-app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
-app.config.setdefault('SESSION_COOKIE_HTTPONLY', True)
 
 # Use cross-origin resource sharing in return headers, to tell browser to allow responses from different origin
 CORS(app)
-
-VALID_USERS = {
-    'geir.smestad': {
-        'id': 'geir.smestad',
-        'full_name': 'Geir Smestad',
-    }
-}
-
-
-def is_authenticated():
-    return 'user_id' in session
-
-
-def authenticate(full_name: str):
-    if not full_name:
-        return None
-    wanted = full_name.strip().lower()
-    for user in VALID_USERS.values():
-        if user['full_name'].lower() == wanted:
-            return user
-    return None
-
-
-@app.route('/', methods=['GET'])
-def landing_page():
-    if is_authenticated():
-        return redirect(url_for('protected_map'))
-    return send_from_directory(PROJECT_ROOT, 'index.html')
-
-
-@app.route('/map.html', methods=['GET'])
-def protected_map():
-    if not is_authenticated():
-        return redirect(url_for('landing_page'))
-    return send_from_directory(PROJECT_ROOT, 'map.html')
-
-
-@app.route('/api/login', methods=['POST'])
-def login():
-    payload = request.get_json(silent=True) or request.form or {}
-    full_name = (payload.get('fullName') or '').strip()
-    user = authenticate(full_name)
-    if not user:
-        return jsonify({'message': 'Feil navn'}), 401
-    session.permanent = True
-    session['user_id'] = user['id']
-    session['full_name'] = user['full_name']
-    response = jsonify({'message': 'OK'})
-    response.headers['Cache-Control'] = 'no-store'
-    return response
-
-
-@app.route('/api/logout', methods=['POST'])
-def logout():
-    session.clear()
-    response = jsonify({'message': 'Logget ut'})
-    response.headers['Cache-Control'] = 'no-store'
-    return response
 
 def add_transparent_border(image, border_size):
     # Create a new image with transparent background
