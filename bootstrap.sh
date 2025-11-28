@@ -27,7 +27,12 @@ User=ubuntu
 Group=ubuntu
 WorkingDirectory=/srv/bergenomap/backend
 Environment="PATH=/srv/bergenomap/venv/bin"
-ExecStart=/srv/bergenomap/venv/bin/gunicorn --bind 127.0.0.1:5000 Backend:app
+ExecStart=/srv/bergenomap/venv/bin/gunicorn \
+  --workers 1 \
+  --threads 1 \
+  --max-requests 100 \
+  --max-requests-jitter 20 \
+  --bind 127.0.0.1:5000 Backend:app
 Restart=on-failure
 
 [Install]
@@ -74,3 +79,12 @@ sudo certbot --nginx \
   --redirect
 
 echo "Bootstrap complete with HTTPS enabled for https://${DOMAIN}"
+
+# Create 2G swap
+sudo fallocate -l 2G /swapfile || true
+sudo chmod 600 /swapfile || true
+sudo mkswap /swapfile || true
+sudo swapon /swapfile || true
+grep -q '/swapfile' /etc/fstab || echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
+
+

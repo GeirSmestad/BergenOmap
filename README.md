@@ -18,16 +18,16 @@ Shortlist for neste punkter: cache API-kall, låse zoom og snurre etter kompass.
 
 * Grensesnitt for å redigere metadata i databasen uten å røre kart-registreringen
 
-* Få inn merker i tre farger for hvor man har klikket på kart og overlay ved registrering, kanskje la brukeren dra dem rundt
+* Få inn merker i tre farger for hvor man har klikket på kart og overlay ved registrering, la brukeren dra dem rundt
 * Mistenker at det er lurt å refaktorere kode til moduler først, for etter dette vil JS-filen ha veldig mye state-håndtering
 * Verktøy for å finjustere registrering: rotasjon, størrelse, translasjon
-* Legge inn ny constraint i beregningen av kart-hjørnenes koordinater: At aspect-ratio til kart-rektangelet ikke skal endre seg
-* Legg til checkbox som lar deg registrere kartet til database hvis du leser inn registreringen fra JSON
 
-* For registrering i bedriftscuppen, bør jeg ha et verktøy som raskt lar meg sette samme registrering på identiske kart
+* Legg til checkbox som lar deg registrere kartet til database hvis du leser inn registreringen fra JSON
+* For registrering i bedriftscuppen, bør jeg ha et verktøy som raskt lar meg sette samme registrering på identiske kart (egen side?)
 * + lagre metadata fra mappestruktur. Trenger bare å få det ustrukturert inn i databasen; kan ta detaljene med AI-modell senere.
 
 
+* (X) Legge inn ny constraint i beregningen av kart-hjørnenes koordinater: At aspect-ratio til kart-rektangelet ikke skal endre seg
 * (X) Støtt transformering av PDF til PNG når du drag-and-dropper en PDF i registreringsvinduet
 * (X) Legg inn knapp for å bytte mellom satellittfoto og Norgeskart i Leaflet
 * (X) Ser ikke ut som metadata-egenskapene flyttes inn i databasen fra registrerings-browser; fiks det.
@@ -177,8 +177,7 @@ Shortlist for neste punkter: cache API-kall, låse zoom og snurre etter kompass.
 
 ## Bugs
 
-* Serveren krasjer innimellom. ChatGPT har forslag til hva jeg kan sjekke etter reboot.
-
+* (X) Serveren krasjer innimellom. ChatGPT har forslag til hva jeg kan sjekke etter reboot (OOM; tror det er fikset)
 * (X) Hvis man trykker process registration flere ganger, får du nå duplikater i stedet for overskriving.
 * (X) list_maps-spørringen tar 7 sekunder. Den må optimiseres, skal bare ta et øyeblikk.
 * (X) Blåmannen-kartet "Blamannen-10k-rotates-weirdly.png" får rar rotasjon [løst med ny algoritme]
@@ -215,12 +214,14 @@ Shortlist for neste punkter: cache API-kall, låse zoom og snurre etter kompass.
 ## Refaktorering
 
 * Kan hende jeg må refaktorere kart-visningen på et tidspunkt. Flere steg her.
-* Rename CSS-fil for kartvisning slik at den matcher etter refaktoreringen
+
 * Bruke ecmascript-moduler?
 * Trekke felles kode ut i felles moduler?
 * Felles environment-config på tvers av sider?
 
 * (X) Refaktorere CSS til å bli separat mellom ulike sider
+* (X) Rename CSS-fil for kartvisning slik at den matcher etter refaktoreringen
+
 
 ## Løse idéer som jeg er usikker på
 
