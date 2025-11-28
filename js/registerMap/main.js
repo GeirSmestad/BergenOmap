@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
     previewController,
     elements: {
       processButton: document.getElementById('processButton'),
-      registerFromJsonButton: document.getElementById('registerFromJsonButton'),
+      registerMapFromJsonButton: document.getElementById('registerMapFromJsonButton'),
       registrationPreviewButton: document.getElementById('registrationPreviewButton'),
       outputDatabaseButton: document.getElementById('outputDatabaseButton'),
       outputTextarea: document.getElementById('output'),

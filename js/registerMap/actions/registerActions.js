@@ -16,7 +16,7 @@ export function initRegisterActions({
 }) {
   const {
     processButton,
-    registerFromJsonButton,
+    registerMapFromJsonButton,
     registrationPreviewButton,
     outputDatabaseButton,
     outputTextarea,
@@ -27,8 +27,8 @@ export function initRegisterActions({
     processButton.addEventListener('click', () => processRegistration());
   }
 
-  if (registerFromJsonButton) {
-    registerFromJsonButton.addEventListener('click', () => registerFromJson());
+  if (registerMapFromJsonButton) {
+    registerMapFromJsonButton.addEventListener('click', () => registerMapFromJson());
   }
 
   if (registrationPreviewButton) {
@@ -111,7 +111,7 @@ export function initRegisterActions({
     }
   }
 
-  async function registerFromJson() {
+  async function registerMapFromJson() {
     try {
       const text = outputTextarea?.value;
 
