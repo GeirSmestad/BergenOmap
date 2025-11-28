@@ -1,9 +1,9 @@
 import { CoordinateStore } from './state/coordinateStore.js';
 import { RegistrationStore } from './state/registrationStore.js';
-import { createMapViewController } from './map/mapViewController.js';
-import { createOverlayController } from './overlay/overlayController.js';
+import { createMapViewController } from './controllers/mapViewController.js';
+import { createOverlayController } from './controllers/overlayController.js';
 import { initCoordinatePanel } from './ui/coordinatePanel.js';
-import { createPreviewController } from './preview/previewController.js';
+import { createPreviewController } from './controllers/previewController.js';
 import { initRegisterActions } from './actions/registerActions.js';
 import { initFileService } from './services/fileService.js';
 
