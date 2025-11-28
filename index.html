@@ -1,7 +1,140 @@
 <!doctype html>
-<html>
+<html lang="no">
   <head>
-    <meta http-equiv="refresh" content="0; URL=map.html" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bergen O-map</title>
+    <style>
+      :root {
+        color-scheme: dark;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+        background: radial-gradient(circle at top, #1e293b, #0f172a 55%);
+        color: #e2e8f0;
+        min-height: 100vh;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1.5rem;
+      }
+      main {
+        width: min(420px, 100%);
+      }
+      .card {
+        background: rgba(15, 23, 42, 0.9);
+        border: 1px solid rgba(56, 189, 248, 0.2);
+        border-radius: 1.25rem;
+        padding: 2.5rem;
+        box-shadow: 0 25px 60px rgba(15, 23, 42, 0.6);
+      }
+      h1 {
+        margin-top: 0;
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+        color: #38bdf8;
+      }
+      label {
+        font-size: 0.95rem;
+        display: block;
+        margin-bottom: 0.75rem;
+        color: #94a3b8;
+      }
+      input[type="text"] {
+        width: 100%;
+        padding: 0.9rem 1rem;
+        border-radius: 0.75rem;
+        border: 1px solid rgba(148, 163, 184, 0.4);
+        background: rgba(15, 23, 42, 0.6);
+        color: inherit;
+        font-size: 1rem;
+        transition: border 0.2s, box-shadow 0.2s;
+      }
+      input[type="text"]:focus {
+        outline: none;
+        border-color: rgba(56, 189, 248, 0.9);
+        box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.25);
+      }
+      button {
+        margin-top: 1.25rem;
+        width: 100%;
+        padding: 0.95rem;
+        border: none;
+        border-radius: 0.75rem;
+        background: linear-gradient(135deg, #38bdf8, #2563eb);
+        color: #0f172a;
+        font-weight: 600;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: transform 0.15s ease, opacity 0.15s ease;
+      }
+      button:hover:not(:disabled) {
+        transform: translateY(-1px);
+      }
+      button:disabled {
+        opacity: 0.7;
+        cursor: wait;
+      }
+      p {
+        min-height: 1.5rem;
+        margin: 0.75rem 0 0;
+        color: #f87171;
+      }
+    </style>
   </head>
-  <body></body>
+  <body>
+    <main>
+      <section class="card">
+        <h1>Hei!</h1>
+        <form id="loginForm" novalidate>
+          <label for="fullName">Logg inn ved å oppgi fullt navn til forfatteren av denne appen (du er veldig velkommen hvis vi kjenner hverandre, altså!)</label>
+          <input id="fullName" name="fullName" type="text" autocomplete="name" required />
+          <button type="submit" id="loginButton">Logg inn</button>
+          <p id="loginError" role="alert" aria-live="polite"></p>
+        </form>
+      </section>
+    </main>
+
+    <script>
+      const form = document.getElementById('loginForm');
+      const button = document.getElementById('loginButton');
+      const errorEl = document.getElementById('loginError');
+      let apiBase =
+        window.location.protocol === 'file:' || window.location.origin === 'null'
+          ? 'http://127.0.0.1:5000'
+          : '';
+
+      const buildUrl = (path) => (apiBase ? `${apiBase}${path}` : path);
+
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        errorEl.textContent = '';
+        button.disabled = true;
+
+        try {
+          const fullName = form.fullName.value.trim();
+          const response = await fetch(buildUrl('/api/login'), {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ fullName })
+          });
+
+          if (!response.ok) {
+            const body = await response.json().catch(() => ({}));
+            throw new Error(body.message || 'Kunne ikke logge inn');
+          }
+
+          window.location.assign(buildUrl('/map.html'));
+        } catch (error) {
+          errorEl.textContent = error.message;
+        } finally {
+          button.disabled = false;
+        }
+      });
+    </script>
+  </body>
 </html>
