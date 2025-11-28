@@ -248,12 +248,17 @@ def get_overlay_coordinates():
         pixelWidthEstimate = metersPerPixel[0]*overlay_width
         pixelHeightEstimate = metersPerPixel[1]*overlay_height
 
-        print(f"Meters per pixel in x and y is {metersPerPixel[0]:.4f} and {metersPerPixel[1]:.4f}.")
-        print(f"By this measure, the area of the un-rotated map rectangle is {pixelWidthEstimate:.1f}x{pixelHeightEstimate:.1f} meters = " + \
-           f"{pixelWidthEstimate*pixelHeightEstimate/1000000.0:.4f} square kilometers.")
-        print(f"By the latitude and longitude of our calculated north-eastern and south-western corner of the rotated map rectangle, " + \
-            f"its area is {areaOfRegisteredArea:.4f} square kilometers.")
-        print(f"(These numbers should obviously be quite similar)")
+        # Compare aspect ratios between input pixels and fitted lat/lon bounds
+        input_aspect_ratio = overlay_width / overlay_height
+        nw_lat, nw_lon = rotationAndBounds["nw_coords"]
+        se_lat, se_lon = rotationAndBounds["se_coords"]
+        ns_height_m = haversine(nw_lat, nw_lon, se_lat, nw_lon)
+        mid_lat = (nw_lat + se_lat) / 2.0
+        ew_width_m = haversine(mid_lat, nw_lon, mid_lat, se_lon)
+        output_aspect_ratio = ew_width_m / ns_height_m
+
+        print(f"Aspect ratio (width/height): input overlay {input_aspect_ratio:.6f}, registered bounds {output_aspect_ratio:.6f} "
+              f"(width {ew_width_m:.1f} m, height {ns_height_m:.1f} m)")
 
         result = {"nw_coords" : rotationAndBounds["nw_coords"], 
               "se_coords" : rotationAndBounds["se_coords"], 

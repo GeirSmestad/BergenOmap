@@ -64,7 +64,8 @@ def getOverlayCoordinatesWithOptimalRotation(image_coords, real_coords, overlayW
 
    find the best rotation to geographic north, then register the pixel coordinates onto
    real-world coordinates by least-squares fitting the north-western corner and the scale
-   factors of latitude and longitude required to make the control points fit.
+   factors of latitude and longitude required to make the control points fit. Preserving
+   the aspect ratio of the input overlay.
 
    Return the northwest and southeast (lat, lon) coordinates of this registration,
    and the error.
@@ -79,25 +80,48 @@ def rotateAndRegisterOverlay(image_coords, real_coords, angle_degrees, overlayWi
     lats = np.array([p[0] for p in real_coords], dtype=float)
     lons = np.array([p[1] for p in real_coords], dtype=float)
 
-    # 2. Fit lat = a + b * y  (a = lat_nw, b = scale_lat)
-    y_mean = ys.mean()
-    lat_mean = lats.mean()
-    denom_y = np.sum((ys - y_mean) ** 2)
-    if denom_y == 0:
-        raise ValueError("Cannot determine vertical scale: all y are equal")
+    # Convert geo points to local tangent-plane meters to keep isotropic scale meaningful
+    lat0 = float(lats.mean())
+    lon0 = float(lons.mean())
+    R_earth = 6371000.0
+    lat0_rad = math.radians(lat0)
+    meters_per_rad_lat = R_earth
+    meters_per_rad_lon = R_earth * math.cos(lat0_rad)
 
-    scale_lat = np.sum((ys - y_mean) * (lats - lat_mean)) / denom_y
-    lat_nw = lat_mean - scale_lat * y_mean
+    northings = np.radians(lats - lat0) * meters_per_rad_lat
+    eastings = np.radians(lons - lon0) * meters_per_rad_lon
 
-    # 3. Fit lon = c + d * x  (c = lon_nw, d = scale_lon)
-    x_mean = xs.mean()
-    lon_mean = lons.mean()
-    denom_x = np.sum((xs - x_mean) ** 2)
-    if denom_x == 0:
-        raise ValueError("Cannot determine horizontal scale: all x are equal")
+    # 2. Fit north/east simultaneously with a shared scale to preserve aspect ratio
+    num_points = len(xs)
+    if num_points < 2:
+        raise ValueError("Need at least two control points to determine transform")
 
-    scale_lon = np.sum((xs - x_mean) * (lons - lon_mean)) / denom_x
-    lon_nw = lon_mean - scale_lon * x_mean
+    design_matrix = np.zeros((num_points * 2, 3), dtype=float)
+    observations = np.zeros(num_points * 2, dtype=float)
+
+    # Northing rows: N ≈ N_nw - scale * y (y increases southward)
+    design_matrix[0::2, 0] = 1.0
+    design_matrix[0::2, 2] = -ys
+    observations[0::2] = northings
+
+    # Easting rows: E ≈ E_nw + scale * x
+    design_matrix[1::2, 1] = 1.0
+    design_matrix[1::2, 2] = xs
+    observations[1::2] = eastings
+
+    params, _, rank, _ = np.linalg.lstsq(design_matrix, observations, rcond=None)
+    if rank < 3:
+        raise ValueError("Control points are degenerate; cannot determine constrained transform")
+
+    north_nw_m, east_nw_m, shared_scale_m = (float(params[0]), float(params[1]), float(params[2]))
+
+    meters_to_deg_lat = math.degrees(1.0 / R_earth)
+    meters_to_deg_lon = math.degrees(1.0 / (R_earth * math.cos(lat0_rad)))
+
+    lat_nw = lat0 + north_nw_m * meters_to_deg_lat
+    lon_nw = lon0 + east_nw_m * meters_to_deg_lon
+    scale_lat = -shared_scale_m * meters_to_deg_lat
+    scale_lon = shared_scale_m * meters_to_deg_lon
 
     # 4. Compute overlay corners from NW + scales
     nw = (lat_nw, lon_nw)
@@ -372,3 +396,76 @@ def compute_procrustes_registration(width, height, pixel_points, geo_points):
         "scale": scale,
         "rms_deg_error": rms_deg_error,
     }
+
+
+
+
+"""Given three sets of pixel coordinates on an orienteering map overlay
+   [(x1, y1), (x2, y2), (x3, y3)]
+
+   and three sets of real-world (lat, lon) coordinates matching their location
+   [(lat1, lon1), (lat2, lon2), (lat3, lon3)],
+
+   and an angle of counter-clockwise rotation,
+
+   find the best rotation to geographic north, then register the pixel coordinates onto
+   real-world coordinates by least-squares fitting the north-western corner and the scale
+   factors of latitude and longitude required to make the control points fit.
+
+   Return the northwest and southeast (lat, lon) coordinates of this registration,
+   and the error.
+
+   This older version of the algorithm does not preserve the aspect ratio of the input overlay.
+   Keeping it here to allow future comparison between the accuracy of the versions.
+"""
+def rotateAndRegisterOverlay_old(image_coords, real_coords, angle_degrees, overlayWidth, overlayHeight):
+    # 1. Rotate control points
+    pointsAfterRotating = rotate_points(image_coords, overlayWidth, overlayHeight, angle_degrees)
+
+    # Extract arrays for LS fit
+    xs = np.array([p[0] for p in pointsAfterRotating], dtype=float)
+    ys = np.array([p[1] for p in pointsAfterRotating], dtype=float)
+    lats = np.array([p[0] for p in real_coords], dtype=float)
+    lons = np.array([p[1] for p in real_coords], dtype=float)
+
+    # 2. Fit lat = a + b * y  (a = lat_nw, b = scale_lat)
+    y_mean = ys.mean()
+    lat_mean = lats.mean()
+    denom_y = np.sum((ys - y_mean) ** 2)
+    if denom_y == 0:
+        raise ValueError("Cannot determine vertical scale: all y are equal")
+
+    scale_lat = np.sum((ys - y_mean) * (lats - lat_mean)) / denom_y
+    lat_nw = lat_mean - scale_lat * y_mean
+
+    # 3. Fit lon = c + d * x  (c = lon_nw, d = scale_lon)
+    x_mean = xs.mean()
+    lon_mean = lons.mean()
+    denom_x = np.sum((xs - x_mean) ** 2)
+    if denom_x == 0:
+        raise ValueError("Cannot determine horizontal scale: all x are equal")
+
+    scale_lon = np.sum((xs - x_mean) * (lons - lon_mean)) / denom_x
+    lon_nw = lon_mean - scale_lon * x_mean
+
+    # 4. Compute overlay corners from NW + scales
+    nw = (lat_nw, lon_nw)
+    se = (
+        lat_nw + overlayHeight * scale_lat,
+        lon_nw + overlayWidth * scale_lon,
+    )
+
+    # 5. Compute error: how well do we hit the three control points?
+    #    (using squared Euclidean in lat/lon space)
+    errors_sq = []
+    for xi, yi, (lat_true, lon_true) in zip(xs, ys, real_coords):
+        lat_pred = lat_nw + yi * scale_lat
+        lon_pred = lon_nw + xi * scale_lon
+        err = euclidean_distance((lat_pred, lon_pred), (lat_true, lon_true))
+        errors_sq.append(err ** 2)
+
+    # Mean squared error
+    error = sum(errors_sq) / len(errors_sq)
+
+    result = {"nw_coords": nw, "se_coords": se, "error": error}
+    return result
