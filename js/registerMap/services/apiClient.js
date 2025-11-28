@@ -18,7 +18,7 @@ async function postJson(path, payload) {
   return response.json();
 }
 
-async function postFormForBlob(path, formData) {
+async function postForm(path, formData) {
   const response = await fetch(`${API_BASE}${path}`, {
     method: 'POST',
     body: formData
@@ -36,19 +36,19 @@ export function getOverlayCoordinates(payload) {
 }
 
 export function transformAndStoreMapData(formData) {
-  return postFormForBlob('/api/transformAndStoreMapData', formData);
+  return postForm('/api/transformAndStoreMapData', formData);
 }
 
 export function transformMap(formData) {
-  return postFormForBlob('/api/transformMap', formData);
+  return postForm('/api/transformMap', formData);
 }
 
 export function processDroppedImage(formData) {
-  return postFormForBlob('/api/processDroppedImage', formData);
+  return postForm('/api/processDroppedImage', formData);
 }
 
 export function convertPdfToImage(formData) {
-  return postFormForBlob('/api/convertPdfToImage', formData);
+  return postForm('/api/convertPdfToImage', formData);
 }
 
 export function exportDatabase(payload) {

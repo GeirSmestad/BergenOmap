@@ -1,6 +1,6 @@
 import { convertPdfToImage, processDroppedImage } from './apiClient.js';
 
-export function initFileService({
+export function initfileDropService({
   dropArea,
   registrationStore,
   onOverlayReady,

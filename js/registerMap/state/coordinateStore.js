@@ -1,11 +1,11 @@
-import { COORDINATE_PAIRS } from '../config.js';
+import { NUM_COORDINATE_PAIRS_FOR_REGISTRATION } from '../config.js';
 
-const createLatLonPoints = () => Array.from({ length: COORDINATE_PAIRS }, () => ({
+const createLatLonPoints = () => Array.from({ length: NUM_COORDINATE_PAIRS_FOR_REGISTRATION }, () => ({
   lat: 0,
   lon: 0
 }));
 
-const createImagePoints = () => Array.from({ length: COORDINATE_PAIRS }, () => ({
+const createImagePoints = () => Array.from({ length: NUM_COORDINATE_PAIRS_FOR_REGISTRATION }, () => ({
   x: 0,
   y: 0
 }));

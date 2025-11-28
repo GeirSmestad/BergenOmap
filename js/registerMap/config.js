@@ -8,5 +8,5 @@ export const START_LAT_LON = [60.3368, 5.33669];
 
 export const DEFAULT_MAP_ZOOM = 10;
 
-export const COORDINATE_PAIRS = 3;
+export const NUM_COORDINATE_PAIRS_FOR_REGISTRATION = 3;
 

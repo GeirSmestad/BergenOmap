@@ -5,7 +5,7 @@ import { createOverlayController } from './controllers/overlayController.js';
 import { initCoordinatePanel } from './ui/coordinatePanel.js';
 import { createPreviewController } from './controllers/previewController.js';
 import { initRegisterActions } from './actions/registerActions.js';
-import { initFileService } from './services/fileService.js';
+import { initfileDropService } from './services/fileDropService.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   const coordinateStore = new CoordinateStore();
@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  initFileService({
+  initfileDropService({
     dropArea: document.getElementById('drop-area'),
     registrationStore,
     onOverlayReady: (url) => overlayController.setSource(url),
