@@ -108,7 +108,7 @@ Shortlist for neste punkter: cache API-kall, låse zoom og snurre etter kompass.
 
 * Database-nøkkel som gir versjonen av et bestemt kart, slik at jeg kan cache i nettleseren til brukeren
 * Autentisering, hvis jeg vil gjøre appen mindre tilgjengelig for Gud og hvermann. Auth med navn?
-* Landingsside
+* Landingsside for auth
 
 
 * (X) På et tidspunkt vil jeg kanskje ha en indeks-primærnøkkel heller enn å bruke kartnavnet, pga. mange kart i samme område
@@ -134,8 +134,8 @@ Shortlist for neste punkter: cache API-kall, låse zoom og snurre etter kompass.
 * Registrere alle kartene som ikke er fra bedriftscuppen (mappe O-kart under Scans)
 * Registrere alle tur-orienteringskartene
 
-* Registrere bedriftscup-kart 2025
-* Registrere resten av bedriftscup-kart
+* Registrere alle bedriftscup-kart fra løp jeg har deltatt i
+* Registrere ett fra hvert bedriftsløp bakover i tid
 
 
 * (X) Jeg mangler løpene fra Dyreparken i 2024, vet ikke hvor de kartene har blitt av.
@@ -228,6 +228,8 @@ Shortlist for neste punkter: cache API-kall, låse zoom og snurre etter kompass.
 * Animasjon med "flash" langs outline av kart før det lastes, for å gi brukeren en indikasjon på framdriften
 * Gjøre det mulig å raskt fokusere på sentrum av valgt kart, hvis brukeren ønsker det (men vanskelig å få UXen bra)
 * Går an å lagre en "løpende" komprimert utgave av kartet ved registrering (ekstra rad), for å slippe deploy-komprimering
+* Registrere alle bedriftscup-kart som matcher registreringen fra allerede-registrerte løp, automatisk
+* Registrere alle gjenstående bedriftscup-kart
 
 ## Deployment - hvordan kjøre deploy av appen
 
@@ -292,11 +294,14 @@ Eller også inkludert database:
 
 Eller BARE databasen:
 
-  scp -i ~/.ssh/LightsailDefaultKey-eu-west-1.pem -r `
-    data `
-    ubuntu@54.220.213.9:/srv/bergenomap/
-  ssh bergenomap "sudo systemctl restart bergenomap"
+scp -i ~/.ssh/LightsailDefaultKey-eu-west-1.pem -r `
+  data/database.db `
+  ubuntu@54.220.213.9:/srv/bergenomap/data/
+ssh bergenomap "sudo systemctl restart bergenomap"
 
+
+Hvis du vil komprimere database for prod-deploy (husk backup først):
+python utils\CompressDbForProductionDeploy.py --method 6 --quality 100
 
 ## Kart-kilder -- flyfoto og topografiske kart
 
