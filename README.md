@@ -15,8 +15,12 @@ cd C:\Source\BergenOmap; python -m http.server 8000
 
 ## Registrering av kart
 
-* Grensesnitt for å redigere metadata i databasen uten å røre kart-registreringen
 
+* Refaktorering av nytt markør-grensesnitt for bedre lesbarhet
+* Endre koordinat-visning sånn at den kun viser de tilgjengelige markørene, ikke koordinatene (tar mindre vertikal plass)
+* Fjerne kode som etter endringen i koordinat-visning vil være ubrukt
+
+* Grensesnitt for å redigere metadata i databasen uten å røre kart-registreringen
 
 * Verktøy for å finjustere registrering: rotasjon, størrelse, translasjon
 
@@ -26,6 +30,7 @@ cd C:\Source\BergenOmap; python -m http.server 8000
 * Verktøy som lar deg gjennomgå en eksisterende registrering, og viser med markørene hvor kontrollpunktene er satt
 
 
+* (X) Forbedre markør-visningen så den viser klikk-koordinatet mer presist
 * (X) Få inn merker i tre farger for hvor man har klikket på kart og overlay ved registrering, la brukeren dra dem rundt
 * (X) Mistenker at det er lurt å refaktorere kode til moduler først, for etter dette vil JS-filen ha veldig mye state-håndtering
 * (X) Legge inn ny constraint i beregningen av kart-hjørnenes koordinater: At aspect-ratio til kart-rektangelet ikke skal endre seg
