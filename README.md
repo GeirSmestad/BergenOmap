@@ -12,24 +12,19 @@ cd C:\Source\BergenOmap; python -m http.server 8000
 
 # TODO
 
-
 ## Registrering av kart
 
+* Endre brukerflyt: én knapp for å finne plassering og forhåndsvise (eller "prøve på nytt"), og én for å lagre kartet i databasen
 
-* Refaktorering av nytt markør-grensesnitt for bedre lesbarhet
+* Verktøy som lar deg gjennomgå en eksisterende registrering, og viser med markørene hvor kontrollpunktene er satt
+* Grensesnitt for å redigere metadata i databasen uten å røre kart-registreringen
+* For registrering i bedriftscuppen, bør jeg ha et verktøy som raskt lar meg sette samme registrering på identiske kart (egen side?)
+* + lagre metadata fra mappestruktur. Trenger bare å få det ustrukturert inn i databasen; kan ta detaljene med AI-modell senere.
 * Endre koordinat-visning sånn at den kun viser de tilgjengelige markørene, ikke koordinatene (tar mindre vertikal plass)
 * Fjerne kode som etter endringen i koordinat-visning vil være ubrukt
 
-* Grensesnitt for å redigere metadata i databasen uten å røre kart-registreringen
-
-* Verktøy for å finjustere registrering: rotasjon, størrelse, translasjon
-
-* Legg til checkbox som lar deg registrere kartet til database hvis du leser inn registreringen fra JSON
-* For registrering i bedriftscuppen, bør jeg ha et verktøy som raskt lar meg sette samme registrering på identiske kart (egen side?)
-* + lagre metadata fra mappestruktur. Trenger bare å få det ustrukturert inn i databasen; kan ta detaljene med AI-modell senere.
-* Verktøy som lar deg gjennomgå en eksisterende registrering, og viser med markørene hvor kontrollpunktene er satt
-
-
+* (X) Skjule koordinat-visningen i kartregistrerings-grensesnittet
+* (X) Refaktorering av nytt markør-grensesnitt for bedre lesbarhet
 * (X) Forbedre markør-visningen så den viser klikk-koordinatet mer presist
 * (X) Få inn merker i tre farger for hvor man har klikket på kart og overlay ved registrering, la brukeren dra dem rundt
 * (X) Mistenker at det er lurt å refaktorere kode til moduler først, for etter dette vil JS-filen ha veldig mye state-håndtering
@@ -231,6 +226,9 @@ cd C:\Source\BergenOmap; python -m http.server 8000
 
 
 ## Løse idéer som jeg er usikker på
+
+* Verktøy for å finjustere registrering: rotasjon, størrelse, translasjon
+* Legg til checkbox som lar deg registrere kartet til database hvis du leser inn registreringen fra JSON
 
 * Animasjon med "flash" langs outline av kart før det lastes, for å gi brukeren en indikasjon på framdriften
 * Gjøre det mulig å raskt fokusere på sentrum av valgt kart, hvis brukeren ønsker det (men vanskelig å få UXen bra)
