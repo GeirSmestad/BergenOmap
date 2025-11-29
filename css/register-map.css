@@ -240,12 +240,6 @@ textarea {
   resize: vertical;
 }
 
-#output {
-  margin-top: 1.5rem;
-  width: 100%;
-  min-height: 220px;
-}
-
 .registration-marker {
   width: 36px;
   height: 52px;

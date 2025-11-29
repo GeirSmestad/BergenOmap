@@ -1,8 +1,7 @@
 import {
   exportDatabase,
   getOverlayCoordinates,
-  transformAndStoreMapData,
-  transformMap
+  transformAndStoreMapData
 } from '../services/apiClient.js';
 
 const roundLatLon = (value) => parseFloat(value.toFixed(6));
@@ -16,18 +15,12 @@ export function initRegisterActions({
 }) {
   const {
     processButton,
-    registerMapFromJsonButton,
     registrationPreviewButton,
-    outputDatabaseButton,
-    outputTextarea
+    outputDatabaseButton
   } = elements;
 
   if (processButton) {
     processButton.addEventListener('click', () => processRegistration());
-  }
-
-  if (registerMapFromJsonButton) {
-    registerMapFromJsonButton.addEventListener('click', () => registerMapFromJson());
   }
 
   if (registrationPreviewButton) {
@@ -37,12 +30,6 @@ export function initRegisterActions({
   if (outputDatabaseButton) {
     outputDatabaseButton.addEventListener('click', () => exportDatabaseSnapshot());
   }
-
-  const outputResult = (data) => {
-    if (outputTextarea) {
-      outputTextarea.value = JSON.stringify(data, null, 2);
-    }
-  };
 
   const handleTransformResult = (blob) => {
     const url = URL.createObjectURL(blob);
@@ -96,46 +83,12 @@ export function initRegisterActions({
       const enrichedData = { ...registrationData, ...metadata };
 
       registrationStore.setRegistrationData(enrichedData);
-      outputResult(enrichedData);
 
       const formData = buildFormData(registrationStore.getDroppedImage(), enrichedData);
       const blob = await transformAndStoreMapData(formData);
       handleTransformResult(blob);
     } catch (error) {
       console.error('Error processing registration:', error);
-      outputResult({ error: error.message });
-    }
-  }
-
-  async function registerMapFromJson() {
-    try {
-      const text = outputTextarea?.value;
-
-      if (!text) {
-        throw new Error('Please paste registration JSON before using this action.');
-      }
-
-      const pastedJson = JSON.parse(text);
-
-      const payload = {
-        image_coords: pastedJson.selected_pixel_coords,
-        real_coords: pastedJson.selected_realworld_coords,
-        overlayWidth: pastedJson.overlay_width,
-        overlayHeight: pastedJson.overlay_height
-      };
-
-      const data = await getOverlayCoordinates(payload);
-      payload.optimal_rotation_angle = data.optimal_rotation_angle;
-
-      registrationStore.setRegistrationData(data);
-      outputResult(data);
-
-      const formData = buildFormData(registrationStore.getDroppedImage(), payload);
-      const blob = await transformMap(formData);
-      handleTransformResult(blob);
-    } catch (error) {
-      console.error('Error registering from JSON:', error);
-      outputResult({ error: error.message });
     }
   }
 

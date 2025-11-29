@@ -47,7 +47,6 @@
     <div class="registration-map-header">
       <div class="registration-map-controls">
         <button id="processButton" class="registrationButton">Process selected registration</button>
-        <button id="registerMapFromJsonButton" class="registrationButton">Register from pasted JSON</button>
         <button id="registrationPreviewButton" class="registrationButton">Toggle registration preview</button>
         <button id="basemapToggleButton" class="registrationButton">Switch to aerial photos</button>
       </div>
@@ -88,7 +87,7 @@
     </div>
     <div class="inputFields">
       <label for="attribution">Attribution:</label>
-      <textarea id="attribution" name="attribution"></textarea>
+      <input type="text" id="attribution" name="attribution">
     </div>
     <div class="inputFields">
       <label for="mapArea">Map area:</label>
@@ -118,7 +117,6 @@
       <label for="mapAttribution">Map attribution:</label>
       <input type="text" id="mapAttribution" name="mapAttribution">
     </div>
-  <textarea id="output"></textarea>
   </div>
 </body>
 
