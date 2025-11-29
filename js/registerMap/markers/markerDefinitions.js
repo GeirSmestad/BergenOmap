@@ -74,7 +74,7 @@ export const getMarkerColor = (index) => getMarkerDefinition(index)?.color ?? '#
 
 export const getMarkerLabel = (index) => getMarkerDefinition(index)?.shortLabel ?? '';
 
-const MARKER_VIEWBOX = '0 0 36 52';
+const MARKER_VIEWBOX = '0 0 36 54';
 const MARKER_PATH_D = 'M18 1C8.611 1 1 8.611 1 18c0 12.809 15.138 33.32 16.357 34.94a1.3 1.3 0 0 0 2.286 0C20.862 51.32 36 30.809 36 18 36 8.611 29.389 1 18 1Z';
 
 export const buildMarkerSvgMarkup = (index) => {
@@ -82,10 +82,32 @@ export const buildMarkerSvgMarkup = (index) => {
   const label = getMarkerLabel(index);
 
   return `
-    <svg class="registration-marker__svg" viewBox="${MARKER_VIEWBOX}" width="36" height="52" role="presentation" aria-hidden="true">
-      <path d="${MARKER_PATH_D}" fill="${color}" stroke="#ffffff" stroke-width="3" stroke-linejoin="round"></path>
-      <text class="registration-marker__svg-label" x="18" y="21" text-anchor="middle" dominant-baseline="middle">${label}</text>
-    </svg>
-  `;
-};
+  <svg class="registration-marker__svg"
+       viewBox="${MARKER_VIEWBOX}"
+       width="36"
+       height="52"
+       role="presentation"
+       aria-hidden="true">
 
+    <path d="${MARKER_PATH_D}"
+          fill="${color}"
+          stroke="#ffffff"
+          stroke-width="3"
+          stroke-linejoin="round">
+    </path>
+
+    <!-- Sharp tip glyph to emphasize the pixel target of the marker-->
+    <circle cx="18"
+            cy="54"
+            r="1.5"
+            fill="#ff1493">
+    </circle>
+
+    <text class="registration-marker__svg-label"
+          x="18"
+          y="21"
+          text-anchor="middle"
+          dominant-baseline="middle">${label}
+    </text>
+  </svg>
+`};
