@@ -15,9 +15,10 @@ cd C:\Source\BergenOmap; python -m http.server 8000
 ## Registrering av kart
 
 * Endre brukerflyt: én knapp for å finne plassering og forhåndsvise (eller "prøve på nytt"), og én for å lagre kartet i databasen
+* Fjern knapp og kode for registrering av kart fra JSON, trenger det ikke lenger (databasen er pålitelig nå)
 
 * Verktøy som lar deg gjennomgå en eksisterende registrering, og viser med markørene hvor kontrollpunktene er satt
-* Grensesnitt for å redigere metadata i databasen uten å røre kart-registreringen
+* Grensesnitt for å redigere metadata i databasen uten å røre kart-registreringen. Løser også forrige, hvis du kan velge kart
 * For registrering i bedriftscuppen, bør jeg ha et verktøy som raskt lar meg sette samme registrering på identiske kart (egen side?)
 * + lagre metadata fra mappestruktur. Trenger bare å få det ustrukturert inn i databasen; kan ta detaljene med AI-modell senere.
 * Endre koordinat-visning sånn at den kun viser de tilgjengelige markørene, ikke koordinatene (tar mindre vertikal plass)
@@ -77,14 +78,10 @@ cd C:\Source\BergenOmap; python -m http.server 8000
 
 ## Navigasjons-app
 
-
 * Cache Leaflet-filer, orienteringskart, og kart-definisjoner lokalt i appen i tilfelle brudd i nettverk (Cache Storage API?)
 
 * Kartet orienteres etter retningen man holder mobilen (toggle av/på)
 * Zoom-innstilling som finner mobil-dimensjoner og setter zoom til å tilsvare kartets målestokk (1:7500 inntil videre)
-
-* Mulighet for å vise Strava-track fra tidligere løp på et orienteringskart (kanskje i helt separat view)
-* Database-integrasjon for å samle en brukers informasjon (fx. GPX-filer fra Strava)
 
 * (0) Vise en slags highlight i det brukeren har valgt å laste et kart, sånn at de forstår at det skjer noe i bakgrunnen
 * (0) Skru av live oppdatering av posisjons-visning når du simulerer posisjon, ellers spretter den tilbake
@@ -103,6 +100,24 @@ cd C:\Source\BergenOmap; python -m http.server 8000
 * (X) GPS-posisjon vises på kartet
 * (X) Visning hvor kart er satt til korrekt posisjon med 0% opacity
 
+## GPX-viewer
+
+* Mulighet for å vise Strava-track fra tidligere løp på et orienteringskart (kanskje i helt separat view)
+* Database-støtte for å samle en brukers informasjon (fx. GPX-filer fra Strava)
+* Mulighet for å laste opp GPX-filer og lagre dem i database (inkludert enkel metadata, fx. et navn)
+* Mulighet for å velge kart, trolig samme liste som før men kun med "nær kartvindu"
+* Mulighet for å velge hvilken GPX-fil man skal vise
+* Mulighet for å "spille av" løpet, og bla fram og tilbake i løpets framdrift
+* Mulighet for å visualisere hastighet
+
+## Trenings-app
+
+* Mulighet for å velge kart, trolig samme liste som jeg allerede har
+* Database-støtte for å lagre hvor på kartet hver av postene befinner seg
+* Støtte i registrerings-grensesnitt for å markere hvor på kartet hver post er
+* Visning av hvilke poster man har vært innom
+* Automatisk stempling (med minste avstand til post, og GPS-presisjon)
+* Mauell stempling (registrer avstand og presisjon fra GPS)
 
 ## Infrastruktur
 
@@ -190,19 +205,16 @@ cd C:\Source\BergenOmap; python -m http.server 8000
 * Menysystem hvis appen begynner å bli komplisert
 
 * Innsending av database-kart + kjente metadata til AI-modell for setting av metadata i database
-* Funksjon for å registrere/stemple poster når man er ute og trener på et gammelt kart
 * Maskinlærings-system for å identifisere post-posisjoner på registrerte kart og regne disse om til ekte koordinater
-* Databasetabell for å støtte post-plasseringer på kart og posisjonene deres i virkeligheten
-* Kan velge å fjerne original-bildene fra prod-databasen for å spare båndbredde, de vil pr. nå aldri bli brukt der
 
 * Mobilvennlig layout og funksjonalitet for kart-registrering (omfattende task, inkl. zoom og markører på bilder + mobilvennlig layout & navigasjon, unødvendig pr. nå siden bøygen er å registrere mine eksisterende kart)
-* Vise Strava-track fra GPX-fil i registrert kart (i en helt ny visning kanskje? dårlig match for nav-appen)
 * Logge track på turen du har gått så langt
 
 * Kreditere kart-tegneren i grensesnittet, kanskje på placeholder-bildene før kartet lastes
-* Når jeg får veldig mange kart, må jeg kanskje ha et avansert filter for kart, som lar meg filtrere på metadata.
+* Når jeg får veldig mange kart, vil jeg kanskje ha et avansert filter for kart, som lar meg filtrere på metadata.
 * Ta ned gamle kart.twerkules.com, den nye appen er mye bedre
 
+* (X) Kan velge å fjerne original-bildene fra prod-databasen for å spare båndbredde, de vil pr. nå aldri bli brukt der
 * (X) Menysystem for å velge flere kart, hvis de overlapper i terrenget
 * (X) Et mer ordentlig system for hosting og deploy, når det blir nødvendig
 * (X) Deploy-script som setter opp all infrastuktur med én kommando [nært nok med bootstrap + scp]
@@ -228,13 +240,14 @@ cd C:\Source\BergenOmap; python -m http.server 8000
 ## Løse idéer som jeg er usikker på
 
 * Verktøy for å finjustere registrering: rotasjon, størrelse, translasjon
-* Legg til checkbox som lar deg registrere kartet til database hvis du leser inn registreringen fra JSON
 
 * Animasjon med "flash" langs outline av kart før det lastes, for å gi brukeren en indikasjon på framdriften
 * Gjøre det mulig å raskt fokusere på sentrum av valgt kart, hvis brukeren ønsker det (men vanskelig å få UXen bra)
 * Går an å lagre en "løpende" komprimert utgave av kartet ved registrering (ekstra rad), for å slippe deploy-komprimering
 * Registrere alle bedriftscup-kart som matcher registreringen fra allerede-registrerte løp, automatisk
 * Registrere alle gjenstående bedriftscup-kart
+
+* (0) Legg til checkbox som lar deg registrere kartet til database hvis du leser inn registreringen fra JSON
 
 ## Deployment - hvordan kjøre deploy av appen
 
