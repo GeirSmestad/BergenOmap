@@ -18,7 +18,7 @@ function calculateClickedImageCoordinates(img, event) {
   };
 }
 
-export function createOverlayController({
+export function createOverlayController({ // TODO: Can rename to orienteeringMapController? Overlay isn't accurately descriptive
   coordinateStore,
   onOverlayLoaded
 }) {

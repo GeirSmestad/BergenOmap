@@ -216,8 +216,9 @@ cd C:\Source\BergenOmap; python -m http.server 8000
 
 * Bruke ecmascript-moduler?
 * Trekke felles kode ut i felles moduler?
-* Felles environment-config på tvers av sider?
+* Felles environment-config på tvers av sider? (har nå dette for registerMap, men ikke kartvisningen)
 
+* (X) Refaktorere registerMap til EcmaScript-moduler
 * (X) Refaktorere CSS til å bli separat mellom ulike sider
 * (X) Rename CSS-fil for kartvisning slik at den matcher etter refaktoreringen
 

@@ -9,7 +9,7 @@ function addOrienteeringMapOverlay(definition, map) {
   }).addTo(map);
 }
 
-export function createPreviewController({
+export function createPreviewController({ // TODO: Can rename to registrationPreviewController
   map,
   registrationStore
 }) {
