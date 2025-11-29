@@ -120,6 +120,7 @@ canvas {
 
 .registration-map-views__panel--overlay {
   align-self: flex-start;
+  position: relative;
 }
 
 #registrationMapBrowser {
@@ -141,6 +142,29 @@ canvas {
   border-radius: 12px;
   object-fit: contain;
   border: 1px solid #d7dce5;
+  display: block;
+}
+
+.overlay-view-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.overlay-marker-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.overlay-view-wrapper img {
+  position: relative;
+  z-index: 1;
+  display: block;
+}
+
+.overlay-marker-layer .registration-marker {
+  pointer-events: auto;
 }
 
 #registrationData {
@@ -225,6 +249,43 @@ textarea {
   border: 1px solid #d7dce5;
   box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
   max-width: 960px;
+}
+
+.registration-marker {
+  width: 36px;
+  height: 52px;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+  display: block;
+}
+
+.registration-marker--map {
+  cursor: pointer;
+}
+
+.registration-marker--anchored {
+  position: absolute;
+  transform: translate(-50%, -100%);
+  z-index: 10;
+}
+
+.registration-marker__svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  filter: drop-shadow(0 6px 15px rgba(15, 23, 42, 0.35));
+}
+
+.registration-marker__svg-label {
+  font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  font-weight: 700;
+  font-size: 15px;
+  fill: #ffffff;
+}
+
+.registration-marker:active {
+  cursor: grabbing;
 }
 
 @media (max-width: 600px) {

@@ -10,14 +10,26 @@ export function initCoordinatePanel({
   }
 
   const render = (snapshot = coordinateStore.getSnapshot()) => {
-    const { latLon, xy, currentLatLonIndex, currentXYIndex } = snapshot;
+    const {
+      latLon,
+      xy,
+      currentLatLonIndex,
+      currentXYIndex,
+      latLonOccupancy = [],
+      xyOccupancy = []
+    } = snapshot;
 
     for (let i = 0; i < latLon.length; i += 1) {
       const latLonElement = latLonElements[i];
       if (latLonElement) {
         const { lat, lon } = latLon[i];
-        latLonElement.textContent = `Point ${i + 1} - Lat: ${roundToFiveDecimals(lat)}, Lon: ${roundToFiveDecimals(lon)}`;
-        latLonElement.style.fontWeight = i === currentLatLonIndex ? 'bold' : 'normal';
+        const isSet = latLonOccupancy[i] ?? true;
+        latLonElement.textContent = isSet
+          ? `Point ${i + 1} - Lat: ${roundToFiveDecimals(lat)}, Lon: ${roundToFiveDecimals(lon)}`
+          : `Point ${i + 1} - Not set`;
+        latLonElement.style.fontWeight = typeof currentLatLonIndex === 'number' && i === currentLatLonIndex
+          ? 'bold'
+          : 'normal';
       }
     }
 
@@ -25,8 +37,13 @@ export function initCoordinatePanel({
       const xyElement = xyElements[i];
       if (xyElement) {
         const { x, y } = xy[i];
-        xyElement.textContent = `Point ${i + 1} - X: ${Math.round(x)}, Y: ${Math.round(y)}`;
-        xyElement.style.fontWeight = i === currentXYIndex ? 'bold' : 'normal';
+        const isSet = xyOccupancy[i] ?? true;
+        xyElement.textContent = isSet
+          ? `Point ${i + 1} - X: ${Math.round(x)}, Y: ${Math.round(y)}`
+          : `Point ${i + 1} - Not set`;
+        xyElement.style.fontWeight = typeof currentXYIndex === 'number' && i === currentXYIndex
+          ? 'bold'
+          : 'normal';
       }
     }
   };

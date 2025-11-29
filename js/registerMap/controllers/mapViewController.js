@@ -1,4 +1,5 @@
 import { DEFAULT_MAP_ZOOM, START_LAT_LON } from '../config.js';
+import { createMapMarkerManager } from './mapMarkerManager.js';
 
 export function createMapViewController({
   coordinateStore,
@@ -64,28 +65,12 @@ export function createMapViewController({
 
   window.addEventListener('resize', () => map.invalidateSize());
 
-  let isDragging = false;
-
-  map.on('mousedown', () => {
-    isDragging = false;
-  });
-
-  map.on('mousemove', () => {
-    isDragging = true;
-  });
-
-  map.on('mouseup', (event) => {
-    if (isDragging) {
-      return;
-    }
-
-    const { lat, lng } = event.latlng;
-    coordinateStore.recordLatLng(lat, lng);
-  });
+  const markerManager = createMapMarkerManager({ map, coordinateStore });
 
   return {
     map,
-    toggleBasemap
+    toggleBasemap,
+    markerManager
   };
 }
 
