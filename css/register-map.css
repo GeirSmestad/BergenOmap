@@ -246,15 +246,6 @@ textarea {
   min-height: 220px;
 }
 
-#outputImage {
-  display: block;
-  margin-top: 1rem;
-  border-radius: 12px;
-  border: 1px solid #d7dce5;
-  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
-  max-width: 960px;
-}
-
 .registration-marker {
   width: 36px;
   height: 52px;

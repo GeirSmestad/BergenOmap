@@ -50,8 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
       registerMapFromJsonButton: document.getElementById('registerMapFromJsonButton'),
       registrationPreviewButton: document.getElementById('registrationPreviewButton'),
       outputDatabaseButton: document.getElementById('outputDatabaseButton'),
-      outputTextarea: document.getElementById('output'),
-      outputImage: document.getElementById('outputImage')
+      outputTextarea: document.getElementById('output')
     }
   });
 

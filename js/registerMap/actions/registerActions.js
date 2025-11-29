@@ -19,8 +19,7 @@ export function initRegisterActions({
     registerMapFromJsonButton,
     registrationPreviewButton,
     outputDatabaseButton,
-    outputTextarea,
-    outputImage
+    outputTextarea
   } = elements;
 
   if (processButton) {
@@ -47,9 +46,6 @@ export function initRegisterActions({
 
   const handleTransformResult = (blob) => {
     const url = URL.createObjectURL(blob);
-    if (outputImage) {
-      outputImage.src = url;
-    }
     registrationStore.setOverlayImageUrl(url);
     previewController.clearPreview();
   };
