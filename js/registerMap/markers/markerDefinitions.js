@@ -9,7 +9,7 @@ const BASE_MARKER_DEFINITIONS = [
   { key: 'orange', label: 'Orange marker', color: '#f57c00' }
 ];
 
-const ensureMarkerPalette = (count) => {
+const getMarkerPalette = (count) => {
   if (count <= BASE_MARKER_DEFINITIONS.length) {
     return BASE_MARKER_DEFINITIONS.slice(0, count);
   }
@@ -56,9 +56,9 @@ const hslToHex = (h, s, l) => {
     .join('')}`;
 };
 
-const rawDefinitions = ensureMarkerPalette(NUM_COORDINATE_PAIRS_FOR_REGISTRATION);
+const rawMarkerDefinitions = getMarkerPalette(NUM_COORDINATE_PAIRS_FOR_REGISTRATION);
 
-export const MARKER_DEFINITIONS = rawDefinitions.map((definition, index) => ({
+export const MARKER_DEFINITIONS = rawMarkerDefinitions.map((definition, index) => ({
   ...definition,
   order: index,
   shortLabel: definition.shortLabel ?? `${index + 1}`

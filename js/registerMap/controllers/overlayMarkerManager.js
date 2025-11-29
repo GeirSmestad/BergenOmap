@@ -1,6 +1,6 @@
 import { buildMarkerSvgMarkup } from '../markers/markerDefinitions.js';
 
-const clamp = (value, min = 0, max = 1) => Math.min(max, Math.max(min, value));
+const clamp = value => Math.min(1, Math.max(0, value));
 
 export function createOverlayMarkerManager({
   imageElement,
@@ -63,7 +63,7 @@ export function createOverlayMarkerManager({
     marker.dataset.naturalY = String(y);
   };
 
-  const naturalToPercent = (x, y) => {
+  const naturalCoordsToPercentOfImage = (x, y) => {
     if (!isImageReady()) {
       return null;
     }
@@ -74,6 +74,10 @@ export function createOverlayMarkerManager({
     };
   };
 
+
+  // In order to correctly handle marker positioning when elements are re-sized, we track
+  // their position in percent of their bounding client rectangle in addition to their
+  // absolute positions.
   const getPercentFromEvent = (event) => {
     if (!isImageReady()) {
       return null;
@@ -101,7 +105,7 @@ export function createOverlayMarkerManager({
     const marker = markersByIndex.get(index) ?? buildMarkerElement(index);
     storeNaturalCoordinatesOnMarker(marker, x, y);
 
-    const percents = naturalToPercent(x, y);
+    const percents = naturalCoordsToPercentOfImage(x, y);
     if (!percents) {
       marker.style.opacity = '0';
       return;
@@ -206,7 +210,7 @@ export function createOverlayMarkerManager({
         return;
       }
 
-      const percents = naturalToPercent(x, y);
+      const percents = naturalCoordsToPercentOfImage(x, y);
       if (!percents) {
         marker.style.opacity = '0';
         return;
