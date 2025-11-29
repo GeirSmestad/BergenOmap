@@ -28,10 +28,6 @@ export function createOverlayMarkerManager({
     marker.className = 'registration-marker registration-marker--anchored';
     marker.dataset.index = String(index);
     marker.innerHTML = buildMarkerSvgMarkup(index);
-    marker.style.position = 'absolute';
-    marker.style.transform = 'translate(-50%, -100%)';
-    marker.style.transformOrigin = '50% 100%';
-    marker.style.pointerEvents = 'auto';
 
     markerLayerElement.appendChild(marker);
     attachMarkerEventHandlers(marker, index);

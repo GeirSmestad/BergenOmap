@@ -267,6 +267,7 @@ textarea {
 .registration-marker--anchored {
   position: absolute;
   transform: translate(-50%, -100%);
+  transform-origin: 50% 100%;
   z-index: 10;
 }
 

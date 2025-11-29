@@ -17,15 +17,17 @@ cd C:\Source\BergenOmap; python -m http.server 8000
 
 * Grensesnitt for å redigere metadata i databasen uten å røre kart-registreringen
 
-* Få inn merker i tre farger for hvor man har klikket på kart og overlay ved registrering, la brukeren dra dem rundt
-* Mistenker at det er lurt å refaktorere kode til moduler først, for etter dette vil JS-filen ha veldig mye state-håndtering
+
 * Verktøy for å finjustere registrering: rotasjon, størrelse, translasjon
 
 * Legg til checkbox som lar deg registrere kartet til database hvis du leser inn registreringen fra JSON
 * For registrering i bedriftscuppen, bør jeg ha et verktøy som raskt lar meg sette samme registrering på identiske kart (egen side?)
 * + lagre metadata fra mappestruktur. Trenger bare å få det ustrukturert inn i databasen; kan ta detaljene med AI-modell senere.
+* Verktøy som lar deg gjennomgå en eksisterende registrering, og viser med markørene hvor kontrollpunktene er satt
 
 
+* (X) Få inn merker i tre farger for hvor man har klikket på kart og overlay ved registrering, la brukeren dra dem rundt
+* (X) Mistenker at det er lurt å refaktorere kode til moduler først, for etter dette vil JS-filen ha veldig mye state-håndtering
 * (X) Legge inn ny constraint i beregningen av kart-hjørnenes koordinater: At aspect-ratio til kart-rektangelet ikke skal endre seg
 * (X) Støtt transformering av PDF til PNG når du drag-and-dropper en PDF i registreringsvinduet
 * (X) Legg inn knapp for å bytte mellom satellittfoto og Norgeskart i Leaflet
