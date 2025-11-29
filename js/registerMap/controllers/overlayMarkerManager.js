@@ -78,7 +78,7 @@ export function createOverlayMarkerManager({
   // In order to correctly handle marker positioning when elements are re-sized, we track
   // their position in percent of their bounding client rectangle in addition to their
   // absolute positions.
-  const getPercentFromEvent = (event) => {
+  const getCoordsAndPercentOfBoundingImageFromEvent = (event) => {
     if (!isImageReady()) {
       return null;
     }
@@ -137,7 +137,7 @@ export function createOverlayMarkerManager({
       return;
     }
 
-    const coords = getPercentFromEvent(event);
+    const coords = getCoordsAndPercentOfBoundingImageFromEvent(event);
     if (!coords) {
       return;
     }
@@ -172,7 +172,7 @@ export function createOverlayMarkerManager({
       return;
     }
 
-    const coords = getPercentFromEvent(event);
+    const coords = getCoordsAndPercentOfBoundingImageFromEvent(event);
     if (!coords || !pointerState.marker) {
       return;
     }

@@ -75,7 +75,7 @@ export function createMapMarkerManager({ map, coordinateStore }) {
     return marker;
   };
 
-  const syncMarkersFromStore = (snapshot = coordinateStore.getSnapshot()) => {
+  const syncMarkerPositionsFromCoordinateStore = (snapshot = coordinateStore.getSnapshot()) => {
     snapshot.latLon.forEach((point, index) => {
       const isSet = snapshot.latLonOccupancy[index];
       const marker = markersByIndex.get(index);
@@ -92,7 +92,7 @@ export function createMapMarkerManager({ map, coordinateStore }) {
     });
   };
 
-  const handleStoreChange = (event) => syncMarkersFromStore(event.detail);
+  const handleStoreChange = (event) => syncMarkerPositionsFromCoordinateStore(event.detail);
 
   const destroy = () => {
     map.off('click', handleMapClick);
@@ -103,10 +103,10 @@ export function createMapMarkerManager({ map, coordinateStore }) {
 
   map.on('click', handleMapClick);
   coordinateStore.addEventListener('change', handleStoreChange);
-  syncMarkersFromStore();
+  syncMarkerPositionsFromCoordinateStore();
 
   return {
-    sync: syncMarkersFromStore,
+    sync: syncMarkerPositionsFromCoordinateStore,
     destroy
   };
 }

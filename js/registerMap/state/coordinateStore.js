@@ -23,6 +23,7 @@ export class CoordinateStore extends EventTarget {
     this.latLonOccupied = createOccupancyArray(this.latLon.length);
     this.xyOccupied = createOccupancyArray(this.xy.length);
 
+    // The index variables are used to track which coordinate is the next to be selected by the user.
     this.currentLatLonIndex = this.latLon.length ? 0 : null;
     this.currentXYIndex = this.xy.length ? 0 : null;
   }
