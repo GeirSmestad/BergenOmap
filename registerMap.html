@@ -37,10 +37,18 @@
   <!-- Add your site or application content here -->
   <script type="module" src="js/registerMap/main.js"></script>
 
-  <div id="imageInput">
-    <p>Please choose an input map. You can drag-and-drop it here.</p>
-    <div id="drop-area">Drop image here</div>
-    <div id="dimensions"></div>
+  <div class="image-input-wrapper">
+    <div id="imageInput">
+      <p>Please choose an input map. You can drag-and-drop it here.</p>
+      <div id="drop-area">Drop image here</div>
+      <div id="dimensions"></div>
+    </div>
+
+    <div id="preExistingMapSelector" aria-live="polite">
+      <p class="pre-existing-map-selector__intro">Or you can select an existing map to edit here.</p>
+      <div id="preExistingMapList" class="pre-existing-map-list" role="listbox" aria-label="Existing maps"></div>
+      <p id="preExistingMapStatus" class="pre-existing-map-status" aria-live="polite"></p>
+    </div>
   </div>
 
   <div class="registration-map-section">

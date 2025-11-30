@@ -4,6 +4,26 @@ const JSON_HEADERS = {
   'Content-Type': 'application/json'
 };
 
+async function getJson(path) {
+  const response = await fetch(`${API_BASE}${path}`);
+
+  if (!response.ok) {
+    throw new Error(`Request to ${path} failed with status ${response.status}`);
+  }
+
+  return response.json();
+}
+
+async function getBlob(path) {
+  const response = await fetch(`${API_BASE}${path}`);
+
+  if (!response.ok) {
+    throw new Error(`Request to ${path} failed with status ${response.status}`);
+  }
+
+  return response.blob();
+}
+
 async function postJson(path, payload) {
   const response = await fetch(`${API_BASE}${path}`, {
     method: 'POST',
@@ -53,5 +73,21 @@ export function convertPdfToImage(formData) {
 
 export function exportDatabase(payload) {
   return postJson('/api/dal/export_database', payload);
+}
+
+export function listMaps() {
+  return getJson('/api/dal/list_maps');
+}
+
+const encodeMapName = (mapName) => encodeURIComponent(mapName ?? '');
+
+export function fetchOriginalMapFile(mapName) {
+  // backend/Backend.py::transform_and_store_map saves mapfile_original as PNG,
+  // so reusing this blob avoids any additional image recompression artifacts.
+  return getBlob(`/api/dal/mapfile/original/${encodeMapName(mapName)}`);
+}
+
+export function fetchFinalMapFile(mapName) {
+  return getBlob(`/api/dal/mapfile/final/${encodeMapName(mapName)}`);
 }
 

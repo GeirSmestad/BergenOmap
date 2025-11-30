@@ -14,6 +14,57 @@ const createOccupancyArray = (length) => Array.from({ length }, () => false);
 
 const clampIndex = (index, length) => (length === 0 ? null : Math.max(0, Math.min(index, length - 1)));
 
+const isFiniteNumber = (value) => typeof value === 'number' && Number.isFinite(value);
+
+const parseLatLonFromDatabase = (input) => {
+  if (!input) {
+    return null;
+  }
+
+  if (Array.isArray(input) && input.length >= 2) {
+    const [lat, lon] = input;
+    if (isFiniteNumber(lat) && isFiniteNumber(lon)) {
+      return { lat, lon };
+    }
+  }
+
+  if (typeof input === 'object') {
+    const { lat, lon } = input;
+    if (isFiniteNumber(lat) && isFiniteNumber(lon)) {
+      return { lat, lon };
+    }
+  }
+
+  return null;
+};
+
+const parseImagePointFromDatabase = (input) => {
+  if (!input) {
+    return null;
+  }
+
+  if (Array.isArray(input) && input.length >= 2) {
+    const [x, y] = input;
+    if (isFiniteNumber(x) && isFiniteNumber(y)) {
+      return { x, y };
+    }
+  }
+
+  if (typeof input === 'object') {
+    const { x, y } = input;
+    if (isFiniteNumber(x) && isFiniteNumber(y)) {
+      return { x, y };
+    }
+  }
+
+  return null;
+};
+
+const findFirstUnoccupiedIndex = (occupancyArray) => {
+  const index = occupancyArray.findIndex((isSet) => !isSet);
+  return index === -1 ? null : index;
+};
+
 export class CoordinateStore extends EventTarget {
   constructor() {
     super();
@@ -137,6 +188,38 @@ export class CoordinateStore extends EventTarget {
       latLonOccupancy: this.getLatLonOccupancy(),
       xyOccupancy: this.getImageOccupancy()
     };
+  }
+
+  hydrateCoordinates({
+    latLonPairs = [],
+    imagePairs = []
+  } = {}) {
+    this.latLon.forEach((_, index) => {
+      const latLonPoint = parseLatLonFromDatabase(latLonPairs[index]);
+      if (latLonPoint) {
+        this.latLon[index] = latLonPoint;
+        this.latLonOccupied[index] = true;
+      } else {
+        this.latLon[index] = { lat: 0, lon: 0 };
+        this.latLonOccupied[index] = false;
+      }
+    });
+
+    this.xy.forEach((_, index) => {
+      const imagePoint = parseImagePointFromDatabase(imagePairs[index]);
+      if (imagePoint) {
+        this.xy[index] = imagePoint;
+        this.xyOccupied[index] = true;
+      } else {
+        this.xy[index] = { x: 0, y: 0 };
+        this.xyOccupied[index] = false;
+      }
+    });
+
+    this.currentLatLonIndex = findFirstUnoccupiedIndex(this.latLonOccupied);
+    this.currentXYIndex = findFirstUnoccupiedIndex(this.xyOccupied);
+
+    this.emitChange();
   }
 
   emitChange() {

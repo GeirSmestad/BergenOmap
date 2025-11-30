@@ -4,8 +4,10 @@ import { createMapViewController } from './controllers/mapViewController.js';
 import { createOverlayController } from './controllers/overlayController.js';
 import { initCoordinatePanel } from './ui/coordinatePanel.js';
 import { createPreviewController } from './controllers/previewController.js';
+import { createPreExistingMapController } from './controllers/existingMapController.js';
 import { initRegisterActions } from './actions/registerActions.js';
 import { initfileDropService } from './services/fileDropService.js';
+import { fetchOriginalMapFile, fetchFinalMapFile } from './services/apiClient.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   const coordinateStore = new CoordinateStore();
@@ -40,6 +42,207 @@ document.addEventListener('DOMContentLoaded', () => {
     registrationStore
   });
 
+  const preExistingMapListElement = document.getElementById('preExistingMapList');
+  const preExistingMapStatusElement = document.getElementById('preExistingMapStatus');
+  const statusBarElement = document.getElementById('registrationStatus');
+  const dimensionsElement = document.getElementById('dimensions');
+
+  const metadataFieldMappings = [
+    ['mapName', 'map_name'],
+    ['filename', 'map_filename'],
+    ['attribution', 'attribution'],
+    ['mapArea', 'map_area'],
+    ['mapEvent', 'map_event'],
+    ['mapDate', 'map_date'],
+    ['mapCourse', 'map_course'],
+    ['mapClub', 'map_club'],
+    ['mapCoursePlanner', 'map_course_planner'],
+    ['mapAttribution', 'map_attribution']
+  ];
+
+  let preExistingMapController;
+  let originalOverlayObjectUrl = null;
+  let registeredOverlayObjectUrl = null;
+  let activeMapLoadToken = 0;
+
+  const setStatusBarMessage = (message) => {
+    if (statusBarElement && typeof message === 'string') {
+      statusBarElement.textContent = message;
+    }
+  };
+
+  const updateMetadataInputs = (mapEntry) => {
+    metadataFieldMappings.forEach(([inputId, key]) => {
+      const element = document.getElementById(inputId);
+      if (element) {
+        element.value = mapEntry?.[key] ?? '';
+      }
+    });
+  };
+
+  const updateDimensionsDisplay = (mapEntry) => {
+    if (!dimensionsElement) {
+      return;
+    }
+    const width = Number(mapEntry?.overlay_width);
+    const height = Number(mapEntry?.overlay_height);
+
+    if (Number.isFinite(width) && Number.isFinite(height)) {
+      dimensionsElement.textContent = `Dimensions: ${Math.round(width)} × ${Math.round(height)} px`;
+    } else {
+      dimensionsElement.textContent = '';
+    }
+  };
+
+  const buildRegistrationDataFromDatabaseEntry = (mapEntry) => ({
+    map_id: mapEntry.map_id,
+    map_name: mapEntry.map_name,
+    map_filename: mapEntry.map_filename,
+    attribution: mapEntry.attribution,
+    map_area: mapEntry.map_area,
+    map_event: mapEntry.map_event,
+    map_date: mapEntry.map_date,
+    map_course: mapEntry.map_course,
+    map_club: mapEntry.map_club,
+    map_course_planner: mapEntry.map_course_planner,
+    map_attribution: mapEntry.map_attribution,
+    nw_coords: mapEntry.nw_coords,
+    se_coords: mapEntry.se_coords,
+    optimal_rotation_angle: mapEntry.optimal_rotation_angle,
+    overlay_width: mapEntry.overlay_width,
+    overlay_height: mapEntry.overlay_height,
+    selected_pixel_coords: mapEntry.selected_pixel_coords,
+    selected_realworld_coords: mapEntry.selected_realworld_coords
+  });
+
+  const hydrateStoresFromEntryFromDatabaseEntry = (mapEntry) => {
+    registrationStore.setRegistrationData(buildRegistrationDataFromDatabaseEntry(mapEntry));
+    coordinateStore.hydrateCoordinates({
+      latLonPairs: mapEntry.selected_realworld_coords || [],
+      imagePairs: mapEntry.selected_pixel_coords || []
+    });
+  };
+
+  const focusLeafletMap = (mapEntry) => {
+    const { nw_coords: nwCoords, se_coords: seCoords } = mapEntry;
+    if (!Array.isArray(nwCoords) || !Array.isArray(seCoords)) {
+      return;
+    }
+
+    try {
+      mapViewController.map.fitBounds([nwCoords, seCoords], { padding: [40, 40] });
+    } catch (error) {
+      console.warn('Failed to fit bounds for selected map.', error);
+      mapViewController.map.setView(nwCoords);
+    }
+  };
+
+  const releaseStoredMapUrls = () => {
+    if (originalOverlayObjectUrl) {
+      URL.revokeObjectURL(originalOverlayObjectUrl);
+      originalOverlayObjectUrl = null;
+    }
+
+    if (registeredOverlayObjectUrl) {
+      URL.revokeObjectURL(registeredOverlayObjectUrl);
+      registeredOverlayObjectUrl = null;
+    }
+  };
+
+  const updateOverlaySources = (originalBlob, finalBlob) => {
+    releaseStoredMapUrls();
+    originalOverlayObjectUrl = URL.createObjectURL(originalBlob);
+    overlayController.setSource(originalOverlayObjectUrl);
+
+    if (finalBlob) {
+      registeredOverlayObjectUrl = URL.createObjectURL(finalBlob);
+      registrationStore.setOverlayImageUrl(registeredOverlayObjectUrl);
+    } else {
+      registrationStore.setOverlayImageUrl(null);
+    }
+  };
+
+  const buildOriginalFilename = (mapEntry) => {
+    if (mapEntry?.map_filename) {
+      return mapEntry.map_filename;
+    }
+
+    if (mapEntry?.map_name) {
+      return `${mapEntry.map_name.replace(/[^a-z0-9-_]+/gi, '_')}.png`;
+    }
+
+    return 'map.png';
+  };
+
+  const loadExistingMapAssets = async (mapEntry, requestId) => {
+    if (!mapEntry?.map_name) {
+      throw new Error('Selected map is missing a name and cannot be loaded.');
+    }
+
+    const [originalBlob, finalBlob] = await Promise.all([
+      fetchOriginalMapFile(mapEntry.map_name),
+      fetchFinalMapFile(mapEntry.map_name)
+    ]);
+
+    if (requestId !== activeMapLoadToken) {
+      return;
+    }
+
+    const originalFile = new File([originalBlob], buildOriginalFilename(mapEntry), { type: originalBlob.type || 'image/png' });
+
+    updateOverlaySources(originalBlob, finalBlob);
+    updateMetadataInputs(mapEntry);
+    updateDimensionsDisplay(mapEntry);
+    hydrateStoresFromEntryFromDatabaseEntry(mapEntry);
+    registrationStore.setDroppedImage(originalFile);
+    focusLeafletMap(mapEntry);
+
+    previewController.showPreview();
+  };
+
+  const handlePreExistingMapSelection = (mapEntry) => {
+    if (!mapEntry) {
+      return;
+    }
+
+    const requestId = ++activeMapLoadToken;
+    const mapLabel = mapEntry.map_name || 'selected map';
+
+    if (preExistingMapController) {
+      preExistingMapController.setStatus(`Loading "${mapLabel}"…`);
+    }
+    setStatusBarMessage(`Loading "${mapLabel}" from database…`);
+
+    loadExistingMapAssets(mapEntry, requestId)
+      .then(() => {
+        if (requestId !== activeMapLoadToken) {
+          return;
+        }
+
+        if (preExistingMapController) {
+          preExistingMapController.setStatus(`Loaded "${mapLabel}".`);
+        }
+        setStatusBarMessage(`Loaded "${mapLabel}". Preview enabled.`);
+      })
+      .catch((error) => {
+        if (requestId !== activeMapLoadToken) {
+          return;
+        }
+
+        console.error('Failed to load map from database:', error);
+        if (preExistingMapController) {
+          preExistingMapController.setStatus(`Failed to load "${mapLabel}".`);
+        }
+        setStatusBarMessage('Failed to load selected map. Check console for details.');
+      });
+  };
+
+  preExistingMapController = createPreExistingMapController({
+    listElement: preExistingMapListElement,
+    statusElement: preExistingMapStatusElement,
+    onMapRequested: handlePreExistingMapSelection
+  });
+
   initRegisterActions({
     coordinateStore,
     registrationStore,
@@ -50,15 +253,22 @@ document.addEventListener('DOMContentLoaded', () => {
       saveMapButton: document.getElementById('saveMapButton'),
       registrationPreviewButton: document.getElementById('registrationPreviewButton'),
       outputDatabaseButton: document.getElementById('outputDatabaseButton'),
-      statusBar: document.getElementById('registrationStatus')
+      statusBar: statusBarElement
     }
   });
 
   initfileDropService({
     dropArea: document.getElementById('drop-area'),
     registrationStore,
-    onOverlayReady: (url) => overlayController.setSource(url),
+    onOverlayReady: (url) => {
+      releaseStoredMapUrls();
+      overlayController.setSource(url);
+      registrationStore.setOverlayImageUrl(null);
+      previewController.clearPreview();
+    },
     onStatusMessage: (message) => console.warn(message) // TODO: Rename to disambiguate from the statusbar, also add file dropping to statusbar
   });
+
+  preExistingMapController.loadAvailableMaps();
 });
 
