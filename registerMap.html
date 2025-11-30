@@ -52,7 +52,9 @@
         <button id="basemapToggleButton" class="registrationButton">Switch to aerial photos</button>
       </div>
       <div id="registrationData">
-        <p>Please mark three points in the terrain and their corresponding location on the orienteering map on the right.</p>
+        <p id="registrationStatus" class="registrationStatus" aria-live="polite">Please mark three points in the terrain and their corresponding 
+          location on the orienteering map on the right. 'Compute registration' previews the selected registration and 'Save map' stores it in 
+          the database.</p>
         <div class="coordinates">
           <div>
             <p id="latLon1"></p>

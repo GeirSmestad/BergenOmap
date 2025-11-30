@@ -92,7 +92,6 @@ canvas {
   color: #fff;
   cursor: pointer;
   transition: transform 120ms ease, box-shadow 160ms ease, background 160ms ease;
-  box-shadow: 0 10px 24px rgba(28, 100, 242, 0.35);
 }
 
 .registrationButton:active {
@@ -171,6 +170,19 @@ canvas {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
+}
+
+.registrationStatus {
+  font-family: "Consolas", "SFMono-Regular", "Menlo", monospace;
+  background: #f6f8fb;
+  border: 1px solid #e4e7ec;
+  border-radius: 10px;
+  padding: 0.65rem 0.85rem;
+  margin: 0;
+  color: #475467;
+  min-height: 2.25rem;
+  display: flex;
+  align-items: center;
 }
 
 .coordinates {

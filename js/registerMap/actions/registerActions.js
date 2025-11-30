@@ -18,8 +18,25 @@ export function initRegisterActions({
     computeRegistrationButton,
     saveMapButton,
     registrationPreviewButton,
-    outputDatabaseButton
+    outputDatabaseButton,
+    statusBar
   } = elements;
+
+  const STATUS_MESSAGES = {
+    idle: "Please mark three points in the terrain and their corresponding location on the orienteering map on the right. 'Compute registration' previews the selected registration and 'Save map' stores it in the database.",
+    computing: 'Calculating registration...',
+    saving: 'Saving map...',
+    done: 'Done.',
+    computeError: 'Failed to compute registration.',
+    saveError: 'Failed to save map.',
+    missingRegistration: 'Please compute a registration before saving.'
+  };
+
+  const setStatusBarMessage = (message) => {
+    if (statusBar && typeof message === 'string') {
+      statusBar.textContent = message;
+    }
+  };
 
   if (computeRegistrationButton) {
     computeRegistrationButton.addEventListener('click', () => computeRegistration());
@@ -101,6 +118,7 @@ export function initRegisterActions({
   };
 
   async function computeRegistration() {
+    setStatusBarMessage(STATUS_MESSAGES.computing);
     try {
       const overlayElement = overlayController.getElement();
       const payload = getOverlayPayload(overlayElement);
@@ -115,17 +133,25 @@ export function initRegisterActions({
       showLatestPreview();
     } catch (error) {
       console.error('Error computing registration:', error);
+      setStatusBarMessage(STATUS_MESSAGES.computeError);
+      return;
     }
+
+    setStatusBarMessage(STATUS_MESSAGES.done);
   }
 
   async function saveRegistration() {
+    const latestRegistration = registrationStore.getRegistrationData();
+
+    if (!latestRegistration || !latestRegistration.nw_coords || !latestRegistration.se_coords) {
+      setStatusBarMessage(STATUS_MESSAGES.missingRegistration);
+      console.warn('Save requested before a registration was computed.');
+      return;
+    }
+
+    setStatusBarMessage(STATUS_MESSAGES.saving);
+
     try {
-      const latestRegistration = registrationStore.getRegistrationData();
-
-      if (!latestRegistration || !latestRegistration.nw_coords || !latestRegistration.se_coords) {
-        throw new Error('Please compute a registration before saving.');
-      }
-
       const enrichedData = mergeWithLatestMetadata(latestRegistration);
       registrationStore.setRegistrationData(enrichedData);
 
@@ -135,7 +161,11 @@ export function initRegisterActions({
       showLatestPreview();
     } catch (error) {
       console.error('Error saving map:', error);
+      setStatusBarMessage(STATUS_MESSAGES.saveError);
+      return;
     }
+
+    setStatusBarMessage(STATUS_MESSAGES.done);
   }
 
   async function exportDatabaseSnapshot() {

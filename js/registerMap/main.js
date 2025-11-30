@@ -49,7 +49,8 @@ document.addEventListener('DOMContentLoaded', () => {
       computeRegistrationButton: document.getElementById('computeRegistrationButton'),
       saveMapButton: document.getElementById('saveMapButton'),
       registrationPreviewButton: document.getElementById('registrationPreviewButton'),
-      outputDatabaseButton: document.getElementById('outputDatabaseButton')
+      outputDatabaseButton: document.getElementById('outputDatabaseButton'),
+      statusBar: document.getElementById('registrationStatus')
     }
   });
 
@@ -57,7 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
     dropArea: document.getElementById('drop-area'),
     registrationStore,
     onOverlayReady: (url) => overlayController.setSource(url),
-    onStatusMessage: (message) => console.warn(message)
+    onStatusMessage: (message) => console.warn(message) // TODO: Rename to disambiguate from the statusbar, also add file dropping to statusbar
   });
 });
 
