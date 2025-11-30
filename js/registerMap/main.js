@@ -7,7 +7,7 @@ import { createPreviewController } from './controllers/previewController.js';
 import { createPreExistingMapController } from './controllers/existingMapController.js';
 import { initRegisterActions } from './actions/registerActions.js';
 import { initfileDropService } from './services/fileDropService.js';
-import { fetchOriginalMapFile, fetchFinalMapFile } from './services/apiClient.js';
+import { fetchOriginalMapFile, fetchFinalMapFile, processDroppedImage } from './services/apiClient.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   const coordinateStore = new CoordinateStore();
@@ -61,7 +61,7 @@ document.addEventListener('DOMContentLoaded', () => {
   ];
 
   let preExistingMapController;
-  let originalOverlayObjectUrl = null;
+  let processedOverlayObjectUrl = null;
   let registeredOverlayObjectUrl = null;
   let activeMapLoadToken = 0;
 
@@ -138,9 +138,9 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   const releaseStoredMapUrls = () => {
-    if (originalOverlayObjectUrl) {
-      URL.revokeObjectURL(originalOverlayObjectUrl);
-      originalOverlayObjectUrl = null;
+    if (processedOverlayObjectUrl) {
+      URL.revokeObjectURL(processedOverlayObjectUrl);
+      processedOverlayObjectUrl = null;
     }
 
     if (registeredOverlayObjectUrl) {
@@ -149,10 +149,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  const updateOverlaySources = (originalBlob, finalBlob) => {
+  const updateOverlaySources = (processedOverlayBlob, finalBlob) => {
     releaseStoredMapUrls();
-    originalOverlayObjectUrl = URL.createObjectURL(originalBlob);
-    overlayController.setSource(originalOverlayObjectUrl);
+    processedOverlayObjectUrl = URL.createObjectURL(processedOverlayBlob);
+    overlayController.setSource(processedOverlayObjectUrl);
 
     if (finalBlob) {
       registeredOverlayObjectUrl = URL.createObjectURL(finalBlob);
@@ -174,13 +174,22 @@ document.addEventListener('DOMContentLoaded', () => {
     return 'map.png';
   };
 
+  const requestProcessedOverlayBlob = async (file) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    return processDroppedImage(formData);
+  };
+
   const loadExistingMapAssets = async (mapEntry, requestId) => {
     if (!mapEntry?.map_name) {
       throw new Error('Selected map is missing a name and cannot be loaded.');
     }
 
-    const [originalBlob, finalBlob] = await Promise.all([
-      fetchOriginalMapFile(mapEntry.map_name),
+    const originalBlob = await fetchOriginalMapFile(mapEntry.map_name);
+    const originalFile = new File([originalBlob], buildOriginalFilename(mapEntry), { type: originalBlob.type || 'image/png' });
+
+    const [processedOverlayBlob, finalBlob] = await Promise.all([
+      requestProcessedOverlayBlob(originalFile),
       fetchFinalMapFile(mapEntry.map_name)
     ]);
 
@@ -188,9 +197,7 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    const originalFile = new File([originalBlob], buildOriginalFilename(mapEntry), { type: originalBlob.type || 'image/png' });
-
-    updateOverlaySources(originalBlob, finalBlob);
+    updateOverlaySources(processedOverlayBlob, finalBlob);
     updateMetadataInputs(mapEntry);
     updateDimensionsDisplay(mapEntry);
     hydrateStoresFromEntryFromDatabaseEntry(mapEntry);
