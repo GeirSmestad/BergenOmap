@@ -46,7 +46,8 @@ document.addEventListener('DOMContentLoaded', () => {
     overlayController,
     previewController,
     elements: {
-      processButton: document.getElementById('processButton'),
+      computeRegistrationButton: document.getElementById('computeRegistrationButton'),
+      saveMapButton: document.getElementById('saveMapButton'),
       registrationPreviewButton: document.getElementById('registrationPreviewButton'),
       outputDatabaseButton: document.getElementById('outputDatabaseButton')
     }

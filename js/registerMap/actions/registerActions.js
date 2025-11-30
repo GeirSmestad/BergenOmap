@@ -1,7 +1,8 @@
 import {
   exportDatabase,
   getOverlayCoordinates,
-  transformAndStoreMapData
+  transformAndStoreMapData, // TODO: Rename to saveRegistration, can optionally drop re-submitting map to server
+  transformMap // TODO: Rename to computeRegistration
 } from '../services/apiClient.js';
 
 const roundLatLon = (value) => parseFloat(value.toFixed(6));
@@ -14,13 +15,18 @@ export function initRegisterActions({
   elements
 }) {
   const {
-    processButton,
+    computeRegistrationButton,
+    saveMapButton,
     registrationPreviewButton,
     outputDatabaseButton
   } = elements;
 
-  if (processButton) {
-    processButton.addEventListener('click', () => processRegistration());
+  if (computeRegistrationButton) {
+    computeRegistrationButton.addEventListener('click', () => computeRegistration());
+  }
+
+  if (saveMapButton) {
+    saveMapButton.addEventListener('click', () => saveRegistration());
   }
 
   if (registrationPreviewButton) {
@@ -31,6 +37,7 @@ export function initRegisterActions({
     outputDatabaseButton.addEventListener('click', () => exportDatabaseSnapshot());
   }
 
+  // TODO: Might rename this to "handleRegistrationResult" or something.
   const handleTransformResult = (blob) => {
     const url = URL.createObjectURL(blob);
     registrationStore.setOverlayImageUrl(url);
@@ -74,21 +81,60 @@ export function initRegisterActions({
     return formData;
   };
 
-  async function processRegistration() {
+  const mergeWithLatestMetadata = (registrationData) => ({ // TODO: Remove "latest"
+    ...registrationData,
+    ...registrationStore.getRegistrationMetadata()
+  });
+
+  const showLatestPreview = () => {
+    if (typeof previewController.showPreview === 'function') {
+      previewController.showPreview();
+      return;
+    }
+
+    if (typeof previewController.togglePreview === 'function') {
+      previewController.togglePreview();
+      return;
+    }
+
+    console.warn('Preview controller is missing showPreview/togglePreview handlers.');
+  };
+
+  async function computeRegistration() {
     try {
       const overlayElement = overlayController.getElement();
       const payload = getOverlayPayload(overlayElement);
       const registrationData = await getOverlayCoordinates(payload);
-      const metadata = registrationStore.getRegistrationMetadata();
-      const enrichedData = { ...registrationData, ...metadata };
+      const enrichedData = mergeWithLatestMetadata(registrationData);
 
       registrationStore.setRegistrationData(enrichedData);
 
       const formData = buildFormData(registrationStore.getDroppedImage(), enrichedData);
-      const blob = await transformAndStoreMapData(formData);
+      const blob = await transformMap(formData); // TODO: TransformData should maybe be renamed to "getRegisteredMap" or something. Also don't like "blob".
       handleTransformResult(blob);
+      showLatestPreview();
     } catch (error) {
-      console.error('Error processing registration:', error);
+      console.error('Error computing registration:', error);
+    }
+  }
+
+  async function saveRegistration() {
+    try {
+      const latestRegistration = registrationStore.getRegistrationData();
+
+      if (!latestRegistration || !latestRegistration.nw_coords || !latestRegistration.se_coords) {
+        throw new Error('Please compute a registration before saving.');
+      }
+
+      const enrichedData = mergeWithLatestMetadata(latestRegistration);
+      registrationStore.setRegistrationData(enrichedData);
+
+      const formData = buildFormData(registrationStore.getDroppedImage(), enrichedData);
+      const blob = await transformAndStoreMapData(formData); // TODO: Rename to "registerAndStoreMap" or something
+      handleTransformResult(blob);
+      showLatestPreview();
+    } catch (error) {
+      console.error('Error saving map:', error);
     }
   }
 

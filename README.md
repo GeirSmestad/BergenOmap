@@ -14,16 +14,17 @@ cd C:\Source\BergenOmap; python -m http.server 8000
 
 ## Registrering av kart
 
-* Endre brukerflyt: én knapp for å finne plassering og forhåndsvise (eller "prøve på nytt"), og én for å lagre kartet i databasen
-* Fjern knapp og kode for registrering av kart fra JSON, trenger det ikke lenger (databasen er pålitelig nå)
 
 * Verktøy som lar deg gjennomgå en eksisterende registrering, og viser med markørene hvor kontrollpunktene er satt
 * Grensesnitt for å redigere metadata i databasen uten å røre kart-registreringen. Løser også forrige, hvis du kan velge kart
+
 * For registrering i bedriftscuppen, bør jeg ha et verktøy som raskt lar meg sette samme registrering på identiske kart (egen side?)
 * + lagre metadata fra mappestruktur. Trenger bare å få det ustrukturert inn i databasen; kan ta detaljene med AI-modell senere.
 * Endre koordinat-visning sånn at den kun viser de tilgjengelige markørene, ikke koordinatene (tar mindre vertikal plass)
 * Fjerne kode som etter endringen i koordinat-visning vil være ubrukt
 
+* (X) Endre brukerflyt: én knapp for å finne plassering og forhåndsvise (eller "prøve på nytt"), og én for å lagre kartet i DB
+* (X) Fjern knapp og kode for registrering av kart fra JSON, trenger det ikke lenger (databasen er pålitelig nå)
 * (X) Skjule koordinat-visningen i kartregistrerings-grensesnittet
 * (X) Refaktorering av nytt markør-grensesnitt for bedre lesbarhet
 * (X) Forbedre markør-visningen så den viser klikk-koordinatet mer presist
@@ -77,6 +78,8 @@ cd C:\Source\BergenOmap; python -m http.server 8000
 
 
 ## Navigasjons-app
+
+* Refaktorere JS til moduler, og gi Cursor konteksten av hva vi skal gjøre med GPX og trenings-feature senere.
 
 * Cache Leaflet-filer, orienteringskart, og kart-definisjoner lokalt i appen i tilfelle brudd i nettverk (Cache Storage API?)
 
@@ -164,6 +167,7 @@ cd C:\Source\BergenOmap; python -m http.server 8000
 
 ## Generelle forbedringer
 
+* Jeg har noen renamings-TODOer i koden; gjennomfør disse. Cursor tar dem sikkert one-shot, bare oppgi presise navn på rename.
 
 * Kjøre gjennom database og re-generer roterte bilder med gjennomsiktige områder på alle steder som er utenfor selve kartet
 * Beskjed i registrerings-grensesnitt om framdrift ved registrering ("Beregner registrering / overfører bilder / ferdig"), kanskje en sticky status-bar

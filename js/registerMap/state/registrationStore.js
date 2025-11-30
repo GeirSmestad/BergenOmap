@@ -21,6 +21,7 @@ export class RegistrationStore {
     return this.currentRegistrationData;
   }
 
+  // TODO: Might rename these to "PreviewImageUrl" or similar
   setOverlayImageUrl(url) {
     this.currentOverlayImageUrl = url;
   }

@@ -24,22 +24,12 @@ export function createPreviewController({ // TODO: Can rename to registrationPre
     isVisible = false;
   };
 
-  const togglePreview = () => {
-    const registrationData = registrationStore.getRegistrationData();
-    const overlayImageUrl = registrationStore.getOverlayImageUrl();
+  const hasPreviewData = (registrationData, overlayImageUrl) => (
+    !!(registrationData?.nw_coords && registrationData?.se_coords && overlayImageUrl)
+  );
 
-    if (!registrationData.nw_coords || !registrationData.se_coords || !overlayImageUrl) {
-      console.warn('No registration data available for preview yet.');
-      return;
-    }
-
-    if (isVisible) {
-      clearPreview();
-      return;
-    }
-
+  const renderPreview = (registrationData, overlayImageUrl) => {
     clearPreview();
-
     const previewDefinition = {
       nw_coords: registrationData.nw_coords,
       se_coords: registrationData.se_coords,
@@ -51,9 +41,31 @@ export function createPreviewController({ // TODO: Can rename to registrationPre
     isVisible = true;
   };
 
+  const showPreview = () => {
+    const registrationData = registrationStore.getRegistrationData();
+    const overlayImageUrl = registrationStore.getOverlayImageUrl();
+
+    if (!hasPreviewData(registrationData, overlayImageUrl)) {
+      console.warn('No registration data available for preview yet.');
+      return;
+    }
+
+    renderPreview(registrationData, overlayImageUrl);
+  };
+
+  const togglePreview = () => {
+    if (isVisible) {
+      clearPreview();
+      return;
+    }
+
+    showPreview();
+  };
+
   return {
     togglePreview,
-    clearPreview
+    clearPreview,
+    showPreview
   };
 }
 
