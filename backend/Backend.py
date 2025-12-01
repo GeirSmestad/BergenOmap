@@ -8,6 +8,7 @@ from io import BytesIO
 import traceback
 import math
 import fitz
+import xml.etree.ElementTree as ET
 
 # Constants
 default_border_percentage = 0.13 # Width of each side border, as percentage of longest dimension
@@ -285,6 +286,7 @@ def get_overlay_coordinates():
 # Database interface. Unsure if you'll actually want to expose them over HTTP like this, but you have the option.
 # I'm thinking I'll most likely access it through other HTTP methods, not exposing the db directly.
 from Database import Database
+from gpx_parser import parse_strava_gpx
 
 def get_db():
     if 'db' not in g:
@@ -313,6 +315,80 @@ def list_maps():
     db = get_db()
     maps = db.list_maps()
     return jsonify(maps)
+
+
+@app.route('/api/gps-tracks/<username>', methods=['GET'])
+def list_gps_tracks(username):
+    db = get_db()
+    user = db.get_user_by_username(username)
+    if not user:
+        return jsonify({"error": f"User '{username}' not found"}), 404
+
+    tracks = db.list_gps_tracks(username)
+    return jsonify(tracks)
+
+
+@app.route('/api/gps-tracks/<username>/<int:track_id>', methods=['GET'])
+def get_gps_track(username, track_id):
+    db = get_db()
+    track = db.get_gps_track_by_id(username, track_id)
+    if not track:
+        return jsonify({"error": "Track not found"}), 404
+
+    try:
+        parsed_gpx = parse_strava_gpx(track["gpx_data"])
+    except ET.ParseError as exc:
+        return jsonify({"error": f"Unable to parse GPX payload: {exc}"}), 500
+
+    response = {
+        "track_id": track["track_id"],
+        "username": track["username"],
+        "description": track["description"],
+        "gpx": parsed_gpx
+    }
+    return jsonify(response)
+
+
+@app.route('/api/gps-tracks', methods=['POST'])
+def insert_gps_track():
+    uploaded_file = request.files.get('file')
+    username = request.form.get('username')
+    description = request.form.get('description', '')
+
+    if not uploaded_file or uploaded_file.filename == '':
+        return jsonify({"error": "A GPX file is required"}), 400
+    if not username:
+        return jsonify({"error": "username is required"}), 400
+
+    gpx_bytes = uploaded_file.read()
+    if not gpx_bytes:
+        return jsonify({"error": "Uploaded GPX file is empty"}), 400
+
+    try:
+        parsed_preview = parse_strava_gpx(gpx_bytes)
+    except ET.ParseError as exc:
+        return jsonify({"error": f"Invalid GPX file: {exc}"}), 400
+
+    db = get_db()
+    try:
+        track_id = db.insert_gps_track(username, gpx_bytes, description)
+    except ValueError as exc:
+        return jsonify({"error": str(exc)}), 400
+
+    preview_point_count = sum(len(track["points"]) for track in parsed_preview.get("tracks", []))
+    preview_track_count = len(parsed_preview.get("tracks", []))
+
+    return jsonify({
+        "message": "Track stored successfully",
+        "track_id": track_id,
+        "username": username,
+        "description": description,
+        "preview": {
+            "metadata": parsed_preview.get("metadata", {}),
+            "track_count": preview_track_count,
+            "point_count": preview_point_count
+        }
+    }), 201
 
 @app.route('/api/dal/mapfile/original/<map_name>', methods=['GET'])
 def get_mapfile_original(map_name):

@@ -106,7 +106,7 @@ class Database:
 
     def list_gps_tracks(self, username):
         select_sql = '''
-        SELECT track_id, username, gpx_data, description
+        SELECT track_id, username, description
         FROM gps_tracks
         WHERE username = ?
         ORDER BY track_id ASC
@@ -117,10 +117,9 @@ class Database:
             {
                 "track_id": track_id,
                 "username": user,
-                "gpx_data": gpx_blob,
                 "description": description
             }
-            for track_id, user, gpx_blob, description in rows
+            for track_id, user, description in rows
         ]
 
     def get_gps_track_by_id(self, username, track_id):
