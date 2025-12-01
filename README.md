@@ -78,13 +78,11 @@ cd C:\Source\BergenOmap; python -m http.server 8000
 
 ## Navigasjons-app
 
-- [ ] Refaktorere JS til moduler, og gi Cursor konteksten av hva vi skal gjøre med GPX og trenings-feature senere.
-
 - [ ] Cache Leaflet-filer, orienteringskart, og kart-definisjoner lokalt i appen i tilfelle brudd i nettverk (Cache Storage API?)
-
 - [ ] Kartet orienteres etter retningen man holder mobilen (toggle av/på)
 - [ ] Zoom-innstilling som finner mobil-dimensjoner og setter zoom til å tilsvare kartets målestokk (1:7500 inntil videre)
 
+- [x] Refaktorere JS til moduler, og gi Cursor konteksten av hva vi skal gjøre med GPX og trenings-feature senere.
 - [x] (0) Vise en slags highlight i det brukeren har valgt å laste et kart, sånn at de forstår at det skjer noe i bakgrunnen
 - [x] (0) Skru av live oppdatering av posisjons-visning når du simulerer posisjon, ellers spretter den tilbake
 - [x] (0) Kanskje en debug-mode som gjør det lettere å velge simulert posisjon på kartet? [trenger det ikke]
@@ -229,12 +227,11 @@ cd C:\Source\BergenOmap; python -m http.server 8000
 
 ## Refaktorering
 
-- [ ] Kan hende jeg må refaktorere kart-visningen på et tidspunkt. Flere steg her.
-
-- [ ] Bruke ecmascript-moduler?
 - [ ] Trekke felles kode ut i felles moduler?
 - [ ] Felles environment-config på tvers av sider? (har nå dette for registerMap, men ikke kartvisningen)
 
+- [x] Kan hende jeg må refaktorere kart-visningen på et tidspunkt. Flere steg her.
+- [x] Bruke ecmascript-moduler?
 - [x] Refaktorere registerMap til EcmaScript-moduler
 - [x] Refaktorere CSS til å bli separat mellom ulike sider
 - [x] Rename CSS-fil for kartvisning slik at den matcher etter refaktoreringen
