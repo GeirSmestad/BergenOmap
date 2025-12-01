@@ -94,7 +94,7 @@ cd C:\Source\BergenOmap; python -m http.server 8000
 - [x] Vise en liste over alle kart som er tilgjengelige på posisjonen kartet er satt
 - [x] Prøv med sentrering på nåværende posisjon første gang du laster siden.
 - [x] Bedre grensesnitt for valg av kart. Full liste, sorter på avstand, vis kartene for nåværende posisjon, rask toggle mellom dem.
-- [x] Hosting, som eksponerer appen på twerkules.com
+- [x] Hosting, som eksponerer appen på internett
 - [x] Flere kart på en gang (generalisert, basert på en liste som kommer som parameter)
 - [x] Velge hvilke(t) kart man vil se, når det er flere å velge mellom (fx. ikke laste før du klikker på kart-området)  
 - [x] GPS-posisjon vises på kartet
@@ -213,7 +213,7 @@ cd C:\Source\BergenOmap; python -m http.server 8000
 
 - [ ] Kreditere kart-tegneren i grensesnittet, kanskje på placeholder-bildene før kartet lastes
 - [ ] Når jeg får veldig mange kart, vil jeg kanskje ha et avansert filter for kart, som lar meg filtrere på metadata.
-- [ ] Ta ned gamle kart.twerkules.com, den nye appen er mye bedre
+- [ ] Ta ned den gamle kart-appen, den nye appen er mye bedre
 
 - [x] Kan velge å fjerne original-bildene fra prod-databasen for å spare båndbredde, de vil pr. nå aldri bli brukt der
 - [x] Menysystem for å velge flere kart, hvis de overlapper i terrenget
