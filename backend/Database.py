@@ -44,7 +44,103 @@ class Database:
         '''
         self.cursor.execute(create_maps_sql)
         self.cursor.execute(create_map_files_sql)
+        self.create_users_table()
+        self.create_gps_tracks_table()
+        self.ensure_user_exists('geir.smestad')
         self.connection.commit()
+
+    def create_users_table(self):
+        create_users_sql = '''
+        CREATE TABLE IF NOT EXISTS users (
+            username TEXT PRIMARY KEY
+        )
+        '''
+        self.cursor.execute(create_users_sql)
+
+    def create_gps_tracks_table(self):
+        create_gps_tracks_sql = '''
+        CREATE TABLE IF NOT EXISTS gps_tracks (
+            track_id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT NOT NULL,
+            gpx_data BLOB NOT NULL,
+            description TEXT,
+            FOREIGN KEY (username) REFERENCES users(username) ON DELETE CASCADE
+        )
+        '''
+        self.cursor.execute(create_gps_tracks_sql)
+
+    def ensure_user_exists(self, username):
+        insert_sql = '''
+        INSERT OR IGNORE INTO users (username)
+        VALUES (?)
+        '''
+        self.cursor.execute(insert_sql, (username,))
+        self.connection.commit()
+
+    def get_user_by_username(self, username):
+        select_sql = '''
+        SELECT username
+        FROM users
+        WHERE username = ?
+        LIMIT 1
+        '''
+        self.cursor.execute(select_sql, (username,))
+        result = self.cursor.fetchone()
+        return {"username": result[0]} if result else None
+
+    def insert_gps_track(self, username, gpx_data, description=None):
+        if not self.get_user_by_username(username):
+            raise ValueError(f"User '{username}' does not exist. Create the user before inserting tracks.")
+        insert_sql = '''
+        INSERT INTO gps_tracks (username, gpx_data, description)
+        VALUES (?, ?, ?)
+        '''
+        self.cursor.execute(insert_sql, (username, gpx_data, description))
+        self.connection.commit()
+        return self.cursor.lastrowid
+
+    def insert_gps_track_from_file(self, username, file_path, description=None):
+        with open(file_path, 'rb') as file:
+            gpx_data = file.read()
+        return self.insert_gps_track(username, gpx_data, description)
+
+    def list_gps_tracks(self, username):
+        select_sql = '''
+        SELECT track_id, username, gpx_data, description
+        FROM gps_tracks
+        WHERE username = ?
+        ORDER BY track_id ASC
+        '''
+        self.cursor.execute(select_sql, (username,))
+        rows = self.cursor.fetchall()
+        return [
+            {
+                "track_id": track_id,
+                "username": user,
+                "gpx_data": gpx_blob,
+                "description": description
+            }
+            for track_id, user, gpx_blob, description in rows
+        ]
+
+    def get_gps_track_by_id(self, username, track_id):
+        select_sql = '''
+        SELECT track_id, username, gpx_data, description
+        FROM gps_tracks
+        WHERE username = ? AND track_id = ?
+        LIMIT 1
+        '''
+        self.cursor.execute(select_sql, (username, track_id))
+        result = self.cursor.fetchone()
+        if not result:
+            return None
+        track_id, user, gpx_blob, description = result
+        return {
+            "track_id": track_id,
+            "username": user,
+            "gpx_data": gpx_blob,
+            "description": description
+        }
 
     def insert_data(self, data):
         insert_sql = '''

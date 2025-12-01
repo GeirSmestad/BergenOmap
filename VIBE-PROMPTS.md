@@ -96,7 +96,17 @@ Transformed image of dimensions (3432, 2480) to image of dimensions (4324, 3372)
 
 Let me know if you need more info.
 
+## GPX viewer
 
+We will start implementing the GPX viewer feature.
+
+Let's start with the back-end. I need a new database table, "users", that stores the different people who may use the app. It should have a unique username as primary key, for now. Make create table and get operations for it, but don't expose them in Backend.py yet. Write a query for creating it. We will have a single default user for now, geir.smestad. 
+
+We will also need a second table, gps_tracks, that stores the different runs the user has uploaded. It should have a sequential integer primary key, username foreign key, a BLOB field for a gpx file, and a text field called "description". Make create table, list (by username) and get_gpxfile (by username and integer key) operations for it. 
+
+Give me the SQL queries for table creation, so I can run them separately from the code.
+
+I also have a test GPX file, tell me how to get it into the table for the default user we will use for all testing.
 
 
 ## Scratchpad
