@@ -43,9 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   const preExistingMapListElement = document.getElementById('preExistingMapList');
-  const preExistingMapStatusElement = document.getElementById('preExistingMapStatus');
   const statusBarElement = document.getElementById('registrationStatus');
-  const dimensionsElement = document.getElementById('dimensions');
 
   const metadataFieldMappings = [
     ['mapName', 'map_name'],
@@ -78,20 +76,6 @@ document.addEventListener('DOMContentLoaded', () => {
         element.value = mapEntry?.[key] ?? '';
       }
     });
-  };
-
-  const updateDimensionsDisplay = (mapEntry) => {
-    if (!dimensionsElement) {
-      return;
-    }
-    const width = Number(mapEntry?.overlay_width);
-    const height = Number(mapEntry?.overlay_height);
-
-    if (Number.isFinite(width) && Number.isFinite(height)) {
-      dimensionsElement.textContent = `Dimensions: ${Math.round(width)} × ${Math.round(height)} px`;
-    } else {
-      dimensionsElement.textContent = '';
-    }
   };
 
   const buildRegistrationDataFromDatabaseEntry = (mapEntry) => ({
@@ -199,7 +183,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     updateOverlaySources(processedOverlayBlob, finalBlob);
     updateMetadataInputs(mapEntry);
-    updateDimensionsDisplay(mapEntry);
     hydrateStoresFromEntryFromDatabaseEntry(mapEntry);
     registrationStore.setDroppedImage(originalFile);
     focusLeafletMap(mapEntry);
@@ -215,9 +198,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const requestId = ++activeMapLoadToken;
     const mapLabel = mapEntry.map_name || 'selected map';
 
-    if (preExistingMapController) {
-      preExistingMapController.setStatus(`Loading "${mapLabel}"…`);
-    }
     setStatusBarMessage(`Loading "${mapLabel}" from database…`);
 
     loadExistingMapAssets(mapEntry, requestId)
@@ -226,9 +206,6 @@ document.addEventListener('DOMContentLoaded', () => {
           return;
         }
 
-        if (preExistingMapController) {
-          preExistingMapController.setStatus(`Loaded "${mapLabel}".`);
-        }
         setStatusBarMessage(`Loaded "${mapLabel}". Preview enabled.`);
       })
       .catch((error) => {
@@ -237,16 +214,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         console.error('Failed to load map from database:', error);
-        if (preExistingMapController) {
-          preExistingMapController.setStatus(`Failed to load "${mapLabel}".`);
-        }
         setStatusBarMessage('Failed to load selected map. Check console for details.');
       });
   };
 
   preExistingMapController = createPreExistingMapController({
     listElement: preExistingMapListElement,
-    statusElement: preExistingMapStatusElement,
     onMapRequested: handlePreExistingMapSelection
   });
 

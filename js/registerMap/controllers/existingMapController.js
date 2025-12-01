@@ -14,17 +14,10 @@ const formatMetaLine = (mapEntry) => {
 
 export function createPreExistingMapController({
   listElement,
-  statusElement,
   onMapRequested = noop
 }) {
   let maps = [];
   let activeMapId = null;
-
-  const setStatus = (message) => {
-    if (statusElement) {
-      statusElement.textContent = message ?? '';
-    }
-  };
 
   const clearList = () => {
     if (listElement) {
@@ -117,16 +110,13 @@ export function createPreExistingMapController({
   }
 
   const loadAvailableMaps = async () => {
-    setStatus('Loading maps…');
     try {
       maps = await listMaps();
       maps.sort((a, b) => (a.map_name || '').localeCompare(b.map_name || ''));
       renderMaps();
-      setStatus(maps.length ? 'Select a map to load.' : 'No saved maps found.');
     } catch (error) {
       console.error('Failed to load maps:', error);
       clearList();
-      setStatus('Failed to load maps.');
     }
   };
 
@@ -142,7 +132,6 @@ export function createPreExistingMapController({
     loadAvailableMaps,
     handleMapSelection,
     getActiveMap,
-    setStatus,
     destroy
   };
 }

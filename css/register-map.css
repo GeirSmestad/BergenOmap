@@ -46,8 +46,8 @@ canvas {
 }
 
 #preExistingMapSelector {
-  flex: 0 1 320px;
-  max-width: 400px;
+  flex: 0 1 450px;
+  max-width: 450px;
   background: #fff;
   border-radius: 12px;
   border: 1px solid #dcdfe6;
@@ -75,13 +75,6 @@ canvas {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-}
-
-.pre-existing-map-status {
-  min-height: 1.5rem;
-  font-size: 0.85rem;
-  color: #475467;
-  margin: 0;
 }
 
 .pre-existing-map-card {
