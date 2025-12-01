@@ -545,15 +545,5 @@ if __name__ == '__main__':
     db = Database()
 
     print()
-    print("Loading initial database from map definitions. Records will not be overwritten if they already exist.")
+    print("Loading database.")
     print()
-    
-    db.setup_database(map_definitions)
-
-    print("Maps loaded, outputting maps table to console for testing purposes.")
-    print()
-
-    all_maps = db.list_maps()
-    pretty_format_maps(all_maps)
-
-    # db.close()
