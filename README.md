@@ -15,243 +15,242 @@ cd C:\Source\BergenOmap; python -m http.server 8000
 ## Registrering av kart
 
 
-* Verktøy som lar deg gjennomgå en eksisterende registrering, og viser med markørene hvor kontrollpunktene er satt
-* Grensesnitt for å redigere metadata i databasen uten å røre kart-registreringen. Løser også forrige, hvis du kan velge kart
+- [ ] Endre koordinat-visning sånn at den kun viser de tilgjengelige markørene, ikke koordinatene (tar mindre vertikal plass)
+- [ ] Fjerne kode som etter endringen i koordinat-visning vil være ubrukt
 
-* For registrering i bedriftscuppen, bør jeg ha et verktøy som raskt lar meg sette samme registrering på identiske kart (egen side?)
-* + lagre metadata fra mappestruktur. Trenger bare å få det ustrukturert inn i databasen; kan ta detaljene med AI-modell senere.
-* Endre koordinat-visning sånn at den kun viser de tilgjengelige markørene, ikke koordinatene (tar mindre vertikal plass)
-* Fjerne kode som etter endringen i koordinat-visning vil være ubrukt
-
-* (X) Endre brukerflyt: én knapp for å finne plassering og forhåndsvise (eller "prøve på nytt"), og én for å lagre kartet i DB
-* (X) Fjern knapp og kode for registrering av kart fra JSON, trenger det ikke lenger (databasen er pålitelig nå)
-* (X) Skjule koordinat-visningen i kartregistrerings-grensesnittet
-* (X) Refaktorering av nytt markør-grensesnitt for bedre lesbarhet
-* (X) Forbedre markør-visningen så den viser klikk-koordinatet mer presist
-* (X) Få inn merker i tre farger for hvor man har klikket på kart og overlay ved registrering, la brukeren dra dem rundt
-* (X) Mistenker at det er lurt å refaktorere kode til moduler først, for etter dette vil JS-filen ha veldig mye state-håndtering
-* (X) Legge inn ny constraint i beregningen av kart-hjørnenes koordinater: At aspect-ratio til kart-rektangelet ikke skal endre seg
-* (X) Støtt transformering av PDF til PNG når du drag-and-dropper en PDF i registreringsvinduet
-* (X) Legg inn knapp for å bytte mellom satellittfoto og Norgeskart i Leaflet
-* (X) Ser ikke ut som metadata-egenskapene flyttes inn i databasen fra registrerings-browser; fiks det.
-* (X) Bytte mellom flyfoto og raster-kart under registrering
-* (X) Milepæl, registrering av kart er nå ganske enkelt! Kommet langt siden jeg måtte sjonglere filer og JS-definisjoner :)
-* (X) Bedre ergonomi ved velging av 3+3 punkter, helst ved å både kunne se orienteringskart og Leaflet ved siden av hverandre
-* (X) Koble den nye algoritmen opp til knappen som registrerer alt i databasen; her er det en bug
-* (X) Mer pålitelig algoritme for å registrere kart, må også ta høyde for "forstørr-og-roter"-behovet som kommer fra Leaflet
-* (X) Output hvilken feil algoritmen regnet ved registrering
-* (0) Du kan gjerne putte denne i databasen ved registrering
-* (X) Mer presis muspeker i Leaflet-kart, for presis registrering
-* (X) Preload Map name og Filename i registrerings-vindu når du drag & dropper en kartfil
-* (X) Må få inn JSON med metadata for kart: Dato, område, event, løype, kart-tegner, kart-klubb, løypelegger
-* (X) Knapp for å dumpe kartfiler og kart-definisjoner i javascript fra DB til disk
-* (X) Knapp for å skru av og på forhåndsvisning registrert kart i registrerings-app
-* (0) Lag programvare for å slå disse kartene sammen til (post-frie) kart man kan bruke i terrenget
-* (X) Helhetlig integrert grensesnitt for behandling av bildefil og registrering av kart
-* (X) Ideelt sett mulighet for å lagre info om registrering til database, så registrering av nye kart går fortere
-* (X) Lag scraper for å hente og sortere alle kartene fra o-bergen
-* (X) Lag grensesnitt for å plassere kartet riktig, basert på algoritme
-* (X) Standardiser marger på overlay som en prosent av lengste dimensjon (13% per side er rimelig)
-* (X) Lag enkel software for å konvertere PDFer og fjerne magenta-linjer
-* (0) Estimer kart-dimensjoner med høyde for mine selvpåførte marger
-* (X) Legg inn nytt og mer detaljert kart
-* (0) Lag justerbar gjennomsiktighet for overlay
-* (0) Preload +/- 5 grader rotasjon fra back-end
-* (X) Lag algoritme for rotasjon og plassering av overlay
-* (X) Beregn matematikken for å klikke på bilde og kart for å regne ut riktige koordinater
-* (0) Fiks system for å dra et punkt på O-kartet til å matche ekte-kartet
-* (X) Fiks system for å rotere kart
-* (X) Regn ut koordinater for kart basert på dimensjon og målestokk for A4-kart
-* (X) Bytt checkboks til å resize kart og beholde forhold mellom X- og Y-dimensjon
-* (X) Motta bildefil til server med drag'n'drop
-* (X) Transformer bildefil på server til kart med gjennomsiktige marginer og null rotasjon
-* (X) Send respons tilbake til server
-* (X) Sett dimensjons-velgeren til bildet du har sendt
-* (X) (la brukeren gjøre registreringsprosessen)
-* (X) Få opprinnelig bildefil tilbake til server (sånn at den kan roteres til rett vinkel)
-* (X) Roter opprinnelig bilde til vinkel spesifisert av registreringsprosess
-* (X) Sett inn bilde-filnavn og andre innhentede data i JSON-datastruktur
-* (X) Send JSON-datastruktur til server 
-* (X) Lagre rotert bilde på server
-* (X) Eventuelt med kartnavn og annen metadata spesifisert i registrerings-vinduet
-* (X) Sørg for at filer/filnavn og JSON-data kan hentes inn i mapBrowser.js
+- [x] Verktøy som lar deg gjennomgå en eksisterende registrering, og viser med markørene hvor kontrollpunktene er satt
+- [x] Grensesnitt for å redigere metadata i databasen uten å røre kart-registreringen. Løser også forrige, hvis du kan velge kart
+- [x] For registrering i bedriftscuppen, bør jeg ha et verktøy som raskt lar meg sette samme registrering på identiske kart (egen side?)
+- [x] (0) + lagre metadata fra mappestruktur. Trenger bare å få det ustrukturert inn i databasen; kan ta detaljene med AI-modell senere.
+- [x] Endre brukerflyt: én knapp for å finne plassering og forhåndsvise (eller "prøve på nytt"), og én for å lagre kartet i DB
+- [x] Fjern knapp og kode for registrering av kart fra JSON, trenger det ikke lenger (databasen er pålitelig nå)
+- [x] Skjule koordinat-visningen i kartregistrerings-grensesnittet
+- [x] Refaktorering av nytt markør-grensesnitt for bedre lesbarhet
+- [x] Forbedre markør-visningen så den viser klikk-koordinatet mer presist
+- [x] Få inn merker i tre farger for hvor man har klikket på kart og overlay ved registrering, la brukeren dra dem rundt
+- [x] Mistenker at det er lurt å refaktorere kode til moduler først, for etter dette vil JS-filen ha veldig mye state-håndtering
+- [x] Legge inn ny constraint i beregningen av kart-hjørnenes koordinater: At aspect-ratio til kart-rektangelet ikke skal endre seg
+- [x] Støtt transformering av PDF til PNG når du drag-and-dropper en PDF i registreringsvinduet
+- [x] Legg inn knapp for å bytte mellom satellittfoto og Norgeskart i Leaflet
+- [x] Ser ikke ut som metadata-egenskapene flyttes inn i databasen fra registrerings-browser; fiks det.
+- [x] Bytte mellom flyfoto og raster-kart under registrering
+- [x] Milepæl, registrering av kart er nå ganske enkelt! Kommet langt siden jeg måtte sjonglere filer og JS-definisjoner :)
+- [x] Bedre ergonomi ved velging av 3+3 punkter, helst ved å både kunne se orienteringskart og Leaflet ved siden av hverandre
+- [x] Koble den nye algoritmen opp til knappen som registrerer alt i databasen; her er det en bug
+- [x] Mer pålitelig algoritme for å registrere kart, må også ta høyde for "forstørr-og-roter"-behovet som kommer fra Leaflet
+- [x] Output hvilken feil algoritmen regnet ved registrering
+- [x] (0) Du kan gjerne putte denne i databasen ved registrering
+- [x] Mer presis muspeker i Leaflet-kart, for presis registrering
+- [x] Preload Map name og Filename i registrerings-vindu når du drag & dropper en kartfil
+- [x] Må få inn JSON med metadata for kart: Dato, område, event, løype, kart-tegner, kart-klubb, løypelegger
+- [x] Knapp for å dumpe kartfiler og kart-definisjoner i javascript fra DB til disk
+- [x] Knapp for å skru av og på forhåndsvisning registrert kart i registrerings-app
+- [x] (0) Lag programvare for å slå disse kartene sammen til (post-frie) kart man kan bruke i terrenget
+- [x] Helhetlig integrert grensesnitt for behandling av bildefil og registrering av kart
+- [x] Ideelt sett mulighet for å lagre info om registrering til database, så registrering av nye kart går fortere
+- [x] Lag scraper for å hente og sortere alle kartene fra o-bergen
+- [x] Lag grensesnitt for å plassere kartet riktig, basert på algoritme
+- [x] Standardiser marger på overlay som en prosent av lengste dimensjon (13% per side er rimelig)
+- [x] Lag enkel software for å konvertere PDFer og fjerne magenta-linjer
+- [x] (0) Estimer kart-dimensjoner med høyde for mine selvpåførte marger
+- [x] Legg inn nytt og mer detaljert kart
+- [x] (0) Lag justerbar gjennomsiktighet for overlay
+- [x] (0) Preload +/- 5 grader rotasjon fra back-end
+- [x] Lag algoritme for rotasjon og plassering av overlay
+- [x] Beregn matematikken for å klikke på bilde og kart for å regne ut riktige koordinater
+- [x] (0) Fiks system for å dra et punkt på O-kartet til å matche ekte-kartet
+- [x] Fiks system for å rotere kart
+- [x] Regn ut koordinater for kart basert på dimensjon og målestokk for A4-kart
+- [x] Bytt checkboks til å resize kart og beholde forhold mellom X- og Y-dimensjon
+- [x] Motta bildefil til server med drag'n'drop
+- [x] Transformer bildefil på server til kart med gjennomsiktige marginer og null rotasjon
+- [x] Send respons tilbake til server
+- [x] Sett dimensjons-velgeren til bildet du har sendt
+- [x] (la brukeren gjøre registreringsprosessen)
+- [x] Få opprinnelig bildefil tilbake til server (sånn at den kan roteres til rett vinkel)
+- [x] Roter opprinnelig bilde til vinkel spesifisert av registreringsprosess
+- [x] Sett inn bilde-filnavn og andre innhentede data i JSON-datastruktur
+- [x] Send JSON-datastruktur til server 
+- [x] Lagre rotert bilde på server
+- [x] Eventuelt med kartnavn og annen metadata spesifisert i registrerings-vinduet
+- [x] Sørg for at filer/filnavn og JSON-data kan hentes inn i mapBrowser.js
 
 
 ## Navigasjons-app
 
-* Refaktorere JS til moduler, og gi Cursor konteksten av hva vi skal gjøre med GPX og trenings-feature senere.
+- [ ] Refaktorere JS til moduler, og gi Cursor konteksten av hva vi skal gjøre med GPX og trenings-feature senere.
 
-* Cache Leaflet-filer, orienteringskart, og kart-definisjoner lokalt i appen i tilfelle brudd i nettverk (Cache Storage API?)
+- [ ] Cache Leaflet-filer, orienteringskart, og kart-definisjoner lokalt i appen i tilfelle brudd i nettverk (Cache Storage API?)
 
-* Kartet orienteres etter retningen man holder mobilen (toggle av/på)
-* Zoom-innstilling som finner mobil-dimensjoner og setter zoom til å tilsvare kartets målestokk (1:7500 inntil videre)
+- [ ] Kartet orienteres etter retningen man holder mobilen (toggle av/på)
+- [ ] Zoom-innstilling som finner mobil-dimensjoner og setter zoom til å tilsvare kartets målestokk (1:7500 inntil videre)
 
-* (0) Vise en slags highlight i det brukeren har valgt å laste et kart, sånn at de forstår at det skjer noe i bakgrunnen
-* (0) Skru av live oppdatering av posisjons-visning når du simulerer posisjon, ellers spretter den tilbake
-* (0) Kanskje en debug-mode som gjør det lettere å velge simulert posisjon på kartet? [trenger det ikke]
-* (X) Visuelt fine segmented controls for å velge modus på kart-velgeren (nær meg eller nær kart-sentrum)
-* (X) Sentrer kartet på brukerens posisjon (knapp)
-* (X) Kartet følger brukerens posisjon (toggle av/på)
-* (X) Kanskje med en toggle-knapp øverst for å følge posisjonen til brukeren?
-* (X) Kanskje prøve ut om det finnes en måte å vise på oversiktskartet hvilke kart som er tilgjengelige.
-* (X) Vise en liste over alle kart som er tilgjengelige på posisjonen kartet er satt
-* (X) Prøv med sentrering på nåværende posisjon første gang du laster siden.
-* (X)Bedre grensesnitt for valg av kart. Full liste, sorter på avstand, vis kartene for nåværende posisjon, rask toggle mellom dem.
-* (X) Hosting, som eksponerer appen på twerkules.com
-* (X) Flere kart på en gang (generalisert, basert på en liste som kommer som parameter)
-* (X) Velge hvilke(t) kart man vil se, når det er flere å velge mellom (fx. ikke laste før du klikker på kart-området)  
-* (X) GPS-posisjon vises på kartet
-* (X) Visning hvor kart er satt til korrekt posisjon med 0% opacity
+- [x] (0) Vise en slags highlight i det brukeren har valgt å laste et kart, sånn at de forstår at det skjer noe i bakgrunnen
+- [x] (0) Skru av live oppdatering av posisjons-visning når du simulerer posisjon, ellers spretter den tilbake
+- [x] (0) Kanskje en debug-mode som gjør det lettere å velge simulert posisjon på kartet? [trenger det ikke]
+- [x] Visuelt fine segmented controls for å velge modus på kart-velgeren (nær meg eller nær kart-sentrum)
+- [x] Sentrer kartet på brukerens posisjon (knapp)
+- [x] Kartet følger brukerens posisjon (toggle av/på)
+- [x] Kanskje med en toggle-knapp øverst for å følge posisjonen til brukeren?
+- [x] Kanskje prøve ut om det finnes en måte å vise på oversiktskartet hvilke kart som er tilgjengelige.
+- [x] Vise en liste over alle kart som er tilgjengelige på posisjonen kartet er satt
+- [x] Prøv med sentrering på nåværende posisjon første gang du laster siden.
+- [x] Bedre grensesnitt for valg av kart. Full liste, sorter på avstand, vis kartene for nåværende posisjon, rask toggle mellom dem.
+- [x] Hosting, som eksponerer appen på twerkules.com
+- [x] Flere kart på en gang (generalisert, basert på en liste som kommer som parameter)
+- [x] Velge hvilke(t) kart man vil se, når det er flere å velge mellom (fx. ikke laste før du klikker på kart-området)  
+- [x] GPS-posisjon vises på kartet
+- [x] Visning hvor kart er satt til korrekt posisjon med 0% opacity
 
 ## GPX-viewer
 
-* Mulighet for å vise Strava-track fra tidligere løp på et orienteringskart (kanskje i helt separat view)
-* Database-støtte for å samle en brukers informasjon (fx. GPX-filer fra Strava)
-* Mulighet for å laste opp GPX-filer og lagre dem i database (inkludert enkel metadata, fx. et navn)
-* Mulighet for å velge kart, trolig samme liste som før men kun med "nær kartvindu"
-* Mulighet for å velge hvilken GPX-fil man skal vise
-* Mulighet for å "spille av" løpet, og bla fram og tilbake i løpets framdrift
-* Mulighet for å visualisere hastighet
+- [ ] Mulighet for å vise Strava-track fra tidligere løp på et orienteringskart (kanskje i helt separat view)
+- [ ] Database-støtte for å samle en brukers informasjon (fx. GPX-filer fra Strava)
+- [ ] Mulighet for å laste opp GPX-filer og lagre dem i database (inkludert enkel metadata, fx. et navn)
+- [ ] Mulighet for å velge kart, trolig samme liste som før men kun med "nær kartvindu"
+- [ ] Mulighet for å velge hvilken GPX-fil man skal vise
+- [ ] Mulighet for å "spille av" løpet, og bla fram og tilbake i løpets framdrift
+- [ ] Mulighet for å visualisere hastighet
 
 ## Trenings-app
 
-* Mulighet for å velge kart, trolig samme liste som jeg allerede har
-* Database-støtte for å lagre hvor på kartet hver av postene befinner seg
-* Støtte i registrerings-grensesnitt for å markere hvor på kartet hver post er
-* Visning av hvilke poster man har vært innom
-* Automatisk stempling (med minste avstand til post, og GPS-presisjon)
-* Mauell stempling (registrer avstand og presisjon fra GPS)
+- [ ] Mulighet for å velge kart, trolig samme liste som jeg allerede har
+- [ ] Database-støtte for å lagre hvor på kartet hver av postene befinner seg
+- [ ] Støtte i registrerings-grensesnitt for å markere hvor på kartet hver post er
+- [ ] Visning av hvilke poster man har vært innom
+- [ ] Automatisk stempling (med minste avstand til post, og GPS-presisjon)
+- [ ] Mauell stempling (registrer avstand og presisjon fra GPS)
 
 ## Infrastruktur
 
 
-* Database-nøkkel som gir versjonen av et bestemt kart, slik at jeg kan cache i nettleseren til brukeren
-* Autentisering, hvis jeg vil gjøre appen mindre tilgjengelig for Gud og hvermann. Auth med navn?
-* Landingsside for auth
+- [ ] Database-nøkkel som gir versjonen av et bestemt kart, slik at jeg kan cache i nettleseren til brukeren
+- [ ] Autentisering, hvis jeg vil gjøre appen mindre tilgjengelig for Gud og hvermann. Auth med navn?
+- [ ] Landingsside for auth
 
 
-* (X) På et tidspunkt vil jeg kanskje ha en indeks-primærnøkkel heller enn å bruke kartnavnet, pga. mange kart i samme område
-* (X) Deployment på EC2/Lightsail
-* (X) Scanne alle O-kartene mine som ikke er fra bedriftscup
-* (X) Laste ned 2025-kartene fra bedriftscup (bruk script)
-* (0) Deploy-skript som genererer kart og kopierer filer til S3. Alternativ for å overskrive eksisterende kart.
-* (X) Serving av kart via DB-grensesnitt, så man slipper å tenke på filsystem
-* (X) Koble på og justere "dump database-funksjon" så filene kommer inn i AWS-katalogen og brukes direkte av kart-appen
-* (X) Bruke DB uten server: Kommando som dumper definisjoner og kartfiler fra DB -> disk, for rask kopiering til AWS (se under)
-* (X) MapDefinitions.py -> Database (også med kart/bilder) -> kartfiler på disk + mapDefinitions.js som leses av mapBrowser.js
-* (X) Må lagre detaljene om de 6 koordinatene i DB ved registrering, så jeg kan rekonstruere registreringen i ettertid
-* (X) Legge til multiline-tekstfelt i database for credits for kart
-* (X) Database-lagring av kartfiler
-* (X) Nytt web-grensesnitt for å bla i databasen. Dette kan du sikkert få ut fra én ChatGPT-prompt.
-* (X) Se om det er mulig å komprimere kart-filene [webp 70% gir 50% mindre fil med OK kvalitetstap. Bør helst gjøres via config.]
-* (X) Database for kart-registreringer (sqlite)
-* (X) Javascript for å be nettleseren ikke sette låse telefonen ved inaktivitet
+- [x] På et tidspunkt vil jeg kanskje ha en indeks-primærnøkkel heller enn å bruke kartnavnet, pga. mange kart i samme område
+- [x] Deployment på EC2/Lightsail
+- [x] Scanne alle O-kartene mine som ikke er fra bedriftscup
+- [x] Laste ned 2025-kartene fra bedriftscup (bruk script)
+- [x] (0) Deploy-skript som genererer kart og kopierer filer til S3. Alternativ for å overskrive eksisterende kart.
+- [x] Serving av kart via DB-grensesnitt, så man slipper å tenke på filsystem
+- [x] Koble på og justere "dump database-funksjon" så filene kommer inn i AWS-katalogen og brukes direkte av kart-appen
+- [x] Bruke DB uten server: Kommando som dumper definisjoner og kartfiler fra DB -> disk, for rask kopiering til AWS (se under)
+- [x] MapDefinitions.py -> Database (også med kart/bilder) -> kartfiler på disk + mapDefinitions.js som leses av mapBrowser.js
+- [x] Må lagre detaljene om de 6 koordinatene i DB ved registrering, så jeg kan rekonstruere registreringen i ettertid
+- [x] Legge til multiline-tekstfelt i database for credits for kart
+- [x] Database-lagring av kartfiler
+- [x] Nytt web-grensesnitt for å bla i databasen. Dette kan du sikkert få ut fra én ChatGPT-prompt.
+- [x] Se om det er mulig å komprimere kart-filene [webp 70% gir 50% mindre fil med OK kvalitetstap. Bør helst gjøres via config.]
+- [x] Database for kart-registreringer (sqlite)
+- [x] Javascript for å be nettleseren ikke sette låse telefonen ved inaktivitet
 
 
 ## Scanning og registrering av spesifikke kart
 
-* Registrere alle kartene som ikke er fra bedriftscuppen (mappe O-kart under Scans)
-* Registrere alle tur-orienteringskartene
+- [ ] Registrere alle kartene som ikke er fra bedriftscuppen (mappe O-kart under Scans)
+- [ ] Registrere alle tur-orienteringskartene
 
-* Registrere alle bedriftscup-kart fra løp jeg har deltatt i
-* Registrere ett fra hvert bedriftsløp bakover i tid
+- [ ] Registrere alle bedriftscup-kart fra løp jeg har deltatt i
+- [ ] Registrere ett fra hvert bedriftsløp bakover i tid
 
 
-* (X) Jeg mangler løpene fra Dyreparken i 2024, vet ikke hvor de kartene har blitt av.
-* (X) Spor opp alle de gamle turorienterings-kartene dine, og få dem på listen over kart å registrere. Se på Gmail & Downloads
-* (X) Legge inn "månedens kart november" på Skage, hvor jeg og C gikk lørdagstur
-* (X) Scanne alle kart fra løp som ikke er bedriftscuppen, så jeg kan legge dem inn
-* (X) Gamle turorienteringskart som kan lastes ned fra turorientering.no
-* (X)Legge inn mine kart fra løp som mangler fra bedriftscuppens nettside i perioden jeg har løpt
+- [x] Jeg mangler løpene fra Dyreparken i 2024, vet ikke hvor de kartene har blitt av.
+- [x] Spor opp alle de gamle turorienterings-kartene dine, og få dem på listen over kart å registrere. Se på Gmail & Downloads
+- [x] Legge inn "månedens kart november" på Skage, hvor jeg og C gikk lørdagstur
+- [x] Scanne alle kart fra løp som ikke er bedriftscuppen, så jeg kan legge dem inn
+- [x] Gamle turorienteringskart som kan lastes ned fra turorientering.no
+- [x] Legge inn mine kart fra løp som mangler fra bedriftscuppens nettside i perioden jeg har løpt
 
 
 ## Generelle forbedringer
 
-* Jeg har noen renamings-TODOer i koden; gjennomfør disse. Cursor tar dem sikkert one-shot, bare oppgi presise navn på rename.
+- [ ] Jeg har noen renamings-TODOer i koden; gjennomfør disse. Cursor tar dem sikkert one-shot, bare oppgi presise navn på rename.
 
-* Kjøre gjennom database og re-generer roterte bilder med gjennomsiktige områder på alle steder som er utenfor selve kartet
+- [ ] Kjøre gjennom database og re-generer roterte bilder med gjennomsiktige områder på alle steder som er utenfor selve kartet
 
-* (X) Beskjed i registrerings-grensesnitt om framdrift ved registrering ("Beregner registrering / overfører bilder / ferdig")
-* (X) Mulighet for å lagre kart som webp. Når DB inneholder koordinater, original og live, kan du re-generere live on-demand som webp.
-* (X) Funksjon for å re-generere final-bilder i database som webp og fjerne final-bilder for deploy
-* (X) Fjern filnavnet fra viewDatabase-funksjonen; jeg trenger det ikke. Fjern også Attribution-feltet.
-* (X) Det burde gå an å one-shotte en justering i registrerings-grensesnittet sånn at jeg lett kan putte inn de nye feltene jeg ønsker å lagre i databasen.
-* (X) Lagre kun 6 desimaler i koordinater i DB ved registrering
-* (X) Registrer kart på nytt, til database, som du nå kan arkivere en lang-levd kopi av
-* (X) Slette filer som ikke er i bruk lenger, restrukturere appen så det relevante ligger i rot-katalogen
-* (X) Refaktorere katalogene for database-eksport som lett-tilgjengelige konstanter øverst i Backend.py
-* (X) Lagre pixel-koordinater fra registerImage.html til DB som int heller enn float; unødvendig å ta med desimalene.
-* (X) Rename MapTransform.py til Backend.py; den inneholder nå en webserver som gjør mye forskjellig.
-* (X) Rydd opp i database-innsetting i MapTransform-py, rename variabler til mer fornuftige navn++
-* (X) Last ned alle de historiske kartene fra o-bergen
-* (X) Python-script som laster ned alle kartene jeg er ute etter på en høflig måte
-* (0) Kart-dimensjoner i metadata for kartet, så jeg kan bruke de dataene i appen [nei, henter dette fra kartfilen]
-* (X) Parameterisert input av hvilket kart man skal registrere i registerMap.html
-* (X) Ikke bruke 'alert' ved feil i mottak av GPS-posisjon; det er veldig in-your-face
-* (X) Lagt til kart over Munkebotn
-* (X) Lagt til kart over Åstveitskogen
-* (X) Lagt inn Storerinden -- litt usikker på registreringen
-* (X) Lagt til sprintkart på Bønes
-* (X) Lagt til gammelt kart (2005-ish?) fra Midtfjellet
-* (X) Lagt til Blåmannen
+- [x] Beskjed i registrerings-grensesnitt om framdrift ved registrering ("Beregner registrering / overfører bilder / ferdig")
+- [x] Mulighet for å lagre kart som webp. Når DB inneholder koordinater, original og live, kan du re-generere live on-demand som webp.
+- [x] Funksjon for å re-generere final-bilder i database som webp og fjerne final-bilder for deploy
+- [x] Fjern filnavnet fra viewDatabase-funksjonen; jeg trenger det ikke. Fjern også Attribution-feltet.
+- [x] Det burde gå an å one-shotte en justering i registrerings-grensesnittet sånn at jeg lett kan putte inn de nye feltene jeg ønsker å lagre i databasen.
+- [x] Lagre kun 6 desimaler i koordinater i DB ved registrering
+- [x] Registrer kart på nytt, til database, som du nå kan arkivere en lang-levd kopi av
+- [x] Slette filer som ikke er i bruk lenger, restrukturere appen så det relevante ligger i rot-katalogen
+- [x] Refaktorere katalogene for database-eksport som lett-tilgjengelige konstanter øverst i Backend.py
+- [x] Lagre pixel-koordinater fra registerImage.html til DB som int heller enn float; unødvendig å ta med desimalene.
+- [x] Rename MapTransform.py til Backend.py; den inneholder nå en webserver som gjør mye forskjellig.
+- [x] Rydd opp i database-innsetting i MapTransform-py, rename variabler til mer fornuftige navn++
+- [x] Last ned alle de historiske kartene fra o-bergen
+- [x] Python-script som laster ned alle kartene jeg er ute etter på en høflig måte
+- [x] (0) Kart-dimensjoner i metadata for kartet, så jeg kan bruke de dataene i appen [nei, henter dette fra kartfilen]
+- [x] Parameterisert input av hvilket kart man skal registrere i registerMap.html
+- [x] Ikke bruke 'alert' ved feil i mottak av GPS-posisjon; det er veldig in-your-face
+- [x] Lagt til kart over Munkebotn
+- [x] Lagt til kart over Åstveitskogen
+- [x] Lagt inn Storerinden -- litt usikker på registreringen
+- [x] Lagt til sprintkart på Bønes
+- [x] Lagt til gammelt kart (2005-ish?) fra Midtfjellet
+- [x] Lagt til Blåmannen
 
 ## Bugs
 
-* (X) Serveren krasjer innimellom. ChatGPT har forslag til hva jeg kan sjekke etter reboot (OOM; tror det er fikset)
-* (X) Hvis man trykker process registration flere ganger, får du nå duplikater i stedet for overskriving.
-* (X) list_maps-spørringen tar 7 sekunder. Den må optimiseres, skal bare ta et øyeblikk.
-* (X) Blåmannen-kartet "Blamannen-10k-rotates-weirdly.png" får rar rotasjon [løst med ny algoritme]
-* (X) Fiks exceptions som skjer når du åpner database-visning
-* (X) Backend sender nå felt-navnet "filename" i stedet for "map_filename" ved registrering (som gjør at map.html ikke finner den)
+- [x] Serveren krasjer innimellom. ChatGPT har forslag til hva jeg kan sjekke etter reboot (OOM; tror det er fikset)
+- [x] Hvis man trykker process registration flere ganger, får du nå duplikater i stedet for overskriving.
+- [x] list_maps-spørringen tar 7 sekunder. Den må optimiseres, skal bare ta et øyeblikk.
+- [x] Blåmannen-kartet "Blamannen-10k-rotates-weirdly.png" får rar rotasjon [løst med ny algoritme]
+- [x] Fiks exceptions som skjer når du åpner database-visning
+- [x] Backend sender nå felt-navnet "filename" i stedet for "map_filename" ved registrering (som gjør at map.html ikke finner den)
 
 ## Langsiktige ambisjoner
 
-* Menysystem hvis appen begynner å bli komplisert
+- [ ] Menysystem hvis appen begynner å bli komplisert
 
-* Innsending av database-kart + kjente metadata til AI-modell for setting av metadata i database
-* Maskinlærings-system for å identifisere post-posisjoner på registrerte kart og regne disse om til ekte koordinater
+- [ ] Innsending av database-kart + kjente metadata til AI-modell for setting av metadata i database
+- [ ] Maskinlærings-system for å identifisere post-posisjoner på registrerte kart og regne disse om til ekte koordinater
 
-* Mobilvennlig layout og funksjonalitet for kart-registrering (omfattende task, inkl. zoom og markører på bilder + mobilvennlig layout & navigasjon, unødvendig pr. nå siden bøygen er å registrere mine eksisterende kart)
-* Logge track på turen du har gått så langt
+- [ ] Mobilvennlig layout og funksjonalitet for kart-registrering (omfattende task, inkl. zoom og markører på bilder + mobilvennlig layout & navigasjon, unødvendig pr. nå siden bøygen er å registrere mine eksisterende kart)
+- [ ] Logge track på turen du har gått så langt
 
-* Kreditere kart-tegneren i grensesnittet, kanskje på placeholder-bildene før kartet lastes
-* Når jeg får veldig mange kart, vil jeg kanskje ha et avansert filter for kart, som lar meg filtrere på metadata.
-* Ta ned gamle kart.twerkules.com, den nye appen er mye bedre
+- [ ] Kreditere kart-tegneren i grensesnittet, kanskje på placeholder-bildene før kartet lastes
+- [ ] Når jeg får veldig mange kart, vil jeg kanskje ha et avansert filter for kart, som lar meg filtrere på metadata.
+- [ ] Ta ned gamle kart.twerkules.com, den nye appen er mye bedre
 
-* (X) Kan velge å fjerne original-bildene fra prod-databasen for å spare båndbredde, de vil pr. nå aldri bli brukt der
-* (X) Menysystem for å velge flere kart, hvis de overlapper i terrenget
-* (X) Et mer ordentlig system for hosting og deploy, når det blir nødvendig
-* (X) Deploy-script som setter opp all infrastuktur med én kommando [nært nok med bootstrap + scp]
-* (0) Automatisk identifikasjon av start/mål, poster, målestokk, postbeskrivelser, kart-areal via bildeanalyse med AWS, og utregning av GPS-koordinater for poster
-* (0) Kjør back-end i container som hostes på ECC og kobles mot S3 [dette skal jeg gjøre på en mer pragmatisk måte]
-* (0) Støtt direkte kobling mellom kartvisning og database i container [løst ved å la back-end serve kart rett fra DB]
-* (0) Kjøre selv-hostet instans av OpenStreetMap i container; la appen hente kart fra denne [løst med Kartverkets server]
-* (X) Årstall for kart i JSON-format [dette går i attribution-feltet]
+- [x] Kan velge å fjerne original-bildene fra prod-databasen for å spare båndbredde, de vil pr. nå aldri bli brukt der
+- [x] Menysystem for å velge flere kart, hvis de overlapper i terrenget
+- [x] Et mer ordentlig system for hosting og deploy, når det blir nødvendig
+- [x] Deploy-script som setter opp all infrastuktur med én kommando [nært nok med bootstrap + scp]
+- [x] (0) Automatisk identifikasjon av start/mål, poster, målestokk, postbeskrivelser, kart-areal via bildeanalyse med AWS, og utregning av GPS-koordinater for poster
+- [x] (0) Kjør back-end i container som hostes på ECC og kobles mot S3 [dette skal jeg gjøre på en mer pragmatisk måte]
+- [x] (0) Støtt direkte kobling mellom kartvisning og database i container [løst ved å la back-end serve kart rett fra DB]
+- [x] (0) Kjøre selv-hostet instans av OpenStreetMap i container; la appen hente kart fra denne [løst med Kartverkets server]
+- [x] Årstall for kart i JSON-format [dette går i attribution-feltet]
 
 ## Refaktorering
 
-* Kan hende jeg må refaktorere kart-visningen på et tidspunkt. Flere steg her.
+- [ ] Kan hende jeg må refaktorere kart-visningen på et tidspunkt. Flere steg her.
 
-* Bruke ecmascript-moduler?
-* Trekke felles kode ut i felles moduler?
-* Felles environment-config på tvers av sider? (har nå dette for registerMap, men ikke kartvisningen)
+- [ ] Bruke ecmascript-moduler?
+- [ ] Trekke felles kode ut i felles moduler?
+- [ ] Felles environment-config på tvers av sider? (har nå dette for registerMap, men ikke kartvisningen)
 
-* (X) Refaktorere registerMap til EcmaScript-moduler
-* (X) Refaktorere CSS til å bli separat mellom ulike sider
-* (X) Rename CSS-fil for kartvisning slik at den matcher etter refaktoreringen
+- [x] Refaktorere registerMap til EcmaScript-moduler
+- [x] Refaktorere CSS til å bli separat mellom ulike sider
+- [x] Rename CSS-fil for kartvisning slik at den matcher etter refaktoreringen
 
 
 ## Løse idéer som jeg er usikker på
 
-* Verktøy for å finjustere registrering: rotasjon, størrelse, translasjon
+- [ ] Verktøy for å finjustere registrering: rotasjon, størrelse, translasjon
 
-* Animasjon med "flash" langs outline av kart før det lastes, for å gi brukeren en indikasjon på framdriften
-* Gjøre det mulig å raskt fokusere på sentrum av valgt kart, hvis brukeren ønsker det (men vanskelig å få UXen bra)
-* Går an å lagre en "løpende" komprimert utgave av kartet ved registrering (ekstra rad), for å slippe deploy-komprimering
-* Registrere alle bedriftscup-kart som matcher registreringen fra allerede-registrerte løp, automatisk
-* Registrere alle gjenstående bedriftscup-kart
+- [ ] Animasjon med "flash" langs outline av kart før det lastes, for å gi brukeren en indikasjon på framdriften
+- [ ] Gjøre det mulig å raskt fokusere på sentrum av valgt kart, hvis brukeren ønsker det (men vanskelig å få UXen bra)
+- [ ] Går an å lagre en "løpende" komprimert utgave av kartet ved registrering (ekstra rad), for å slippe deploy-komprimering
+- [ ] Registrere alle bedriftscup-kart som matcher registreringen fra allerede-registrerte løp, automatisk
+- [ ] Registrere alle gjenstående bedriftscup-kart
 
-* (0) Legg til checkbox som lar deg registrere kartet til database hvis du leser inn registreringen fra JSON
+- [x] (0) Legg til checkbox som lar deg registrere kartet til database hvis du leser inn registreringen fra JSON
 
 ## Deployment - hvordan kjøre deploy av appen
 
