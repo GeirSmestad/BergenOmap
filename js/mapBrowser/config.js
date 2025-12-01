@@ -5,9 +5,9 @@ const isLocal =
   hostname === '127.0.0.1' ||
   hostname === '';
 
-export const backendBaseUrl = isLocal ? 'http://127.0.0.1:5000' : '';
+export const API_BASE = isLocal ? 'http://127.0.0.1:5000' : '';
 
-export const errorOverlayUrl = 'https://cdn-icons-png.flaticon.com/512/110/110686.png';
+export const ERROR_OVERLAY_URL = 'https://cdn-icons-png.flaticon.com/512/110/110686.png';
 
 export const MAP_LIST_SOURCE = {
   NEAR_ME: 'nearMe',
@@ -16,10 +16,10 @@ export const MAP_LIST_SOURCE = {
 
 export const ONLY_FOLLOW_WHEN_ACCURACY_IS_BETTER_THAN = 100;
 
-export const defaultMapCenter = [60.4002, 5.3411]; // Bergen
-export const defaultMapZoom = 15;
+export const DEFAULT_MAP_CENTER = [60.4002, 5.3411]; // Bergen
+export const DEFAULT_MAP_ZOOM = 15;
 
-export const tileLayerConfig = {
+export const TILE_LAYER_CONFIG = {
   url: 'https://cache.kartverket.no/v1/wmts/1.0.0/topo/default/webmercator/{z}/{y}/{x}.png',
   options: {
     maxZoom: 18,

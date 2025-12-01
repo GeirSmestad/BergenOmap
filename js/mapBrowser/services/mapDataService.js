@@ -1,6 +1,6 @@
-import { backendBaseUrl } from '../config.js';
+import { API_BASE } from '../config.js';
 
-export async function fetchMapDefinitions(baseUrl = backendBaseUrl) {
+export async function fetchMapDefinitions(baseUrl = API_BASE) {
   const requestUrl = `${baseUrl}/api/dal/list_maps`;
 
   const response = await fetch(requestUrl, {

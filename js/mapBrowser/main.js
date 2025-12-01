@@ -1,4 +1,4 @@
-import { backendBaseUrl, MAP_LIST_SOURCE } from './config.js';
+import { API_BASE, MAP_LIST_SOURCE } from './config.js';
 import { MapBrowserStore } from './state/mapBrowserStore.js';
 import { fetchMapDefinitions } from './services/mapDataService.js';
 import { createWakeLockService } from './services/wakeLockService.js';
@@ -108,7 +108,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   window.simulateLocation = locationController.simulateLocation;
 
   try {
-    const mapDefinitions = await fetchMapDefinitions(backendBaseUrl);
+    const mapDefinitions = await fetchMapDefinitions(API_BASE);
     store.setMapDefinitions(mapDefinitions);
     console.log(`Loaded ${mapDefinitions.length} maps from backend`);
     mapSelectorPanel.renderIfVisible();

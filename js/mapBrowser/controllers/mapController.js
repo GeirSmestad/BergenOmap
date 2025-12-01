@@ -1,9 +1,9 @@
 import {
-  backendBaseUrl,
-  defaultMapCenter,
-  defaultMapZoom,
-  errorOverlayUrl,
-  tileLayerConfig
+  API_BASE,
+  DEFAULT_MAP_CENTER,
+  DEFAULT_MAP_ZOOM,
+  ERROR_OVERLAY_URL,
+  TILE_LAYER_CONFIG
 } from '../config.js';
 
 export function createMapController({
@@ -15,9 +15,9 @@ export function createMapController({
     throw new Error('Leaflet is required for mapController');
   }
 
-  const map = L.map(elementId).setView(defaultMapCenter, defaultMapZoom);
+  const map = L.map(elementId).setView(DEFAULT_MAP_CENTER, DEFAULT_MAP_ZOOM);
 
-  L.tileLayer(tileLayerConfig.url, tileLayerConfig.options).addTo(map);
+  L.tileLayer(TILE_LAYER_CONFIG.url, TILE_LAYER_CONFIG.options).addTo(map);
 
   if (store) {
     map.once('mousedown', () => store.setUserHasInteractedWithMap(true));
@@ -52,11 +52,11 @@ export function createMapController({
     removeCurrentOverlay();
 
     const overlayCoords = [definition.nw_coords, definition.se_coords];
-    const overlayFile = `${backendBaseUrl}/api/dal/mapfile/final/${encodeURIComponent(definition.map_name)}`;
+    const overlayFile = `${API_BASE}/api/dal/mapfile/final/${encodeURIComponent(definition.map_name)}`;
 
     currentOverlay = L.imageOverlay(overlayFile, overlayCoords, {
       opacity: 1,
-      errorOverlayUrl,
+      ERROR_OVERLAY_URL,
       alt: '',
       interactive: true
     }).addTo(map);
