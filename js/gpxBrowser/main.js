@@ -2,9 +2,11 @@ import { API_BASE, MAP_LIST_SOURCE } from '../mapBrowser/config.js';
 import { createMapController } from '../mapBrowser/controllers/mapController.js';
 import { createMapSelectorPanel } from '../mapBrowser/ui/mapSelectorPanel.js';
 import { fetchMapDefinitions } from '../mapBrowser/services/mapDataService.js';
-import { fetchUserTracks } from './services/gpxTrackService.js';
+import { fetchTrackDetail, fetchUserTracks } from './services/gpxTrackService.js';
 import { createGpxListPanel } from './ui/gpxListPanel.js';
 import { GpxBrowserStore } from './state/gpxBrowserStore.js';
+import { createGpxTrackRenderer } from './controllers/gpxTrackRenderer.js';
+import { getSegmentLatLngs } from './utils/gpxTrackUtils.js';
 
 const DEFAULT_USERNAME = 'geir.smestad';
 
@@ -27,6 +29,15 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
     }
   });
+
+  const trackRenderer = createGpxTrackRenderer({
+    map: mapController.map,
+    polylineOptions: {
+      weight: 5
+    }
+  });
+
+  let activeTrackRequest = 0;
 
   function handleMapSelection(mapDefinition) {
     const selectedMapName = store.getState().selectedMapName;
@@ -76,21 +87,63 @@ document.addEventListener('DOMContentLoaded', async () => {
       panel: document.getElementById('gpxSelectorPanel'),
       list: document.getElementById('gpxSelectorList')
     },
-    onTrackSelected: (track) => {
-      const selectedId = store.getState().selectedTrackId;
-      if (selectedId === track.track_id) {
-        store.setSelectedTrackId(null);
-        return;
-      }
-
-      store.setSelectedTrackId(track.track_id);
-    },
+    onTrackSelected: (track) => handleTrackSelection(track),
     onVisibilityChange: (isVisible) => {
       if (isVisible) {
         mapSelectorPanel?.hide();
       }
     }
   });
+
+  async function handleTrackSelection(track) {
+    const selectedId = store.getState().selectedTrackId;
+    const isAlreadySelected = selectedId === track.track_id;
+
+    if (isAlreadySelected) {
+      store.setSelectedTrackId(null);
+      store.setActiveTrack(null);
+      trackRenderer.clearTrack();
+      return;
+    }
+
+    store.setSelectedTrackId(track.track_id);
+    await loadAndRenderTrack(track.track_id);
+  }
+
+  async function loadAndRenderTrack(trackId) {
+    const requestId = ++activeTrackRequest;
+    store.setTrackLoading(true, null);
+
+    try {
+      const trackDetail = await fetchTrackDetail(API_BASE, DEFAULT_USERNAME, trackId);
+
+      if (requestId !== activeTrackRequest) {
+        return;
+      }
+
+      store.setActiveTrack(trackDetail);
+      store.setTrackLoading(false, null);
+
+      const segments = getSegmentLatLngs(trackDetail);
+
+      if (segments.length === 0) {
+        trackRenderer.clearTrack();
+        console.warn(`Track ${trackId} did not contain drawable coordinates.`);
+        return;
+      }
+
+      trackRenderer.renderTrack(segments);
+    } catch (error) {
+      if (requestId !== activeTrackRequest) {
+        return;
+      }
+
+      console.error('Failed to load GPX track', error);
+      store.setActiveTrack(null);
+      store.setTrackLoading(false, error.message);
+      trackRenderer.clearTrack();
+    }
+  }
 
   try {
     const mapDefinitions = await fetchMapDefinitions(API_BASE);
@@ -106,7 +159,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     gpxListPanel.renderIfVisible();
   } catch (error) {
     console.error('Failed to load GPX tracks', error);
-    gpxListPanel.showError('Kunne ikke laste GPX-spor');
+    gpxListPanel.showError('Kunne ikke laste GPS-spor');
   }
 });
 

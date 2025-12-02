@@ -124,9 +124,11 @@ Don't implement functionality for actually viewing GPX tracks yet, we will do th
 
 ###
 
-Now we will implement functionality to draw a GPX track. We will only ever draw one at a time. Use Leaflet drawing functionality if this is an option, and make sure you'll draw on top of the selected orienteering map overlay if one is selected.
+Now we will implement functionality to draw a GPX track. We will only ever draw one at a time, and the one that's being drawn will be the one that is selected in the GPX list. Use Leaflet drawing functionality if this is an option, and make sure you'll draw on top of the selected orienteering map overlay if one is selected.
 
-Make sure you implement drawing functionality in separate module(s), so it can be modified independently later. For now, you can use a red pen for drawing. Line thickness *might* have to vary with differing zoom levels; check what options are available in Leaflet's API in this regard.
+Make sure you implement the drawing functionality in separate module(s), so it can be modified independently later. For now, you can use a red pen for drawing. Line thickness *might* have to vary with differing zoom levels; check what options are available in Leaflet's API in this regard. If Leaflet's functionality does not allow for lines that automatically scale with zoom level, just use a single hard-coded size for now, but explain to me the possibilities in your output.
+
+Future drawing features, not to be implemented now but provided for your context, will be a line that is not solid red but has different color depending on runner speed, as well as *playback* of a race by instead of a line, drawing a marker that will gradually move through the GPX track in a sped-up replay of the runner's location.
 
 ## Scratchpad
 

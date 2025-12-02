@@ -21,3 +21,28 @@ export async function fetchUserTracks(baseUrl = API_BASE, username) {
   return response.json();
 }
 
+export async function fetchTrackDetail(baseUrl = API_BASE, username, trackId) {
+  if (!username) {
+    throw new Error('username is required to fetch GPX track detail');
+  }
+
+  if (typeof trackId !== 'number') {
+    throw new Error('trackId must be a number');
+  }
+
+  const requestUrl = `${baseUrl}/api/gps-tracks/${encodeURIComponent(username)}/${trackId}`;
+
+  const response = await fetch(requestUrl, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch GPX track ${trackId}: ${response.status} ${response.statusText}`);
+  }
+
+  return response.json();
+}
+

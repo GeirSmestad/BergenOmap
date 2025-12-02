@@ -5,7 +5,10 @@ const defaultState = {
   selectedMapName: null,
   selectedTrackId: null,
   gpxTracks: [],
-  mapListSource: MAP_LIST_SOURCE.NEAR_VIEWPORT
+  mapListSource: MAP_LIST_SOURCE.NEAR_VIEWPORT,
+  activeTrack: null,
+  isTrackLoading: false,
+  trackLoadError: null
 };
 
 export class GpxBrowserStore {
@@ -79,6 +82,20 @@ export class GpxBrowserStore {
     }
 
     this.update({ mapListSource: source }, { type: 'mapListSource' });
+  }
+
+  setActiveTrack(trackData) {
+    this.update({ activeTrack: trackData ?? null }, { type: 'activeTrack' });
+  }
+
+  setTrackLoading(isLoading, errorMessage = null) {
+    this.update(
+      {
+        isTrackLoading: Boolean(isLoading),
+        trackLoadError: errorMessage
+      },
+      { type: 'trackLoading' }
+    );
   }
 }
 
