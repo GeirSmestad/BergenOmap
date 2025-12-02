@@ -15,7 +15,7 @@ cd C:\Source\BergenOmap; python -m http.server 8000
 ## Registrering av kart
 
 
-- [ ] Endre koordinat-visning sånn at den kun viser de tilgjengelige markørene, ikke koordinatene (tar mindre vertikal plass)
+- [ ] Endre koordinat-visning sånn at den kun viser de tilgjengelige markørene, ikke koordinatene (highlight neste ledige markør)
 - [ ] Fjerne kode som etter endringen i koordinat-visning vil være ubrukt
 
 - [x] Verktøy som lar deg gjennomgå en eksisterende registrering, og viser med markørene hvor kontrollpunktene er satt
@@ -104,13 +104,16 @@ cd C:\Source\BergenOmap; python -m http.server 8000
 
 Løse ideer: Spline-basert justering av track? 
 
+- [ ] Flytt kartvisning til sentrum av kart eller track når du velger et nytt kart eller track
+- [ ] Beregning av lat/lon "bounding box" for et GPX-track; trengs for enkelte features. Database, ved innsetting?
 - [ ] Filtrering av kart- og track-valg basert på hva som overlapper det som er valgt i den andre listen
 - [ ] Knapp for å velge flyfoto
 - [ ] Mouse-over på GPS-track for å se tid
 - [ ] Penere styling av GPX-opplastingsdialogboks
 - [ ] Gjøre listene for å velge track og kart litt penere i stylingen
 - [ ] Mulighet for å "spille av" løpet, og bla fram og tilbake i løpets framdrift
-- [ ] Mulighet for å visualisere hastighet
+- [ ] Mulighet for å visualisere hastighet med farger
+- [ ] Undersøk om det er mulig å få "border" på polylinen, for å lettere skille krysninger av eget spor
 - [x] Mulighet for å laste opp GPX-filer og lagre dem i database (inkludert enkel metadata, fx. et navn)
 - [x] Mulighet for å vise Strava-track fra tidligere løp på et orienteringskart (kanskje i helt separat view)
 - [x] Database-støtte for å samle en brukers informasjon (fx. GPX-filer fra Strava)
@@ -154,13 +157,14 @@ Løse ideer: Spline-basert justering av track?
 
 ## Scanning og registrering av spesifikke kart
 
-- [ ] Registrere alle kartene som ikke er fra bedriftscuppen (mappe O-kart under Scans)
 - [ ] Registrere alle tur-orienteringskartene
 
 - [ ] Registrere alle bedriftscup-kart fra løp jeg har deltatt i
 - [ ] Registrere ett fra hvert bedriftsløp bakover i tid
 
+- [ ] Legg inn GPX-spor fra alle de løpene mine fra Strava
 
+- [x] Registrere alle kartene som ikke er fra bedriftscuppen (mappe O-kart under Scans)
 - [x] Jeg mangler løpene fra Dyreparken i 2024, vet ikke hvor de kartene har blitt av.
 - [x] Spor opp alle de gamle turorienterings-kartene dine, og få dem på listen over kart å registrere. Se på Gmail & Downloads
 - [x] Legge inn "månedens kart november" på Skage, hvor jeg og C gikk lørdagstur
@@ -235,8 +239,9 @@ Løse ideer: Spline-basert justering av track?
 
 ## Refaktorering
 
-- [ ] Trekke felles kode ut i felles moduler?
+- [ ] Trekke felles kode ut i felles moduler? (Usikker på om jeg ønsker dette; greit vedlikeholdbart som det er)
 - [ ] Felles environment-config på tvers av sider? (har nå dette for registerMap, men ikke kartvisningen)
+- [ ] Refaktorere Python-kode i bedre modul-struktur
 
 - [x] Kan hende jeg må refaktorere kart-visningen på et tidspunkt. Flere steg her.
 - [x] Bruke ecmascript-moduler?
@@ -256,6 +261,8 @@ Løse ideer: Spline-basert justering av track?
 - [ ] Registrere alle gjenstående bedriftscup-kart
 
 - [x] (0) Legg til checkbox som lar deg registrere kartet til database hvis du leser inn registreringen fra JSON
+
+
 
 ## Deployment - hvordan kjøre deploy av appen
 
@@ -326,7 +333,7 @@ scp -i ~/.ssh/LightsailDefaultKey-eu-west-1.pem -r `
 ssh bergenomap "sudo systemctl restart bergenomap"
 
 
-Hvis du vil komprimere database for prod-deploy (husk backup først):
+Hvis du vil komprimere database for prod-deploy (husk backup først; den sletter originalene):
 python utils\CompressDbForProductionDeploy.py --method 6 --quality 100
 
 ## Kart-kilder -- flyfoto og topografiske kart
@@ -339,10 +346,6 @@ https://cache.kartverket.no/v1/wmts/1.0.0/topo/default/webmercator/{z}/{y}/{x}.p
 https://cache.kartverket.no/v1/wmts/1.0.0/sjokartraster/default/webmercator/{z}/{y}/{x}.png - sjøkart-raster
 https://cache.kartverket.no/v1/wmts/1.0.0/topograatone/default/webmercator/{z}/{y}/{x}.png - svart-hvitt topografisk
 
-Usikker på om dette lar seg implementere i Leaflet på en måte som er kompatibel med det jeg har bygget til nå, men det ville være dritfett:
-Å kunne switche mellom flyfoto og topografisk kart ville gjøre manuell registrering enklere.
-
-Se diskusjon med chatbotten: https://chatgpt.com/share/69239302-0f0c-8000-a610-abdb9d3be08e
 
 Kartverket / Norge i bilder tilbyr web service for flyfoto til ikke-kommersiell bruk. Se spesifikasjoner her:
 
@@ -355,8 +358,6 @@ XML-spesifikasjoner er henholdsvis:
 http://opencache.statkart.no/gatekeeper/gk/gk.open_nib_utm33_wmts_v2?SERVICE=WMTS&REQUEST=GetCapabilities
 https://opencache.statkart.no/gatekeeper/gk/gk.open_nib_utm32_wmts_v2?SERVICE=WMTS&REQUEST=GetCapabilities
 https://opencache.statkart.no/gatekeeper/gk/gk.open_nib_web_mercator_wmts_v2?SERVICE=WMTS&REQUEST=GetCapabilities
-
-ChatGPT påstår at Leaflet støtter CRS (coordinate reference system) for UTM hvis jeg bruker pakkene Proj4Leaflet og WMTS (Web Map Tile Service).
 
 Ha! Amazing!! Jeg kan bruke Mercator-tjenesten (nederst) og den gir et fungerende kart av flyfoto. Usikker på registreringen. 
 Slik legger du den til i min Leaflet-plugin:
@@ -386,6 +387,8 @@ Teknisk kontakt - trond.ola.ulvolden@kartverket.no
 
 
 ## Notater
+
+Ser ut som at iPhone har mer presis GPS enn Garmin-klokker. Dette kan være relevant for løps-feature.
 
 Jeg har custom-innstillinger for cache under Behaviors i CloudFront og Edit Metatada i S3. De er kortlevde.
 
