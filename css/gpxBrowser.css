@@ -1,0 +1,88 @@
+@import "./map.css";
+
+.gpx-selector-toggle {
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  z-index: 1200;
+  min-width: 120px;
+}
+
+.gpx-selector-panel {
+  position: fixed;
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(90vw, 420px);
+  height: 40vh;
+  background: rgba(21, 21, 21, 0.71);
+  color: #fff;
+  border-radius: 20px;
+  z-index: 1100;
+  box-shadow: 0 32px 60px rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(3px);
+  display: none;
+  flex-direction: column;
+}
+
+.gpx-selector-panel.is-visible {
+  display: flex;
+}
+
+.gpx-selector-panel__header {
+  margin: 0;
+  padding: 0.75rem 1.25rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.gpx-selector-panel__header h2 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.gpx-selector-list {
+  flex: 1;
+  overflow-y: auto;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.gpx-selector-item {
+  border: none;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  padding: 0.9rem 1.25rem;
+  border-bottom: 1px solid rgba(130, 130, 130, 0.17);
+  cursor: pointer;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.25rem;
+}
+
+.gpx-selector-item:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.gpx-selector-item.selected {
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.gpx-selector-item__description {
+  font-weight: 600;
+}
+
+.gpx-selector-item__meta {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.gpx-selector-empty {
+  padding: 1.25rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+

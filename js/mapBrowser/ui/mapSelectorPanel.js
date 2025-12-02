@@ -22,6 +22,11 @@ export function createMapSelectorPanel({
 
   const modeNearMeLabel = modeNearMeInput?.closest('.map-selector-mode');
   const modeNearViewportLabel = modeNearViewportInput?.closest('.map-selector-mode');
+  const supportsNearMe = Boolean(modeNearMeInput);
+
+  if (!supportsNearMe && store?.getState().mapListSource === MAP_LIST_SOURCE.NEAR_ME) {
+    store.setMapListSource(MAP_LIST_SOURCE.NEAR_VIEWPORT);
+  }
 
   let isVisible = false;
 
@@ -153,24 +158,20 @@ export function createMapSelectorPanel({
   }
 
   function updateModeUI() {
-    if (!modeNearMeInput || !modeNearViewportInput) {
-      return;
-    }
-
     const currentSource = store.getState().mapListSource;
     const isNearMe = currentSource === MAP_LIST_SOURCE.NEAR_ME;
     const isNearViewport = currentSource === MAP_LIST_SOURCE.NEAR_VIEWPORT;
 
-    modeNearMeInput.checked = isNearMe;
-    modeNearViewportInput.checked = isNearViewport;
-
-    if (modeNearMeLabel) {
-      modeNearMeLabel.classList.toggle('is-active', isNearMe);
+    if (modeNearMeInput) {
+      modeNearMeInput.checked = isNearMe;
     }
 
-    if (modeNearViewportLabel) {
-      modeNearViewportLabel.classList.toggle('is-active', isNearViewport);
+    if (modeNearViewportInput) {
+      modeNearViewportInput.checked = isNearViewport || !supportsNearMe;
     }
+
+    modeNearMeLabel?.classList.toggle('is-active', isNearMe);
+    modeNearViewportLabel?.classList.toggle('is-active', isNearViewport || !supportsNearMe);
   }
 
   function scrollListToTop() {
