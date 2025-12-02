@@ -1,7 +1,8 @@
 export function createGpxListPanel({
   store,
   elements,
-  onTrackSelected
+  onTrackSelected,
+  onVisibilityChange
 } = {}) {
   const { toggleButton, panel, list } = elements ?? {};
 
@@ -13,15 +14,24 @@ export function createGpxListPanel({
       return;
     }
 
-    if (shouldShow) {
+    const nextVisibility = Boolean(shouldShow);
+    if (isVisible === nextVisibility) {
+      return;
+    }
+
+    if (nextVisibility) {
       renderList();
     }
 
-    isVisible = shouldShow;
-    panel.classList.toggle('is-visible', shouldShow);
-    panel.setAttribute('aria-hidden', (!shouldShow).toString());
-    toggleButton.setAttribute('aria-expanded', shouldShow ? 'true' : 'false');
-    toggleButton.textContent = shouldShow ? 'Lukk GPX' : 'Velg GPX';
+    isVisible = nextVisibility;
+    panel.classList.toggle('is-visible', nextVisibility);
+    panel.setAttribute('aria-hidden', (!nextVisibility).toString());
+    toggleButton.setAttribute('aria-expanded', nextVisibility ? 'true' : 'false');
+    toggleButton.textContent = nextVisibility ? 'Lukk' : 'Velg GPS-spor';
+
+    if (typeof onVisibilityChange === 'function') {
+      onVisibilityChange(isVisible);
+    }
   }
 
   function toggleVisibility() {

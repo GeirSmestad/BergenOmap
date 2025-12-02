@@ -10,7 +10,8 @@ export function createMapSelectorPanel({
   map,
   elements,
   onMapSelected,
-  onModeChange
+  onModeChange,
+  onVisibilityChange
 } = {}) {
   const {
     toggleButton,
@@ -141,16 +142,25 @@ export function createMapSelectorPanel({
       return;
     }
 
-    if (shouldShow) {
+    const nextVisibility = Boolean(shouldShow);
+    if (isVisible === nextVisibility) {
+      return;
+    }
+
+    if (nextVisibility) {
       updateModeUI();
       renderList();
     }
 
-    isVisible = shouldShow;
-    panel.classList.toggle('is-visible', shouldShow);
-    panel.setAttribute('aria-hidden', (!shouldShow).toString());
-    toggleButton.setAttribute('aria-expanded', shouldShow ? 'true' : 'false');
-    toggleButton.textContent = shouldShow ? 'Lukk' : 'Velg kart';
+    isVisible = nextVisibility;
+    panel.classList.toggle('is-visible', nextVisibility);
+    panel.setAttribute('aria-hidden', (!nextVisibility).toString());
+    toggleButton.setAttribute('aria-expanded', nextVisibility ? 'true' : 'false');
+    toggleButton.textContent = nextVisibility ? 'Lukk' : 'Velg kart';
+
+    if (typeof onVisibilityChange === 'function') {
+      onVisibilityChange(isVisible);
+    }
   }
 
   function toggleVisibility() {

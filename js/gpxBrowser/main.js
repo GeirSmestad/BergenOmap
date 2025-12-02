@@ -21,7 +21,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   const mapController = createMapController({
     elementId: 'mapBrowser',
-    store,
     onViewportMoved: () => {
       if (store.getState().mapListSource === MAP_LIST_SOURCE.NEAR_VIEWPORT) {
         mapSelectorPanel?.renderIfVisible();
@@ -53,17 +52,24 @@ document.addEventListener('DOMContentLoaded', async () => {
     mapSelectorPanel?.scrollListToTop();
   }
 
+  let gpxListPanel = null;
+
   const mapSelectorPanel = createMapSelectorPanel({
     store,
     map: mapController.map,
     elements: mapSelectorElements,
     onMapSelected: handleMapSelection,
-    onModeChange: handleMapSelectorModeChange
+    onModeChange: handleMapSelectorModeChange,
+    onVisibilityChange: (isVisible) => {
+      if (isVisible) {
+        gpxListPanel?.hide();
+      }
+    }
   });
 
   mapSelectorPanel.updateModeUI();
 
-  const gpxListPanel = createGpxListPanel({
+  gpxListPanel = createGpxListPanel({
     store,
     elements: {
       toggleButton: document.getElementById('gpxSelectorToggle'),
@@ -78,6 +84,11 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
 
       store.setSelectedTrackId(track.track_id);
+    },
+    onVisibilityChange: (isVisible) => {
+      if (isVisible) {
+        mapSelectorPanel?.hide();
+      }
     }
   });
 

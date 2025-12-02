@@ -29,16 +29,26 @@
           crossorigin=""></script>
 </head>
 
-<body>
+<body class="gpx-browser">
   <div id="mapBrowser"></div>
 
-  <button id="mapSelectorToggle"
-          class="map-control-button map-selector-toggle"
-          type="button"
-          aria-controls="mapSelectorPanel"
-          aria-expanded="false">
-    Velg kart
-  </button>
+  <div class="panel-toggle-container">
+    <button id="gpxSelectorToggle"
+            class="map-control-button gpx-selector-toggle"
+            type="button"
+            aria-controls="gpxSelectorPanel"
+            aria-expanded="false">
+      Velg GPS-spor
+    </button>
+
+    <button id="mapSelectorToggle"
+            class="map-control-button map-selector-toggle"
+            type="button"
+            aria-controls="mapSelectorPanel"
+            aria-expanded="false">
+      Velg kart
+    </button>
+  </div>
 
   <div id="mapSelectorPanel" class="map-selector-panel" aria-hidden="true">
     <div class="map-selector-panel__header">
@@ -54,17 +64,9 @@
     <ul id="mapSelectorList" class="map-selector-list"></ul>
   </div>
 
-  <button id="gpxSelectorToggle"
-          class="map-control-button gpx-selector-toggle"
-          type="button"
-          aria-controls="gpxSelectorPanel"
-          aria-expanded="false">
-    Velg GPX
-  </button>
-
   <div id="gpxSelectorPanel" class="gpx-selector-panel" aria-hidden="true">
     <div class="gpx-selector-panel__header">
-      <h2>GPX-spor</h2>
+      <h2>GPS-spor</h2>
     </div>
     <ul id="gpxSelectorList" class="gpx-selector-list"></ul>
   </div>

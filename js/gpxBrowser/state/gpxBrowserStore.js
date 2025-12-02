@@ -5,8 +5,7 @@ const defaultState = {
   selectedMapName: null,
   selectedTrackId: null,
   gpxTracks: [],
-  mapListSource: MAP_LIST_SOURCE.NEAR_VIEWPORT,
-  userHasInteractedWithMap: false
+  mapListSource: MAP_LIST_SOURCE.NEAR_VIEWPORT
 };
 
 export class GpxBrowserStore {
@@ -80,13 +79,6 @@ export class GpxBrowserStore {
     }
 
     this.update({ mapListSource: source }, { type: 'mapListSource' });
-  }
-
-  setUserHasInteractedWithMap(hasInteracted = true) {
-    this.update(
-      { userHasInteractedWithMap: Boolean(hasInteracted) },
-      { type: 'interaction' }
-    );
   }
 }
 

@@ -1,20 +1,25 @@
 @import "./map.css";
 
-.gpx-selector-toggle {
+.gpx-browser .panel-toggle-container {
   position: fixed;
   top: 1rem;
-  left: 1rem;
+  right: 1rem;
+  display: flex;
+  gap: 0.75rem;
   z-index: 1200;
-  min-width: 120px;
+}
+
+.gpx-browser .panel-toggle-container .map-control-button {
+  position: static;
 }
 
 .gpx-selector-panel {
   position: fixed;
-  bottom: 1rem;
+  top: 50%;
   left: 50%;
-  transform: translateX(-50%);
+  transform: translate(-50%, -50%);
   width: min(90vw, 420px);
-  height: 40vh;
+  height: 60vh;
   background: rgba(21, 21, 21, 0.71);
   color: #fff;
   border-radius: 20px;
@@ -84,5 +89,16 @@
 .gpx-selector-empty {
   padding: 1.25rem;
   color: rgba(255, 255, 255, 0.7);
+}
+
+@media (min-width: 1024px) {
+  .gpx-selector-panel {
+    top: calc(1rem + 3.5rem);
+    right: 1rem;
+    left: auto;
+    transform: none;
+    height: calc(100% - (1rem + 3.5rem) - 1rem);
+    width: 360px;
+  }
 }
 
