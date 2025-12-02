@@ -33,6 +33,12 @@
   <div id="mapBrowser"></div>
 
   <div class="panel-toggle-container">
+    <button id="uploadGpxButton"
+            class="map-control-button upload-gpx-button"
+            type="button">
+      Last opp GPX-fil
+    </button>
+
     <button id="gpxSelectorToggle"
             class="map-control-button gpx-selector-toggle"
             type="button"
@@ -48,6 +54,29 @@
             aria-expanded="false">
       Velg kart
     </button>
+  </div>
+
+  <input type="file"
+         id="gpxFileInput"
+         accept=".gpx,application/gpx+xml"
+         class="visually-hidden">
+
+  <div id="gpxUploadModal" class="gpx-upload-modal" aria-hidden="true" role="dialog" aria-modal="true">
+    <div class="gpx-upload-modal__backdrop"></div>
+    <div class="gpx-upload-modal__dialog">
+      <h2>Last opp GPX-fil</h2>
+      <label class="gpx-upload-modal__label" for="gpxUploadDescription">Navn</label>
+      <input id="gpxUploadDescription" class="gpx-upload-modal__input" maxlength="200">
+      <p id="gpxUploadError" class="gpx-upload-modal__error" aria-live="polite"></p>
+      <div class="gpx-upload-modal__actions">
+        <button type="button" id="gpxUploadCancelButton" class="gpx-upload-modal__button gpx-upload-modal__button--secondary">
+          Avbryt
+        </button>
+        <button type="button" id="gpxUploadSubmitButton" class="gpx-upload-modal__button gpx-upload-modal__button--primary">
+          Last opp
+        </button>
+      </div>
+    </div>
   </div>
 
   <div id="mapSelectorPanel" class="map-selector-panel" aria-hidden="true">

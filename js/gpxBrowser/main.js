@@ -2,11 +2,12 @@ import { API_BASE, MAP_LIST_SOURCE } from '../mapBrowser/config.js';
 import { createMapController } from '../mapBrowser/controllers/mapController.js';
 import { createMapSelectorPanel } from '../mapBrowser/ui/mapSelectorPanel.js';
 import { fetchMapDefinitions } from '../mapBrowser/services/mapDataService.js';
-import { fetchTrackDetail, fetchUserTracks } from './services/gpxTrackService.js';
+import { fetchTrackDetail, fetchUserTracks, uploadTrack } from './services/gpxTrackService.js';
 import { createGpxListPanel } from './ui/gpxListPanel.js';
 import { GpxBrowserStore } from './state/gpxBrowserStore.js';
 import { createGpxTrackRenderer } from './controllers/gpxTrackRenderer.js';
 import { getSegmentLatLngs } from './utils/gpxTrackUtils.js';
+import { createGpxUploadDialog } from './ui/gpxUploadDialog.js';
 
 const DEFAULT_USERNAME = 'geir.smestad';
 
@@ -153,10 +154,49 @@ document.addEventListener('DOMContentLoaded', async () => {
     console.error('Failed to load map definitions', error);
   }
 
-  try {
+  const uploadDialog = createGpxUploadDialog({
+    elements: {
+      triggerButton: document.getElementById('uploadGpxButton'),
+      fileInput: document.getElementById('gpxFileInput'),
+      modal: document.getElementById('gpxUploadModal'),
+      filenameLabel: document.getElementById('gpxUploadFilename'),
+      descriptionInput: document.getElementById('gpxUploadDescription'),
+      errorText: document.getElementById('gpxUploadError'),
+      cancelButton: document.getElementById('gpxUploadCancelButton'),
+      submitButton: document.getElementById('gpxUploadSubmitButton')
+    },
+    onSubmit: async ({ file, description }) => {
+      const response = await uploadTrack(API_BASE, DEFAULT_USERNAME, description, file);
+      await refreshTrackList();
+      if (response?.track_id) {
+        await handleNewTrackSelection(response.track_id);
+      }
+    }
+  });
+
+  async function handleNewTrackSelection(trackId) {
+    const numericId = Number(trackId);
+    if (!Number.isFinite(numericId)) {
+      return;
+    }
+    const tracks = store.getState().gpxTracks;
+    const exists = tracks.some((track) => track.track_id === numericId);
+    if (!exists) {
+      return;
+    }
+    store.setSelectedTrackId(numericId);
+    await loadAndRenderTrack(numericId);
+  }
+
+  async function refreshTrackList() {
     const tracks = await fetchUserTracks(API_BASE, DEFAULT_USERNAME);
     store.setGpxTracks(tracks);
     gpxListPanel.renderIfVisible();
+    return tracks;
+  }
+
+  try {
+    await refreshTrackList();
   } catch (error) {
     console.error('Failed to load GPX tracks', error);
     gpxListPanel.showError('Kunne ikke laste GPS-spor');

@@ -46,3 +46,39 @@ export async function fetchTrackDetail(baseUrl = API_BASE, username, trackId) {
   return response.json();
 }
 
+export async function uploadTrack(baseUrl = API_BASE, username, description, file) {
+  if (!username) {
+    throw new Error('username is required to upload a GPX track');
+  }
+
+  if (!(file instanceof File)) {
+    throw new Error('A GPX file must be selected before uploading.');
+  }
+
+  const formData = new FormData();
+  formData.append('username', username);
+  formData.append('description', description);
+  formData.append('file', file, file.name);
+
+  const response = await fetch(`${baseUrl}/api/gps-tracks`, {
+    method: 'POST',
+    body: formData
+  });
+
+  if (!response.ok) {
+    const message = await safeReadError(response);
+    throw new Error(message || `Opplasting feilet: ${response.status}`);
+  }
+
+  return response.json();
+}
+
+async function safeReadError(response) {
+  try {
+    const data = await response.json();
+    return data?.error;
+  } catch (_) {
+    return null;
+  }
+}
+

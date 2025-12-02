@@ -102,13 +102,20 @@ cd C:\Source\BergenOmap; python -m http.server 8000
 
 ## GPX-viewer
 
-- [ ] Mulighet for å vise Strava-track fra tidligere løp på et orienteringskart (kanskje i helt separat view)
-- [ ] Database-støtte for å samle en brukers informasjon (fx. GPX-filer fra Strava)
-- [ ] Mulighet for å laste opp GPX-filer og lagre dem i database (inkludert enkel metadata, fx. et navn)
-- [ ] Mulighet for å velge kart, trolig samme liste som før men kun med "nær kartvindu"
-- [ ] Mulighet for å velge hvilken GPX-fil man skal vise
+Løse ideer: Spline-basert justering av track? 
+
+- [ ] Filtrering av kart- og track-valg basert på hva som overlapper det som er valgt i den andre listen
+- [ ] Knapp for å velge flyfoto
+- [ ] Mouse-over på GPS-track for å se tid
+- [ ] Penere styling av GPX-opplastingsdialogboks
+- [ ] Gjøre listene for å velge track og kart litt penere i stylingen
 - [ ] Mulighet for å "spille av" løpet, og bla fram og tilbake i løpets framdrift
 - [ ] Mulighet for å visualisere hastighet
+- [x] Mulighet for å laste opp GPX-filer og lagre dem i database (inkludert enkel metadata, fx. et navn)
+- [x] Mulighet for å vise Strava-track fra tidligere løp på et orienteringskart (kanskje i helt separat view)
+- [x] Database-støtte for å samle en brukers informasjon (fx. GPX-filer fra Strava)
+- [x] Mulighet for å velge kart, trolig samme liste som før men kun med "nær kartvindu"
+- [x] Mulighet for å velge hvilken GPX-fil man skal vise
 
 ## Trenings-app
 
@@ -163,6 +170,9 @@ cd C:\Source\BergenOmap; python -m http.server 8000
 
 
 ## Generelle forbedringer
+
+- [ ] Kart-velger og GPX-velger må leve separat for hver side, ikke være delt mellom dem
+- [ ] Etter du har gjort saken over: Skru tilbake endringene som ble gjort for å gjøre kart-velger i map.html mer generisk
 
 - [ ] Jeg har noen renamings-TODOer i koden; gjennomfør disse. Cursor tar dem sikkert one-shot, bare oppgi presise navn på rename.
 
