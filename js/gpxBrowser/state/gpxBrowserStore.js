@@ -1,11 +1,8 @@
-import { MAP_LIST_SOURCE } from '../../mapBrowser/config.js';
-
 const defaultState = {
   mapDefinitions: [],
   selectedMapName: null,
   selectedTrackId: null,
   gpxTracks: [],
-  mapListSource: MAP_LIST_SOURCE.NEAR_VIEWPORT,
   activeTrack: null,
   isTrackLoading: false,
   trackLoadError: null
@@ -74,14 +71,6 @@ export class GpxBrowserStore {
       { selectedTrackId: typeof trackId === 'number' ? trackId : null },
       { type: 'selectedTrackId' }
     );
-  }
-
-  setMapListSource(source) {
-    if (!Object.values(MAP_LIST_SOURCE).includes(source)) {
-      return;
-    }
-
-    this.update({ mapListSource: source }, { type: 'mapListSource' });
   }
 
   setActiveTrack(trackData) {

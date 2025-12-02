@@ -171,13 +171,11 @@ Løse ideer: Spline-basert justering av track?
 
 ## Generelle forbedringer
 
-- [ ] Kart-velger og GPX-velger må leve separat for hver side, ikke være delt mellom dem
-- [ ] Etter du har gjort saken over: Skru tilbake endringene som ble gjort for å gjøre kart-velger i map.html mer generisk
-
 - [ ] Jeg har noen renamings-TODOer i koden; gjennomfør disse. Cursor tar dem sikkert one-shot, bare oppgi presise navn på rename.
-
 - [ ] Kjøre gjennom database og re-generer roterte bilder med gjennomsiktige områder på alle steder som er utenfor selve kartet
 
+- [x] Kart-velger og GPX-velger må leve separat for hver side, ikke være delt mellom dem
+- [x] Etter du har gjort saken over: Skru tilbake endringene som ble gjort for å gjøre kart-velger i map.html mer generisk
 - [x] Beskjed i registrerings-grensesnitt om framdrift ved registrering ("Beregner registrering / overfører bilder / ferdig")
 - [x] Mulighet for å lagre kart som webp. Når DB inneholder koordinater, original og live, kan du re-generere live on-demand som webp.
 - [x] Funksjon for å re-generere final-bilder i database som webp og fjerne final-bilder for deploy

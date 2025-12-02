@@ -1,6 +1,5 @@
-import { API_BASE, MAP_LIST_SOURCE } from '../mapBrowser/config.js';
+import { API_BASE } from '../mapBrowser/config.js';
 import { createMapController } from '../mapBrowser/controllers/mapController.js';
-import { createMapSelectorPanel } from '../mapBrowser/ui/mapSelectorPanel.js';
 import { fetchMapDefinitions } from '../mapBrowser/services/mapDataService.js';
 import { fetchTrackDetail, fetchUserTracks, uploadTrack } from './services/gpxTrackService.js';
 import { createGpxListPanel } from './ui/gpxListPanel.js';
@@ -8,6 +7,7 @@ import { GpxBrowserStore } from './state/gpxBrowserStore.js';
 import { createGpxTrackRenderer } from './controllers/gpxTrackRenderer.js';
 import { getSegmentLatLngs } from './utils/gpxTrackUtils.js';
 import { createGpxUploadDialog } from './ui/gpxUploadDialog.js';
+import { createGpxMapSelectorPanel } from './ui/mapSelectorPanel.js';
 
 const DEFAULT_USERNAME = 'geir.smestad';
 
@@ -18,16 +18,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     toggleButton: document.getElementById('mapSelectorToggle'),
     panel: document.getElementById('mapSelectorPanel'),
     list: document.getElementById('mapSelectorList'),
-    modeNearMeInput: document.getElementById('mapSelectorModeNearMe'),
     modeNearViewportInput: document.getElementById('mapSelectorModeNearViewport')
   };
 
   const mapController = createMapController({
     elementId: 'mapBrowser',
     onViewportMoved: () => {
-      if (store.getState().mapListSource === MAP_LIST_SOURCE.NEAR_VIEWPORT) {
-        mapSelectorPanel?.renderIfVisible();
-      }
+      mapSelectorPanel?.renderIfVisible();
     }
   });
 
@@ -54,32 +51,19 @@ document.addEventListener('DOMContentLoaded', async () => {
     store.setSelectedMapName(mapDefinition.map_name);
   }
 
-  function handleMapSelectorModeChange(nextMode) {
-    if (nextMode !== MAP_LIST_SOURCE.NEAR_VIEWPORT) {
-      return;
-    }
-
-    store.setMapListSource(nextMode);
-    mapSelectorPanel?.renderIfVisible();
-    mapSelectorPanel?.scrollListToTop();
-  }
-
   let gpxListPanel = null;
 
-  const mapSelectorPanel = createMapSelectorPanel({
+  const mapSelectorPanel = createGpxMapSelectorPanel({
     store,
     map: mapController.map,
     elements: mapSelectorElements,
     onMapSelected: handleMapSelection,
-    onModeChange: handleMapSelectorModeChange,
     onVisibilityChange: (isVisible) => {
       if (isVisible) {
         gpxListPanel?.hide();
       }
     }
   });
-
-  mapSelectorPanel.updateModeUI();
 
   gpxListPanel = createGpxListPanel({
     store,
@@ -159,7 +143,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       triggerButton: document.getElementById('uploadGpxButton'),
       fileInput: document.getElementById('gpxFileInput'),
       modal: document.getElementById('gpxUploadModal'),
-      filenameLabel: document.getElementById('gpxUploadFilename'),
       descriptionInput: document.getElementById('gpxUploadDescription'),
       errorText: document.getElementById('gpxUploadError'),
       cancelButton: document.getElementById('gpxUploadCancelButton'),

@@ -1,46 +1,33 @@
-import { MAP_LIST_SOURCE } from '../config.js';
 import {
   calculateDistanceMeters,
   formatDistanceLabel,
   getMapCenterCoords
-} from '../utils/geo.js';
+} from '../../mapBrowser/utils/geo.js';
 
-export function createMapSelectorPanel({
+export function createGpxMapSelectorPanel({
   store,
   map,
   elements,
   onMapSelected,
-  onModeChange
+  onVisibilityChange
 } = {}) {
   const {
     toggleButton,
     panel,
     list,
-    modeNearMeInput,
     modeNearViewportInput
   } = elements;
 
-  const modeNearMeLabel = modeNearMeInput?.closest('.map-selector-mode');
   const modeNearViewportLabel = modeNearViewportInput?.closest('.map-selector-mode');
-
   let isVisible = false;
 
   function getReferencePoint() {
-    const state = store.getState();
-
-    if (state.mapListSource === MAP_LIST_SOURCE.NEAR_VIEWPORT && map) {
-      const boundsCenter = map.getBounds().getCenter();
-      return { lat: boundsCenter.lat, lng: boundsCenter.lng };
+    if (!map) {
+      return null;
     }
 
-    if (state.lastKnownLocation) {
-      return {
-        lat: state.lastKnownLocation.lat,
-        lng: state.lastKnownLocation.lng
-      };
-    }
-
-    return null;
+    const boundsCenter = map.getBounds().getCenter();
+    return { lat: boundsCenter.lat, lng: boundsCenter.lng };
   }
 
   function highlightSelectedListItem() {
@@ -142,7 +129,6 @@ export function createMapSelectorPanel({
     }
 
     if (nextVisibility) {
-      updateModeUI();
       renderList();
     }
 
@@ -152,22 +138,13 @@ export function createMapSelectorPanel({
     toggleButton.setAttribute('aria-expanded', nextVisibility ? 'true' : 'false');
     toggleButton.textContent = nextVisibility ? 'Lukk' : 'Velg kart';
 
+    if (typeof onVisibilityChange === 'function') {
+      onVisibilityChange(isVisible);
+    }
   }
 
   function toggleVisibility() {
     setVisibility(!isVisible);
-  }
-
-  function updateModeUI() {
-    const currentSource = store.getState().mapListSource;
-    const isNearMe = currentSource === MAP_LIST_SOURCE.NEAR_ME;
-    const isNearViewport = currentSource === MAP_LIST_SOURCE.NEAR_VIEWPORT;
-
-    modeNearMeInput.checked = isNearMe;
-    modeNearViewportInput.checked = isNearViewport;
-
-    modeNearMeLabel?.classList.toggle('is-active', isNearMe);
-    modeNearViewportLabel?.classList.toggle('is-active', isNearViewport);
   }
 
   function scrollListToTop() {
@@ -182,30 +159,17 @@ export function createMapSelectorPanel({
     }
   }
 
-  function wireEvents() {
-    toggleButton?.addEventListener('click', toggleVisibility);
-
-    modeNearMeInput?.addEventListener('change', (event) => {
-      if (event.target.checked && typeof onModeChange === 'function') {
-        onModeChange(MAP_LIST_SOURCE.NEAR_ME);
-      }
-    });
-
-    modeNearViewportInput?.addEventListener('change', (event) => {
-      if (event.target.checked && typeof onModeChange === 'function') {
-        onModeChange(MAP_LIST_SOURCE.NEAR_VIEWPORT);
-      }
-    });
+  function updateModeUI() {
+    modeNearViewportInput.checked = true;
+    modeNearViewportLabel?.classList.add('is-active');
   }
 
-  wireEvents();
+  toggleButton?.addEventListener('click', toggleVisibility);
+  modeNearViewportInput?.addEventListener('change', () => {
+    renderIfVisible();
+  });
 
   const unsubscribe = store.subscribe((state, prevState, change) => {
-    if (change?.type === 'mapListSource') {
-      updateModeUI();
-      renderIfVisible();
-    }
-
     if (change?.type === 'mapDefinitions') {
       renderIfVisible();
     }
@@ -215,13 +179,14 @@ export function createMapSelectorPanel({
     }
   });
 
+  updateModeUI();
+
   return {
     show: () => setVisibility(true),
     hide: () => setVisibility(false),
     toggleVisibility,
     renderIfVisible,
     scrollListToTop,
-    updateModeUI,
     destroy() {
       unsubscribe();
       toggleButton?.removeEventListener('click', toggleVisibility);
