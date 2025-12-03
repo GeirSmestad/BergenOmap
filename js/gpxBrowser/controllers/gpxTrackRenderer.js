@@ -5,6 +5,8 @@ const DEFAULT_POLYLINE_OPTIONS = {
   lineCap: 'round',
   lineJoin: 'round'
 };
+const OUTLINE_COLOR = '#2b0000'; // very dark red for subtle contrast
+const OUTLINE_EXTRA_WEIGHT = 1; // add 1px around the inner stroke
 
 export function createGpxTrackRenderer({
   map,
@@ -40,9 +42,26 @@ export function createGpxTrackRenderer({
         return;
       }
 
-      const polyline = L.polyline(segment, {
+      const mergedOptions = {
         ...DEFAULT_POLYLINE_OPTIONS,
-        ...polylineOptions,
+        ...polylineOptions
+      };
+
+      const baseWeight = typeof mergedOptions.weight === 'number'
+        ? mergedOptions.weight
+        : DEFAULT_POLYLINE_OPTIONS.weight;
+
+      const outline = L.polyline(segment, {
+        color: OUTLINE_COLOR,
+        opacity: 1,
+        weight: baseWeight + OUTLINE_EXTRA_WEIGHT,
+        lineCap: mergedOptions.lineCap,
+        lineJoin: mergedOptions.lineJoin,
+        pane: paneName
+      }).addTo(map);
+
+      const polyline = L.polyline(segment, {
+        ...mergedOptions,
         pane: paneName
       }).addTo(map);
 
@@ -50,7 +69,7 @@ export function createGpxTrackRenderer({
         polyline.bringToFront();
       }
 
-      layers.push(polyline);
+      layers.push(outline, polyline);
     });
   }
 

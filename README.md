@@ -113,7 +113,7 @@ Løse ideer: Spline-basert justering av track?
 - [ ] Gjøre listene for å velge track og kart litt penere i stylingen
 - [ ] Mulighet for å "spille av" løpet, og bla fram og tilbake i løpets framdrift
 - [ ] Mulighet for å visualisere hastighet med farger
-- [ ] Undersøk om det er mulig å få "border" på polylinen, for å lettere skille krysninger av eget spor
+- [x] Undersøk om det er mulig å få "border" på polylinen, for å lettere skille krysninger av eget spor
 - [x] Mulighet for å laste opp GPX-filer og lagre dem i database (inkludert enkel metadata, fx. et navn)
 - [x] Mulighet for å vise Strava-track fra tidligere løp på et orienteringskart (kanskje i helt separat view)
 - [x] Database-støtte for å samle en brukers informasjon (fx. GPX-filer fra Strava)
