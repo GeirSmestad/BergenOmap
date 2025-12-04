@@ -158,13 +158,12 @@ Løse ideer: Spline-basert justering av track?
 
 ## Scanning og registrering av spesifikke kart
 
-- [ ] Registrere alle tur-orienteringskartene
-
-- [ ] Registrere alle bedriftscup-kart fra løp jeg har deltatt i
-- [ ] Registrere ett fra hvert bedriftsløp bakover i tid
+- [ ] Registrere alle bedriftscup-kart fra løp jeg har deltatt i (ca. 52 totalt)
+- [ ] Registrere ett fra hvert bedriftsløp bakover i tid før jeg startet (circa 80?)
 
 - [ ] Legg inn GPX-spor fra alle de løpene mine fra Strava
 
+- [x] Registrere alle tur-orienteringskartene
 - [x] Registrere alle kartene som ikke er fra bedriftscuppen (mappe O-kart under Scans)
 - [x] Jeg mangler løpene fra Dyreparken i 2024, vet ikke hvor de kartene har blitt av.
 - [x] Spor opp alle de gamle turorienterings-kartene dine, og få dem på listen over kart å registrere. Se på Gmail & Downloads
@@ -335,7 +334,7 @@ ssh bergenomap "sudo systemctl restart bergenomap"
 
 
 Hvis du vil komprimere database for prod-deploy (husk backup først; den sletter originalene):
-python utils\CompressDbForProductionDeploy.py --method 6 --quality 100
+cd C:\Source\BergenOmap\utils; python CompressDbForProductionDeploy.py --method 6 --quality 100
 
 ## Kart-kilder -- flyfoto og topografiske kart
 
