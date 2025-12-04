@@ -28,10 +28,19 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   });
 
+  const timePanel = createTrackTimePanel();
+
   const trackRenderer = createGpxTrackRenderer({
     map: mapController.map,
     polylineOptions: {
-      weight: 5
+      weight: 7
+    },
+    onPointHover: (timeIso) => {
+      if (timeIso) {
+        timePanel.show(timeIso);
+      } else {
+        timePanel.hideWithDelay(4000);
+      }
     }
   });
 
@@ -109,7 +118,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       store.setActiveTrack(trackDetail);
       store.setTrackLoading(false, null);
 
-      const segments = getSegmentLatLngs(trackDetail);
+      const { segments, metadata } = getSegmentLatLngs(trackDetail);
 
       if (segments.length === 0) {
         trackRenderer.clearTrack();
@@ -117,7 +126,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         return;
       }
 
-      trackRenderer.renderTrack(segments);
+      trackRenderer.renderTrack(segments, metadata);
     } catch (error) {
       if (requestId !== activeTrackRequest) {
         return;
@@ -185,4 +194,51 @@ document.addEventListener('DOMContentLoaded', async () => {
     gpxListPanel.showError('Kunne ikke laste GPS-spor');
   }
 });
+
+function createTrackTimePanel() {
+  const panel = document.getElementById('gpxTrackTimePanel');
+  const label = document.getElementById('gpxTrackTimeLabel');
+  let hideTimeoutId = null;
+
+  function formatTime(isoString) {
+    if (!isoString) {
+      return '--:--:--';
+    }
+    const date = new Date(isoString);
+    if (Number.isNaN(date.getTime())) {
+      return '--:--:--';
+    }
+    return date.toLocaleTimeString([], { hour12: false });
+  }
+
+  function clearHideTimer() {
+    if (hideTimeoutId) {
+      clearTimeout(hideTimeoutId);
+      hideTimeoutId = null;
+    }
+  }
+
+  return {
+    show(timeIso) {
+      if (!panel || !label) {
+        return;
+      }
+      clearHideTimer();
+      label.textContent = `Tid: ${formatTime(timeIso)}`;
+      panel.classList.add('is-visible');
+      panel.setAttribute('aria-hidden', 'false');
+    },
+    hideWithDelay(delayMs = 4000) {
+      if (!panel || !label) {
+        return;
+      }
+      clearHideTimer();
+      hideTimeoutId = setTimeout(() => {
+        panel.classList.remove('is-visible');
+        panel.setAttribute('aria-hidden', 'true');
+        hideTimeoutId = null;
+      }, delayMs);
+    }
+  };
+}
 

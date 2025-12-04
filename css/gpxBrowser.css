@@ -38,6 +38,27 @@
   display: flex;
 }
 
+.gpx-track-time-panel {
+  position: fixed;
+  bottom: 1.25rem;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 0.75rem 1.5rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.92);
+  color: #111;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(4px);
+  display: none;
+  z-index: 1400;
+}
+
+.gpx-track-time-panel.is-visible {
+  display: inline-flex;
+}
+
 .gpx-selector-panel__header {
   margin: 0;
   padding: 0.75rem 1.25rem;

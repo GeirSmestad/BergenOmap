@@ -1,10 +1,11 @@
 export function getSegmentLatLngs(trackPayload) {
   const tracks = trackPayload?.gpx?.tracks;
   if (!Array.isArray(tracks) || tracks.length === 0) {
-    return [];
+    return { segments: [], metadata: [] };
   }
 
   const segments = [];
+  const metadata = [];
 
   tracks.forEach((track) => {
     const trackSegments = track?.segments;
@@ -14,17 +15,28 @@ export function getSegmentLatLngs(trackPayload) {
 
     trackSegments.forEach((segment) => {
       const points = Array.isArray(segment?.points) ? segment.points : [];
-      const latLngs = points
-        .map((point) => normalizeLatLng(point))
-        .filter(Boolean);
+      const latLngs = [];
+      const metaEntries = [];
+
+      points.forEach((point) => {
+        const latLng = normalizeLatLng(point);
+        if (!latLng) {
+          return;
+        }
+        latLngs.push(latLng);
+        metaEntries.push({
+          time: point?.time ?? null
+        });
+      });
 
       if (latLngs.length > 0) {
         segments.push(latLngs);
+        metadata.push(metaEntries);
       }
     });
   });
 
-  return segments;
+  return { segments, metadata };
 }
 
 function normalizeLatLng(point) {

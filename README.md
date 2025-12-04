@@ -104,15 +104,16 @@ cd C:\Source\BergenOmap; python -m http.server 8000
 
 Løse ideer: Spline-basert justering av track? 
 
-- [ ] Flytt kartvisning til sentrum av kart eller track når du velger et nytt kart eller track
 - [ ] Beregning av lat/lon "bounding box" for et GPX-track; trengs for enkelte features. Database, ved innsetting?
 - [ ] Filtrering av kart- og track-valg basert på hva som overlapper det som er valgt i den andre listen
 - [ ] Knapp for å velge flyfoto
-- [ ] Mouse-over på GPS-track for å se tid
 - [ ] Penere styling av GPX-opplastingsdialogboks
 - [ ] Gjøre listene for å velge track og kart litt penere i stylingen
 - [ ] Mulighet for å "spille av" løpet, og bla fram og tilbake i løpets framdrift
 - [ ] Mulighet for å visualisere hastighet med farger
+- [x] Mouse-over på GPS-track for å se tid
+- [x] (0) Flytt kartvisning til sentrum av kart du velger et nytt kart (UX funker ikke pga. omstokking av kart-liste)
+- [x] (0) Flytt kartvisning til sentrum av track når du velger et nytt track
 - [x] Undersøk om det er mulig å få "border" på polylinen, for å lettere skille krysninger av eget spor
 - [x] Mulighet for å laste opp GPX-filer og lagre dem i database (inkludert enkel metadata, fx. et navn)
 - [x] Mulighet for å vise Strava-track fra tidligere løp på et orienteringskart (kanskje i helt separat view)

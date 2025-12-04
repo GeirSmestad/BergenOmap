@@ -1,6 +1,6 @@
 const DEFAULT_POLYLINE_OPTIONS = {
   color: '#ff2d2d',
-  weight: 4,
+  weight: 6,
   opacity: 0.95,
   lineCap: 'round',
   lineJoin: 'round'
@@ -12,7 +12,8 @@ export function createGpxTrackRenderer({
   map,
   polylineOptions = {},
   paneName = 'gpx-track-pane',
-  paneZIndex = 650
+  paneZIndex = 650,
+  onPointHover
 } = {}) {
   if (!map || typeof L === 'undefined') {
     throw new Error('Leaflet map instance is required for GPX track renderer');
@@ -30,17 +31,19 @@ export function createGpxTrackRenderer({
     });
   }
 
-  function renderTrack(segmentLatLngs) {
+  function renderTrack(segmentLatLngs, segmentMetadata) {
     clearTrack();
 
     if (!Array.isArray(segmentLatLngs) || segmentLatLngs.length === 0) {
       return;
     }
 
-    segmentLatLngs.forEach((segment) => {
+    segmentLatLngs.forEach((segment, index) => {
       if (!Array.isArray(segment) || segment.length < 2) {
         return;
       }
+
+      const metadataPoints = segmentMetadata?.[index] ?? [];
 
       const mergedOptions = {
         ...DEFAULT_POLYLINE_OPTIONS,
@@ -69,6 +72,17 @@ export function createGpxTrackRenderer({
         polyline.bringToFront();
       }
 
+      if (typeof onPointHover === 'function') {
+        polyline.on('mousemove', (event) => {
+          const time = findClosestPointTime(event.latlng, segment, metadataPoints);
+          onPointHover(time, event.latlng);
+        });
+
+        polyline.on('mouseout', () => {
+          onPointHover(null, null);
+        });
+      }
+
       layers.push(outline, polyline);
     });
   }
@@ -88,7 +102,39 @@ function ensurePane(map, paneName, paneZIndex) {
   map.createPane(paneName);
   const pane = map.getPane(paneName);
   pane.style.zIndex = String(paneZIndex);
-  pane.style.pointerEvents = 'none';
+  pane.style.pointerEvents = 'auto';
   return pane;
+}
+
+function findClosestPointTime(latlng, segment, metadataPoints) {
+  /* TODO: If I read this right, it's very inefficient; O(n) of GPX length on the client
+     every time the mouse cursor changes. Can be done in O(1) by attaching the time to each
+     point on the polyline when creating it. Assuming I understand it right. */
+  if (!Array.isArray(metadataPoints) || metadataPoints.length !== segment.length) {
+    return null;
+  }
+
+  let closestIndex = -1;
+  let shortestDistance = Infinity;
+
+  segment.forEach((point, index) => {
+    const distance = latLngDistance(latlng, point);
+    if (distance < shortestDistance) {
+      shortestDistance = distance;
+      closestIndex = index;
+    }
+  });
+
+  if (closestIndex === -1) {
+    return null;
+  }
+
+  return metadataPoints[closestIndex]?.time ?? null;
+}
+
+function latLngDistance(latlng, pointArray) {
+  const latDiff = latlng.lat - pointArray[0];
+  const lngDiff = latlng.lng - pointArray[1];
+  return Math.sqrt(latDiff * latDiff + lngDiff * lngDiff);
 }
 
