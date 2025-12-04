@@ -134,8 +134,6 @@ Løse ideer: Spline-basert justering av track?
 
 
 - [ ] Database-nøkkel som gir versjonen av et bestemt kart, slik at jeg kan cache i nettleseren til brukeren
-- [ ] Autentisering, hvis jeg vil gjøre appen mindre tilgjengelig for Gud og hvermann. Auth med navn?
-- [ ] Landingsside for auth
 
 
 - [x] På et tidspunkt vil jeg kanskje ha en indeks-primærnøkkel heller enn å bruke kartnavnet, pga. mange kart i samme område
@@ -174,6 +172,10 @@ Løse ideer: Spline-basert justering av track?
 
 
 ## Generelle forbedringer
+
+- [ ] Autentisering, for å gjøre appen mindre tilgjengelig for Gud og hvermann. Auth med navn?
+- [ ] Landingsside for auth
+- [ ] Menysystem for å bytte mellom de ulike modusene
 
 - [ ] Jeg har noen renamings-TODOer i koden; gjennomfør disse. Cursor tar dem sikkert one-shot, bare oppgi presise navn på rename.
 - [ ] Kjøre gjennom database og re-generer roterte bilder med gjennomsiktige områder på alle steder som er utenfor selve kartet
@@ -214,8 +216,6 @@ Løse ideer: Spline-basert justering av track?
 - [x] Backend sender nå felt-navnet "filename" i stedet for "map_filename" ved registrering (som gjør at map.html ikke finner den)
 
 ## Langsiktige ambisjoner
-
-- [ ] Menysystem hvis appen begynner å bli komplisert
 
 - [ ] Innsending av database-kart + kjente metadata til AI-modell for setting av metadata i database
 - [ ] Maskinlærings-system for å identifisere post-posisjoner på registrerte kart og regne disse om til ekte koordinater
