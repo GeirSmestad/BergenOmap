@@ -392,9 +392,6 @@ def insert_gps_track():
 
 @app.route('/api/dal/mapfile/original/<map_name>', methods=['GET'])
 def get_mapfile_original(map_name):
-    if not is_local_request():
-        abort(404)
-
     db = get_db()
     image_data = db.get_mapfile_original(map_name)
     if image_data is not None:
@@ -404,9 +401,6 @@ def get_mapfile_original(map_name):
 
 @app.route('/api/dal/mapfile/final/<map_name>', methods=['GET'])
 def get_mapfile_final(map_name):
-    if not is_local_request():
-        abort(404)
-
     db = get_db()
     image_data = db.get_mapfile_final(map_name)
     if image_data is not None:
