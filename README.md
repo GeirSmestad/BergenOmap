@@ -13,7 +13,7 @@ cd C:\Source\BergenOmap; python -m http.server 8000
 cd /Users/Geir/Source/BergenOmap/backend; python3 Backend.py
 cd /Users/Geir/Source/BergenOmap; python3 -m http.server 8000
 
-Serves fra fx. http://localhost:8000/map.html
+Serves fra fx. http://127.0.0.1:8000/map.html
 
 # TODO
 
