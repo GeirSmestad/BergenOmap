@@ -10,10 +10,16 @@ For å kjøre servere for utvikling:
 cd C:\Source\BergenOmap\backend; python .\Backend.py
 cd C:\Source\BergenOmap; python -m http.server 8000
 
+cd /Users/Geir/Source/BergenOmap/backend; python3 Backend.py
+cd /Users/Geir/Source/BergenOmap; python3 -m http.server 8000
+
+Serves fra fx. http://localhost:8000/map.html
+
 # TODO
 
-## Registrering av kart
+Shortlist: Auth, menysystem, bedre markør-visning ved registrering
 
+## Registrering av kart
 
 - [ ] Endre koordinat-visning sånn at den kun viser de tilgjengelige markørene, ikke koordinatene (highlight neste ledige markør)
 - [ ] Fjerne kode som etter endringen i koordinat-visning vil være ubrukt
@@ -109,6 +115,7 @@ Løse ideer: Spline-basert justering av track?
 - [ ] Knapp for å velge flyfoto
 - [ ] Penere styling av GPX-opplastingsdialogboks
 - [ ] Gjøre listene for å velge track og kart litt penere i stylingen
+- [ ] Ved mouseover for å se tid: Framhev punktet på tracket brukeren studerer akkurat nå
 - [ ] Mulighet for å "spille av" løpet, og bla fram og tilbake i løpets framdrift
 - [ ] Mulighet for å visualisere hastighet med farger
 - [x] Mouse-over på GPS-track for å se tid
@@ -175,11 +182,12 @@ Løse ideer: Spline-basert justering av track?
 
 - [ ] Autentisering, for å gjøre appen mindre tilgjengelig for Gud og hvermann. Auth med navn?
 - [ ] Landingsside for auth
-- [ ] Menysystem for å bytte mellom de ulike modusene
+- [ ] Menysystem for å bytte mellom de ulike modusene (spør chatbotten om paradigmer for å bytte mellom 3)
 
 - [ ] Jeg har noen renamings-TODOer i koden; gjennomfør disse. Cursor tar dem sikkert one-shot, bare oppgi presise navn på rename.
 - [ ] Kjøre gjennom database og re-generer roterte bilder med gjennomsiktige områder på alle steder som er utenfor selve kartet
 
+- [x] Lære meg utvikling fra Macbook
 - [x] Kart-velger og GPX-velger må leve separat for hver side, ikke være delt mellom dem
 - [x] Etter du har gjort saken over: Skru tilbake endringene som ble gjort for å gjøre kart-velger i map.html mer generisk
 - [x] Beskjed i registrerings-grensesnitt om framdrift ved registrering ("Beregner registrering / overfører bilder / ferdig")
@@ -208,6 +216,7 @@ Løse ideer: Spline-basert justering av track?
 
 ## Bugs
 
+- [x] Registrerings-verktøyet virker ikke på web (skyldtes krympet DB + max transfer size; fikset)
 - [x] Serveren krasjer innimellom. ChatGPT har forslag til hva jeg kan sjekke etter reboot (OOM; tror det er fikset)
 - [x] Hvis man trykker process registration flere ganger, får du nå duplikater i stedet for overskriving.
 - [x] list_maps-spørringen tar 7 sekunder. Den må optimiseres, skal bare ta et øyeblikk.
