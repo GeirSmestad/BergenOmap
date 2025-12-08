@@ -17,12 +17,13 @@ Serves fra fx. http://127.0.0.1:8000/map.html
 
 # TODO
 
-Shortlist: Auth, menysystem, bedre markør-visning ved registrering
+Shortlist: Auth (trengs db-endringer), menysystem, bedre markør-visning ved registrering
 
 ## Registrering av kart
 
 - [ ] Endre koordinat-visning sånn at den kun viser de tilgjengelige markørene, ikke koordinatene (highlight neste ledige markør)
 - [ ] Fjerne kode som etter endringen i koordinat-visning vil være ubrukt
+- [ ] Zoom-mulighet i bildevisning (kun på mobil? usikker)
 
 - [x] Verktøy som lar deg gjennomgå en eksisterende registrering, og viser med markørene hvor kontrollpunktene er satt
 - [x] Grensesnitt for å redigere metadata i databasen uten å røre kart-registreringen. Løser også forrige, hvis du kan velge kart

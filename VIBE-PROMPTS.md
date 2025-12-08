@@ -109,7 +109,7 @@ Give me the SQL queries for table creation, so I can run them separately from th
 I also have a test GPX file, tell me how to get it into the table for the default user we will use for all testing.
 
 
-###
+### GPS track page
 
 We will now create a new page to browse and view GPS tracks in the context of maps. For now, you can assume that the simulated user is always geir.smestad; hard-code this.
 
@@ -122,13 +122,35 @@ We will also need a GPX list. It can be very similar to the map list, both visua
 Don't implement functionality for actually viewing GPX tracks yet, we will do that later. Write an implementation that is maintainable and extensible.
 
 
-###
+### GPX track drawing
 
 Now we will implement functionality to draw a GPX track. We will only ever draw one at a time, and the one that's being drawn will be the one that is selected in the GPX list. Use Leaflet drawing functionality if this is an option, and make sure you'll draw on top of the selected orienteering map overlay if one is selected.
 
 Make sure you implement the drawing functionality in separate module(s), so it can be modified independently later. For now, you can use a red pen for drawing. Line thickness *might* have to vary with differing zoom levels; check what options are available in Leaflet's API in this regard. If Leaflet's functionality does not allow for lines that automatically scale with zoom level, just use a single hard-coded size for now, but explain to me the possibilities in your output.
 
 Future drawing features, not to be implemented now but provided for your context, will be a line that is not solid red but has different color depending on runner speed, as well as *playback* of a race by instead of a line, drawing a marker that will gradually move through the GPX track in a sped-up replay of the runner's location.
+
+## Authentication
+
+I want to add some rudimentary authentication to my web server. The app currently allows anyone to access it, and I want to restrict it just a tiny bit.
+
+I want a very simple form when the user first visits omaps.twerkules.com, which says 
+
+"For å logge inn, skriv fullt navn på personen som har laget appen
+(du er veldig veldig velkommen til å bruke den!)"
+
+And a button saying "Logg inn".
+
+Make this form tasteful, simple and good-looking both on mobile and desktop sizes.
+
+I want successful login to set a session cookie valid for 1 year, and which will make the web server serve any of its HTML pages.
+
+You can create a session database table, I want fields for both date_set and session_key .
+
+Note that I don't serve pages through my Python back-end; they are served through nginx as stated in bootstrap.sh.
+
+Ask me clarifying questions if required.
+
 
 ## Scratchpad
 
