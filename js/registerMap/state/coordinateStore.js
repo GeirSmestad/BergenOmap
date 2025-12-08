@@ -79,26 +79,6 @@ export class CoordinateStore extends EventTarget {
     this.currentXYIndex = this.xy.length ? 0 : null;
   }
 
-  /**
-   * Legacy helper retained for compatibility. Still follows round-robin rules.
-   */
-  recordLatLng(lat, lon) {
-    if (this.currentLatLonIndex == null) {
-      return;
-    }
-    this.setLatLonAt(this.currentLatLonIndex, lat, lon);
-  }
-
-  /**
-   * Legacy helper retained for compatibility. Still follows round-robin rules.
-   */
-  recordImageCoordinate(x, y) {
-    if (this.currentXYIndex == null) {
-      return;
-    }
-    this.setImageCoordinateAt(this.currentXYIndex, x, y);
-  }
-
   setLatLonAt(index, lat, lon, options = {}) {
     const resolvedIndex = clampIndex(index, this.latLon.length);
     if (resolvedIndex == null) {
