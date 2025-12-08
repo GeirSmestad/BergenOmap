@@ -61,25 +61,15 @@
         <p id="registrationStatus" class="registrationStatus" aria-live="polite">Please mark three points in the terrain and their corresponding 
           location on the orienteering map on the right. 'Compute registration' previews the selected registration and 'Save map' stores it in 
           the database.</p>
-        <div class="coordinates">
-          <div>
-            <p id="latLon1"></p>
-            <p id="latLon2"></p>
-            <p id="latLon3"></p>
-          </div>
-          <div>
-            <p id="xy1"></p>
-            <p id="xy2"></p>
-            <p id="xy3"></p>
-          </div>
-        </div>
       </div>
     </div>
     <div class="registration-map-views">
       <div class="registration-map-views__panel">
+        <div id="mapMarkerPalette"></div>
         <div id="registrationMapBrowser"></div>
       </div>
       <div class="registration-map-views__panel registration-map-views__panel--overlay">
+        <div id="overlayMarkerPalette"></div>
         <img id="overlayView" alt="Overlay map preview"/>
       </div>
     </div>

@@ -2,7 +2,7 @@ import { CoordinateStore } from './state/coordinateStore.js';
 import { RegistrationStore } from './state/registrationStore.js';
 import { createMapViewController } from './controllers/mapViewController.js';
 import { createOverlayController } from './controllers/overlayController.js';
-import { initCoordinatePanel } from './ui/coordinatePanel.js';
+import { initMarkerPalettePanel } from './ui/markerPalettePanel.js';
 import { createPreviewController } from './controllers/previewController.js';
 import { createPreExistingMapController } from './controllers/existingMapController.js';
 import { initRegisterActions } from './actions/registerActions.js';
@@ -23,18 +23,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
   window.map = mapViewController.map;
 
-  initCoordinatePanel({
+  initMarkerPalettePanel({
+    element: document.getElementById('mapMarkerPalette'),
     coordinateStore,
-    latLonElements: [
-      document.getElementById('latLon1'),
-      document.getElementById('latLon2'),
-      document.getElementById('latLon3')
-    ],
-    xyElements: [
-      document.getElementById('xy1'),
-      document.getElementById('xy2'),
-      document.getElementById('xy3')
-    ]
+    type: 'map'
+  });
+
+  initMarkerPalettePanel({
+    element: document.getElementById('overlayMarkerPalette'),
+    coordinateStore,
+    type: 'overlay'
   });
 
   const previewController = createPreviewController({

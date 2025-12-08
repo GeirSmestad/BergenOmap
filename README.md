@@ -21,7 +21,7 @@ Shortlist: Auth (trengs db-endringer), menysystem, bedre markør-visning ved reg
 
 ## Registrering av kart
 
-- [ ] Endre koordinat-visning sånn at den kun viser de tilgjengelige markørene, ikke koordinatene (highlight neste ledige markør)
+- [x] Endre koordinat-visning sånn at den kun viser de tilgjengelige markørene, ikke koordinatene (highlight neste ledige markør)
 - [ ] Fjerne kode som etter endringen i koordinat-visning vil være ubrukt
 - [ ] Zoom-mulighet i bildevisning (kun på mobil? usikker)
 

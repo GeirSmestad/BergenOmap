@@ -133,6 +133,24 @@ export class CoordinateStore extends EventTarget {
     this.emitChange();
   }
 
+  selectLatLonIndex(index) {
+    const resolvedIndex = clampIndex(index, this.latLon.length);
+    if (resolvedIndex == null) {
+      return;
+    }
+    this.currentLatLonIndex = resolvedIndex;
+    this.emitChange();
+  }
+
+  selectXYIndex(index) {
+    const resolvedIndex = clampIndex(index, this.xy.length);
+    if (resolvedIndex == null) {
+      return;
+    }
+    this.currentXYIndex = resolvedIndex;
+    this.emitChange();
+  }
+
   clearLatLonAt(index) {
     const resolvedIndex = clampIndex(index, this.latLon.length);
     if (resolvedIndex == null) {
