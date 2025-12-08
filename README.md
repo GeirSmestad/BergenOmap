@@ -17,13 +17,13 @@ Serves fra fx. http://127.0.0.1:8000/map.html
 
 # TODO
 
-Shortlist: Auth (trengs db-endringer), menysystem
+Shortlist: Auth (trengs db-endringer), mobilvennlig registrering
 
 ## Registrering av kart
 
 
 - [ ] Zoom-mulighet i bildevisning (kun på mobil? usikker)
-
+- [ ] Mobilvennlig layout og funksjonalitet for kart-registrering; mobilvennlig layout & navigasjon
 
 - [x] Endre koordinat-visning sånn at den kun viser de tilgjengelige markørene, ikke koordinatene (highlight neste ledige markør)
 - [x] Fjerne kode som etter endringen i koordinat-visning vil være ubrukt
@@ -87,7 +87,6 @@ Shortlist: Auth (trengs db-endringer), menysystem
 
 ## Navigasjons-app
 
-- [ ] Cache Leaflet-filer, orienteringskart, og kart-definisjoner lokalt i appen i tilfelle brudd i nettverk (Cache Storage API?)
 - [ ] Kartet orienteres etter retningen man holder mobilen (toggle av/på)
 - [ ] Zoom-innstilling som finner mobil-dimensjoner og setter zoom til å tilsvare kartets målestokk (1:7500 inntil videre)
 
@@ -135,7 +134,7 @@ Løse ideer: Spline-basert justering av track?
 
 - [ ] Mulighet for å velge kart, trolig samme liste som jeg allerede har
 - [ ] Database-støtte for å lagre hvor på kartet hver av postene befinner seg
-- [ ] Støtte i registrerings-grensesnitt for å markere hvor på kartet hver post er
+- [ ] Støtte i registrerings-grensesnitt for å markere hvor på kartet hver post er (ny side, tror jeg)
 - [ ] Visning av hvilke poster man har vært innom
 - [ ] Automatisk stempling (med minste avstand til post, og GPS-presisjon)
 - [ ] Mauell stempling (registrer avstand og presisjon fra GPS)
@@ -185,11 +184,12 @@ Løse ideer: Spline-basert justering av track?
 
 - [ ] Autentisering, for å gjøre appen mindre tilgjengelig for Gud og hvermann. Auth med navn?
 - [ ] Landingsside for auth
-- [ ] Menysystem for å bytte mellom de ulike modusene (spør chatbotten om paradigmer for å bytte mellom 3)
 
 - [ ] Jeg har noen renamings-TODOer i koden; gjennomfør disse. Cursor tar dem sikkert one-shot, bare oppgi presise navn på rename.
 - [ ] Kjøre gjennom database og re-generer roterte bilder med gjennomsiktige områder på alle steder som er utenfor selve kartet
+- [ ] Cache Leaflet-filer, orienteringskart, og kart-definisjoner lokalt i appen i tilfelle brudd i nettverk (Cache Storage API?)
 
+- [x] Menysystem for å bytte mellom de ulike modusene (spør chatbotten om paradigmer for å bytte mellom 3)
 - [x] Lære meg utvikling fra Macbook
 - [x] Kart-velger og GPX-velger må leve separat for hver side, ikke være delt mellom dem
 - [x] Etter du har gjort saken over: Skru tilbake endringene som ble gjort for å gjøre kart-velger i map.html mer generisk
@@ -230,10 +230,10 @@ Løse ideer: Spline-basert justering av track?
 ## Langsiktige ambisjoner
 
 - [ ] Innsending av database-kart + kjente metadata til AI-modell for setting av metadata i database
+- [ ] Ifm. henting av metadata fra kart: Ekstra DB-felt for kartets målestokk
 - [ ] Maskinlærings-system for å identifisere post-posisjoner på registrerte kart og regne disse om til ekte koordinater
 
-- [ ] Mobilvennlig layout og funksjonalitet for kart-registrering (omfattende task, inkl. zoom og markører på bilder + mobilvennlig layout & navigasjon, unødvendig pr. nå siden bøygen er å registrere mine eksisterende kart)
-- [ ] Logge track på turen du har gått så langt
+- [ ] Logge track på turen du har gått så langt, med usikkerhet i GPS-mottak
 
 - [ ] Kreditere kart-tegneren i grensesnittet, kanskje på placeholder-bildene før kartet lastes
 - [ ] Når jeg får veldig mange kart, vil jeg kanskje ha et avansert filter for kart, som lar meg filtrere på metadata.

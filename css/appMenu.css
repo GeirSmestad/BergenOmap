@@ -1,0 +1,95 @@
+/* Container for the menu system, fixed to bottom-left */
+.app-menu-container {
+  position: fixed;
+  bottom: 1.5rem;
+  left: 1.5rem;
+  z-index: 2000; /* High z-index to sit above map controls and layers */
+  display: flex;
+  flex-direction: column-reverse; /* Button at bottom, items expand upwards */
+  align-items: flex-start;
+  gap: 0.75rem;
+  pointer-events: none; /* Let clicks pass through the container area */
+}
+
+/* The toggle button (Pill -> Circle) */
+.app-menu-toggle {
+  pointer-events: auto;
+  appearance: none;
+  border: none;
+  border-radius: 50%;
+  width: 3.5rem;
+  height: 3.5rem;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: 600;
+  background: rgba(20, 20, 20, 0.9);
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), background 0.2s ease;
+}
+
+.app-menu-icon {
+  line-height: 1;
+  display: block;
+}
+
+.app-menu-toggle:active {
+  transform: scale(0.96);
+}
+
+/* The list of menu items */
+.app-menu-list {
+  pointer-events: auto;
+  list-style: none;
+  margin: 0;
+  padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  background: rgba(20, 20, 20, 0.85);
+  backdrop-filter: blur(8px);
+  border-radius: 16px;
+  min-width: 160px;
+  
+  /* Animation states */
+  opacity: 0;
+  transform: translateY(10px) scale(0.95);
+  transform-origin: bottom left;
+  transition: opacity 0.2s ease, transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  visibility: hidden;
+}
+
+.app-menu-container.is-open .app-menu-list {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  visibility: visible;
+}
+
+/* Individual links */
+.app-menu-link {
+  display: block;
+  text-decoration: none;
+  color: rgba(255, 255, 255, 0.85);
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 0.95rem;
+  transition: background 0.2s ease, color 0.2s ease;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.app-menu-link:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.app-menu-link.is-active {
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+  font-weight: 600;
+}
+

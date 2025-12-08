@@ -1,4 +1,5 @@
 import { API_BASE } from '../mapBrowser/config.js';
+import { AppMenu } from '../appMenu.js';
 import { createMapController } from '../mapBrowser/controllers/mapController.js';
 import { fetchMapDefinitions } from '../mapBrowser/services/mapDataService.js';
 import { fetchTrackDetail, fetchUserTracks, uploadTrack } from './services/gpxTrackService.js';
@@ -12,6 +13,7 @@ import { createGpxMapSelectorPanel } from './ui/mapSelectorPanel.js';
 const DEFAULT_USERNAME = 'geir.smestad';
 
 document.addEventListener('DOMContentLoaded', async () => {
+  const appMenu = new AppMenu();
   const store = new GpxBrowserStore();
 
   const mapSelectorElements = {

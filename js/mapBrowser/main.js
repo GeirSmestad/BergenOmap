@@ -1,4 +1,5 @@
 import { API_BASE, MAP_LIST_SOURCE } from './config.js';
+import { AppMenu } from '../appMenu.js';
 import { MapBrowserStore } from './state/mapBrowserStore.js';
 import { fetchMapDefinitions } from './services/mapDataService.js';
 import { createWakeLockService } from './services/wakeLockService.js';
@@ -9,6 +10,7 @@ import { createFollowPositionButton } from './ui/followPositionButton.js';
 import { isAccuracyAcceptable } from './utils/geo.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
+  const appMenu = new AppMenu();
   const store = new MapBrowserStore();
   const wakeLockService = createWakeLockService();
 
