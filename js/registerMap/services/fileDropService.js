@@ -2,10 +2,20 @@ import { convertPdfToImage, processDroppedImage } from './apiClient.js';
 
 export function initfileDropService({
   dropArea,
+  fileInput,
   registrationStore,
   onOverlayReady,
   onStatusMessage
 }) {
+  if (fileInput) {
+    fileInput.addEventListener('change', async (event) => {
+      const files = event.target.files;
+      await handleFiles(files);
+      // Reset input so same file can be selected again if needed
+      event.target.value = '';
+    });
+  }
+
   if (!dropArea) {
     return;
   }

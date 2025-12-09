@@ -7,11 +7,14 @@ import { createPreviewController } from './controllers/previewController.js';
 import { createPreExistingMapController } from './controllers/existingMapController.js';
 import { initRegisterActions } from './actions/registerActions.js';
 import { initfileDropService } from './services/fileDropService.js';
+import { initMobileTabs } from './ui/mobileTabController.js';
 import { fetchOriginalMapFile, fetchFinalMapFile, processDroppedImage } from './services/apiClient.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   const coordinateStore = new CoordinateStore();
   const registrationStore = new RegistrationStore();
+
+  const mobileTabs = initMobileTabs();
 
   const basemapToggleButton = document.getElementById('basemapToggleButton');
   const mapViewController = createMapViewController({ coordinateStore, basemapToggleButton });
@@ -204,6 +207,10 @@ document.addEventListener('DOMContentLoaded', () => {
           return;
         }
 
+        if (mobileTabs) {
+          mobileTabs.switchToTab('terrain');
+        }
+
         setStatusBarMessage(`Loaded "${mapLabel}". Preview enabled.`);
       })
       .catch((error) => {
@@ -237,12 +244,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
   initfileDropService({
     dropArea: document.getElementById('drop-area'),
+    fileInput: document.getElementById('fileUploadInput'),
     registrationStore,
     onOverlayReady: (url) => {
       releaseStoredMapUrls();
       overlayController.setSource(url);
       registrationStore.setOverlayImageUrl(null);
       previewController.clearPreview();
+      if (mobileTabs) {
+        mobileTabs.switchToTab('terrain');
+      }
     },
     onStatusMessage: (message) => console.warn(message) // TODO: Rename to disambiguate from the statusbar, also add file dropping to statusbar
   });
