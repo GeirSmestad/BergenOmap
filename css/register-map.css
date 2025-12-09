@@ -41,7 +41,7 @@ canvas {
 }
 
 .image-input-wrapper > #imageInput {
-  flex: 1 1 420px;
+  flex: 1 1 150px;
   margin-bottom: 0;
 }
 
@@ -456,6 +456,10 @@ textarea {
   border-color: #1c64f2;
 }
 
+.mobile-upload-container {
+  display: none;
+}
+
 /* Tablet/Mobile Breakpoint */
 @media (max-width: 768px) {
   body {
@@ -558,9 +562,38 @@ textarea {
     display: none;
   }
   
+  /* Explicitly ensure header is visible on other tabs (redundant but safe) */
+  body[data-mobile-tab="terrain"] .registration-map-header,
+  body[data-mobile-tab="overlay"] .registration-map-header,
+  body[data-mobile-tab="metadata"] .registration-map-header {
+    display: flex;
+  }
+  
   /* Adjustments for Start Screen */
   .image-input-wrapper {
     flex-direction: column;
+  }
+
+  /* Hide the drag-drop area on mobile */
+  #drop-area {
+    display: none !important;
+  }
+
+  /* Show the mobile upload button, but only when on start tab */
+  .mobile-upload-container {
+    display: none;
+    padding: 1rem 0;
+    justify-content: center;
+  }
+
+  body[data-mobile-tab="start"] .mobile-upload-container {
+    display: flex;
+  }
+
+  .mobile-upload-btn {
+    width: 100%;
+    padding: 12px;
+    font-size: 1rem;
   }
   
   #preExistingMapSelector {

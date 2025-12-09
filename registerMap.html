@@ -39,12 +39,17 @@
 
   <div id="tab-content-start" class="image-input-wrapper">
     <div id="imageInput">
-      <p>Please choose an input map. You can drag-and-drop it here, or click to select.</p>
+      <p>Please choose an input map.</p>
       <div id="drop-area">
         Drop image here
         <br>
         <button type="button" class="file-select-btn" onclick="document.getElementById('fileUploadInput').click()">Select File</button>
         <input type="file" id="fileUploadInput" accept="image/*,.pdf" style="display: none">
+      </div>
+      <div id="mobile-upload-area" class="mobile-upload-container">
+        <button type="button" class="file-select-btn mobile-upload-btn" onclick="document.getElementById('fileUploadInput').click()">
+          Select File to Upload
+        </button>
       </div>
     </div>
 
@@ -64,7 +69,7 @@
       </div>
       <div id="registrationData">
         <p id="registrationStatus" class="registrationStatus" aria-live="polite">Please mark three points in the terrain and their corresponding 
-          location on the orienteering map on the right. 'Compute registration' previews the selected registration and 'Save map' stores it in 
+          location on the orienteering map. 'Compute registration' previews the selected registration and 'Save map' stores it in 
           the database.</p>
       </div>
     </div>

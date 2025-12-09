@@ -23,7 +23,7 @@ export function initRegisterActions({
   } = elements;
 
   const STATUS_MESSAGES = {
-    idle: "Please mark three points in the terrain and their corresponding location on the orienteering map on the right. 'Compute registration' previews the selected registration and 'Save map' stores it in the database.",
+    idle: "Please mark three points in the terrain and their corresponding location on the orienteering map. 'Compute registration' previews the selected registration and 'Save map' stores it in the database.",
     computing: 'Calculating registration...',
     saving: 'Saving map...',
     done: 'Done.',
