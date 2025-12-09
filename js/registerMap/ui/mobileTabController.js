@@ -24,6 +24,9 @@ export function initMobileTabs() {
       }
     });
 
+    // Set data attribute on body for global styling access
+    document.body.dataset.mobileTab = tabName;
+
     // Toggle content sections
     Object.keys(contentSections).forEach(key => {
       const section = contentSections[key];
@@ -41,13 +44,14 @@ export function initMobileTabs() {
     });
 
     // Toggle header visibility
-    if (header) {
-      if (tabName === 'start') {
-        header.classList.add('registration-map-header--hidden');
-      } else {
-        header.classList.remove('registration-map-header--hidden');
-      }
-    }
+    // Deprecated: CSS now handles this via body[data-mobile-tab="start"]
+    // if (header) {
+    //   if (tabName === 'start') {
+    //     header.classList.add('registration-map-header--hidden');
+    //   } else {
+    //     header.classList.remove('registration-map-header--hidden');
+    //   }
+    // }
   }
 
   // Add click listeners

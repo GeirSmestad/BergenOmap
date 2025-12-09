@@ -548,7 +548,13 @@ textarea {
     transition: transform 0.3s ease, opacity 0.3s ease;
   }
 
+  /* Deprecated JS class - kept for backward compat or if needed */
   .registration-map-header--hidden {
+    display: none;
+  }
+
+  /* Hide header on start tab via data attribute on body */
+  body[data-mobile-tab="start"] .registration-map-header {
     display: none;
   }
   
