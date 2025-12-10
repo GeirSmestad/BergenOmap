@@ -22,9 +22,12 @@ Shortlist: Auth (trengs db-endringer), mobilvennlig registrering
 ## Registrering av kart
 
 
-- [ ] Zoom-mulighet i bildevisning (kun på mobil? usikker)
-- [ ] Mobilvennlig layout og funksjonalitet for kart-registrering; mobilvennlig layout & navigasjon
+- [ ] Zoom-mulighet i bildevisning (kun på mobil)
+- [ ] Test mobilvennlig registrering på fysisk mobil
+- [ ] Metadata-visning på mobil havner under knappene øverst; fiks det
+- [ ] Mobilvisning: Få chatbotten til å gå gjennom CSS & JS og se om det er noe som kan forenkles eller gjøres tydeligere
 
+- [x] Mobilvennlig layout og funksjonalitet for kart-registrering; mobilvennlig layout & navigasjon
 - [x] Endre koordinat-visning sånn at den kun viser de tilgjengelige markørene, ikke koordinatene (highlight neste ledige markør)
 - [x] Fjerne kode som etter endringen i koordinat-visning vil være ubrukt
 - [x] Verktøy som lar deg gjennomgå en eksisterende registrering, og viser med markørene hvor kontrollpunktene er satt
@@ -188,6 +191,7 @@ Løse ideer: Spline-basert justering av track?
 - [ ] Jeg har noen renamings-TODOer i koden; gjennomfør disse. Cursor tar dem sikkert one-shot, bare oppgi presise navn på rename.
 - [ ] Kjøre gjennom database og re-generer roterte bilder med gjennomsiktige områder på alle steder som er utenfor selve kartet
 - [ ] Cache Leaflet-filer, orienteringskart, og kart-definisjoner lokalt i appen i tilfelle brudd i nettverk (Cache Storage API?)
+- [ ] Finjuster UI for kart-registrering på mobil mtp. marginer og detaljer
 
 - [x] Menysystem for å bytte mellom de ulike modusene (spør chatbotten om paradigmer for å bytte mellom 3)
 - [x] Lære meg utvikling fra Macbook

@@ -467,6 +467,10 @@ textarea {
     padding-left: 0;
     padding-right: 0;
     padding-top: 0;
+    display: flex;
+    flex-direction: column;
+    height: 100vh; /* Lock body height to viewport */
+    overflow: hidden; /* Prevent page scrolling, content scrolls internally */
   }
 
   /* Add padding to content containers to compensate for zero body padding */
@@ -530,6 +534,14 @@ textarea {
     height: calc(100vh - 60px - env(safe-area-inset-bottom, 0)); /* Viewport minus tab bar */
   }
 
+  /* Exception for metadata tab to allow scrolling */
+  #tab-content-metadata {
+    height: auto !important; /* Let it grow naturally */
+    overflow-y: auto !important; /* Enable scrolling */
+    min-height: 0; /* Reset */
+    flex: 1 1 auto; /* Allow growth */
+  }
+
   /* Only show the active one */
   #tab-content-start.tab-content--active,
   #tab-content-terrain.tab-content--active,
@@ -547,21 +559,28 @@ textarea {
 
   /* Layout adjustments when tabs are active */
   .registration-map-views {
-    display: block; /* Remove flex here so children don't compete */
+    display: flex; /* Ensure it flexes to fill available space */
+    flex: 1; /* Grow to fill remaining height */
+    overflow: hidden; /* Prevent scrolling within container, map handles panning */
+    flex-direction: column;
     gap: 0;
+    min-height: 0; /* Critical for flex scrolling */
   }
 
   .registration-map-views__panel {
-    flex: none;
+    flex: 1; /* Panel takes all available height of the view container */
     width: 100%;
     margin-bottom: 0;
-    min-height: calc(100vh - 180px); /* Fill most of screen */
+    height: 100%; /* Force full height */
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
   }
 
   /* Header visibility */
   .registration-map-header {
     position: relative; /* Back to relative flow, not absolute overlay */
-    flex: 0 0 auto;
+    flex: 0 0 auto; /* Don't shrink, maintain height */
     z-index: 1500;
     margin: 0;
     padding: 0.5rem;
