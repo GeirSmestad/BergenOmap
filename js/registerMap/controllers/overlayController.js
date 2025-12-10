@@ -43,6 +43,18 @@ const ensurePanZoomCanvas = (wrapperElement, overlayElement) => {
   return canvas;
 };
 
+const disableNativeDragBehavior = (imageElement) => {
+  if (!imageElement) {
+    return () => {};
+  }
+
+  imageElement.setAttribute('draggable', 'false');
+  const handleDragStart = (event) => event.preventDefault();
+  imageElement.addEventListener('dragstart', handleDragStart);
+
+  return () => imageElement.removeEventListener('dragstart', handleDragStart);
+};
+
 export function createOverlayController({ // TODO: Can rename to orienteeringMapController? Overlay isn't accurately descriptive
   coordinateStore,
   onOverlayLoaded
@@ -54,6 +66,7 @@ export function createOverlayController({ // TODO: Can rename to orienteeringMap
   }
 
   const overlayWrapper = ensureOverlayWrapper(overlayElement);
+  const cleanupDragHandler = disableNativeDragBehavior(overlayElement);
   const panZoomCanvas = ensurePanZoomCanvas(overlayWrapper, overlayElement);
   const markerLayer = ensureMarkerLayer(panZoomCanvas);
   const panZoomController = createOverlayPanZoomController({
@@ -86,7 +99,13 @@ export function createOverlayController({ // TODO: Can rename to orienteeringMap
     setSource: (src) => {
       overlayElement.src = src;
     },
-    markerManager
+    markerManager,
+    destroy: () => {
+      cleanupDragHandler();
+      panZoomController.destroy();
+      markerManager.destroy?.();
+      overlayElement.removeEventListener('load', handleOverlayLoad);
+    }
   };
 }
 
