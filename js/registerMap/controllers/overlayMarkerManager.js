@@ -5,7 +5,9 @@ const clamp = value => Math.min(1, Math.max(0, value));
 export function createOverlayMarkerManager({
   imageElement,
   markerLayerElement,
-  coordinateStore
+  coordinateStore,
+  coordinateResolver,
+  shouldIgnoreClick
 }) {
   if (!imageElement || !markerLayerElement) {
     throw new Error('Overlay marker manager requires both an image and marker layer element.');
@@ -78,9 +80,13 @@ export function createOverlayMarkerManager({
   // In order to correctly handle marker positioning when elements are re-sized, we track
   // their position in percent of their bounding client rectangle in addition to their
   // absolute positions.
-  const getCoordsAndPercentOfBoundingImageFromEvent = (event) => {
+  const resolveCoordsFromEvent = (event) => {
     if (!isImageReady()) {
       return null;
+    }
+
+    if (typeof coordinateResolver === 'function') {
+      return coordinateResolver(event);
     }
 
     const rect = imageElement.getBoundingClientRect();
@@ -137,7 +143,11 @@ export function createOverlayMarkerManager({
       return;
     }
 
-    const coords = getCoordsAndPercentOfBoundingImageFromEvent(event);
+    if (typeof shouldIgnoreClick === 'function' && shouldIgnoreClick()) {
+      return;
+    }
+
+    const coords = resolveCoordsFromEvent(event);
     if (!coords) {
       return;
     }
@@ -172,7 +182,7 @@ export function createOverlayMarkerManager({
       return;
     }
 
-    const coords = getCoordsAndPercentOfBoundingImageFromEvent(event);
+    const coords = resolveCoordsFromEvent(event);
     if (!coords || !pointerState.marker) {
       return;
     }

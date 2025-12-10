@@ -24,9 +24,11 @@ Shortlist: Auth (trengs db-endringer), mobilvennlig registrering
 
 - [ ] Zoom-mulighet i bildevisning (kun på mobil)
 - [ ] Test mobilvennlig registrering på fysisk mobil
-- [ ] Metadata-visning på mobil havner under knappene øverst; fiks det
-- [ ] Mobilvisning: Få chatbotten til å gå gjennom CSS & JS og se om det er noe som kan forenkles eller gjøres tydeligere
+- [ ] Legg inn duplikat av status-bar på Data
+- [ ] Få inn fil-lasting i status-bar, juster første melding for å forklare flyten
 
+- [x] Metadata-visning på mobil havner under knappene øverst; fiks det
+- [x] Mobilvisning: Få chatbotten til å gå gjennom CSS & JS og se om det er noe som kan forenkles eller gjøres tydeligere
 - [x] Mobilvennlig layout og funksjonalitet for kart-registrering; mobilvennlig layout & navigasjon
 - [x] Endre koordinat-visning sånn at den kun viser de tilgjengelige markørene, ikke koordinatene (highlight neste ledige markør)
 - [x] Fjerne kode som etter endringen i koordinat-visning vil være ubrukt
