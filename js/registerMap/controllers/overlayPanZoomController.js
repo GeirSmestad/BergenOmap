@@ -6,7 +6,7 @@ const midpointBetween = (a, b) => ({
 });
 
 const MIN_ZOOM = 1;
-const MAX_ZOOM = 5;
+const MAX_ZOOM = 8;
 const WHEEL_SENSITIVITY = 0.0025;
 const DRAG_THRESHOLD_PX = 4;
 
