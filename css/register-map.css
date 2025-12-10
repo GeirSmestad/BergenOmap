@@ -577,6 +577,15 @@ textarea {
     flex-direction: column;
   }
 
+  /* When metadata tab is active, collapse the map views so content starts below the header */
+  body[data-mobile-tab="metadata"] .registration-map-views {
+    display: none;
+  }
+
+  body[data-mobile-tab="metadata"] .registration-map-section {
+    flex: 0 0 auto;
+  }
+
   /* Header visibility */
   .registration-map-header {
     position: relative; /* Back to relative flow, not absolute overlay */
