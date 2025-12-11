@@ -17,13 +17,11 @@ Serves fra fx. http://127.0.0.1:8000/map.html
 
 # TODO
 
-Shortlist: Auth (trengs db-endringer), mobilvennlig registrering
+Shortlist: Auth (trengs db-endringer), legge inn flere kart
 
 ## Registrering av kart
 
-
-
-- [ ] Legg inn duplikat av status-bar på Data
+- [ ] Legg inn duplikat av status-bar på Data-tabben
 - [ ] Få inn fil-lasting i status-bar, juster første melding for å forklare flyten
 
 - [ ] På safari/ios krymper ikke markør-ikonene i bildet når man zoomer; tror det også forårsaker at pinch-zoom feiler
@@ -99,10 +97,10 @@ Shortlist: Auth (trengs db-endringer), mobilvennlig registrering
 
 ## Navigasjons-app
 
-- [ ] Zoom-innstilling som finner mobil-dimensjoner og setter zoom til å tilsvare kartets målestokk (1:7500 inntil videre)
+
 - [ ] Løp et treningsløp i skogen med appen som guide
 
-
+- [x] Zoom-innstilling som finner mobil-dimensjoner og setter zoom til å tilsvare kartets målestokk (1:7500 inntil videre)
 - [x] (0) Kartet orienteres etter retningen man holder mobilen (toggle av/på) (støttes ikke av JS-API)
 - [x] Refaktorere JS til moduler, og gi Cursor konteksten av hva vi skal gjøre med GPX og trenings-feature senere.
 - [x] (0) Vise en slags highlight i det brukeren har valgt å laste et kart, sånn at de forstår at det skjer noe i bakgrunnen
@@ -126,6 +124,7 @@ Shortlist: Auth (trengs db-endringer), mobilvennlig registrering
 
 Løse ideer: Spline-basert justering av track? 
 
+- [ ] Mer granulær zoom, for å gjøre det enklere med screenshots til Strava
 - [ ] Beregning av lat/lon "bounding box" for et GPX-track; trengs for enkelte features. Database, ved innsetting?
 - [ ] Filtrering av kart- og track-valg basert på hva som overlapper det som er valgt i den andre listen
 - [ ] Knapp for å velge flyfoto
@@ -156,10 +155,10 @@ Løse ideer: Spline-basert justering av track?
 ## Infrastruktur
 
 
-- [ ] Make eller tilsvarende system, som gjør deploy-prosessene mine og virker på både Windows og OS X
+
 - [ ] Database-nøkkel som gir versjonen av et bestemt kart, slik at jeg kan cache i nettleseren til brukeren
 
-
+- [x] Make eller tilsvarende system, som gjør deploy-prosessene mine og virker på både Windows og OS X
 - [x] På et tidspunkt vil jeg kanskje ha en indeks-primærnøkkel heller enn å bruke kartnavnet, pga. mange kart i samme område
 - [x] Deployment på EC2/Lightsail
 - [x] Scanne alle O-kartene mine som ikke er fra bedriftscup
@@ -235,6 +234,8 @@ Løse ideer: Spline-basert justering av track?
 
 ## Bugs
 
+- [ ] Det er mulig å dobbelt-trykke på knappene i kartet for å mobil-zoome. Kanskje fjerne zoom på siden generelt.
+
 - [x] Registrerings-verktøyet virker ikke på web (skyldtes krympet DB + max transfer size; fikset)
 - [x] Serveren krasjer innimellom. ChatGPT har forslag til hva jeg kan sjekke etter reboot (OOM; tror det er fikset)
 - [x] Hvis man trykker process registration flere ganger, får du nå duplikater i stedet for overskriving.
@@ -246,7 +247,7 @@ Løse ideer: Spline-basert justering av track?
 ## Langsiktige ambisjoner
 
 - [ ] Innsending av database-kart + kjente metadata til AI-modell for setting av metadata i database
-- [ ] Ifm. henting av metadata fra kart: Ekstra DB-felt for kartets målestokk
+- [ ] Ifm. henting av metadata fra kart: Ekstra DB-felt for kartets målestokk (og integrer det med auto-målestokk-knapp)
 - [ ] Maskinlærings-system for å identifisere post-posisjoner på registrerte kart og regne disse om til ekte koordinater
 
 - [ ] Strava-integrasjon med tillatelser, for å hente ut GPX-spor
@@ -295,6 +296,9 @@ Løse ideer: Spline-basert justering av track?
 
 ## Deployment - hvordan kjøre deploy av appen
 
+
+### Installere ny server fra bunnen av
+
 Opprett Lightsail-server med statisk IP. Legg til firewall-regel for å tillate port 443 (HTTPS)
 
 Sett opp SSH-config i ~\.ssh\config, med følgende innhold (og ha pem-nøkkel i samme mappe):
@@ -330,40 +334,18 @@ Se etter web-feil i logger:
   sudo tail -f /var/log/nginx/access.log
   sudo tail -f /var/log/nginx/error.log
 
-Re-deploy app når du har endret kode:
-  (kopier alle filer som er endret tli server, med SCP. Se under)
-  ssh bergenomap "sudo systemctl restart bergenomap"
 
-Hvis du ikke får rsync til å fungere, deploy filene og mappene du trenger med scp:
-  scp -i ~/.ssh/LightsailDefaultKey-eu-west-1.pem -r `
-    *.html `
-    js `
-    css `
-    backend `
-    ubuntu@54.220.213.9:/srv/bergenomap/
-  ssh bergenomap "sudo systemctl restart bergenomap"
+### Deploy av endringer i app
 
-Eller også inkludert database:
+Installer Just hvis du ikke har det:
 
-  scp -i ~/.ssh/LightsailDefaultKey-eu-west-1.pem -r `
-    *.html `
-    js `
-    css `
-    backend `
-    data `
-    ubuntu@54.220.213.9:/srv/bergenomap/
-  ssh bergenomap "sudo systemctl restart bergenomap"
+winget install --id casey.Just (Windows)
+brew install just (OS X)
 
-Eller BARE databasen:
-
-scp -i ~/.ssh/LightsailDefaultKey-eu-west-1.pem -r `
-  data/database.db `
-  ubuntu@54.220.213.9:/srv/bergenomap/data/
-ssh bergenomap "sudo systemctl restart bergenomap"
+For deploy, se Justfile for detaljer. 
+Enkel deploy er fx. "just deploy-app"
 
 
-Hvis du vil komprimere database for prod-deploy (husk backup først; den sletter originalene):
-cd C:\Source\BergenOmap\utils; python CompressDbForProductionDeploy.py --method 6 --quality 100
 
 ## Kart-kilder -- flyfoto og topografiske kart
 

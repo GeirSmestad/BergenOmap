@@ -16,7 +16,7 @@ from pathlib import Path
 
 from PIL import Image
 
-DB_PATH = Path(r"..\data\database.db")
+DB_PATH = Path("../data/database.db")
 DEFAULT_QUALITY = 90
 DEFAULT_METHOD = 0
 
