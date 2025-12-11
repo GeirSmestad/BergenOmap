@@ -142,7 +142,8 @@ textarea {
   min-width: 120px;
 }
 
-.follow-position-toggle {
+.follow-position-toggle,
+.fixed-zoom-toggle {
   min-width: unset;
   width: 44px;
   height: 44px;
@@ -150,6 +151,12 @@ textarea {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.fixed-zoom-toggle {
+  font-size: 0.65rem;
+  line-height: 1;
+  white-space: nowrap;
 }
 
 .map-selector-panel {

@@ -9,7 +9,8 @@ const defaultState = {
   hasReceivedInitialLocation: false,
   mapListSource: MAP_LIST_SOURCE.NEAR_ME,
   toggleButtons: {
-    followPosition: false
+    followPosition: false,
+    fixedZoom: false
   }
 };
 
@@ -93,9 +94,23 @@ export class MapBrowserStore {
     }, { type: 'followPosition' });
   }
 
+  setFixedZoomEnabled(isEnabled) {
+    this.update({
+      toggleButtons: {
+        ...this.state.toggleButtons,
+        fixedZoom: Boolean(isEnabled)
+      }
+    }, { type: 'fixedZoom' });
+  }
+
   toggleFollowPosition() {
     const nextValue = !this.state.toggleButtons.followPosition;
     this.setFollowPositionEnabled(nextValue);
+  }
+
+  toggleFixedZoom() {
+    const nextValue = !this.state.toggleButtons.fixedZoom;
+    this.setFixedZoomEnabled(nextValue);
   }
 }
 

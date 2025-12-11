@@ -214,5 +214,8 @@ The feature is not critical to non-mobile widths, so if required due to complexi
 
 Please add a button to map-controls for setting a fixed zoom level on the Leaflet map. Visually, it should be identical in size to the followPositionToggle and have the text "1:7500" inside it, small enough to fit.
 
-This button will toggle a mode that sets the Leaflet zoom level to a specific value, and prevents pinch-to-zoom from working on the map.
+This button will toggle a mode that sets the Leaflet zoom level to a specific value, and prevents pinch-to-zoom from working on the map. The zoom level will not be an integer number, so take this into account. The mode should be un-toggled if the user switches to display different map in the map selection list. For now, you can choose an arbitrary zoom level to set; we will introduce code to calculate it later.
 
+The zoom level to set will be set based on the screen dimensions of the device.
+
+We want zoom level to be set such that the map will physically appear on the device at an approximately 1:7500 scale to the real-world terrain it represents. Figure out a way to calculate this, explain how it will work and implement it. If the solution will be unreliable or impossible due to API limitations, don't implement anything but let me know what the problem is so we can discuss assumptions.

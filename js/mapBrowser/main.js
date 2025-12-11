@@ -7,7 +7,8 @@ import { createMapController } from './controllers/mapController.js';
 import { createLocationController } from './controllers/locationController.js';
 import { createMapSelectorPanel } from './ui/mapSelectorPanel.js';
 import { createFollowPositionButton } from './ui/followPositionButton.js';
-import { isAccuracyAcceptable } from './utils/geo.js';
+import { createFixedZoomButton } from './ui/fixedZoomButton.js';
+import { isAccuracyAcceptable, calculateZoomLevelForScale } from './utils/geo.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
   const appMenu = new AppMenu();
@@ -59,7 +60,25 @@ document.addEventListener('DOMContentLoaded', async () => {
     onToggle: handleFollowToggle
   });
 
+  createFixedZoomButton({
+    buttonElement: document.getElementById('fixedZoomToggle'),
+    store,
+    onToggle: (isEnabled) => {
+      if (isEnabled) {
+        const center = mapController.map.getCenter();
+        const zoom = calculateZoomLevelForScale(center.lat, 7500);
+        mapController.setFixedZoom(true, zoom);
+      } else {
+        mapController.setFixedZoom(false);
+      }
+    }
+  });
+
   function handleMapSelection(definition) {
+    // Untoggle fixed zoom when selecting a new map
+    store.setFixedZoomEnabled(false);
+    mapController.setFixedZoom(false);
+
     const selectedMapName = store.getState().selectedMapName;
     const userClickedSelectedMap = selectedMapName === definition.map_name;
 

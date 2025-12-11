@@ -64,6 +64,25 @@ export function createMapController({
     return currentOverlay;
   }
 
+  function setFixedZoom(isEnabled, zoomLevel) {
+    if (isEnabled) {
+      if (typeof zoomLevel === 'number') {
+        map.flyTo(map.getCenter(), zoomLevel); // Need flyTo to get non-integer zoom level
+      }
+      map.touchZoom.disable();
+      map.doubleClickZoom.disable();
+      map.scrollWheelZoom.disable();
+      map.boxZoom.disable();
+      map.keyboard.disable();
+    } else {
+      map.touchZoom.enable();
+      map.doubleClickZoom.enable();
+      map.scrollWheelZoom.enable();
+      map.boxZoom.enable();
+      map.keyboard.enable();
+    }
+  }
+
   return {
     map,
     setView: (latlng, zoom = map.getZoom()) => {
@@ -73,7 +92,8 @@ export function createMapController({
     },
     addOverlay,
     clearOverlay: removeCurrentOverlay,
-    getCurrentOverlay: () => currentOverlay
+    getCurrentOverlay: () => currentOverlay,
+    setFixedZoom
   };
 }
 
