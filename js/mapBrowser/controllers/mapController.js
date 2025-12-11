@@ -9,13 +9,14 @@ import {
 export function createMapController({
   elementId = 'mapBrowser',
   store,
-  onViewportMoved
+  onViewportMoved,
+  mapOptions = {}
 } = {}) {
   if (typeof L === 'undefined') {
     throw new Error('Leaflet is required for mapController');
   }
 
-  const map = L.map(elementId).setView(DEFAULT_MAP_CENTER, DEFAULT_MAP_ZOOM);
+  const map = L.map(elementId, mapOptions).setView(DEFAULT_MAP_CENTER, DEFAULT_MAP_ZOOM);
 
   L.tileLayer(TILE_LAYER_CONFIG.url, TILE_LAYER_CONFIG.options).addTo(map);
 

@@ -24,12 +24,12 @@ Shortlist: Auth (trengs db-endringer), legge inn flere kart
 - [ ] Legg inn duplikat av status-bar på Data-tabben
 - [ ] Få inn fil-lasting i status-bar, juster første melding for å forklare flyten
 
-- [ ] På safari/ios krymper ikke markør-ikonene i bildet når man zoomer; tror det også forårsaker at pinch-zoom feiler
+- [ ] Markør-ikonene i overlay krymper ikke når man zoomer; tror det også forårsaker at pinch-zoom feiler.
 - [ ] Ideelt sett burde klikk/press på overlay-markører gripe dem i "håndtaket", ikke mål-pikselen (vrient å treffe på mobil)
 - [ ] På safari/ios fører gestures til at bildet blir "valgt"; frys muligheten for seleksjon i JS
-- [ ] Frys mulighet til å zoome på selve siden på mobil? Det er mulig på iPhone
 - [ ] "Start"-siden sine elementer kommer side-by-side på iPhone 15 Pro
 
+- [x] Frys mulighet til å zoome på selve siden på mobil? Det er mulig på iPhone
 - [x] Test mobilvennlig registrering på fysisk mobil
 - [x] Zoom-mulighet i bildevisning (kun på mobil)
 - [x] Metadata-visning på mobil havner under knappene øverst; fiks det
@@ -124,7 +124,6 @@ Shortlist: Auth (trengs db-endringer), legge inn flere kart
 
 Løse ideer: Spline-basert justering av track? 
 
-- [ ] Mer granulær zoom, for å gjøre det enklere med screenshots til Strava
 - [ ] Beregning av lat/lon "bounding box" for et GPX-track; trengs for enkelte features. Database, ved innsetting?
 - [ ] Filtrering av kart- og track-valg basert på hva som overlapper det som er valgt i den andre listen
 - [ ] Knapp for å velge flyfoto
@@ -133,6 +132,7 @@ Løse ideer: Spline-basert justering av track?
 - [ ] Ved mouseover for å se tid: Framhev punktet på tracket brukeren studerer akkurat nå
 - [ ] Mulighet for å "spille av" løpet, og bla fram og tilbake i løpets framdrift
 - [ ] Mulighet for å visualisere hastighet med farger
+- [x] Mer granulær zoom, for å gjøre det enklere med screenshots til Strava
 - [x] Mouse-over på GPS-track for å se tid
 - [x] (0) Flytt kartvisning til sentrum av kart du velger et nytt kart (UX funker ikke pga. omstokking av kart-liste)
 - [x] (0) Flytt kartvisning til sentrum av track når du velger et nytt track

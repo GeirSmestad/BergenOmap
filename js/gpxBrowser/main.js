@@ -27,6 +27,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     elementId: 'mapBrowser',
     onViewportMoved: () => {
       mapSelectorPanel?.renderIfVisible();
+    },
+    mapOptions: {
+      zoomSnap: 0.5,
+      zoomDelta: 0.5,
+      wheelPxPerZoomLevel: 45
     }
   });
 
