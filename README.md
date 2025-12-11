@@ -22,10 +22,17 @@ Shortlist: Auth (trengs db-endringer), mobilvennlig registrering
 ## Registrering av kart
 
 
-- [ ] Test mobilvennlig registrering på fysisk mobil
+
 - [ ] Legg inn duplikat av status-bar på Data
 - [ ] Få inn fil-lasting i status-bar, juster første melding for å forklare flyten
 
+- [ ] På safari/ios krymper ikke markør-ikonene i bildet når man zoomer; tror det også forårsaker at pinch-zoom feiler
+- [ ] Ideelt sett burde klikk/press på overlay-markører gripe dem i "håndtaket", ikke mål-pikselen (vrient å treffe på mobil)
+- [ ] På safari/ios fører gestures til at bildet blir "valgt"; frys muligheten for seleksjon i JS
+- [ ] Frys mulighet til å zoome på selve siden på mobil? Det er mulig på iPhone
+- [ ] "Start"-siden sine elementer kommer side-by-side på iPhone 15 Pro
+
+- [x] Test mobilvennlig registrering på fysisk mobil
 - [x] Zoom-mulighet i bildevisning (kun på mobil)
 - [x] Metadata-visning på mobil havner under knappene øverst; fiks det
 - [x] Mobilvisning: Få chatbotten til å gå gjennom CSS & JS og se om det er noe som kan forenkles eller gjøres tydeligere
@@ -94,6 +101,7 @@ Shortlist: Auth (trengs db-endringer), mobilvennlig registrering
 
 - [ ] Kartet orienteres etter retningen man holder mobilen (toggle av/på)
 - [ ] Zoom-innstilling som finner mobil-dimensjoner og setter zoom til å tilsvare kartets målestokk (1:7500 inntil videre)
+- [ ] Løp et treningsløp i skogen med appen som guide
 
 - [x] Refaktorere JS til moduler, og gi Cursor konteksten av hva vi skal gjøre med GPX og trenings-feature senere.
 - [x] (0) Vise en slags highlight i det brukeren har valgt å laste et kart, sånn at de forstår at det skjer noe i bakgrunnen
@@ -147,6 +155,7 @@ Løse ideer: Spline-basert justering av track?
 ## Infrastruktur
 
 
+- [ ] Make eller tilsvarende system, som gjør deploy-prosessene mine og virker på både Windows og OS X
 - [ ] Database-nøkkel som gir versjonen av et bestemt kart, slik at jeg kan cache i nettleseren til brukeren
 
 
@@ -193,7 +202,7 @@ Løse ideer: Spline-basert justering av track?
 - [ ] Jeg har noen renamings-TODOer i koden; gjennomfør disse. Cursor tar dem sikkert one-shot, bare oppgi presise navn på rename.
 - [ ] Kjøre gjennom database og re-generer roterte bilder med gjennomsiktige områder på alle steder som er utenfor selve kartet
 - [ ] Cache Leaflet-filer, orienteringskart, og kart-definisjoner lokalt i appen i tilfelle brudd i nettverk (Cache Storage API?)
-- [ ] Finjuster UI for kart-registrering på mobil mtp. marginer og detaljer
+- [ ] Finjuster UI for kart-registrering på mobil mtp. marginer og andre detaljer; mye finpuss man kan gjøre
 
 - [x] Menysystem for å bytte mellom de ulike modusene (spør chatbotten om paradigmer for å bytte mellom 3)
 - [x] Lære meg utvikling fra Macbook
@@ -239,6 +248,7 @@ Løse ideer: Spline-basert justering av track?
 - [ ] Ifm. henting av metadata fra kart: Ekstra DB-felt for kartets målestokk
 - [ ] Maskinlærings-system for å identifisere post-posisjoner på registrerte kart og regne disse om til ekte koordinater
 
+- [ ] Strava-integrasjon med tillatelser, for å hente ut GPX-spor
 - [ ] Logge track på turen du har gått så langt, med usikkerhet i GPS-mottak
 
 - [ ] Kreditere kart-tegneren i grensesnittet, kanskje på placeholder-bildene før kartet lastes
