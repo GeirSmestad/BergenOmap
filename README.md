@@ -99,10 +99,11 @@ Shortlist: Auth (trengs db-endringer), mobilvennlig registrering
 
 ## Navigasjons-app
 
-- [ ] Kartet orienteres etter retningen man holder mobilen (toggle av/på)
 - [ ] Zoom-innstilling som finner mobil-dimensjoner og setter zoom til å tilsvare kartets målestokk (1:7500 inntil videre)
 - [ ] Løp et treningsløp i skogen med appen som guide
 
+
+- [x] (0) Kartet orienteres etter retningen man holder mobilen (toggle av/på) (støttes ikke av JS-API)
 - [x] Refaktorere JS til moduler, og gi Cursor konteksten av hva vi skal gjøre med GPX og trenings-feature senere.
 - [x] (0) Vise en slags highlight i det brukeren har valgt å laste et kart, sånn at de forstår at det skjer noe i bakgrunnen
 - [x] (0) Skru av live oppdatering av posisjons-visning når du simulerer posisjon, ellers spretter den tilbake

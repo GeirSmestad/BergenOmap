@@ -212,4 +212,7 @@ The feature is not critical to non-mobile widths, so if required due to complexi
 
 ## Scratchpad
 
-Remove the registerMapFromJsonButton from registerMap.html, and remove all code that references it.
+Please add a button to map-controls for setting a fixed zoom level on the Leaflet map. Visually, it should be identical in size to the followPositionToggle and have the text "1:7500" inside it, small enough to fit.
+
+This button will toggle a mode that sets the Leaflet zoom level to a specific value, and prevents pinch-to-zoom from working on the map.
+
