@@ -239,7 +239,6 @@ canvas {
 .registration-map-views__panel--overlay {
   align-self: flex-start;
   position: relative;
-  flex: 1;
   min-height: 0;
 }
 
