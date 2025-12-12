@@ -214,6 +214,12 @@ The feature is not critical to non-mobile widths, so if required due to complexi
 
 In registerMap, there seems to be a bug with marker placement and dragging on mobile device sizes, in the Overlay tab. Placing and dragging markers works fine on desktop widths. But on mobile widths, the marker will both appear quite a bit higher than the user clicked, and when dragging the marker will be moved to a position similarly higher than the mouse cursor.
 
+If dragging the marker to the top of the screen, the cursor and marker will be at the same location. But when dragging it down the screen, the marker will only move at about half the vertical rate of the mouse pointer. Note that this is relative to the top of the *image*, not the currently-zoomed view of it. When zoomed in, the marker is only at the same vertical position as the cursor if we are zoomed in on the very top of the image.
+
+Could this be a problem related to how the cursor position is translated to which vertical pixel of the image it corresponds to, maybe?
+
+The problem seems to have been introduced less than 9 commits ago. I am not certain about this and can do binary search if you want me to, but feel free to use Git history to see what changed in that interval.
+
 Are you able to figure out what is wrong based on this information? Let me know if you need to insert console.log statements; I can't reproduce it consistently.
 
 
@@ -221,4 +227,4 @@ Are you able to figure out what is wrong based on this information? Let me know 
 When zooming in the overlay view, the markers grow with the zooming. This makes controlling them difficult on mobile, as they'll eventually take up most of the screen space. A user attempting to pan the map will frequently grab the marker by accident, yielding undesired behavior. Is it easy and feasible to make the markers stay the same size / not be party to the zooming behavior? Let me know if this leads to undesirably high complexity.
 
 
-On mobile browsers, long-presses in the map overlay will sometimes activate the device's "select" behavior. Is it simple to deactivate this?
+

@@ -29,6 +29,8 @@ Shortlist: Auth (trengs db-endringer), legge inn flere kart
 - [ ] På safari/ios fører gestures til at bildet blir "valgt"; frys muligheten for seleksjon i JS
 - [ ] "Start"-siden sine elementer kommer side-by-side på iPhone 15 Pro
 
+- [ ] Det dukket opp en bug i OverlayView; markør kommer ikke der muspekeren er. Men bare i mobil-bredde.
+
 - [x] Markørene bør også være sticky; ser dem ikke når vi scroller ned på desktop
 - [x] Frys mulighet til å zoome på selve siden på mobil? Det er mulig på iPhone
 - [x] Test mobilvennlig registrering på fysisk mobil

@@ -239,6 +239,8 @@ canvas {
 .registration-map-views__panel--overlay {
   align-self: flex-start;
   position: relative;
+  flex: 1;
+  min-height: 0;
 }
 
 #registrationMapBrowser {
@@ -268,12 +270,16 @@ canvas {
   width: 100%;
   overflow: hidden;
   touch-action: none;
+  display: flex;
+  flex: 1;
+  min-height: 0;
 }
 
 .overlay-panzoom-canvas {
   position: relative;
   width: 100%;
   height: 100%;
+  flex: 1;
   transform-origin: top left;
   will-change: transform;
 }
@@ -281,7 +287,9 @@ canvas {
 .overlay-panzoom-canvas > img {
   position: relative;
   width: 100%;
+  height: 100%;
   display: block;
+  object-fit: contain;
   z-index: 1;
   -webkit-user-drag: none;
   -webkit-touch-callout: none;
