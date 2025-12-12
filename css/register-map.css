@@ -284,6 +284,16 @@ canvas {
   display: block;
   z-index: 1;
   -webkit-user-drag: none;
+  -webkit-touch-callout: none;
+  user-select: none;
+}
+
+.overlay-view-wrapper,
+.overlay-panzoom-canvas,
+.overlay-marker-layer {
+  /* Disable long-press selection/callout on overlay imagery */
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
   user-select: none;
 }
 

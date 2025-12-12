@@ -215,3 +215,10 @@ The feature is not critical to non-mobile widths, so if required due to complexi
 In registerMap, there seems to be a bug with marker placement and dragging on mobile device sizes, in the Overlay tab. Placing and dragging markers works fine on desktop widths. But on mobile widths, the marker will both appear quite a bit higher than the user clicked, and when dragging the marker will be moved to a position similarly higher than the mouse cursor.
 
 Are you able to figure out what is wrong based on this information? Let me know if you need to insert console.log statements; I can't reproduce it consistently.
+
+
+
+When zooming in the overlay view, the markers grow with the zooming. This makes controlling them difficult on mobile, as they'll eventually take up most of the screen space. A user attempting to pan the map will frequently grab the marker by accident, yielding undesired behavior. Is it easy and feasible to make the markers stay the same size / not be party to the zooming behavior? Let me know if this leads to undesirably high complexity.
+
+
+On mobile browsers, long-presses in the map overlay will sometimes activate the device's "select" behavior. Is it simple to deactivate this?
