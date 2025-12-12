@@ -479,6 +479,14 @@ textarea {
   filter: drop-shadow(0 6px 15px rgba(15, 23, 42, 0.35));
 }
 
+/* SVG drop-shadow filters often get rasterized under nested transforms (zoom + inverse-zoom).
+   Prefer crisp markers in the overlay editor (mobile usability > shadow aesthetics). */
+.overlay-panzoom-canvas .registration-marker__svg {
+  filter: none;
+  shape-rendering: geometricPrecision;
+  text-rendering: geometricPrecision;
+}
+
 .registration-marker__svg-label {
   font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
   font-weight: 700;
