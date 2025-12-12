@@ -35,6 +35,9 @@ export function createOverlayPanZoomController({
 
   const applyTransform = () => {
     canvasElement.style.transform = `matrix(${state.scale}, 0, 0, ${state.scale}, ${state.translateX}, ${state.translateY})`;
+    // Keep overlay markers a constant on-screen size by letting CSS apply an inverse scale.
+    // (Markers live inside the scaled canvas, so without this they grow/shrink with zoom.)
+    canvasElement.style.setProperty('--overlay-marker-scale', String(1 / state.scale));
   };
 
   const clampTranslation = () => {
