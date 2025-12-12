@@ -80,6 +80,7 @@ export function createOverlayController({ // TODO: Can rename to orienteeringMap
     markerLayerElement: markerLayer,
     coordinateStore,
     coordinateResolver: panZoomController.toImageCoordinates,
+    imageContentMetricsResolver: panZoomController.getImageContentMetrics,
     shouldIgnoreClick: panZoomController.shouldIgnoreClick
   });
 

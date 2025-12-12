@@ -23,14 +23,12 @@ Shortlist: Auth (trengs db-endringer), legge inn flere kart
 
 - [ ] Legg inn duplikat av status-bar på Data-tabben
 - [ ] Få inn fil-lasting i status-bar, juster første melding for å forklare flyten
-
-- [ ] Markør-ikonene i overlay krymper ikke når man zoomer; tror det også forårsaker at pinch-zoom feiler.
-- [ ] Ideelt sett burde klikk/press på overlay-markører gripe dem i "håndtaket", ikke mål-pikselen (vrient å treffe på mobil)
-- [ ] På safari/ios fører gestures til at bildet blir "valgt"; frys muligheten for seleksjon i JS
 - [ ] "Start"-siden sine elementer kommer side-by-side på iPhone 15 Pro
 
-- [ ] Det dukket opp en bug i OverlayView; markør kommer ikke der muspekeren er. Men bare i mobil-bredde.
-
+- [x] Ideelt sett burde klikk/press på overlay-markører gripe dem i "håndtaket", ikke mål-pikselen (vrient å treffe på mobil)
+- [x] På safari/ios fører gestures til at bildet blir "valgt"; frys muligheten for seleksjon i JS
+- [x] Markør-ikonene i overlay krymper ikke når man zoomer; tror det også forårsaker at pinch-zoom feiler.
+- [x] Det dukket opp en bug i OverlayView; markør kommer ikke der muspekeren er. Men bare i mobil-bredde.
 - [x] Markørene bør også være sticky; ser dem ikke når vi scroller ned på desktop
 - [x] Frys mulighet til å zoome på selve siden på mobil? Det er mulig på iPhone
 - [x] Test mobilvennlig registrering på fysisk mobil

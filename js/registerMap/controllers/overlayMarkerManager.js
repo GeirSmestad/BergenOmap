@@ -1,12 +1,14 @@
 import { buildMarkerSvgMarkup } from '../markers/markerDefinitions.js';
 
 const clamp = value => Math.min(1, Math.max(0, value));
+const MARKER_BODY_CENTER_Y_RATIO = 21 / 54; // Matches the SVG label baseline, a good proxy for "body center".
 
 export function createOverlayMarkerManager({
   imageElement,
   markerLayerElement,
   coordinateStore,
   coordinateResolver,
+  imageContentMetricsResolver,
   shouldIgnoreClick
 }) {
   if (!imageElement || !markerLayerElement) {
@@ -20,10 +22,29 @@ export function createOverlayMarkerManager({
     active: false,
     index: null,
     pointerId: null,
-    marker: null
+    marker: null,
+    dragClientOffset: { x: 0, y: 0 }
   };
 
   const isImageReady = () => Boolean(imageElement.naturalWidth && imageElement.naturalHeight);
+
+  const getImageContentMetrics = () => {
+    if (typeof imageContentMetricsResolver === 'function') {
+      return imageContentMetricsResolver();
+    }
+
+    // Fallback: assume content fills the element box.
+    const boxWidth = imageElement.clientWidth;
+    const boxHeight = imageElement.clientHeight;
+    return {
+      boxWidth: boxWidth || 0,
+      boxHeight: boxHeight || 0,
+      offsetX: 0,
+      offsetY: 0,
+      width: boxWidth || 0,
+      height: boxHeight || 0
+    };
+  };
 
   const buildMarkerElement = (index) => {
     const marker = document.createElement('div');
@@ -55,8 +76,11 @@ export function createOverlayMarkerManager({
   };
 
   const setMarkerPosition = (marker, xPercent, yPercent) => {
-    marker.style.left = `${(xPercent * 100).toFixed(4)}%`;
-    marker.style.top = `${(yPercent * 100).toFixed(4)}%`;
+    const metrics = getImageContentMetrics();
+    const x = metrics.offsetX + (xPercent * metrics.width);
+    const y = metrics.offsetY + (yPercent * metrics.height);
+    marker.style.left = `${x.toFixed(2)}px`;
+    marker.style.top = `${y.toFixed(2)}px`;
     marker.style.opacity = '1';
   };
 
@@ -171,6 +195,15 @@ export function createOverlayMarkerManager({
     }
 
     marker.setPointerCapture(event.pointerId);
+    const rect = marker.getBoundingClientRect();
+    const markerHeight = rect.height || 52;
+    // During dragging we want the pointer to sit on the marker "body", while the stored
+    // image coordinate remains the sharp tip pixel. The marker is anchored at the tip,
+    // so we translate pointer -> tip by adding a constant downward screen offset.
+    pointerState.dragClientOffset = {
+      x: 0,
+      y: markerHeight * (1 - MARKER_BODY_CENTER_Y_RATIO)
+    };
     pointerState.active = true;
     pointerState.index = index;
     pointerState.pointerId = event.pointerId;
@@ -182,7 +215,10 @@ export function createOverlayMarkerManager({
       return;
     }
 
-    const coords = resolveCoordsFromEvent(event);
+    const coords = resolveCoordsFromEvent({
+      clientX: event.clientX + (pointerState.dragClientOffset?.x ?? 0),
+      clientY: event.clientY + (pointerState.dragClientOffset?.y ?? 0)
+    });
     if (!coords || !pointerState.marker) {
       return;
     }
@@ -202,6 +238,7 @@ export function createOverlayMarkerManager({
     pointerState.index = null;
     pointerState.pointerId = null;
     pointerState.marker = null;
+    pointerState.dragClientOffset = { x: 0, y: 0 };
   };
 
   const attachMarkerEventHandlers = (marker, index) => {

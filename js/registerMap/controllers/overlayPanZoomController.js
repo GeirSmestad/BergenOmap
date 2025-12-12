@@ -208,6 +208,50 @@ export function createOverlayPanZoomController({
     skipNextClick = true;
   };
 
+  // The overlay image uses CSS object-fit: contain, meaning the actual rendered image content
+  // can be letterboxed within the element's box. We must use the *content rect* (not the
+  // element's client box) when mapping pointer coordinates to image pixels.
+  const getImageContentMetrics = () => {
+    const boxWidth = imageElement.clientWidth;
+    const boxHeight = imageElement.clientHeight;
+    const naturalWidth = imageElement.naturalWidth;
+    const naturalHeight = imageElement.naturalHeight;
+
+    if (!boxWidth || !boxHeight || !naturalWidth || !naturalHeight) {
+      return {
+        boxWidth: boxWidth || 0,
+        boxHeight: boxHeight || 0,
+        offsetX: 0,
+        offsetY: 0,
+        width: boxWidth || 0,
+        height: boxHeight || 0
+      };
+    }
+
+    const boxAspect = boxWidth / boxHeight;
+    const imageAspect = naturalWidth / naturalHeight;
+
+    // object-fit: contain => scale to fit within box, preserving aspect.
+    let width = boxWidth;
+    let height = boxHeight;
+    let offsetX = 0;
+    let offsetY = 0;
+
+    if (imageAspect > boxAspect) {
+      // Limited by width; letterbox top/bottom.
+      width = boxWidth;
+      height = boxWidth / imageAspect;
+      offsetY = (boxHeight - height) / 2;
+    } else {
+      // Limited by height; letterbox left/right.
+      height = boxHeight;
+      width = boxHeight * imageAspect;
+      offsetX = (boxWidth - width) / 2;
+    }
+
+    return { boxWidth, boxHeight, offsetX, offsetY, width, height };
+  };
+
   const toImageCoordinates = (event) => {
     if (!imageElement.naturalWidth || !imageElement.naturalHeight) {
       return null;
@@ -217,17 +261,18 @@ export function createOverlayPanZoomController({
     const pointerX = event.clientX - rect.left;
     const pointerY = event.clientY - rect.top;
 
-    const baseWidth = imageElement.clientWidth;
-    const baseHeight = imageElement.clientHeight;
-    if (!baseWidth || !baseHeight) {
+    const metrics = getImageContentMetrics();
+    if (!metrics.width || !metrics.height) {
       return null;
     }
 
-    const contentX = (pointerX - state.translateX) / state.scale;
-    const contentY = (pointerY - state.translateY) / state.scale;
+    // Convert pointer location in wrapper-space into untransformed canvas-space.
+    // Then translate into the "actual image content" space by removing letterbox offsets.
+    const contentX = ((pointerX - state.translateX) / state.scale) - metrics.offsetX;
+    const contentY = ((pointerY - state.translateY) / state.scale) - metrics.offsetY;
 
-    const xPercent = clamp(contentX / baseWidth, 0, 1);
-    const yPercent = clamp(contentY / baseHeight, 0, 1);
+    const xPercent = clamp(contentX / metrics.width, 0, 1);
+    const yPercent = clamp(contentY / metrics.height, 0, 1);
 
     return {
       xPercent,
@@ -292,6 +337,7 @@ export function createOverlayPanZoomController({
     reset,
     destroy,
     toImageCoordinates,
+    getImageContentMetrics,
     shouldIgnoreClick
   };
 }
