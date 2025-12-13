@@ -285,6 +285,8 @@ GPS-kartet allerede er på plass. Så hvis jeg har lagt inn en god registrering 
 
 ## Refaktorering
 
+- [ ] Dobbeltsjekk om alle flex-reglene i 59f7c05 var nødvendige; tror mange kan fjernes
+
 - [ ] Trekke felles kode ut i felles moduler? (Usikker på om jeg ønsker dette; greit vedlikeholdbart som det er)
 - [ ] Felles environment-config på tvers av sider? (har nå dette for registerMap, men ikke kartvisningen)
 - [ ] Refaktorere Python-kode i bedre modul-struktur
