@@ -146,7 +146,7 @@ export function createPreExistingMapController({
   const loadAvailableMaps = async () => {
     try {
       maps = await listMaps();
-      maps.sort((a, b) => (a.map_name || '').localeCompare(b.map_name || ''));
+      maps.sort((a, b) => b.map_id - a.map_id);
       renderMaps();
     } catch (error) {
       console.error('Failed to load maps:', error);
