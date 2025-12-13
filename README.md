@@ -156,9 +156,9 @@ Løse ideer: Spline-basert justering av track?
 ## Infrastruktur
 
 
-
 - [ ] Database-nøkkel som gir versjonen av et bestemt kart, slik at jeg kan cache i nettleseren til brukeren
 
+- [x] Slå sammen igjen databaser fra disk, hvor du slettet originalkartene i den ene
 - [x] Make eller tilsvarende system, som gjør deploy-prosessene mine og virker på både Windows og OS X
 - [x] På et tidspunkt vil jeg kanskje ha en indeks-primærnøkkel heller enn å bruke kartnavnet, pga. mange kart i samme område
 - [x] Deployment på EC2/Lightsail
@@ -181,7 +181,13 @@ Løse ideer: Spline-basert justering av track?
 ## Scanning og registrering av spesifikke kart
 
 - [ ] Registrere alle bedriftscup-kart fra løp jeg har deltatt i (ca. 52 totalt)
-- [ ] Registrere ett fra hvert bedriftsløp bakover i tid før jeg startet (circa 80?)
+- [x] 2025 (A)
+- [ ] 2024 (B)
+- [ ] 2023 (B)
+- [ ] 2022 (C)
+- [ ] 2021 (kun Stendskogen, N og A)
+
+- [ ] Registrere ett, gjerne A, fra hvert bedriftsløp bakover i tid før jeg startet (circa 80?)
 
 - [ ] Legg inn GPX-spor fra alle de løpene mine fra Strava
 
