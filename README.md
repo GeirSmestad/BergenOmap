@@ -26,6 +26,8 @@ Shortlist: Auth (trengs db-endringer), legge inn flere kart
 - [ ] "Start"-siden sine elementer kommer side-by-side på iPhone 15 Pro
 - [ ] Teste mer i Safari, kanskje på Mac for bedre debugging. Markør-grab og dobbelt-trykk er fortsatt dårlig på mobil
 
+- [ ] Endre auto-zoom ved valg av registrert map til en mer fornuftig verdi
+
 - [x] Filter i "or you can select an existing map" - velger, som filtrer på streng-navn
 - [x] Ideelt sett burde klikk/press på overlay-markører gripe dem i "håndtaket", ikke mål-pikselen (vrient å treffe på mobil)
 - [x] På safari/ios fører gestures til at bildet blir "valgt"; frys muligheten for seleksjon i JS
