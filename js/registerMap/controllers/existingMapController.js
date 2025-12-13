@@ -15,6 +15,7 @@ const formatMetaLine = (mapEntry) => {
 export function createPreExistingMapController({
   listElement,
   filterElement,
+  clearFilterButton,
   onMapRequested = noop
 }) {
   let maps = [];
@@ -37,8 +38,21 @@ export function createPreExistingMapController({
     });
   };
 
+  const handleClearFilter = () => {
+    if (filterElement) {
+      filterElement.value = '';
+      // Dispatch input event so the listener picks it up
+      filterElement.dispatchEvent(new Event('input', { bubbles: true }));
+      filterElement.focus();
+    }
+  };
+
   if (filterElement) {
     filterElement.addEventListener('input', handleFilterInput);
+  }
+
+  if (clearFilterButton) {
+    clearFilterButton.addEventListener('click', handleClearFilter);
   }
 
   const setActiveState = () => {
@@ -148,6 +162,9 @@ export function createPreExistingMapController({
     }
     if (filterElement) {
       filterElement.removeEventListener('input', handleFilterInput);
+    }
+    if (clearFilterButton) {
+      clearFilterButton.removeEventListener('click', handleClearFilter);
     }
   };
 

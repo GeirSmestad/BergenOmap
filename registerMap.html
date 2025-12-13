@@ -59,7 +59,10 @@
 
     <div id="preExistingMapSelector" class="card-panel" aria-live="polite">
       <p class="pre-existing-map-selector__intro">Or you can select an existing map to edit here.</p>
-      <input type="text" id="preExistingMapFilter" class="pre-existing-map-filter" placeholder="Filter maps..." aria-label="Filter maps">
+      <div class="filter-input-wrapper">
+        <input type="text" id="preExistingMapFilter" class="pre-existing-map-filter" placeholder="Filter maps..." aria-label="Filter maps">
+        <button type="button" id="clearMapFilterButton" class="clear-filter-btn" aria-label="Clear filter" title="Clear filter">&times;</button>
+      </div>
       <div id="preExistingMapList" class="pre-existing-map-list" role="listbox" aria-label="Existing maps"></div>
     </div>
   </section>

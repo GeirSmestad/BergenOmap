@@ -169,6 +169,49 @@ canvas {
   margin-bottom: 1rem;
 }
 
+/* Filter Input Styles */
+.filter-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.pre-existing-map-filter {
+  padding-right: 2.5rem; /* Make room for the button */
+}
+
+.clear-filter-btn {
+  position: absolute;
+  right: 0.5rem;
+  top: 50%;
+  transform: translateY(-50%); /* Center vertically relative to wrapper, but input has margin-top */
+  /* Input has margin-top: 0.35rem. Let's adjust top or transform to align visually */
+  margin-top: 0.175rem; /* Half of input's margin-top */
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: #8c95a3;
+  cursor: pointer;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: color 0.2s, background 0.2s;
+}
+
+.clear-filter-btn:hover {
+  color: #374151;
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.clear-filter-btn:active {
+  background: rgba(0, 0, 0, 0.1);
+}
+
 /* == Map Controls & Views ================================================ */
 
 .registration-map-section {
