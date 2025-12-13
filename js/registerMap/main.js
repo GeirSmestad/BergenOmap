@@ -166,10 +166,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     try {
-      mapViewController.map.fitBounds([nwCoords, seCoords], { padding: [40, 40] });
+      const centerLat = (nwCoords[0] + seCoords[0]) / 2;
+      const centerLon = (nwCoords[1] + seCoords[1]) / 2;
+      mapViewController.map.setView([centerLat, centerLon], 16);
     } catch (error) {
-      console.warn('Failed to fit bounds for selected map.', error);
-      mapViewController.map.setView(nwCoords);
+      console.warn('Failed to set view for selected map.', error);
+      mapViewController.map.setView(nwCoords, 16);
     }
   };
 
