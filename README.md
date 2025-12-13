@@ -187,16 +187,16 @@ Det blir lettere å registrere resten av kartene for løp jeg allerede har regis
 GPS-kartet allerede er på plass. Så hvis jeg har lagt inn en god registrering for B, blir det veldig raskt
 å også få inn A.
 
-- [ ] Registrere alle bedriftscup-kart fra løp jeg har deltatt i (ca. 52 totalt)
-- [x] Bedriftscup 2025 (A)
-- [x] Bedriftscup 2024 (B)
-- [x] Bedriftscup 2023 (B)
-- [ ] Bedriftscup 2022 (B)
-- [ ] Bedriftscup 2021 (kun Stendskogen, N og A)
-- [ ] Legge inn både A og B fra løp hvor jeg har registrert ett kart allerede
+- [x] Registrere alle bedriftscup-kart fra løyper jeg har deltatt i: 2025 (A)
+- [x] Registrere alle bedriftscup-kart fra løyper jeg har deltatt i: 2024 (B)
+- [x] Registrere alle bedriftscup-kart fra løyper jeg har deltatt i: 2023 (B)
+- [ ] Registrere alle bedriftscup-kart fra løyper jeg har deltatt i: 2022 (B)
+- [x] Registrere alle bedriftscup-kart fra løyper jeg har deltatt i: 2021 (kun Stendskogen, N og A)
 
-- [ ] Fra 2019 og tidligere er det færre A- og B-kart. Fokuser på disse når du kommer dit, unntatt på nye steder.
-- [ ] Registrere ett, gjerne A, fra hvert bedriftsløp bakover i tid før jeg startet (circa 80?)
+- [ ] Bedriftscup 2021 (B)
+- [ ] Fra 2019-2012 er det færre A- og B-kart. Fokuser på disse når du kommer dit, unntatt på nye steder.
+
+- [ ] Legge inn både A og B fra løp hvor jeg har registrert en løype allerede (gjenbruk registrering fra eksisterende løype)
 
 - [ ] Legg inn GPX-spor fra alle de løpene mine fra Strava
 
@@ -220,6 +220,7 @@ GPS-kartet allerede er på plass. Så hvis jeg har lagt inn en god registrering 
 - [ ] Cache Leaflet-filer, orienteringskart, og kart-definisjoner lokalt i appen i tilfelle brudd i nettverk (Cache Storage API?)
 - [ ] Finjuster UI for kart-registrering på mobil mtp. marginer og andre detaljer; mye finpuss man kan gjøre
 
+- [x] Renamet alle gamle bcup-registreringer i DB til navne-konvensjon med dato, område og løype
 - [x] Menysystem for å bytte mellom de ulike modusene (spør chatbotten om paradigmer for å bytte mellom 3)
 - [x] Lære meg utvikling fra Macbook
 - [x] Kart-velger og GPX-velger må leve separat for hver side, ikke være delt mellom dem
