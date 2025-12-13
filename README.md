@@ -24,7 +24,9 @@ Shortlist: Auth (trengs db-endringer), legge inn flere kart
 - [ ] Legg inn duplikat av status-bar på Data-tabben
 - [ ] Få inn fil-lasting i status-bar, juster første melding for å forklare flyten
 - [ ] "Start"-siden sine elementer kommer side-by-side på iPhone 15 Pro
+- [ ] Teste mer i Safari, kanskje på Mac for bedre debugging. Markør-grab og dobbelt-trykk er fortsatt dårlig på mobil
 
+- [x] Filter i "or you can select an existing map" - velger, som filtrer på streng-navn
 - [x] Ideelt sett burde klikk/press på overlay-markører gripe dem i "håndtaket", ikke mål-pikselen (vrient å treffe på mobil)
 - [x] På safari/ios fører gestures til at bildet blir "valgt"; frys muligheten for seleksjon i JS
 - [x] Markør-ikonene i overlay krymper ikke når man zoomer; tror det også forårsaker at pinch-zoom feiler.
@@ -125,6 +127,7 @@ Shortlist: Auth (trengs db-endringer), legge inn flere kart
 
 Løse ideer: Spline-basert justering av track? 
 
+- [ ] Bytt farge på track til rosa + halvgjennomsiktig0
 - [ ] Beregning av lat/lon "bounding box" for et GPX-track; trengs for enkelte features. Database, ved innsetting?
 - [ ] Filtrering av kart- og track-valg basert på hva som overlapper det som er valgt i den andre listen
 - [ ] Knapp for å velge flyfoto
@@ -180,13 +183,19 @@ Løse ideer: Spline-basert justering av track?
 
 ## Scanning og registrering av spesifikke kart
 
-- [ ] Registrere alle bedriftscup-kart fra løp jeg har deltatt i (ca. 52 totalt)
-- [x] 2025 (A)
-- [ ] 2024 (B)
-- [ ] 2023 (B)
-- [ ] 2022 (C)
-- [ ] 2021 (kun Stendskogen, N og A)
+Det blir lettere å registrere resten av kartene for løp jeg allerede har registrert, siden kontrollpunktene i
+GPS-kartet allerede er på plass. Så hvis jeg har lagt inn en god registrering for B, blir det veldig raskt
+å også få inn A.
 
+- [ ] Registrere alle bedriftscup-kart fra løp jeg har deltatt i (ca. 52 totalt)
+- [x] Bedriftscup 2025 (A)
+- [x] Bedriftscup 2024 (B)
+- [x] Bedriftscup 2023 (B)
+- [ ] Bedriftscup 2022 (B)
+- [ ] Bedriftscup 2021 (kun Stendskogen, N og A)
+- [ ] Legge inn både A og B fra løp hvor jeg har registrert ett kart allerede
+
+- [ ] Fra 2019 og tidligere er det færre A- og B-kart. Fokuser på disse når du kommer dit, unntatt på nye steder.
 - [ ] Registrere ett, gjerne A, fra hvert bedriftsløp bakover i tid før jeg startet (circa 80?)
 
 - [ ] Legg inn GPX-spor fra alle de løpene mine fra Strava

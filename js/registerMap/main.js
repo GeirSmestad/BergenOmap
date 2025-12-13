@@ -93,6 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   const preExistingMapListElement = document.getElementById('preExistingMapList');
+  const preExistingMapFilterElement = document.getElementById('preExistingMapFilter');
   const statusBarElement = document.getElementById('registrationStatus');
 
   const metadataFieldMappings = [
@@ -274,6 +275,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   preExistingMapController = createPreExistingMapController({
     listElement: preExistingMapListElement,
+    filterElement: preExistingMapFilterElement,
     onMapRequested: handlePreExistingMapSelection
   });
 

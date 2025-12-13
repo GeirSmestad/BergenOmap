@@ -219,3 +219,8 @@ Ideally, I'd want the cursor/finger location to be centered on the *body* of the
 See if there is a clean fix that accomplishes this. Note that it needs to work with the zoom & pan functionality that already exists. If it becomes too complex to implement, we will just skip it. This is not a critical feature, and I'm trying to manage the complexity of this feature.
 
 Just for debugging, I'd like you to paint pixels in the image that have been selected as pink, using the image pixel coordinates that will be reported to consumers. This is for visual verification that the feature works as intended.
+
+
+
+
+Great, now sort the buttons in the list on data-map-id (descending) whenever there is text in this field. (Otherwise, sort alphabetically)

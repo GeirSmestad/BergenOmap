@@ -14,6 +14,7 @@ const formatMetaLine = (mapEntry) => {
 
 export function createPreExistingMapController({
   listElement,
+  filterElement,
   onMapRequested = noop
 }) {
   let maps = [];
@@ -24,6 +25,21 @@ export function createPreExistingMapController({
       listElement.innerHTML = '';
     }
   };
+
+  const handleFilterInput = (event) => {
+    const query = event.target.value.toLowerCase();
+    const buttons = listElement.querySelectorAll('.pre-existing-map-card');
+    
+    buttons.forEach((button) => {
+      const title = button.querySelector('.pre-existing-map-card__title');
+      const shouldShow = !query || (title && title.textContent.toLowerCase().includes(query));
+      button.style.display = shouldShow ? '' : 'none';
+    });
+  };
+
+  if (filterElement) {
+    filterElement.addEventListener('input', handleFilterInput);
+  }
 
   const setActiveState = () => {
     if (!listElement) {
@@ -96,6 +112,10 @@ export function createPreExistingMapController({
     });
 
     setActiveState();
+
+    if (filterElement && filterElement.value) {
+      handleFilterInput({ target: filterElement });
+    }
   };
 
   const handleListClick = (event) => {
@@ -125,6 +145,9 @@ export function createPreExistingMapController({
   const destroy = () => {
     if (listElement) {
       listElement.removeEventListener('click', handleListClick);
+    }
+    if (filterElement) {
+      filterElement.removeEventListener('input', handleFilterInput);
     }
   };
 
