@@ -1,0 +1,113 @@
+Fra 2021 og bakover, dropper jeg alle løp som ikke har 
+en A- eller B-løype, eller er et nytt område.
+
+
+2020:
+bcup-2020-09-23-Fløyen-B
+bcup-2020-09-02-Kanadaskogen-B
+    bcup-2020-08-26-LyderhornGravdal-N
+bcup-2020-08-26-Munkebotn-B
+bcup-2020-09-30-Åstveitskogen-B
+
+
+
+
+2021:
+
+
+bcup-2021-08-25-Alvøen-B
+bcup-2021-09-29-Brann-B
+bcup-2021-06-16-Brushytten-B
+    bcup-2021-05-19-Damsgårdsfjellet-B
+bcup-2021-06-02-Haukås-B
+bcup-2021-09-08-Kanadaskogen-B
+bcup-2021-10-06-Kanadaskogen-B
+bcup-2021-09-15-Kokstad-B
+    bcup-2021-09-01-Langeskogen-B
+bcup-2021-06-09-Munkebotn-B
+    bcup-2021-08-18-Stemmemyren-A
+    bcup-2021-09-22-Stendskogen-B
+
+
+2019:
+
+
+bcup-2019-09-25-Båteviksvann-N
+    bcup-2019-06-12-Kismul-N
+bcup-2019-09-04-Langeskogen-B
+bcup-2019-10-02-Mjåtveit-N
+
+bcup-2019-05-08-Norvik-N
+
+bcup-2019-08-21-Solbakkefjell-B
+bcup-2019-06-05-Stendskogen-B
+bcup-2019-09-18-Stendskogen-B
+
+
+
+2017:
+
+(gå gjennom og se hva som er aktuelt)
+
+bcup-2017-04-19-Apeltun-B
+bcup-2017-06-07-Damsgårdsfjellet-B
+bcup-2017-10-04-Fantoft-B
+bcup-2017-05-31-Kanadaskogen-B
+bcup-2017-05-15-Kokstad-B
+    bcup-2017-06-21-Landåsfjellet-B
+bcup-2017-09-27-Langeskogen-B
+bcup-2017-05-10-Munkebotn-B
+bcup-2017-05-22-Orrtua-B
+bcup-2017-08-23-OsavatnetGullfjellet-B
+bcup-2017-06-14-Stendskogen-B
+bcup-2017-05-03-Varden-B
+
+
+
+2018:
+
+(gå gjennom og se hva som er aktuelt)
+
+bcup-2018-04-25-Alvøen-N
+bcup-2018-05-14-Dyngelandsåsen-N
+bcup-2018-09-12-Fløyen-N
+bcup-2018-05-30-Fløyen-N
+bcup-2018-05-02-Kanadaskogen-N
+bcup-2018-06-06-Kanadaskogen-N
+bcup-2018-08-29-Moldalia-N
+bcup-2018-09-19-Munkebotn-N
+bcup-2018-08-15-NHH-N
+bcup-2018-04-11-Skjold-N
+    bcup-2018-09-26-SlettebakkenFantoft-N
+bcup-2018-05-07-Smøråsen-N
+bcup-2018-09-05-Stendskogen-N
+    bcup-2018-06-20-Sædalen-N
+bcup-2018-08-22-Vardefjell-N
+bcup-2018-04-18-Varden-N
+bcup-2018-05-23-Ytrebygda-N
+
+
+Har fra før:
+
+
+
+
+
+bcup-NHH-21-A
+bcup-Øyjordsfjellet-24-A
+bcup-Smørås-24-A
+
+bcup-Bjørndalsskogen-23-A
+bcup-Brann-Stadion-23-A
+
+bcup-Haukås-23-B
+bcup-Havet-23-A
+bcup-Munkebotn-23-A
+
+bcup-Storsåta-22-A
+
+
+
+
+
+

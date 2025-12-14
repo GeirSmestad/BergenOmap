@@ -189,14 +189,16 @@ Det blir lettere å registrere resten av kartene for løp jeg allerede har regis
 GPS-kartet allerede er på plass. Så hvis jeg har lagt inn en god registrering for B, blir det veldig raskt
 å også få inn A.
 
+Grov plan: Få inn alle områder, og ett B-kart fra alle som har. Deretter A for alle områder jeg har.
+
 - [x] Registrere alle bedriftscup-kart fra løyper jeg har deltatt i: 2025 (A)
 - [x] Registrere alle bedriftscup-kart fra løyper jeg har deltatt i: 2024 (B)
 - [x] Registrere alle bedriftscup-kart fra løyper jeg har deltatt i: 2023 (B)
-- [ ] Registrere alle bedriftscup-kart fra løyper jeg har deltatt i: 2022 (B)
+- [x] Registrere alle bedriftscup-kart fra løyper jeg har deltatt i: 2022 (B)
 - [x] Registrere alle bedriftscup-kart fra løyper jeg har deltatt i: 2021 (kun Stendskogen, N og A)
 
 - [ ] Bedriftscup 2021 (B)
-- [ ] Fra 2019-2012 er det færre A- og B-kart. Fokuser på disse når du kommer dit, unntatt på nye steder.
+- [ ] Fra 2019-2012 er det færre A- og B-kart. Fokuser på disse når du kommer dit, og nye områder.
 
 - [ ] Legge inn både A og B fra løp hvor jeg har registrert en løype allerede (gjenbruk registrering fra eksisterende løype)
 
