@@ -26,8 +26,7 @@ Shortlist: Auth (trengs db-endringer), legge inn flere kart
 - [ ] "Start"-siden sine elementer kommer side-by-side på iPhone 15 Pro
 - [ ] Teste mer i Safari, kanskje på Mac for bedre debugging. Markør-grab og dobbelt-trykk er fortsatt dårlig på mobil
 
-- [ ] Endre auto-zoom ved valg av registrert map til en mer fornuftig verdi
-
+- [x] Endre auto-zoom ved valg av registrert map til en mer fornuftig verdi
 - [x] Filter i "or you can select an existing map" - velger, som filtrer på streng-navn
 - [x] Ideelt sett burde klikk/press på overlay-markører gripe dem i "håndtaket", ikke mål-pikselen (vrient å treffe på mobil)
 - [x] På safari/ios fører gestures til at bildet blir "valgt"; frys muligheten for seleksjon i JS
@@ -197,10 +196,13 @@ Grov plan: Få inn alle områder, og ett B-kart fra alle som har. Deretter A for
 - [x] Registrere alle bedriftscup-kart fra løyper jeg har deltatt i: 2022 (B)
 - [x] Registrere alle bedriftscup-kart fra løyper jeg har deltatt i: 2021 (kun Stendskogen, N og A)
 
-- [ ] Bedriftscup 2021 (B)
-- [ ] Fra 2019-2012 er det færre A- og B-kart. Fokuser på disse når du kommer dit, og nye områder.
+- [ ] Bedriftscup 2021 (8 løp) (B)
+- [x] Fra 2019-2012 er det færre A- og B-kart. Registrer kun disse og nye områder; lag oversikt i registration-work-in-progress.txt
+- [ ] 53 gjenstående bcup-kart jeg skal scanne ett B-løp fra, før jeg har fått inn ett fra alle *løp*
 
-- [ ] Legge inn både A og B fra løp hvor jeg har registrert en løype allerede (gjenbruk registrering fra eksisterende løype)
+- [ ] Løyper fra løp jeg har allerede (gjenbruk eksisterende registrering): A-løypene fra 2022-2024
+- [ ] Løyper fra løp jeg har allerede: B-løypene fra 2025
+- [ ] Løyper fra løp jeg har allerede: A-løypene fra 2012-2021 (se registration-work-in-progress.txt for fullstendig liste)
 
 - [ ] Legg inn GPX-spor fra alle de løpene mine fra Strava
 

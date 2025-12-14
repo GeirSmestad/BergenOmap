@@ -45,66 +45,78 @@ bcup-2019-09-18-Stendskogen-B
 
 
 
+2018:
+
+
+bcup-2018-09-12-Fløyen-B
+bcup-2018-05-30-Fløyen-B
+
+bcup-2018-05-14-Dyngeland-N (Godt kart av området)
+
+bcup-2018-04-11-Skjold-B (nytt, sprint)
+    bcup-2018-06-20-Sædalen-B
+    bcup-2018-09-26-SlettebakkenFantoft-B
+
+bcup-2018-09-05-Stendskogen-B
+    
+bcup-2018-08-22-Vardefjell-B (halv-nytt; Os)
+bcup-2018-04-18-Varden-B
+bcup-2018-05-23-Ytrebygda-B (Skage)
+
+
 2017:
 
-(gå gjennom og se hva som er aktuelt)
-
-bcup-2017-04-19-Apeltun-B
-bcup-2017-06-07-Damsgårdsfjellet-B
-bcup-2017-10-04-Fantoft-B
+bcup-2017-04-19-Apeltun-B (nytt, sprint)
 bcup-2017-05-31-Kanadaskogen-B
-bcup-2017-05-15-Kokstad-B
     bcup-2017-06-21-Landåsfjellet-B
 bcup-2017-09-27-Langeskogen-B
 bcup-2017-05-10-Munkebotn-B
-bcup-2017-05-22-Orrtua-B
+bcup-2017-05-22-OrrtuaBirkelandsfjell-B (nytt område!)
 bcup-2017-08-23-OsavatnetGullfjellet-B
-bcup-2017-06-14-Stendskogen-B
+(X) bcup-2017-06-14-Stendskogen-B (ikke aktuell, men har post-plasseringer for et A-løp)
 bcup-2017-05-03-Varden-B
 
 
 
-2018:
-
-(gå gjennom og se hva som er aktuelt)
-
-bcup-2018-04-25-Alvøen-N
-bcup-2018-05-14-Dyngelandsåsen-N
-bcup-2018-09-12-Fløyen-N
-bcup-2018-05-30-Fløyen-N
-bcup-2018-05-02-Kanadaskogen-N
-bcup-2018-06-06-Kanadaskogen-N
-bcup-2018-08-29-Moldalia-N
-bcup-2018-09-19-Munkebotn-N
-bcup-2018-08-15-NHH-N
-bcup-2018-04-11-Skjold-N
-    bcup-2018-09-26-SlettebakkenFantoft-N
-bcup-2018-05-07-Smøråsen-N
-bcup-2018-09-05-Stendskogen-N
-    bcup-2018-06-20-Sædalen-N
-bcup-2018-08-22-Vardefjell-N
-bcup-2018-04-18-Varden-N
-bcup-2018-05-23-Ytrebygda-N
+2016:
 
 
-Har fra før:
+bcup-2016-04-13-Fløyen-B
+bcup-2016-05-02-Kokstad-B
+bcup-2016-04-20-LyderhornKjøkkelvik-B (nytt område)
+bcup-2016-09-21-Smøråsen-B
+bcup-2016-08-24-SolbakkefjellGimmeland-B (nytt område)
+bcup-2016-09-07-Stendskogen-B
+bcup-2016-04-27-Storsåta-B
+
+2015:
 
 
+bcup-2015-04-29-Damsgårdsfjellet-B
+bcup-2015-09-02-Fløyen-B
+bcup-2015-06-10-Kanadaskogen-B
+bcup-2015-05-27-Kokstad-B
+bcup-2015-10-14-Krohnegården-B
+bcup-2015-08-19-Osterøy-B
+bcup-2015-09-16-Stendskogen-B (1:10000 av HELE stendskogen! Kan få egen status)
+
+2014:
 
 
+bcup-2014-09-24-Langeskogen-B
+bcup-2014-08-20-Stendskogen-B
 
-bcup-NHH-21-A
-bcup-Øyjordsfjellet-24-A
-bcup-Smørås-24-A
+2013:
 
-bcup-Bjørndalsskogen-23-A
-bcup-Brann-Stadion-23-A
 
-bcup-Haukås-23-B
-bcup-Havet-23-A
-bcup-Munkebotn-23-A
+bcup-2013-04-29-Stendskogen-B
 
-bcup-Storsåta-22-A
+2012:
+
+bcup-2012-06-20-Munkebotn-B
+bcup-2012-05-23-Søfteland-B (nytt område)
+
+
 
 
 
