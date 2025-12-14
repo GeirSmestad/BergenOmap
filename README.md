@@ -103,6 +103,12 @@ Shortlist: Auth (trengs db-endringer), legge inn flere kart
 
 
 - [ ] Løp et treningsløp i skogen med appen som guide
+- [ ] Linjal som viser skala
+- [ ] Teste ut kompass (vil trolig ikke virke)
+- [ ] Knapp for å skjule brukerens posisjon
+- [ ] Fjerne "nær meg" i kartvelger
+- [ ] Tekst-filter i kartvelger
+- [ ] "Gå hit"-knapp til høyre på valgt kart i kart-menyen; hopper til kartets sentrum og setter kurant zoom
 
 - [x] Zoom-innstilling som finner mobil-dimensjoner og setter zoom til å tilsvare kartets målestokk (1:7500 inntil videre)
 - [x] (0) Kartet orienteres etter retningen man holder mobilen (toggle av/på) (støttes ikke av JS-API)
@@ -218,6 +224,8 @@ Grov plan: Få inn alle områder, og ett B-kart fra alle som har. Deretter A for
 
 ## Generelle forbedringer
 
+- [ ] Rename eksisterende registreringer med navne-konvensjonen jeg har på bcup-kartene (all relevant info i kartnavn)
+
 - [ ] Autentisering, for å gjøre appen mindre tilgjengelig for Gud og hvermann. Auth med navn?
 - [ ] Landingsside for auth
 
@@ -291,6 +299,8 @@ Grov plan: Få inn alle områder, og ett B-kart fra alle som har. Deretter A for
 
 ## Refaktorering
 
+- [ ] Splitte registerMap opp i mobil og desktop-versjon
+
 - [ ] Dobbeltsjekk om alle flex-reglene i 59f7c05 var nødvendige; tror mange kan fjernes
 
 - [ ] Trekke felles kode ut i felles moduler? (Usikker på om jeg ønsker dette; greit vedlikeholdbart som det er)
@@ -310,10 +320,11 @@ Grov plan: Få inn alle områder, og ett B-kart fra alle som har. Deretter A for
 
 - [ ] Animasjon med "flash" langs outline av kart før det lastes, for å gi brukeren en indikasjon på framdriften
 - [ ] Gjøre det mulig å raskt fokusere på sentrum av valgt kart, hvis brukeren ønsker det (men vanskelig å få UXen bra)
-- [ ] Går an å lagre en "løpende" komprimert utgave av kartet ved registrering (ekstra rad), for å slippe deploy-komprimering
-- [ ] Registrere alle bedriftscup-kart som matcher registreringen fra allerede-registrerte løp, automatisk
+
 - [ ] Registrere alle gjenstående bedriftscup-kart
 
+- [x] (0) Registrere alle bedriftscup-kart som matcher registreringen fra allerede-registrerte løp, automatisk
+- [x] (0) Går an å lagre en "løpende" komprimert utgave av kartet ved registrering (ekstra rad), for å slippe deploy-komprimering
 - [x] (0) Legg til checkbox som lar deg registrere kartet til database hvis du leser inn registreringen fra JSON
 
 
