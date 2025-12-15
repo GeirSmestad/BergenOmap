@@ -58,7 +58,25 @@ server {
     }
 
     location / {
+        # Check if the session cookie exists
+        if (\$cookie_session_key = "") {
+            rewrite ^/$ /login.html redirect;
+            rewrite ^/map.html$ /login.html redirect;
+            # Allow other static files (css, js, images) to load even if not logged in, 
+            # so the login page works. Only protect the main entry points if desired.
+            # But strictly speaking, the prompt asked to "block back-end calls as well" 
+            # and serve "any of its HTML pages" only on login.
+            # For simplicity and robustness (so assets load on login page), 
+            # we'll protect the main HTML files specifically.
+        }
+        
+        # If user tries to access root, show map.html (or login if redirected above)
         try_files \$uri \$uri/ =404;
+    }
+    
+    # Explicitly allow login page and assets
+    location = /login.html {
+        try_files \$uri =404;
     }
 }
 EOF

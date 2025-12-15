@@ -9,6 +9,8 @@ import traceback
 import math
 import fitz
 import xml.etree.ElementTree as ET
+import uuid
+from datetime import datetime, timedelta
 
 # Constants
 default_border_percentage = 0.13 # Width of each side border, as percentage of longest dimension
@@ -24,6 +26,59 @@ app = Flask(__name__)
 
 # Use cross-origin resource sharing in return headers, to tell browser to allow responses from different origin
 CORS(app)
+
+@app.before_request
+def check_authentication():
+    # Allow OPTIONS requests for CORS preflight
+    if request.method == 'OPTIONS':
+        return
+        
+    # Only protect /api/ routes
+    if not request.path.startswith('/api/'):
+        return
+
+    # Whitelist login endpoint
+    if request.path == '/api/login':
+        return
+        
+    # Check if we are running locally (debug mode or localhost)
+    if is_local_request() and app.debug:
+        return
+
+    session_key = request.cookies.get('session_key')
+    
+    if not session_key:
+        return jsonify({"error": "Unauthorized"}), 401
+        
+    db = get_db()
+    try:
+        session = db.validate_session(session_key)
+        if not session:
+            return jsonify({"error": "Unauthorized"}), 401
+    except Exception:
+        # If database validation fails (e.g. table doesn't exist yet), deny access
+        return jsonify({"error": "Unauthorized"}), 401
+
+@app.route('/api/login', methods=['POST'])
+def login():
+    data = request.get_json()
+    full_name = data.get('full_name')
+    
+    if full_name != "Geir Smestad":
+        return jsonify({"error": "Invalid credentials"}), 401
+        
+    username = "geir.smestad" # Default user for now
+    session_key = str(uuid.uuid4())
+    expires_at = datetime.now() + timedelta(days=365)
+    
+    db = get_db()
+    db.ensure_user_exists(username)
+    db.create_session(username, session_key, expires_at)
+    
+    response = jsonify({"message": "Login successful"})
+    response.set_cookie('session_key', session_key, expires=expires_at, httponly=False, samesite='Lax')
+    
+    return response
 
 def add_transparent_border(image, border_size):
     # Create a new image with transparent background

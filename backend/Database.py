@@ -68,6 +68,20 @@ class Database:
         )
         '''
         self.cursor.execute(create_gps_tracks_sql)
+        self.create_sessions_table()
+
+    def create_sessions_table(self):
+        create_sessions_sql = '''
+        CREATE TABLE IF NOT EXISTS sessions (
+            session_key TEXT PRIMARY KEY,
+            username TEXT NOT NULL,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            expires_at DATETIME NOT NULL,
+            is_active BOOLEAN DEFAULT 1,
+            FOREIGN KEY (username) REFERENCES users(username)
+        )
+        '''
+        self.cursor.execute(create_sessions_sql)
 
     def ensure_user_exists(self, username):
         insert_sql = '''
@@ -140,6 +154,41 @@ class Database:
             "gpx_data": gpx_blob,
             "description": description
         }
+
+    def create_session(self, username, session_key, expires_at):
+        insert_sql = '''
+        INSERT INTO sessions (session_key, username, expires_at)
+        VALUES (?, ?, ?)
+        '''
+        self.cursor.execute(insert_sql, (session_key, username, expires_at))
+        self.connection.commit()
+
+    def validate_session(self, session_key):
+        select_sql = '''
+        SELECT username, expires_at, is_active
+        FROM sessions
+        WHERE session_key = ?
+        '''
+        self.cursor.execute(select_sql, (session_key,))
+        result = self.cursor.fetchone()
+        
+        if not result:
+            return None
+            
+        username, expires_at, is_active = result
+        
+        if not is_active:
+            return None
+            
+        return {
+            "username": username,
+            "expires_at": expires_at,
+            "is_active": is_active
+        }
+
+    def cleanup_sessions(self):
+        # Optional: Implement cleanup of expired sessions if needed
+        pass
 
     def insert_data(self, data):
         insert_sql = '''
