@@ -230,5 +230,6 @@ Is there currently any code to sort the buttons in preExistingMapSelector? I not
 
 
 
+Good job. For your information, I have made some additional adjustments to the "Sentrer kart" button (colors), the padding of the "clear searchbox" button, and a couple of other small details.
 
-Please implement the same changes for gpxBrowser.html.
+Please implement the changes that we have made in this chat, to the map browser in gpxBrowser.html. I want the exact same behavior there. Let me know if there are complications or differences I should be aware of.

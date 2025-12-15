@@ -20,7 +20,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     toggleButton: document.getElementById('mapSelectorToggle'),
     panel: document.getElementById('mapSelectorPanel'),
     list: document.getElementById('mapSelectorList'),
-    modeNearViewportInput: document.getElementById('mapSelectorModeNearViewport')
+    searchInput: document.getElementById('mapSelectorSearch'),
+    searchClearBtn: document.getElementById('mapSelectorSearchClear')
   };
 
   const mapController = createMapController({

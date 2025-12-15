@@ -233,6 +233,11 @@ export function createMapSelectorPanel({
     toggleButton?.addEventListener('click', toggleVisibility);
     
     searchInput?.addEventListener('input', handleSearchInput);
+    searchInput?.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' || e.key === 'Esc') {
+        searchInput.blur();
+      }
+    });
     searchClearBtn?.addEventListener('click', handleSearchClear);
   }
 

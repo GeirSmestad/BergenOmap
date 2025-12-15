@@ -15,11 +15,12 @@ export function createGpxMapSelectorPanel({
     toggleButton,
     panel,
     list,
-    modeNearViewportInput
+    searchInput,
+    searchClearBtn
   } = elements;
 
-  const modeNearViewportLabel = modeNearViewportInput?.closest('.map-selector-mode');
   let isVisible = false;
+  let currentSearchTerm = '';
 
   function getReferencePoint() {
     if (!map) {
@@ -35,12 +36,8 @@ export function createGpxMapSelectorPanel({
       return;
     }
 
-    const { selectedMapName } = store.getState();
-    const buttons = list.querySelectorAll('.map-selector-item');
-    buttons.forEach((button) => {
-      const isSelected = button.dataset.mapName === selectedMapName;
-      button.classList.toggle('selected', isSelected);
-    });
+    // Since we are changing structure to li.selected, we can just re-render
+    renderList();
   }
 
   function renderList() {
@@ -51,7 +48,13 @@ export function createGpxMapSelectorPanel({
     const referencePoint = getReferencePoint();
     const { mapDefinitions, selectedMapName } = store.getState();
 
-    const entries = mapDefinitions.map((definition) => {
+    // Filter
+    const filteredDefinitions = mapDefinitions.filter(def => {
+      if (!currentSearchTerm) return true;
+      return def.map_name.toLowerCase().includes(currentSearchTerm.toLowerCase());
+    });
+
+    const entries = filteredDefinitions.map((definition) => {
       const center = getMapCenterCoords(definition);
       const distance =
         referencePoint && center
@@ -60,6 +63,7 @@ export function createGpxMapSelectorPanel({
       return { definition, distance };
     });
 
+    // Sort by distance
     entries.sort((a, b) => {
       if (a.distance === null && b.distance === null) {
         return a.definition.map_name.localeCompare(b.definition.map_name);
@@ -78,19 +82,21 @@ export function createGpxMapSelectorPanel({
     if (entries.length === 0) {
       const emptyItem = document.createElement('li');
       emptyItem.className = 'map-selector-empty';
-      emptyItem.textContent = 'No map overlays available';
+      emptyItem.textContent = 'Ingen kart funnet';
       fragment.appendChild(emptyItem);
     } else {
       entries.forEach(({ definition, distance }) => {
         const listItem = document.createElement('li');
-        const button = document.createElement('button');
-        button.type = 'button';
-        button.className = 'map-selector-item';
-        button.dataset.mapName = definition.map_name;
-
+        
         if (definition.map_name === selectedMapName) {
-          button.classList.add('selected');
+          listItem.classList.add('selected');
         }
+
+        const contentBtn = document.createElement('button');
+        contentBtn.type = 'button';
+        contentBtn.className = 'map-selector-item';
+        contentBtn.dataset.mapName = definition.map_name;
+
 
         const nameEl = document.createElement('span');
         nameEl.className = 'map-selector-item__name';
@@ -100,16 +106,40 @@ export function createGpxMapSelectorPanel({
         distanceEl.className = 'map-selector-item__distance';
         distanceEl.textContent = formatDistanceLabel(distance);
 
-        button.appendChild(nameEl);
-        button.appendChild(distanceEl);
+        contentBtn.appendChild(nameEl);
+        contentBtn.appendChild(distanceEl);
 
-        button.addEventListener('click', () => {
+        contentBtn.addEventListener('click', () => {
           if (typeof onMapSelected === 'function') {
             onMapSelected(definition);
           }
         });
 
-        listItem.appendChild(button);
+        listItem.appendChild(contentBtn);
+
+        // Add center button if selected
+        if (definition.map_name === selectedMapName) {
+          const centerBtn = document.createElement('button');
+          centerBtn.type = 'button';
+          centerBtn.className = 'map-selector-item__center-btn';
+          centerBtn.ariaLabel = 'Sentrer kart';
+          centerBtn.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
+              <path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/>
+            </svg>
+          `;
+
+          centerBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const center = getMapCenterCoords(definition);
+            if (center && map) {
+              map.panTo(center);
+            }
+          });
+
+          listItem.appendChild(centerBtn);
+        }
+
         fragment.appendChild(listItem);
       });
     }
@@ -130,6 +160,10 @@ export function createGpxMapSelectorPanel({
 
     if (nextVisibility) {
       renderList();
+      // Focus search input on open
+      setTimeout(() => {
+        searchInput?.focus();
+      }, 100);
     }
 
     isVisible = nextVisibility;
@@ -159,17 +193,44 @@ export function createGpxMapSelectorPanel({
     }
   }
 
-  function updateModeUI() {
-    modeNearViewportInput.checked = true;
-    modeNearViewportLabel?.classList.add('is-active');
+  function handleSearchInput(e) {
+    currentSearchTerm = e.target.value;
+    
+    if (searchClearBtn) {
+      searchClearBtn.hidden = !currentSearchTerm;
+    }
+    
+    renderList();
   }
 
-  toggleButton?.addEventListener('click', toggleVisibility);
-  modeNearViewportInput?.addEventListener('change', () => {
-    renderIfVisible();
-  });
+  function handleSearchClear() {
+    currentSearchTerm = '';
+    if (searchInput) {
+      searchInput.value = '';
+      searchInput.focus();
+    }
+    if (searchClearBtn) {
+      searchClearBtn.hidden = true;
+    }
+    renderList();
+  }
+
+  function wireEvents() {
+    toggleButton?.addEventListener('click', toggleVisibility);
+    
+    searchInput?.addEventListener('input', handleSearchInput);
+    searchInput?.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' || e.key === 'Esc') {
+        searchInput.blur();
+      }
+    });
+    searchClearBtn?.addEventListener('click', handleSearchClear);
+  }
+
+  wireEvents();
 
   const unsubscribe = store.subscribe((state, prevState, change) => {
+    // Re-render on map definitions change or selection change
     if (change?.type === 'mapDefinitions') {
       renderIfVisible();
     }
@@ -178,8 +239,6 @@ export function createGpxMapSelectorPanel({
       highlightSelectedListItem();
     }
   });
-
-  updateModeUI();
 
   return {
     show: () => setVisibility(true),
@@ -190,7 +249,8 @@ export function createGpxMapSelectorPanel({
     destroy() {
       unsubscribe();
       toggleButton?.removeEventListener('click', toggleVisibility);
+      searchInput?.removeEventListener('input', handleSearchInput);
+      searchClearBtn?.removeEventListener('click', handleSearchClear);
     }
   };
 }
-

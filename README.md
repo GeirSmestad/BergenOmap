@@ -109,10 +109,11 @@ Shortlist: Auth (trengs db-endringer), legge inn flere kart
 
 - [ ] Slutt å hoppe til brukerens posisjon ved sidelasting; det finnes en knapp for det.
 
+
 - [x] Fjerne "nær meg" i kartvelger
 - [x] Tekst-filter i kartvelger
 - [x] "Gå hit"-knapp til høyre på valgt kart i kart-menyen; hopper til kartets sentrum og setter kurant zoom
-
+- [x] (0) Bug i kart-filtrering: Muspeker forsvinner når man skriver i søkeboksen på mobilvisning. (Windows/Firefox-bug)
 - [x] Zoom-innstilling som finner mobil-dimensjoner og setter zoom til å tilsvare kartets målestokk (1:7500 inntil videre)
 - [x] (0) Kartet orienteres etter retningen man holder mobilen (toggle av/på) (støttes ikke av JS-API)
 - [x] Refaktorere JS til moduler, og gi Cursor konteksten av hva vi skal gjøre med GPX og trenings-feature senere.
