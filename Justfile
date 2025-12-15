@@ -7,13 +7,14 @@
 # - 'scp' and 'ssh' available in PATH
 
 set shell := ["bash", "-c"]
+set windows-shell := ["powershell.exe", "-NoLogo", "-Command"]
 
 # Configuration
 server := "bergenomap"
 remote_path := "/srv/bergenomap"
 service_name := "bergenomap"
 python := if os() == "windows" { "python" } else { "python3" }
-timestamp := `date +%Y%m%d-%H%M%S`
+timestamp := if os() == "windows" { `Get-Date -Format "yyyyMMdd-HHmmss"` } else { `date +%Y%m%d-%H%M%S` }
 
 default:
     @just --list
@@ -44,7 +45,7 @@ compress-db:
     @echo "Creating backup of database..."
     cp data/database.db "data/database-{{timestamp}}.db"
     @echo "Running compression script..."
-    cd utils && {{python}} CompressDbForProductionDeploy.py --method 6 --quality 100
+    {{python}} utils/CompressDbForProductionDeploy.py --method 6 --quality 100
     @echo "Database compressed."
 
 # Download the database file from the server to a local file
@@ -56,8 +57,4 @@ fetch-db:
 # List first access time for all unique IPs that have requested a map
 logs-stats:
     @echo "Fetching unique visitor stats from {{server}}..."
-    ssh {{server}} "zgrep -h '/api/dal/mapfile/final/' /var/log/nginx/access.log* \
-    | awk '{ip=\$1; ts=\$4; gsub(/^\[/,\"\",ts); print ts, ip}' \
-    | sort \
-    | awk '{ts=\$1; ip=\$2; if(!(ip in first)){first[ip]=ts}} END{for(ip in first) print first[ip], ip}' \
-    | sort"
+    cat utils/get_visitor_stats.sh | ssh {{server}} "bash -s"
