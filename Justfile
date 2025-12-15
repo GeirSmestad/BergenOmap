@@ -48,6 +48,14 @@ compress-db:
     {{python}} utils/CompressDbForProductionDeploy.py --method 6 --quality 100
     @echo "Database compressed."
 
+# Compress my database but keep originals (compressed)
+compress-db-keep-compressed-originals:
+    @echo "Creating backup of database..."
+    cp data/database.db "data/database-{{timestamp}}.db"
+    @echo "Running compression script (keeping originals)..."
+    {{python}} utils/CompressDbForProductionDeploy.py --method 6 --quality 100 --keep-originals
+    @echo "Database compressed (originals preserved)."
+
 # Download the database file from the server to a local file
 fetch-db:
     @echo "Downloading database from {{server}}..."

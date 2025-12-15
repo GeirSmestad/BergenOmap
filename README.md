@@ -17,7 +17,7 @@ Serves fra fx. http://127.0.0.1:8000/map.html
 
 # TODO
 
-Shortlist: Auth (trengs db-endringer), legge inn flere kart
+Shortlist: Legge inn flere kart
 
 ## Registrering av kart
 
@@ -228,14 +228,13 @@ Grov plan: Få inn alle områder, og ett B-kart fra alle som har. Deretter A for
 
 - [ ] Rename eksisterende registreringer med navne-konvensjonen jeg har på bcup-kartene (all relevant info i kartnavn)
 
-- [ ] Autentisering, for å gjøre appen mindre tilgjengelig for Gud og hvermann. Auth med navn?
-- [ ] Landingsside for auth
-
 - [ ] Jeg har noen renamings-TODOer i koden; gjennomfør disse. Cursor tar dem sikkert one-shot, bare oppgi presise navn på rename.
 - [ ] Kjøre gjennom database og re-generer roterte bilder med gjennomsiktige områder på alle steder som er utenfor selve kartet
 - [ ] Cache Leaflet-filer, orienteringskart, og kart-definisjoner lokalt i appen i tilfelle brudd i nettverk (Cache Storage API?)
 - [ ] Finjuster UI for kart-registrering på mobil mtp. marginer og andre detaljer; mye finpuss man kan gjøre
 
+- [x] Autentisering, for å gjøre appen mindre tilgjengelig for Gud og hvermann. Auth med navn?
+- [x] Landingsside for auth
 - [x] Renamet alle gamle bcup-registreringer i DB til navne-konvensjon med dato, område og løype
 - [x] Menysystem for å bytte mellom de ulike modusene (spør chatbotten om paradigmer for å bytte mellom 3)
 - [x] Lære meg utvikling fra Macbook

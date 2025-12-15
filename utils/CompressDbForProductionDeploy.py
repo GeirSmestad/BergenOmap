@@ -55,33 +55,49 @@ def convert_blob_to_webp(
         return buffer.getvalue()
 
 
-def delete_originals_and_compress_finals(*, quality: int, method: int, lossless: bool):
+def compress_database(*, quality: int, method: int, lossless: bool, keep_originals: bool):
     with sqlite3.connect(DB_PATH) as conn:
-        conn.executescript(SQL_DELETE_ORIGINALS)
+        if not keep_originals:
+            conn.executescript(SQL_DELETE_ORIGINALS)
 
         rows = conn.execute(
-            "SELECT m.map_id, m.map_name, mf.mapfile_final "
+            "SELECT m.map_id, m.map_name, mf.mapfile_final, mf.mapfile_original "
             "FROM map_files mf "
             "JOIN maps m ON m.map_id = mf.map_id "
-            "WHERE mf.mapfile_final IS NOT NULL"
+            "WHERE mf.mapfile_final IS NOT NULL OR mf.mapfile_original IS NOT NULL"
         ).fetchall()
 
         converted_count = 0
-        for map_id, map_name, final_blob in rows:
-            try:
-                webp_blob = convert_blob_to_webp(
-                    final_blob, quality=quality, method=method, lossless=lossless
-                )
-            except Exception as exc:  # pragma: no cover - best effort logging
-                print(f"Skipping map_id {map_id}: {exc}")
-                continue
+        for map_id, map_name, final_blob, original_blob in rows:
+            updates = {}
+            
+            # Compress final
+            if final_blob:
+                try:
+                    updates['mapfile_final'] = convert_blob_to_webp(
+                        final_blob, quality=quality, method=method, lossless=lossless
+                    )
+                except Exception as exc:  # pragma: no cover - best effort logging
+                    print(f"Skipping map_id {map_id} final: {exc}")
 
-            conn.execute(
-                "UPDATE map_files SET mapfile_final = ? WHERE map_id = ?",
-                (webp_blob, map_id),
-            )
-            converted_count += 1
-            print(f"Converted #{converted_count}: {map_name}")
+            # Compress original if keeping and it exists
+            if keep_originals and original_blob:
+                 try:
+                    updates['mapfile_original'] = convert_blob_to_webp(
+                        original_blob, quality=quality, method=method, lossless=lossless
+                    )
+                 except Exception as exc:  # pragma: no cover - best effort logging
+                     print(f"Skipping map_id {map_id} original: {exc}")
+
+            if updates:
+                set_clause = ", ".join(f"{col} = ?" for col in updates.keys())
+                values = list(updates.values()) + [map_id]
+                conn.execute(
+                    f"UPDATE map_files SET {set_clause} WHERE map_id = ?",
+                    values
+                )
+                converted_count += 1
+                print(f"Converted #{converted_count}: {map_name}")
 
         conn.commit()
 
@@ -90,12 +106,18 @@ def delete_originals_and_compress_finals(*, quality: int, method: int, lossless:
         conn.execute("VACUUM;")
 
 
-def prompt_confirmation() -> bool:
+def prompt_confirmation(keep_originals: bool) -> bool:
     """Warn the operator since this permanently mutates every map."""
-    warning = (
-        "WARNING: this will delete all original map blobs from database.db "
-        "and convert every final map image to WEBP. Type 'y' to continue: "
-    )
+    if keep_originals:
+         warning = (
+            "WARNING: this will convert every map image (original and final) in database.db "
+            "to WEBP. Type 'y' to continue: "
+        )
+    else:
+        warning = (
+            "WARNING: this will delete all original map blobs from database.db "
+            "and convert every final map image to WEBP. Type 'y' to continue: "
+        )
     response = input(warning)
     if response.strip().lower() not in {"y", "yes"}:
         print("Aborted by user; no changes were made.")
@@ -138,6 +160,11 @@ def parse_cli_args():
         action="store_true",
         help="Enable lossless WEBP compression (quality is ignored).",
     )
+    parser.add_argument(
+        "--keep-originals",
+        action="store_true",
+        help="Compress original maps instead of deleting them.",
+    )
     return parser.parse_args()
 
 
@@ -148,9 +175,9 @@ if __name__ == "__main__":
     method = args.method if args.method is not None else DEFAULT_METHOD
 
     flags_used = (
-        args.quality is not None or args.method is not None or args.lossless
+        args.quality is not None or args.method is not None or args.lossless or args.keep_originals
     )
-    if flags_used or prompt_confirmation():
-        delete_originals_and_compress_finals(
-            quality=quality, method=method, lossless=args.lossless
+    if flags_used or prompt_confirmation(args.keep_originals):
+        compress_database(
+            quality=quality, method=method, lossless=args.lossless, keep_originals=args.keep_originals
         )
