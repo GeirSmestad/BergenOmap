@@ -224,3 +224,11 @@ Just for debugging, I'd like you to paint pixels in the image that have been sel
 
 
 Great, now sort the buttons in the list on data-map-id (descending) whenever there is text in this field. (Otherwise, sort alphabetically)
+
+
+Is there currently any code to sort the buttons in preExistingMapSelector? I notice they appear alphabetically, but maybe that's just what the SQL query gives us directly from the database.
+
+
+
+
+Please implement the same changes for gpxBrowser.html.

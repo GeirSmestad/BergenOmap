@@ -98,14 +98,15 @@ export function createMapSelectorPanel({
       entries.forEach(({ definition, distance }) => {
         const listItem = document.createElement('li');
         
+        if (definition.map_name === selectedMapName) {
+          listItem.classList.add('selected');
+        }
+
         const contentBtn = document.createElement('button');
         contentBtn.type = 'button';
         contentBtn.className = 'map-selector-item';
         contentBtn.dataset.mapName = definition.map_name;
 
-        if (definition.map_name === selectedMapName) {
-          contentBtn.classList.add('selected');
-        }
 
         const nameEl = document.createElement('span');
         nameEl.className = 'map-selector-item__name';

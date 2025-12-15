@@ -106,9 +106,10 @@ Shortlist: Auth (trengs db-endringer), legge inn flere kart
 - [ ] Linjal som viser skala
 - [ ] Teste ut kompass (vil trolig ikke virke)
 - [ ] Knapp for å skjule brukerens posisjon
-- [ ] Fjerne "nær meg" i kartvelger
-- [ ] Tekst-filter i kartvelger
-- [ ] "Gå hit"-knapp til høyre på valgt kart i kart-menyen; hopper til kartets sentrum og setter kurant zoom
+
+- [x] Fjerne "nær meg" i kartvelger
+- [x] Tekst-filter i kartvelger
+- [x] "Gå hit"-knapp til høyre på valgt kart i kart-menyen; hopper til kartets sentrum og setter kurant zoom
 
 - [x] Zoom-innstilling som finner mobil-dimensjoner og setter zoom til å tilsvare kartets målestokk (1:7500 inntil videre)
 - [x] (0) Kartet orienteres etter retningen man holder mobilen (toggle av/på) (støttes ikke av JS-API)
