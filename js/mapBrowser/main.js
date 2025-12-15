@@ -1,4 +1,4 @@
-import { API_BASE, MAP_LIST_SOURCE } from './config.js';
+import { API_BASE } from './config.js';
 import { AppMenu } from '../appMenu.js';
 import { MapBrowserStore } from './state/mapBrowserStore.js';
 import { fetchMapDefinitions } from './services/mapDataService.js';
@@ -22,8 +22,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     toggleButton: document.getElementById('mapSelectorToggle'),
     panel: document.getElementById('mapSelectorPanel'),
     list: document.getElementById('mapSelectorList'),
-    modeNearMeInput: document.getElementById('mapSelectorModeNearMe'),
-    modeNearViewportInput: document.getElementById('mapSelectorModeNearViewport')
+    searchInput: document.getElementById('mapSelectorSearch'),
+    searchClearBtn: document.getElementById('mapSelectorSearchClear')
   };
 
   let mapSelectorPanel = null;
@@ -32,9 +32,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     elementId: 'mapBrowser',
     store,
     onViewportMoved: () => {
-      if (store.getState().mapListSource === MAP_LIST_SOURCE.NEAR_VIEWPORT) {
-        mapSelectorPanel?.renderIfVisible();
-      }
+      // Re-sort the list by distance from new center
+      mapSelectorPanel?.renderIfVisible();
     }
   });
 
@@ -92,37 +91,18 @@ document.addEventListener('DOMContentLoaded', async () => {
     store.setSelectedMapName(definition.map_name);
   }
 
-  function handleMapSelectorModeChange(nextMode) {
-    const currentMode = store.getState().mapListSource;
-
-    if (currentMode === nextMode) {
-      mapSelectorPanel?.renderIfVisible();
-      mapSelectorPanel?.scrollListToTop();
-      return;
-    }
-
-    store.setMapListSource(nextMode);
-    mapSelectorPanel?.renderIfVisible();
-    mapSelectorPanel?.scrollListToTop();
-  }
-
   mapSelectorPanel = createMapSelectorPanel({
     store,
     map: mapController.map,
     elements: mapSelectorElements,
-    onMapSelected: handleMapSelection,
-    onModeChange: handleMapSelectorModeChange
+    onMapSelected: handleMapSelection
   });
-
-  mapSelectorPanel.updateModeUI();
 
   const locationController = createLocationController({
     map: mapController.map,
     store,
     onLocationUpdate: () => {
-      if (store.getState().mapListSource === MAP_LIST_SOURCE.NEAR_ME) {
-        mapSelectorPanel?.renderIfVisible();
-      }
+      // No need to re-render list on location update since we sort by viewport center
     }
   });
 
@@ -137,4 +117,3 @@ document.addEventListener('DOMContentLoaded', async () => {
     console.error('Error fetching map definitions:', error);
   }
 });
-

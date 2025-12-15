@@ -188,40 +188,53 @@ textarea {
   overflow: hidden;
 }
 
-.map-selector-mode {
+.map-selector-search {
+  flex: 1;
+  padding: 0.75rem;
+  display: flex;
   position: relative;
-  flex: 1 1 0;
+  align-items: center;
+}
+
+.map-selector-search__input {
+  width: 100%;
+  border: none;
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  padding: 0.6rem 2rem 0.6rem 0.8rem;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-family: inherit;
+  transition: background 160ms ease;
+}
+
+.map-selector-search__input:focus {
+  outline: none;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.map-selector-search__input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.map-selector-search__clear {
+  position: absolute;
+  right: 1.25rem;
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+  padding: 4px;
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
-  font-weight: 600;
-  letter-spacing: 0.01em;
-  padding: 0.85rem 0.5rem;
-  color: rgba(255, 255, 255, 0.75);
-  transition: background 160ms ease, color 160ms ease;
-  font-family: "Calibri";
+  border-radius: 50%;
+  transition: color 160ms ease, background 160ms ease;
 }
 
-.map-selector-mode:last-child {
-  border-right: none;
-}
-
-.map-selector-mode span {
-  width: 100%;
-  text-align: center;
-}
-
-.map-selector-mode input[type="radio"] {
-  position: absolute;
-  inset: 0;
-  opacity: 0;
-  pointer-events: none;
-}
-
-.map-selector-mode.is-active {
-  background: rgba(255, 255, 255, 0.18);
+.map-selector-search__clear:hover {
   color: #fff;
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .map-selector-list {
@@ -232,14 +245,20 @@ textarea {
   list-style: none;
 }
 
+.map-selector-list li {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid rgba(130, 130, 130, 0.17);
+  position: relative;
+}
+
 .map-selector-item {
-  width: 100%;
+  flex: 1;
   border: none;
   background: transparent;
   color: inherit;
   text-align: left;
   padding: 0.9rem 1.25rem;
-  border-bottom: 1px solid rgba(130, 130, 130, 0.17);
   cursor: pointer;
   display: flex;
   flex-direction: column;
@@ -261,6 +280,31 @@ textarea {
 .map-selector-item__distance {
   font-size: 0.85rem;
   color: rgba(255, 255, 255, 0.75);
+}
+
+.map-selector-item__center-btn {
+  margin-right: 1rem;
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #8e44ad;
+  color: white;
+  cursor: pointer;
+  transition: background 160ms ease, transform 120ms ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  flex-shrink: 0;
+}
+
+.map-selector-item__center-btn:hover {
+  background: #9b59b6;
+}
+
+.map-selector-item__center-btn:active {
+  transform: scale(0.95);
 }
 
 .map-selector-empty {

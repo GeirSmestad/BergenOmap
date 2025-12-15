@@ -1,5 +1,3 @@
-import { MAP_LIST_SOURCE } from '../config.js';
-
 const defaultState = {
   mapDefinitions: [],
   selectedMapName: null,
@@ -7,7 +5,6 @@ const defaultState = {
   lastKnownAccuracy: null,
   userHasInteractedWithMap: false,
   hasReceivedInitialLocation: false,
-  mapListSource: MAP_LIST_SOURCE.NEAR_ME,
   toggleButtons: {
     followPosition: false,
     fixedZoom: false
@@ -75,14 +72,6 @@ export class MapBrowserStore {
 
   setHasReceivedInitialLocation(hasReceived = true) {
     this.update({ hasReceivedInitialLocation: Boolean(hasReceived) }, { type: 'initialLocation' });
-  }
-
-  setMapListSource(source) {
-    if (!Object.values(MAP_LIST_SOURCE).includes(source)) {
-      return;
-    }
-
-    this.update({ mapListSource: source }, { type: 'mapListSource' });
   }
 
   setFollowPositionEnabled(isEnabled) {
