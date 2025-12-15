@@ -107,6 +107,8 @@ Shortlist: Auth (trengs db-endringer), legge inn flere kart
 - [ ] Teste ut kompass (vil trolig ikke virke)
 - [ ] Knapp for å skjule brukerens posisjon
 
+- [ ] Slutt å hoppe til brukerens posisjon ved sidelasting; det finnes en knapp for det.
+
 - [x] Fjerne "nær meg" i kartvelger
 - [x] Tekst-filter i kartvelger
 - [x] "Gå hit"-knapp til høyre på valgt kart i kart-menyen; hopper til kartets sentrum og setter kurant zoom
