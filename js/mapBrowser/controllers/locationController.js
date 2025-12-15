@@ -41,9 +41,6 @@ export function createLocationController({
       const state = store.getState();
 
       if (!state.hasReceivedInitialLocation) {
-        if (!state.userHasInteractedWithMap) {
-          map.setView(event.latlng, map.getZoom());
-        }
         store.setHasReceivedInitialLocation(true);
       }
 
