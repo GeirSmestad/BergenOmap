@@ -136,7 +136,7 @@ Shortlist: Legge inn flere kart
 
 Løse ideer: Spline-basert justering av track? 
 
-- [ ] Bytt farge på track til rosa + halvgjennomsiktig0
+- [ ] Bytt farge på track til rosa + halvgjennomsiktig
 - [ ] Beregning av lat/lon "bounding box" for et GPX-track; trengs for enkelte features. Database, ved innsetting?
 - [ ] Filtrering av kart- og track-valg basert på hva som overlapper det som er valgt i den andre listen
 - [ ] Knapp for å velge flyfoto
@@ -204,9 +204,9 @@ Grov plan: Få inn alle områder, og ett B-kart fra alle som har. Deretter A for
 - [x] Registrere alle bedriftscup-kart fra løyper jeg har deltatt i: 2022 (B)
 - [x] Registrere alle bedriftscup-kart fra løyper jeg har deltatt i: 2021 (kun Stendskogen, N og A)
 
-- [ ] Bedriftscup 2021 (8 løp) (B)
+- [x] Bedriftscup 2021 (8 løp) (B)
 - [x] Fra 2019-2012 er det færre A- og B-kart. Registrer kun disse og nye områder; lag oversikt i registration-work-in-progress.txt
-- [ ] 53 gjenstående bcup-kart jeg skal scanne ett B-løp fra, før jeg har fått inn ett fra alle *løp*
+- [ ] 45 gjenstående bcup-kart jeg skal scanne ett B-løp fra, før jeg har fått inn ett fra alle *løp*
 
 - [ ] Løyper fra løp jeg har allerede (gjenbruk eksisterende registrering): A-løypene fra 2022-2024
 - [ ] Løyper fra løp jeg har allerede: B-løypene fra 2025

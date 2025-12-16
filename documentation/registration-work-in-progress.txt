@@ -15,16 +15,16 @@ bcup-2020-09-30-Åstveitskogen-B
 2021:
 
 
-bcup-2021-08-25-Alvøen-B
-bcup-2021-09-29-Brann-B
-bcup-2021-06-16-Brushytten-B
+    bcup-2021-08-25-Alvøen-B
+    bcup-2021-09-29-Brann-B
+    bcup-2021-06-16-Brushytten-B
     bcup-2021-05-19-Damsgårdsfjellet-B
-bcup-2021-06-02-Haukås-B
-bcup-2021-09-08-Kanadaskogen-B
-bcup-2021-10-06-Kanadaskogen-B
-bcup-2021-09-15-Kokstad-B
+    bcup-2021-06-02-Haukås-B
+    bcup-2021-09-08-Kanadaskogen-B
+    bcup-2021-10-06-Kanadaskogen-B
+    bcup-2021-09-15-Kokstad-B
     bcup-2021-09-01-Langeskogen-B
-bcup-2021-06-09-Munkebotn-B
+    /bcup-2021-06-09-Munkebotn-B
     bcup-2021-08-18-Stemmemyren-A
     bcup-2021-09-22-Stendskogen-B
 
