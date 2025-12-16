@@ -155,7 +155,6 @@ export function createCompassControl({ map } = {}) {
       buttonEl.innerHTML = `
         <svg class="compass-control__icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
           <circle cx="12" cy="12" r="10.25" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.7"/>
-          <path d="M12 2.9l1.5 3.2h-3z" fill="currentColor" opacity="0.65"/>
           <g data-compass-needle>
             <path d="M12 4.6l2.8 7.4-2.8-1.2-2.8 1.2z" fill="#e53935"/>
             <path d="M12 19.4l-2.8-7.4 2.8 1.2 2.8-1.2z" fill="#1e88e5"/>
