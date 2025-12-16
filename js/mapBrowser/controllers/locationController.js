@@ -53,25 +53,22 @@ export function createLocationController({
       accuracyCircle.remove();
     }
 
-    const plusIcon = L.divIcon({
-      className: 'user-position-marker',
-      html: `<div style="width: 20px; height: 20px; position: relative;">
-              <div style="position: absolute; top: 9px; left: 0; right: 0; height: 2px; background-color: #ff0000;"></div>
-              <div style="position: absolute; left: 9px; top: 0; bottom: 0; width: 2px; background-color: #ff0000;"></div>
-             </div>`,
+    const markerIcon = L.divIcon({
+      className: 'user-location-marker-container',
+      html: '<div class="user-location-dot"></div>',
       iconSize: [20, 20],
       iconAnchor: [10, 10]
     });
 
-    marker = L.marker(event.latlng, { icon: plusIcon });
-
     accuracyCircle = L.circle(event.latlng, {
       radius: radius,
-      color: '#8B0000',
-      fillColor: '#8B0000',
+      color: '#2196F3',
+      fillColor: '#2196F3',
       fillOpacity: 0.2,
       weight: 1
-    });
+    }).addTo(map);
+
+    marker = L.marker(event.latlng, { icon: markerIcon }).addTo(map);
 
     updateVisibility();
 
