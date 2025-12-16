@@ -72,8 +72,9 @@ export function createCompassControl({ map } = {}) {
     const heading = getHeadingDegreesFromEvent(event);
     if (heading == null) return;
 
-    // Compass starts pointing north (0deg) and rotates with received heading.
-    const rotation = clampDegrees(heading);
+    // Rotate the needle opposite the device heading so it points towards north.
+    // Example: facing west (heading=270) => north is to the right => rotation=90.
+    const rotation = clampDegrees(360 - heading);
     scheduleNeedleRotation(rotation);
 
     if (buttonEl) {
