@@ -49,8 +49,21 @@ export function createCompassControl({ map } = {}) {
   let buttonEl = null;
   let containerEl = null;
   let rafId = null;
+  let mapOriginRafId = null;
   let pendingRotation = 0;
   let isListening = false;
+  let isCompassEnabled = false; // Toggle state (controls map rotation)
+  let lastHeading = null;
+  let mapRotationUnwrappedDeg = 0;
+
+  const rotatablePaneNames = [
+    'tilePane',
+    'overlayPane',
+    'shadowPane',
+    'markerPane',
+    'tooltipPane',
+    'popupPane'
+  ];
 
   function setNeedleRotation(rotationDegrees) {
     if (!needleEl) return;
@@ -68,18 +81,69 @@ export function createCompassControl({ map } = {}) {
     });
   }
 
+  function applyMapRotation(rotationDeg, { animate = true } = {}) {
+    const normalized = clampDegrees(rotationDeg);
+    const currentNormalized = clampDegrees(mapRotationUnwrappedDeg);
+    const delta = ((normalized - currentNormalized + 540) % 360) - 180;
+    mapRotationUnwrappedDeg += delta;
+
+    const size = map.getSize?.();
+    const mapPane = map.getPane?.('mapPane');
+    const mapPanePos = mapPane ? L.DomUtil.getPosition(mapPane) : null;
+    const originX = (size?.x ?? 0) / 2 - (mapPanePos?.x ?? 0);
+    const originY = (size?.y ?? 0) / 2 - (mapPanePos?.y ?? 0);
+    const origin = `${originX}px ${originY}px`;
+
+    for (const paneName of rotatablePaneNames) {
+      const pane = map.getPane(paneName);
+      if (!pane) continue;
+
+      // Rotate around the *viewport center*, not the pane's bounding box.
+      // We account for Leaflet's current pan transform (mapPane position).
+      pane.style.transformOrigin = origin;
+      pane.style.willChange = 'transform';
+      pane.style.transition = animate ? 'transform 140ms linear' : '';
+      pane.style.transform = `rotate(${mapRotationUnwrappedDeg}deg)`;
+    }
+  }
+
+  function resetMapRotation({ animate = true } = {}) {
+    applyMapRotation(0, { animate });
+  }
+
+  function handleMapViewChangeForRotationOrigin() {
+    if (!isCompassEnabled) return;
+    if (mapOriginRafId) return;
+    mapOriginRafId = globalThis.requestAnimationFrame(() => {
+      mapOriginRafId = null;
+      applyMapRotation(clampDegrees(mapRotationUnwrappedDeg), { animate: false });
+    });
+  }
+
+  function syncToggleUI() {
+    if (!buttonEl) return;
+    buttonEl.classList.toggle('is-active', isCompassEnabled);
+    buttonEl.setAttribute('aria-pressed', isCompassEnabled ? 'true' : 'false');
+  }
+
   function handleOrientation(event) {
-    const heading = getHeadingDegreesFromEvent(event);
-    if (heading == null) return;
+    const rawHeading = getHeadingDegreesFromEvent(event);
+    if (rawHeading == null) return;
+    lastHeading = rawHeading;
 
     // Rotate the needle opposite the device heading so it points towards north.
     // Example: facing west (heading=270) => north is to the right => rotation=90.
-    const rotation = clampDegrees(360 - heading);
+    const rotation = clampDegrees(360 - rawHeading);
     scheduleNeedleRotation(rotation);
 
     if (buttonEl) {
-      buttonEl.classList.add('is-active');
       buttonEl.dataset.compassState = 'receiving';
+    }
+
+    // When toggled on: rotate the map so its north points towards magnetic north.
+    // (We assume magnetic and geographic north are identical for now.)
+    if (isCompassEnabled) {
+      applyMapRotation(rotation, { animate: true });
     }
   }
 
@@ -102,10 +166,7 @@ export function createCompassControl({ map } = {}) {
     isListening = false;
     globalThis.removeEventListener('deviceorientationabsolute', handleOrientation, true);
     globalThis.removeEventListener('deviceorientation', handleOrientation, true);
-    if (buttonEl) {
-      buttonEl.classList.remove('is-active');
-      buttonEl.dataset.compassState = 'stopped';
-    }
+    if (buttonEl) buttonEl.dataset.compassState = 'stopped';
   }
 
   async function requestPermissionIfNeeded() {
@@ -125,6 +186,20 @@ export function createCompassControl({ map } = {}) {
     }
 
     try {
+      // Toggle is always allowed. Listening (permission) is handled separately.
+      isCompassEnabled = !isCompassEnabled;
+      syncToggleUI();
+
+      if (!isCompassEnabled) {
+        // Toggled off => reset to north-up.
+        resetMapRotation({ animate: true });
+      } else if (lastHeading != null) {
+        // Toggled on => immediately apply last known rotation.
+        applyMapRotation(clampDegrees(360 - lastHeading), { animate: true });
+      }
+
+      // Important: once sensor permission is granted, we keep listening even if toggled off
+      // so the compass needle continues spinning.
       if (isListening) return;
 
       const granted = await requestPermissionIfNeeded();
@@ -146,6 +221,7 @@ export function createCompassControl({ map } = {}) {
       buttonEl = L.DomUtil.create('button', 'map-control-button compass-control__button', containerEl);
       buttonEl.type = 'button';
       buttonEl.setAttribute('aria-label', 'Kompass');
+      buttonEl.setAttribute('aria-pressed', 'false');
       buttonEl.dataset.compassState = 'idle';
 
       // Keep the control from interfering with map gestures.
@@ -165,6 +241,7 @@ export function createCompassControl({ map } = {}) {
 
       needleEl = buttonEl.querySelector('[data-compass-needle]');
       setNeedleRotation(0);
+      syncToggleUI();
 
       buttonEl.addEventListener('click', handleClick);
 
@@ -180,10 +257,24 @@ export function createCompassControl({ map } = {}) {
         buttonEl.dataset.compassState = isProbablySecureContext() ? 'needs-permission' : 'insecure';
       }
 
+      // Keep rotation pivot correct while panning/zooming/resizing.
+      // This doesn't change the rotation angle; it only updates the transform-origin.
+      map.on('move', handleMapViewChangeForRotationOrigin);
+      map.on('zoom', handleMapViewChangeForRotationOrigin);
+      map.on('resize', handleMapViewChangeForRotationOrigin);
+
       return containerEl;
     },
     onRemove() {
       stopListening();
+      resetMapRotation({ animate: false });
+      map.off('move', handleMapViewChangeForRotationOrigin);
+      map.off('zoom', handleMapViewChangeForRotationOrigin);
+      map.off('resize', handleMapViewChangeForRotationOrigin);
+      if (mapOriginRafId) {
+        globalThis.cancelAnimationFrame(mapOriginRafId);
+        mapOriginRafId = null;
+      }
       if (rafId) {
         globalThis.cancelAnimationFrame(rafId);
         rafId = null;

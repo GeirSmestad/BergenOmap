@@ -104,8 +104,9 @@ Shortlist: Legge inn flere kart
 
 - [ ] Løp et treningsløp i skogen med appen som guide
 - [ ] Linjal som viser skala
-- [ ] Teste ut kompass (vil trolig ikke virke)
+- [ ] Kompass: Roter kartet mot geografisk nord med lookup-tabell e.l.; dette gir også korrekt rotasjon for registrerte kart
 
+- [x] Teste ut kompass (vil trolig ikke virke)
 - [x] Knapp for å skjule brukerens posisjon
 - [x] Bedre styling på posisjons-visning
 - [x] Slutt å hoppe til brukerens posisjon ved sidelasting; det finnes en knapp for det.
@@ -269,6 +270,7 @@ Grov plan: Få inn alle områder, og ett B-kart fra alle som har. Deretter A for
 
 ## Bugs
 
+- [ ] Kompass-rotasjon "hakker" når man roterer fort. Interaksjon med leaflet, eller støyete data? Rotere kun en gang i sekundet, fx?
 - [x] Det er mulig å dobbelt-trykke på knappene i kartet for å mobil-zoome. Kanskje fjerne zoom på siden generelt.
 - [x] Registrerings-verktøyet virker ikke på web (skyldtes krympet DB + max transfer size; fikset)
 - [x] Serveren krasjer innimellom. ChatGPT har forslag til hva jeg kan sjekke etter reboot (OOM; tror det er fikset)
