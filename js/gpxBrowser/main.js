@@ -203,14 +203,14 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   // Expose instances for debugging
-  window.appMenu = appMenu;
-  window.store = store;
-  window.mapController = mapController;
-  window.trackRenderer = trackRenderer;
-  window.mapSelectorPanel = mapSelectorPanel;
-  window.gpxListPanel = gpxListPanel;
-  window.uploadDialog = uploadDialog;
-  window.timePanel = timePanel;
+  window.d_appMenu = appMenu;
+  window.d_store = store;
+  window.d_mapController = mapController;
+  window.d_trackRenderer = trackRenderer;
+  window.d_mapSelectorPanel = mapSelectorPanel;
+  window.d_gpxListPanel = gpxListPanel;
+  window.d_uploadDialog = uploadDialog;
+  window.d_timePanel = timePanel;
 });
 
 function createTrackTimePanel() {

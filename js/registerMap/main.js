@@ -316,12 +316,12 @@ document.addEventListener('DOMContentLoaded', () => {
   preExistingMapController.loadAvailableMaps();
 
   // Expose instances for debugging
-  window.coordinateStore = coordinateStore;
-  window.registrationStore = registrationStore;
-  window.mobileTabs = mobileTabs;
-  window.mapViewController = mapViewController;
-  window.overlayController = overlayController;
-  window.previewController = previewController;
-  window.preExistingMapController = preExistingMapController;
+  window.d_coordinateStore = coordinateStore;
+  window.d_registrationStore = registrationStore;
+  window.d_mobileTabs = mobileTabs;
+  window.d_mapViewController = mapViewController;
+  window.d_overlayController = overlayController;
+  window.d_previewController = previewController;
+  window.d_preExistingMapController = preExistingMapController;
 });
 

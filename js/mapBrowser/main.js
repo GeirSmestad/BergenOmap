@@ -124,10 +124,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   // Expose instances for debugging
-  window.appMenu = appMenu;
-  window.store = store;
-  window.wakeLockService = wakeLockService;
-  window.mapController = mapController;
-  window.mapSelectorPanel = mapSelectorPanel;
-  window.locationController = locationController;
+  window.d_appMenu = appMenu;
+  window.d_store = store;
+  window.d_wakeLockService = wakeLockService;
+  window.d_mapController = mapController;
+  window.d_mapSelectorPanel = mapSelectorPanel;
+  window.d_locationController = locationController;
 });
