@@ -314,5 +314,14 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   preExistingMapController.loadAvailableMaps();
+
+  // Expose instances for debugging
+  window.coordinateStore = coordinateStore;
+  window.registrationStore = registrationStore;
+  window.mobileTabs = mobileTabs;
+  window.mapViewController = mapViewController;
+  window.overlayController = overlayController;
+  window.previewController = previewController;
+  window.preExistingMapController = preExistingMapController;
 });
 

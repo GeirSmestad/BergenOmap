@@ -201,6 +201,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     console.error('Failed to load GPX tracks', error);
     gpxListPanel.showError('Kunne ikke laste GPS-spor');
   }
+
+  // Expose instances for debugging
+  window.appMenu = appMenu;
+  window.store = store;
+  window.mapController = mapController;
+  window.trackRenderer = trackRenderer;
+  window.mapSelectorPanel = mapSelectorPanel;
+  window.gpxListPanel = gpxListPanel;
+  window.uploadDialog = uploadDialog;
+  window.timePanel = timePanel;
 });
 
 function createTrackTimePanel() {

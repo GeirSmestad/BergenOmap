@@ -122,4 +122,12 @@ document.addEventListener('DOMContentLoaded', async () => {
   } catch (error) {
     console.error('Error fetching map definitions:', error);
   }
+
+  // Expose instances for debugging
+  window.appMenu = appMenu;
+  window.store = store;
+  window.wakeLockService = wakeLockService;
+  window.mapController = mapController;
+  window.mapSelectorPanel = mapSelectorPanel;
+  window.locationController = locationController;
 });
