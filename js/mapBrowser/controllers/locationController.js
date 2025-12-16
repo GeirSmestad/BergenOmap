@@ -55,12 +55,12 @@ export function createLocationController({
 
     const plusIcon = L.divIcon({
       className: 'user-position-marker',
-      html: `<div style="width: 10px; height: 10px; position: relative;">
-              <div style="position: absolute; top: 4px; left: 0; right: 0; height: 2px; background-color: #ff0000;"></div>
-              <div style="position: absolute; left: 4px; top: 0; bottom: 0; width: 2px; background-color: #ff0000;"></div>
+      html: `<div style="width: 20px; height: 20px; position: relative;">
+              <div style="position: absolute; top: 9px; left: 0; right: 0; height: 2px; background-color: #ff0000;"></div>
+              <div style="position: absolute; left: 9px; top: 0; bottom: 0; width: 2px; background-color: #ff0000;"></div>
              </div>`,
-      iconSize: [10, 10],
-      iconAnchor: [5, 5]
+      iconSize: [20, 20],
+      iconAnchor: [10, 10]
     });
 
     marker = L.marker(event.latlng, { icon: plusIcon });

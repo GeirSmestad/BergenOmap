@@ -105,8 +105,9 @@ Shortlist: Legge inn flere kart
 - [ ] Løp et treningsløp i skogen med appen som guide
 - [ ] Linjal som viser skala
 - [ ] Teste ut kompass (vil trolig ikke virke)
-- [ ] Knapp for å skjule brukerens posisjon
 
+- [x] Knapp for å skjule brukerens posisjon
+- [x] Bedre styling på posisjons-visning
 - [x] Slutt å hoppe til brukerens posisjon ved sidelasting; det finnes en knapp for det.
 - [x] Fjerne "nær meg" i kartvelger
 - [x] Tekst-filter i kartvelger
