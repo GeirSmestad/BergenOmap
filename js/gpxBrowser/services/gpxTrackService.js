@@ -1,4 +1,5 @@
 import { API_BASE } from '../../mapBrowser/config.js';
+import { redirectToLoginOnExpiredSession } from '../../utils/apiUtils.js';
 
 export async function fetchUserTracks(baseUrl = API_BASE, username) {
   if (!username) {
@@ -15,6 +16,7 @@ export async function fetchUserTracks(baseUrl = API_BASE, username) {
   });
 
   if (!response.ok) {
+    redirectToLoginOnExpiredSession(response);
     throw new Error(`Failed to fetch GPX tracks: ${response.status} ${response.statusText}`);
   }
 
@@ -40,6 +42,7 @@ export async function fetchTrackDetail(baseUrl = API_BASE, username, trackId) {
   });
 
   if (!response.ok) {
+    redirectToLoginOnExpiredSession(response);
     throw new Error(`Failed to fetch GPX track ${trackId}: ${response.status} ${response.statusText}`);
   }
 
@@ -66,6 +69,7 @@ export async function uploadTrack(baseUrl = API_BASE, username, description, fil
   });
 
   if (!response.ok) {
+    redirectToLoginOnExpiredSession(response);
     const message = await safeReadError(response);
     throw new Error(message || `Opplasting feilet: ${response.status}`);
   }
@@ -81,4 +85,3 @@ async function safeReadError(response) {
     return null;
   }
 }
-

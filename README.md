@@ -234,6 +234,7 @@ Grov plan: Få inn alle områder, og ett B-kart fra alle som har. Deretter A for
 - [ ] Cache Leaflet-filer, orienteringskart, og kart-definisjoner lokalt i appen i tilfelle brudd i nettverk (Cache Storage API?)
 - [ ] Finjuster UI for kart-registrering på mobil mtp. marginer og andre detaljer; mye finpuss man kan gjøre
 
+- [x] Redirect til login hvis API returnerer feilkode som indikerer manglende login
 - [x] Autentisering, for å gjøre appen mindre tilgjengelig for Gud og hvermann. Auth med navn?
 - [x] Landingsside for auth
 - [x] Renamet alle gamle bcup-registreringer i DB til navne-konvensjon med dato, område og løype

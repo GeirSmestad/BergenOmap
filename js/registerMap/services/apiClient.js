@@ -1,4 +1,5 @@
 import { API_BASE } from '../config.js';
+import { redirectToLoginOnExpiredSession } from '../../utils/apiUtils.js';
 
 const JSON_HEADERS = {
   'Content-Type': 'application/json'
@@ -8,6 +9,7 @@ async function getJson(path) {
   const response = await fetch(`${API_BASE}${path}`);
 
   if (!response.ok) {
+    redirectToLoginOnExpiredSession(response);
     throw new Error(`Request to ${path} failed with status ${response.status}`);
   }
 
@@ -18,6 +20,7 @@ async function getBlob(path) {
   const response = await fetch(`${API_BASE}${path}`);
 
   if (!response.ok) {
+    redirectToLoginOnExpiredSession(response);
     throw new Error(`Request to ${path} failed with status ${response.status}`);
   }
 
@@ -32,6 +35,7 @@ async function postJson(path, payload) {
   });
 
   if (!response.ok) {
+    redirectToLoginOnExpiredSession(response);
     throw new Error(`Request to ${path} failed with status ${response.status}`);
   }
 
@@ -45,6 +49,7 @@ async function postForm(path, formData) {
   });
 
   if (!response.ok) {
+    redirectToLoginOnExpiredSession(response);
     throw new Error(`Request to ${path} failed with status ${response.status}`);
   }
 
@@ -90,4 +95,3 @@ export function fetchOriginalMapFile(mapName) {
 export function fetchFinalMapFile(mapName) {
   return getBlob(`/api/dal/mapfile/final/${encodeMapName(mapName)}`);
 }
-
