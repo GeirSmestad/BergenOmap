@@ -7,6 +7,7 @@ import { createMapController } from './controllers/mapController.js';
 import { createLocationController } from './controllers/locationController.js';
 import { createMapSelectorPanel } from './ui/mapSelectorPanel.js';
 import { createFollowPositionButton } from './ui/followPositionButton.js';
+import { createShowPositionButton } from './ui/showPositionButton.js';
 import { createFixedZoomButton } from './ui/fixedZoomButton.js';
 import { isAccuracyAcceptable, calculateZoomLevelForScale } from './utils/geo.js';
 
@@ -57,6 +58,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     buttonElement: document.getElementById('followPositionToggle'),
     store,
     onToggle: handleFollowToggle
+  });
+
+  createShowPositionButton({
+    buttonElement: document.getElementById('showPositionToggle'),
+    store
   });
 
   createFixedZoomButton({

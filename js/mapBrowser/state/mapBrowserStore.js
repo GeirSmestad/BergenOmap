@@ -7,7 +7,8 @@ const defaultState = {
   hasReceivedInitialLocation: false,
   toggleButtons: {
     followPosition: false,
-    fixedZoom: false
+    fixedZoom: false,
+    showPosition: true
   }
 };
 
@@ -81,6 +82,15 @@ export class MapBrowserStore {
         followPosition: Boolean(isEnabled)
       }
     }, { type: 'followPosition' });
+  }
+
+  setShowPositionEnabled(isEnabled) {
+    this.update({
+      toggleButtons: {
+        ...this.state.toggleButtons,
+        showPosition: Boolean(isEnabled)
+      }
+    }, { type: 'showPosition' });
   }
 
   setFixedZoomEnabled(isEnabled) {
