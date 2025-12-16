@@ -9,6 +9,7 @@ import { createMapSelectorPanel } from './ui/mapSelectorPanel.js';
 import { createFollowPositionButton } from './ui/followPositionButton.js';
 import { createShowPositionButton } from './ui/showPositionButton.js';
 import { createFixedZoomButton } from './ui/fixedZoomButton.js';
+import { createCompassControl } from './ui/compassControl.js';
 import { isAccuracyAcceptable, calculateZoomLevelForScale } from './utils/geo.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -39,6 +40,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   window.map = mapController.map;
+  createCompassControl({ map: mapController.map });
 
   function handleFollowToggle(isEnabled) {
     if (!isEnabled) {

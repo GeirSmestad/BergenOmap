@@ -154,6 +154,36 @@ textarea {
   justify-content: center;
 }
 
+.compass-control__button {
+  min-width: unset;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.leaflet-bottom.leaflet-right .compass-control {
+  margin-bottom: calc(10px + env(safe-area-inset-bottom, 0px));
+  margin-right: calc(10px + env(safe-area-inset-right, 0px));
+}
+
+.compass-control__icon {
+  width: 24px;
+  height: 24px;
+}
+
+.compass-control__button[data-compass-state="insecure"],
+.compass-control__button[data-compass-state="denied"],
+.compass-control__button[data-compass-state="error"] {
+  opacity: 0.6;
+}
+
+.compass-control__button[data-compass-state="insecure"] {
+  cursor: not-allowed;
+}
+
 .fixed-zoom-toggle {
   font-size: 0.65rem;
   line-height: 1;
