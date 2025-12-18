@@ -3,11 +3,11 @@ en A- eller B-løype, eller er et nytt område.
 
 
 2020:
-bcup-2020-09-23-Fløyen-B
-bcup-2020-09-02-Kanadaskogen-B
+    bcup-2020-09-23-Fløyen-B
+    bcup-2020-09-02-Kanadaskogen-B
     bcup-2020-08-26-LyderhornGravdal-N
-bcup-2020-08-26-Munkebotn-B
-bcup-2020-09-30-Åstveitskogen-B
+    bcup-2020-08-26-Munkebotn-B
+    bcup-2020-09-30-Åstveitskogen-B
 
 
 
@@ -32,14 +32,14 @@ bcup-2020-09-30-Åstveitskogen-B
 2019:
 
 
-bcup-2019-09-25-Båteviksvann-N
+    bcup-2019-09-25-Båteviksvann-N
     bcup-2019-06-12-Kismul-N
-bcup-2019-09-04-Langeskogen-B
+    bcup-2019-09-04-Langeskogen-B
 bcup-2019-10-02-Mjåtveit-N
 
 bcup-2019-05-08-Norvik-N
 
-bcup-2019-08-21-Solbakkefjell-B
+    bcup-2019-08-21-Solbakkefjell-N
 bcup-2019-06-05-Stendskogen-B
 bcup-2019-09-18-Stendskogen-B
 

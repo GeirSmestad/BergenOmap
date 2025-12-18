@@ -26,6 +26,7 @@ Shortlist: Legge inn flere kart
 - [ ] "Start"-siden sine elementer kommer side-by-side på iPhone 15 Pro
 - [ ] Teste mer i Safari, kanskje på Mac for bedre debugging. Markør-grab og dobbelt-trykk er fortsatt dårlig på mobil
 
+- [x] Shit. Innlesningen av PDF-er er med for lav DPI. Betyr at alle bcup-kartene er lav oppløsning. Finn ut av dette.
 - [x] Endre auto-zoom ved valg av registrert map til en mer fornuftig verdi
 - [x] Filter i "or you can select an existing map" - velger, som filtrer på streng-navn
 - [x] Ideelt sett burde klikk/press på overlay-markører gripe dem i "håndtaket", ikke mål-pikselen (vrient å treffe på mobil)
@@ -102,10 +103,9 @@ Shortlist: Legge inn flere kart
 ## Navigasjons-app
 
 
-- [ ] Løp et treningsløp i skogen med appen som guide
 - [ ] Linjal som viser skala
-- [ ] Kompass: Roter kartet mot geografisk nord med lookup-tabell e.l.; dette gir også korrekt rotasjon for registrerte kart
 
+- [x] Løp et treningsløp i skogen med appen som guide (det funket som et oljet uvær)
 - [x] Teste ut kompass (vil trolig ikke virke)
 - [x] Knapp for å skjule brukerens posisjon
 - [x] Bedre styling på posisjons-visning
@@ -138,6 +138,9 @@ Shortlist: Legge inn flere kart
 
 Løse ideer: Spline-basert justering av track? 
 
+- [ ] Strava-integrasjon
+- [ ] Strava-integrasjonskode som sjekker koordinater mot eksisterende løp; rask måte å få inn alle
+
 - [ ] Bytt farge på track til rosa + halvgjennomsiktig
 - [ ] Beregning av lat/lon "bounding box" for et GPX-track; trengs for enkelte features. Database, ved innsetting?
 - [ ] Filtrering av kart- og track-valg basert på hva som overlapper det som er valgt i den andre listen
@@ -147,6 +150,9 @@ Løse ideer: Spline-basert justering av track?
 - [ ] Ved mouseover for å se tid: Framhev punktet på tracket brukeren studerer akkurat nå
 - [ ] Mulighet for å "spille av" løpet, og bla fram og tilbake i løpets framdrift
 - [ ] Mulighet for å visualisere hastighet med farger
+- [ ] Mulighet til å vise flere spor på én gang, med ulike farger
+- [ ] Filtrerings-søkeboks i GPX-sporvelger; samme system som for kartene
+
 - [x] Mer granulær zoom, for å gjøre det enklere med screenshots til Strava
 - [x] Mouse-over på GPS-track for å se tid
 - [x] (0) Flytt kartvisning til sentrum av kart du velger et nytt kart (UX funker ikke pga. omstokking av kart-liste)
@@ -208,7 +214,11 @@ Grov plan: Få inn alle områder, og ett B-kart fra alle som har. Deretter A for
 
 - [x] Bedriftscup 2021 (8 løp) (B)
 - [x] Fra 2019-2012 er det færre A- og B-kart. Registrer kun disse og nye områder; lag oversikt i registration-work-in-progress.txt
+- [x] Registrere alle fra 2020
+- [ ] Registrere alle fra 2019
 - [ ] 45 gjenstående bcup-kart jeg skal scanne ett B-løp fra, før jeg har fått inn ett fra alle *løp*
+
+- [ ] Registrere alle prototypings-kartene som jeg ikke har originaler i databasen for
 
 - [ ] Løyper fra løp jeg har allerede (gjenbruk eksisterende registrering): A-løypene fra 2022-2024
 - [ ] Løyper fra løp jeg har allerede: B-løypene fra 2025
@@ -228,13 +238,13 @@ Grov plan: Få inn alle områder, og ett B-kart fra alle som har. Deretter A for
 
 ## Generelle forbedringer
 
-- [ ] Rename eksisterende registreringer med navne-konvensjonen jeg har på bcup-kartene (all relevant info i kartnavn)
-
 - [ ] Jeg har noen renamings-TODOer i koden; gjennomfør disse. Cursor tar dem sikkert one-shot, bare oppgi presise navn på rename.
 - [ ] Kjøre gjennom database og re-generer roterte bilder med gjennomsiktige områder på alle steder som er utenfor selve kartet
 - [ ] Cache Leaflet-filer, orienteringskart, og kart-definisjoner lokalt i appen i tilfelle brudd i nettverk (Cache Storage API?)
 - [ ] Finjuster UI for kart-registrering på mobil mtp. marginer og andre detaljer; mye finpuss man kan gjøre
+- [ ] Bedre ytelse ved registrering; går ganske treigt på mobil. Trolig både overflødig opplasting og beregning som tar tid.
 
+- [x] Rename eksisterende registreringer med navne-konvensjonen jeg har på bcup-kartene (all relevant info i kartnavn)
 - [x] Eksponer de ulike controllerne for nettleseren, for bedre debugging
 - [x] Redirect til login hvis API returnerer feilkode som indikerer manglende login
 - [x] Autentisering, for å gjøre appen mindre tilgjengelig for Gud og hvermann. Auth med navn?
@@ -282,12 +292,15 @@ Grov plan: Få inn alle områder, og ett B-kart fra alle som har. Deretter A for
 
 ## Langsiktige ambisjoner
 
-- [ ] Innsending av database-kart + kjente metadata til AI-modell for setting av metadata i database
+- [ ] Innsending av database-kart + kjente metadata til AI-modell for setting av metadata i database (hent all tekst)
 - [ ] Ifm. henting av metadata fra kart: Ekstra DB-felt for kartets målestokk (og integrer det med auto-målestokk-knapp)
 - [ ] Maskinlærings-system for å identifisere post-posisjoner på registrerte kart og regne disse om til ekte koordinater
 
 - [ ] Strava-integrasjon med tillatelser, for å hente ut GPX-spor
 - [ ] Logge track på turen du har gått så langt, med usikkerhet i GPS-mottak
+
+- [ ] Jeg konverterer vektor-PDF-kart i 144 DPI. 300-400 er best. Innfør ny database-rad for original-PDFene
+- [ ] ...og bestem hvorvidt du vil re-generere bildene i DB, eller gjøre det on-the-fly, evt. hvis brukeren ønsker.
 
 - [ ] Kreditere kart-tegneren i grensesnittet, kanskje på placeholder-bildene før kartet lastes
 - [ ] Når jeg får veldig mange kart, vil jeg kanskje ha et avansert filter for kart, som lar meg filtrere på metadata.
@@ -322,7 +335,8 @@ Grov plan: Få inn alle områder, og ett B-kart fra alle som har. Deretter A for
 
 ## Løse idéer som jeg er usikker på
 
-- [ ] Verktøy for å finjustere registrering: rotasjon, størrelse, translasjon
+- [ ] Kompass: Roter kartet mot geografisk nord med lookup-tabell e.l.; dette gir også korrekt rotasjon for registrerte kart
+- [ ] Verktøy for å finjustere registrering: rotasjon, størrelse, translasjon. Unødvendig i Norge pga. at Norgeskart er så bra
 
 - [ ] Animasjon med "flash" langs outline av kart før det lastes, for å gi brukeren en indikasjon på framdriften
 - [ ] Gjøre det mulig å raskt fokusere på sentrum av valgt kart, hvis brukeren ønsker det (men vanskelig å få UXen bra)
