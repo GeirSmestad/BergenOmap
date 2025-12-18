@@ -3,6 +3,7 @@ const defaultState = {
   selectedMapName: null,
   selectedTrackId: null,
   gpxTracks: [],
+  trackBoundsById: {},
   activeTrack: null,
   isTrackLoading: false,
   trackLoadError: null
@@ -57,6 +58,19 @@ export class GpxBrowserStore {
       { gpxTracks: Array.isArray(tracks) ? tracks : [] },
       { type: 'gpxTracks' }
     );
+  }
+
+  setTrackBounds(trackId, bounds) {
+    if (typeof trackId !== 'number') {
+      return;
+    }
+
+    const nextBoundsById = {
+      ...(this.state.trackBoundsById ?? {}),
+      [trackId]: bounds ?? null
+    };
+
+    this.update({ trackBoundsById: nextBoundsById }, { type: 'trackBounds' });
   }
 
   setSelectedMapName(mapName) {

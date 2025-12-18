@@ -142,8 +142,6 @@ Løse ideer: Spline-basert justering av track?
 - [ ] Strava-integrasjonskode som sjekker koordinater mot eksisterende løp; rask måte å få inn alle
 
 - [ ] Bytt farge på track til rosa + halvgjennomsiktig
-- [ ] Beregning av lat/lon "bounding box" for et GPX-track; trengs for enkelte features. Database, ved innsetting?
-- [ ] Filtrering av kart- og track-valg basert på hva som overlapper det som er valgt i den andre listen
 - [ ] Knapp for å velge flyfoto
 - [ ] Penere styling av GPX-opplastingsdialogboks
 - [ ] Gjøre listene for å velge track og kart litt penere i stylingen
@@ -151,8 +149,12 @@ Løse ideer: Spline-basert justering av track?
 - [ ] Mulighet for å "spille av" løpet, og bla fram og tilbake i løpets framdrift
 - [ ] Mulighet for å visualisere hastighet med farger
 - [ ] Mulighet til å vise flere spor på én gang, med ulike farger
+
 - [ ] Filtrerings-søkeboks i GPX-sporvelger; samme system som for kartene
 
+
+- [x] Beregning av lat/lon "bounding box" for et GPX-track; trengs for enkelte features. Database, ved innsetting?
+- [x] Filtrering av kart- og track-valg basert på hva som overlapper det som er valgt i den andre listen
 - [x] Mer granulær zoom, for å gjøre det enklere med screenshots til Strava
 - [x] Mouse-over på GPS-track for å se tid
 - [x] (0) Flytt kartvisning til sentrum av kart du velger et nytt kart (UX funker ikke pga. omstokking av kart-liste)
@@ -318,6 +320,8 @@ Grov plan: Få inn alle områder, og ett B-kart fra alle som har. Deretter A for
 - [x] Årstall for kart i JSON-format [dette går i attribution-feltet]
 
 ## Refaktorering
+
+- [ ] "GPX-spor for dette kartet": Featuren laster nå ned alle GPX-spor ved første kart-lasting. Flytt algoritme og "boundaries" for kart til DB/backend. Husk å be LLM fjerne nå-ubrukt kode for concurrent nettverks-kall og annen kode relatert til dette fra gpxBrowser/main.js. maybePrefetchTrackBounds, hasOwn og runWithConcurrency.
 
 - [ ] Splitte registerMap opp i mobil og desktop-versjon
 

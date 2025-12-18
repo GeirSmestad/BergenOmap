@@ -1,6 +1,8 @@
 import { API_BASE } from '../../mapBrowser/config.js';
 import { redirectToLoginOnExpiredSession } from '../../utils/apiUtils.js';
 
+const trackDetailCache = new Map();
+
 export async function fetchUserTracks(baseUrl = API_BASE, username) {
   if (!username) {
     throw new Error('username is required to fetch GPX tracks');
@@ -32,21 +34,37 @@ export async function fetchTrackDetail(baseUrl = API_BASE, username, trackId) {
     throw new Error('trackId must be a number');
   }
 
-  const requestUrl = `${baseUrl}/api/gps-tracks/${encodeURIComponent(username)}/${trackId}`;
-
-  const response = await fetch(requestUrl, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  });
-
-  if (!response.ok) {
-    redirectToLoginOnExpiredSession(response);
-    throw new Error(`Failed to fetch GPX track ${trackId}: ${response.status} ${response.statusText}`);
+  const cacheKey = `${baseUrl}::${username}::${trackId}`;
+  if (trackDetailCache.has(cacheKey)) {
+    return trackDetailCache.get(cacheKey);
   }
 
-  return response.json();
+  const requestUrl = `${baseUrl}/api/gps-tracks/${encodeURIComponent(username)}/${trackId}`;
+
+  const requestPromise = (async () => {
+    const response = await fetch(requestUrl, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+
+    if (!response.ok) {
+      redirectToLoginOnExpiredSession(response);
+      throw new Error(`Failed to fetch GPX track ${trackId}: ${response.status} ${response.statusText}`);
+    }
+
+    return response.json();
+  })();
+
+  trackDetailCache.set(cacheKey, requestPromise);
+
+  try {
+    return await requestPromise;
+  } catch (error) {
+    trackDetailCache.delete(cacheKey);
+    throw error;
+  }
 }
 
 export async function uploadTrack(baseUrl = API_BASE, username, description, file) {

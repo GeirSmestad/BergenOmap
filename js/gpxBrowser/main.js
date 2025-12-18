@@ -6,7 +6,7 @@ import { fetchTrackDetail, fetchUserTracks, uploadTrack } from './services/gpxTr
 import { createGpxListPanel } from './ui/gpxListPanel.js';
 import { GpxBrowserStore } from './state/gpxBrowserStore.js';
 import { createGpxTrackRenderer } from './controllers/gpxTrackRenderer.js';
-import { getSegmentLatLngs } from './utils/gpxTrackUtils.js';
+import { computeSampledTrackBounds, getSegmentLatLngs } from './utils/gpxTrackUtils.js';
 import { createGpxUploadDialog } from './ui/gpxUploadDialog.js';
 import { createGpxMapSelectorPanel } from './ui/mapSelectorPanel.js';
 
@@ -53,6 +53,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   let activeTrackRequest = 0;
+  let boundsPrefetchToken = 0;
 
   function handleMapSelection(mapDefinition) {
     const selectedMapName = store.getState().selectedMapName;
@@ -149,6 +150,64 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   }
 
+  function hasOwn(obj, key) {
+    return Object.prototype.hasOwnProperty.call(obj, key);
+  }
+
+  function maybePrefetchTrackBounds() {
+    const { selectedMapName, gpxTracks, trackBoundsById } = store.getState();
+    if (!selectedMapName) {
+      return;
+    }
+
+    const boundsMap = trackBoundsById ?? {};
+    const missing = Array.isArray(gpxTracks)
+      ? gpxTracks.filter((track) => typeof track?.track_id === 'number' && !hasOwn(boundsMap, track.track_id))
+      : [];
+
+    if (missing.length === 0) {
+      return;
+    }
+
+    const myToken = ++boundsPrefetchToken;
+    void runWithConcurrency(missing, 3, async (track) => {
+      if (myToken !== boundsPrefetchToken) {
+        return;
+      }
+
+      const trackId = track.track_id;
+      try {
+        const detail = await fetchTrackDetail(API_BASE, DEFAULT_USERNAME, trackId);
+        if (myToken !== boundsPrefetchToken) {
+          return;
+        }
+        const bounds = computeSampledTrackBounds(detail, 20);
+        store.setTrackBounds(trackId, bounds);
+      } catch (error) {
+        console.warn(`Failed to compute bounds for track ${trackId}`, error);
+        store.setTrackBounds(trackId, null);
+      }
+    });
+  }
+
+  async function runWithConcurrency(items, limit, worker) {
+    const queue = Array.isArray(items) ? [...items] : [];
+    const concurrency = Math.max(1, Number(limit) || 1);
+
+    const runners = Array.from({ length: Math.min(concurrency, queue.length) }, async () => {
+      while (queue.length) {
+        const item = queue.shift();
+        try {
+          await worker(item);
+        } catch (error) {
+          console.warn('Bounds worker failed', error);
+        }
+      }
+    });
+
+    await Promise.all(runners);
+  }
+
   try {
     const mapDefinitions = await fetchMapDefinitions(API_BASE);
     store.setMapDefinitions(mapDefinitions);
@@ -194,6 +253,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const tracks = await fetchUserTracks(API_BASE, DEFAULT_USERNAME);
     store.setGpxTracks(tracks);
     gpxListPanel.renderIfVisible();
+    maybePrefetchTrackBounds();
     return tracks;
   }
 
@@ -203,6 +263,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     console.error('Failed to load GPX tracks', error);
     gpxListPanel.showError('Kunne ikke laste GPS-spor');
   }
+
+  store.subscribe((state, prevState, change) => {
+    if (
+      change?.type === 'selectedMapName' &&
+      state.selectedMapName &&
+      state.selectedMapName !== prevState.selectedMapName
+    ) {
+      maybePrefetchTrackBounds();
+    }
+  });
 
   // Expose instances for debugging
   window.d_appMenu = appMenu;

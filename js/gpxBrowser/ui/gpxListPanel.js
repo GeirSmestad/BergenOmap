@@ -49,19 +49,44 @@ export function createGpxListPanel({
     }
   }
 
-  function filterTracksIntersectingSelectedMap(tracks, selectedMapName) {
-    // TODO: Replace with real intersection logic (client-side geometry or server-side filtering).
-    // Keep this as a single hook so we can swap the implementation later without UI changes.
-    void selectedMapName;
-    return tracks;
+  function filterTracksContainedWithinSelectedMap(state, tracks) {
+    const { selectedMapName, mapDefinitions, trackBoundsById } = state;
+    if (!selectedMapName) {
+      return [];
+    }
+
+    const selectedMap = Array.isArray(mapDefinitions)
+      ? mapDefinitions.find((definition) => definition?.map_name === selectedMapName)
+      : null;
+
+    const mapBounds = selectedMap ? getMapBounds(selectedMap) : null;
+    if (!mapBounds) {
+      return [];
+    }
+
+    const boundsMap = trackBoundsById ?? {};
+
+    return tracks.filter((track) => {
+      const trackId = track?.track_id;
+      if (typeof trackId !== 'number') {
+        return false;
+      }
+      if (!Object.prototype.hasOwnProperty.call(boundsMap, trackId)) {
+        // Bounds not computed yet.
+        return false;
+      }
+      const bounds = boundsMap[trackId];
+      if (!bounds) {
+        return false;
+      }
+      return isBoundsContained(bounds, mapBounds);
+    });
   }
 
-  function getVisibleTracks({ gpxTracks, selectedMapName }) {
+  function getVisibleTracks(state) {
+    const { gpxTracks } = state;
     if (listMode === LIST_MODE.ON_MAP) {
-      if (!selectedMapName) {
-        return [];
-      }
-      return filterTracksIntersectingSelectedMap(gpxTracks, selectedMapName);
+      return filterTracksContainedWithinSelectedMap(state, gpxTracks);
     }
 
     return gpxTracks;
@@ -101,8 +126,9 @@ export function createGpxListPanel({
       return;
     }
 
-    const { gpxTracks, selectedTrackId, selectedMapName } = store.getState();
-    const visibleTracks = getVisibleTracks({ gpxTracks, selectedMapName });
+    const state = store.getState();
+    const { selectedTrackId, selectedMapName, trackBoundsById } = state;
+    const visibleTracks = getVisibleTracks(state);
 
     const fragment = document.createDocumentFragment();
 
@@ -116,6 +142,13 @@ export function createGpxListPanel({
       emptyItem.className = 'gpx-selector-empty';
       if (listMode === LIST_MODE.ON_MAP && !selectedMapName) {
         emptyItem.textContent = 'Velg et kart for å se spor i kartet';
+      } else if (listMode === LIST_MODE.ON_MAP) {
+        const pendingCount = countPendingBounds(state.gpxTracks, trackBoundsById);
+        if (pendingCount > 0) {
+          emptyItem.textContent = `Laster spor for kartet... (${pendingCount} gjenstår)`;
+        } else {
+          emptyItem.textContent = 'Ingen GPX-spor i valgt kart';
+        }
       } else {
         emptyItem.textContent = 'Ingen GPX-spor tilgjengelig';
       }
@@ -201,6 +234,10 @@ export function createGpxListPanel({
       renderIfVisible();
     }
 
+    if (change?.type === 'trackBounds' && listMode === LIST_MODE.ON_MAP) {
+      renderIfVisible();
+    }
+
     if (
       change?.type === 'selectedTrackId' &&
       state.selectedTrackId !== prevState.selectedTrackId
@@ -231,5 +268,56 @@ export function createGpxListPanel({
       modeOnMapInput?.removeEventListener('change', handleModeOnMapChange);
     }
   };
+}
+
+function getMapBounds(mapDefinition) {
+  const nw = mapDefinition?.nw_coords;
+  const se = mapDefinition?.se_coords;
+  if (!Array.isArray(nw) || !Array.isArray(se) || nw.length < 2 || se.length < 2) {
+    return null;
+  }
+
+  const latA = Number(nw[0]);
+  const lonA = Number(nw[1]);
+  const latB = Number(se[0]);
+  const lonB = Number(se[1]);
+
+  if (![latA, lonA, latB, lonB].every(Number.isFinite)) {
+    return null;
+  }
+
+  return {
+    minLat: Math.min(latA, latB),
+    maxLat: Math.max(latA, latB),
+    minLon: Math.min(lonA, lonB),
+    maxLon: Math.max(lonA, lonB)
+  };
+}
+
+function isBoundsContained(inner, outer) {
+  return (
+    inner.minLat >= outer.minLat &&
+    inner.maxLat <= outer.maxLat &&
+    inner.minLon >= outer.minLon &&
+    inner.maxLon <= outer.maxLon
+  );
+}
+
+function countPendingBounds(tracks, trackBoundsById) {
+  if (!Array.isArray(tracks) || tracks.length === 0) {
+    return 0;
+  }
+  const boundsMap = trackBoundsById ?? {};
+  let pending = 0;
+  tracks.forEach((track) => {
+    const trackId = track?.track_id;
+    if (typeof trackId !== 'number') {
+      return;
+    }
+    if (!Object.prototype.hasOwnProperty.call(boundsMap, trackId)) {
+      pending += 1;
+    }
+  });
+  return pending;
 }
 
