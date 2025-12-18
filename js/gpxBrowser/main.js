@@ -90,7 +90,9 @@ document.addEventListener('DOMContentLoaded', async () => {
       panel: document.getElementById('gpxSelectorPanel'),
       list: document.getElementById('gpxSelectorList'),
       modeAllInput: document.getElementById('gpxSelectorModeAll'),
-      modeOnMapInput: document.getElementById('gpxSelectorModeOnMap')
+      modeOnMapInput: document.getElementById('gpxSelectorModeOnMap'),
+      searchInput: document.getElementById('gpxSelectorSearch'),
+      searchClearBtn: document.getElementById('gpxSelectorSearchClear')
     },
     onTrackSelected: (track) => handleTrackSelection(track),
     onVisibilityChange: (isVisible) => {

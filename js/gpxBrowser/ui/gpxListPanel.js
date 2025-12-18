@@ -4,10 +4,11 @@ export function createGpxListPanel({
   onTrackSelected,
   onVisibilityChange
 } = {}) {
-  const { toggleButton, panel, list, modeAllInput, modeOnMapInput } = elements ?? {};
+  const { toggleButton, panel, list, modeAllInput, modeOnMapInput, searchInput, searchClearBtn } = elements ?? {};
 
   let isVisible = false;
   let errorMessage = null;
+  let currentSearchTerm = '';
 
   const LIST_MODE = {
     ALL: 'all',
@@ -83,13 +84,27 @@ export function createGpxListPanel({
     });
   }
 
+  function filterBySearchTerm(tracks) {
+    if (!currentSearchTerm) {
+      return tracks;
+    }
+    const term = currentSearchTerm.toLowerCase();
+    return tracks.filter((track) => {
+      const description = track.description || '';
+      const username = track.username || '';
+      return description.toLowerCase().includes(term) || username.toLowerCase().includes(term);
+    });
+  }
+
   function getVisibleTracks(state) {
     const { gpxTracks } = state;
+    let tracks = gpxTracks;
+
     if (listMode === LIST_MODE.ON_MAP) {
-      return filterTracksContainedWithinSelectedMap(state, gpxTracks);
+      tracks = filterTracksContainedWithinSelectedMap(state, gpxTracks);
     }
 
-    return gpxTracks;
+    return filterBySearchTerm(tracks);
   }
 
   function setVisibility(shouldShow) {
@@ -140,7 +155,9 @@ export function createGpxListPanel({
     } else if (!visibleTracks.length) {
       const emptyItem = document.createElement('li');
       emptyItem.className = 'gpx-selector-empty';
-      if (listMode === LIST_MODE.ON_MAP && !selectedMapName) {
+      if (currentSearchTerm) {
+        emptyItem.textContent = 'Ingen GPS-spor matcher søket';
+      } else if (listMode === LIST_MODE.ON_MAP && !selectedMapName) {
         emptyItem.textContent = 'Velg et kart for å se spor i kartet';
       } else if (listMode === LIST_MODE.ON_MAP) {
         const pendingCount = countPendingBounds(state.gpxTracks, trackBoundsById);
@@ -219,6 +236,38 @@ export function createGpxListPanel({
   modeAllInput?.addEventListener('change', handleModeAllChange);
   modeOnMapInput?.addEventListener('change', handleModeOnMapChange);
 
+  function handleSearchInput(e) {
+    currentSearchTerm = e.target.value;
+
+    if (searchClearBtn) {
+      searchClearBtn.hidden = !currentSearchTerm;
+    }
+
+    renderList();
+  }
+
+  function handleSearchClear() {
+    currentSearchTerm = '';
+    if (searchInput) {
+      searchInput.value = '';
+      searchInput.focus();
+    }
+    if (searchClearBtn) {
+      searchClearBtn.hidden = true;
+    }
+    renderList();
+  }
+
+  function handleSearchKeydown(e) {
+    if (e.key === 'Escape' || e.key === 'Esc') {
+      searchInput.blur();
+    }
+  }
+
+  searchInput?.addEventListener('input', handleSearchInput);
+  searchInput?.addEventListener('keydown', handleSearchKeydown);
+  searchClearBtn?.addEventListener('click', handleSearchClear);
+
   updateModeUI();
 
   const unsubscribe = store.subscribe((state, prevState, change) => {
@@ -266,6 +315,9 @@ export function createGpxListPanel({
       toggleButton?.removeEventListener('click', toggleVisibility);
       modeAllInput?.removeEventListener('change', handleModeAllChange);
       modeOnMapInput?.removeEventListener('change', handleModeOnMapChange);
+      searchInput?.removeEventListener('input', handleSearchInput);
+      searchInput?.removeEventListener('keydown', handleSearchKeydown);
+      searchClearBtn?.removeEventListener('click', handleSearchClear);
     }
   };
 }
