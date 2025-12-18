@@ -4,10 +4,68 @@ export function createGpxListPanel({
   onTrackSelected,
   onVisibilityChange
 } = {}) {
-  const { toggleButton, panel, list } = elements ?? {};
+  const { toggleButton, panel, list, modeAllInput, modeOnMapInput } = elements ?? {};
 
   let isVisible = false;
   let errorMessage = null;
+
+  const LIST_MODE = {
+    ALL: 'all',
+    ON_MAP: 'onMap'
+  };
+
+  let listMode = LIST_MODE.ALL;
+
+  const modeAllLabel = modeAllInput?.closest('.gpx-selector-tab');
+  const modeOnMapLabel = modeOnMapInput?.closest('.gpx-selector-tab');
+
+  function updateModeUI() {
+    const isAll = listMode === LIST_MODE.ALL;
+    const isOnMap = listMode === LIST_MODE.ON_MAP;
+
+    if (modeAllInput) {
+      modeAllInput.checked = isAll;
+    }
+    if (modeOnMapInput) {
+      modeOnMapInput.checked = isOnMap;
+    }
+
+    modeAllLabel?.classList.toggle('is-active', isAll);
+    modeOnMapLabel?.classList.toggle('is-active', isOnMap);
+  }
+
+  function setListMode(nextMode) {
+    if (listMode === nextMode) {
+      renderIfVisible();
+      return;
+    }
+
+    listMode = nextMode;
+    updateModeUI();
+    renderIfVisible();
+
+    if (list) {
+      list.scrollTop = 0;
+    }
+  }
+
+  function filterTracksIntersectingSelectedMap(tracks, selectedMapName) {
+    // TODO: Replace with real intersection logic (client-side geometry or server-side filtering).
+    // Keep this as a single hook so we can swap the implementation later without UI changes.
+    void selectedMapName;
+    return tracks;
+  }
+
+  function getVisibleTracks({ gpxTracks, selectedMapName }) {
+    if (listMode === LIST_MODE.ON_MAP) {
+      if (!selectedMapName) {
+        return [];
+      }
+      return filterTracksIntersectingSelectedMap(gpxTracks, selectedMapName);
+    }
+
+    return gpxTracks;
+  }
 
   function setVisibility(shouldShow) {
     if (!panel || !toggleButton) {
@@ -43,7 +101,8 @@ export function createGpxListPanel({
       return;
     }
 
-    const { gpxTracks, selectedTrackId } = store.getState();
+    const { gpxTracks, selectedTrackId, selectedMapName } = store.getState();
+    const visibleTracks = getVisibleTracks({ gpxTracks, selectedMapName });
 
     const fragment = document.createDocumentFragment();
 
@@ -52,13 +111,17 @@ export function createGpxListPanel({
       errorItem.className = 'gpx-selector-empty';
       errorItem.textContent = errorMessage;
       fragment.appendChild(errorItem);
-    } else if (!gpxTracks.length) {
+    } else if (!visibleTracks.length) {
       const emptyItem = document.createElement('li');
       emptyItem.className = 'gpx-selector-empty';
-      emptyItem.textContent = 'Ingen GPX-spor tilgjengelig';
+      if (listMode === LIST_MODE.ON_MAP && !selectedMapName) {
+        emptyItem.textContent = 'Velg et kart for å se spor i kartet';
+      } else {
+        emptyItem.textContent = 'Ingen GPX-spor tilgjengelig';
+      }
       fragment.appendChild(emptyItem);
     } else {
-      gpxTracks.forEach((track) => {
+      visibleTracks.forEach((track) => {
         const listItem = document.createElement('li');
         const button = document.createElement('button');
         button.type = 'button';
@@ -108,8 +171,33 @@ export function createGpxListPanel({
 
   toggleButton?.addEventListener('click', toggleVisibility);
 
+  function handleModeAllChange(event) {
+    if (event.target.checked) {
+      setListMode(LIST_MODE.ALL);
+    }
+  }
+
+  function handleModeOnMapChange(event) {
+    if (event.target.checked) {
+      setListMode(LIST_MODE.ON_MAP);
+    }
+  }
+
+  modeAllInput?.addEventListener('change', handleModeAllChange);
+  modeOnMapInput?.addEventListener('change', handleModeOnMapChange);
+
+  updateModeUI();
+
   const unsubscribe = store.subscribe((state, prevState, change) => {
     if (change?.type === 'gpxTracks') {
+      renderIfVisible();
+    }
+
+    if (
+      change?.type === 'selectedMapName' &&
+      state.selectedMapName !== prevState.selectedMapName &&
+      listMode === LIST_MODE.ON_MAP
+    ) {
       renderIfVisible();
     }
 
@@ -139,6 +227,8 @@ export function createGpxListPanel({
     destroy() {
       unsubscribe();
       toggleButton?.removeEventListener('click', toggleVisibility);
+      modeAllInput?.removeEventListener('change', handleModeAllChange);
+      modeOnMapInput?.removeEventListener('change', handleModeOnMapChange);
     }
   };
 }

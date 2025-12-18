@@ -35,13 +35,13 @@ en A- eller B-løype, eller er et nytt område.
     bcup-2019-09-25-Båteviksvann-N
     bcup-2019-06-12-Kismul-N
     bcup-2019-09-04-Langeskogen-B
-bcup-2019-10-02-Mjåtveit-N
+    bcup-2019-10-02-Mjåtveit-N
 
-bcup-2019-05-08-Norvik-N
+    bcup-2019-05-08-Norvik-N
 
     bcup-2019-08-21-Solbakkefjell-N
-bcup-2019-06-05-Stendskogen-B
-bcup-2019-09-18-Stendskogen-B
+    bcup-2019-06-05-Stendskogen-B
+(X) bcup-2019-09-18-Stendskogen-B (skip; har track på seg)
 
 
 

@@ -96,7 +96,21 @@
 
   <div id="gpxSelectorPanel" class="gpx-selector-panel" aria-hidden="true">
     <div class="gpx-selector-panel__header">
-      <h2>GPS-spor</h2>
+      <label class="gpx-selector-tab">
+        <input type="radio"
+               id="gpxSelectorModeAll"
+               name="gpxSelectorMode"
+               value="all"
+               checked>
+        <span>Alle</span>
+      </label>
+      <label class="gpx-selector-tab">
+        <input type="radio"
+               id="gpxSelectorModeOnMap"
+               name="gpxSelectorMode"
+               value="onMap">
+        <span>I kart</span>
+      </label>
     </div>
     <ul id="gpxSelectorList" class="gpx-selector-list"></ul>
   </div>

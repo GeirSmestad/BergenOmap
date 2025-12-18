@@ -215,8 +215,9 @@ Grov plan: Få inn alle områder, og ett B-kart fra alle som har. Deretter A for
 - [x] Bedriftscup 2021 (8 løp) (B)
 - [x] Fra 2019-2012 er det færre A- og B-kart. Registrer kun disse og nye områder; lag oversikt i registration-work-in-progress.txt
 - [x] Registrere alle fra 2020
-- [ ] Registrere alle fra 2019
-- [ ] 45 gjenstående bcup-kart jeg skal scanne ett B-løp fra, før jeg har fått inn ett fra alle *løp*
+- [x] Registrere alle fra 2019
+- [x] Registrere alle fra 2018
+- [ ] 34 gjenstående bcup-kart jeg skal scanne ett B-løp fra, før jeg har fått inn ett fra alle *løp*
 
 - [ ] Registrere alle prototypings-kartene som jeg ikke har originaler i databasen for
 

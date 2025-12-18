@@ -87,7 +87,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     elements: {
       toggleButton: document.getElementById('gpxSelectorToggle'),
       panel: document.getElementById('gpxSelectorPanel'),
-      list: document.getElementById('gpxSelectorList')
+      list: document.getElementById('gpxSelectorList'),
+      modeAllInput: document.getElementById('gpxSelectorModeAll'),
+      modeOnMapInput: document.getElementById('gpxSelectorModeOnMap')
     },
     onTrackSelected: (track) => handleTrackSelection(track),
     onVisibilityChange: (isVisible) => {
