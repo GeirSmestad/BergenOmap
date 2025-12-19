@@ -136,23 +136,16 @@ Shortlist: Legge inn flere kart
 
 ## GPX-viewer
 
-Løse ideer: Spline-basert justering av track? 
-
-- [ ] Strava-integrasjon
-- [ ] Strava-integrasjonskode som sjekker koordinater mot eksisterende løp; rask måte å få inn alle
-
 - [ ] Bytt farge på track til rosa + halvgjennomsiktig
 - [ ] Knapp for å velge flyfoto
 - [ ] Penere styling av GPX-opplastingsdialogboks
 - [ ] Gjøre listene for å velge track og kart litt penere i stylingen
-- [ ] Ved mouseover for å se tid: Framhev punktet på tracket brukeren studerer akkurat nå
+- [ ] Ved mouseover for å se tid: Framhev punktet på tracket brukeren studerer akkurat nå (større sirkel der)
 - [ ] Mulighet for å "spille av" løpet, og bla fram og tilbake i løpets framdrift
 - [ ] Mulighet for å visualisere hastighet med farger
 - [ ] Mulighet til å vise flere spor på én gang, med ulike farger
 
-- [ ] Filtrerings-søkeboks i GPX-sporvelger; samme system som for kartene
-
-
+- [x] Filtrerings-søkeboks i GPX-sporvelger; samme system som for kartene
 - [x] Beregning av lat/lon "bounding box" for et GPX-track; trengs for enkelte features. Database, ved innsetting?
 - [x] Filtrering av kart- og track-valg basert på hva som overlapper det som er valgt i den andre listen
 - [x] Mer granulær zoom, for å gjøre det enklere med screenshots til Strava
@@ -165,6 +158,16 @@ Løse ideer: Spline-basert justering av track?
 - [x] Database-støtte for å samle en brukers informasjon (fx. GPX-filer fra Strava)
 - [x] Mulighet for å velge kart, trolig samme liste som før men kun med "nær kartvindu"
 - [x] Mulighet for å velge hvilken GPX-fil man skal vise
+
+
+## Strava-integrasjon
+
+Se Strava-integrasjonschat i ChatGPT: https://chatgpt.com/c/693a0201-57cc-8326-9b89-7af8fc56102f
+
+- [ ] Strava-integrasjon. Egen side i appen. Få godkjenning mot Strava og lagre athlete_id og refresh_token i DB.
+- [ ] Grensesnitt som henter alle Strava-aktiviteter i valgt tidsrom med API, lagrer dem i database
+- [ ] Sjekk koordinater på aktiviteter mot eksisterende kart; rask måte å få inn alle
+- [ ] Henter ut data fra Strava-aktiviteter, oversetter dem til GPX, legger dem inn i GPX-database.
 
 ## Trenings-app
 
@@ -300,7 +303,9 @@ Grov plan: Få inn alle områder, og ett B-kart fra alle som har. Deretter A for
 - [ ] Maskinlærings-system for å identifisere post-posisjoner på registrerte kart og regne disse om til ekte koordinater
 
 - [ ] Strava-integrasjon med tillatelser, for å hente ut GPX-spor
+- [ ] Hvis jeg skal gjøre mer enn prototyping og personlig bruk med Strava, trenger jeg en dedikert Strava-konto
 - [ ] Logge track på turen du har gått så langt, med usikkerhet i GPS-mottak
+- [ ] Lagring på S3 er mye billigere per gigabyte hvis appen skal brukes av andre, men jeg har mye å gå på enda.
 
 - [ ] Jeg konverterer vektor-PDF-kart i 144 DPI. 300-400 er best. Innfør ny database-rad for original-PDFene
 - [ ] ...og bestem hvorvidt du vil re-generere bildene i DB, eller gjøre det on-the-fly, evt. hvis brukeren ønsker.
