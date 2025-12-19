@@ -66,3 +66,7 @@ fetch-db:
 logs-stats:
     @echo "Fetching unique visitor stats from {{server}}..."
     cat utils/get_visitor_stats.sh | ssh {{server}} "bash -s"
+
+# Start an interactive SSH session with the server
+ssh:
+    ssh {{server}}
