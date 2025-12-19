@@ -236,3 +236,36 @@ Please implement the changes that we have made in this chat, to the map browser 
 
 
 I know we're kinda re-implementing rsync here, but I don't have it on Windows. Can you do a kind of checksum on files on both ends in "just deploy-app", so that we only have to copy the files that have changed?
+
+
+
+
+
+With this prototype working well, I now wish to move the boundaries of the GPX track off the client side and into my backend & database.
+
+Here's my suggested solution, please let me know if you disagree with parts of it:
+
+1) New columns in DB table gps_tracks for the boundaries of the GPX track. min_lat, min_lon, max_lat, max_lon
+2) Back-end code that runs as part of saving a new GPX track that calculates its boundaries. It can loop through the entire track, not just 20 points.
+3) Back-end call and stack must propagate the bounaries of the track as part of listing out the tracks
+4) Switch around all existing code to use the values from the database instead
+5) Refactor the existing code and removed the parts that are now unused. Particularly from gpxBrowser/main.js. Fairly sure that at least the lines maybePrefetchTrackBounds, hasOwn og runWithConcurrency. Also whatever javascript code to calculate bounds is no longer necessary, since it will have been moved to the Pyton back-end.
+
+You don't have to plan migration of existing tracks; I have only a small amount and can run the calculation & updates for them separately.
+
+
+
+
+
+
+
+
+(index)	track_id	name	username	minLat	maxLat	minLon	maxLon	samplesUsed	totalPoints
+0	1	Nattcup Råstølen 2025	geir.smestad	60.299941	60.303989	5.30735	5.320973	20	939
+1	2	Nattcup-Lepsøy-25	geir.smestad	60.150002	60.160598	5.385669	5.395697	20	2022
+2	3	Trening-Skage-14-11-25	geir.smestad	60.275785	60.284936	5.281923	5.291044	20	1647
+3	4	Bcup-Liafjellet-4-6-25	geir.smestad	60.174924	60.183732	5.415012	5.433676	20	2953
+4	5	urbo-2025-12-2	geir.smestad	60.397798	60.406488	5.319201	5.328296	20	1016
+5	6	Nattcup-2025-12-10-Garmin	geir.smestad	60.34762	60.3597	5.257532	5.272269	20	1921
+6	7	Nattcup-2025-12-10-iPhone	geir.smestad	60.347664	60.35952	5.25744	5.272201	20	5412
+7	8	trening-juks-2025-12-17	geir.smestad	60.346832	60.359987	5.25705	5.272129	20	1480

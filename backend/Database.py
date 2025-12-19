@@ -8,6 +8,25 @@ class Database:
     def __init__(self, db_name=database_file_location):
         self.connection = sqlite3.connect(db_name)
         self.cursor = self.connection.cursor()
+        self._gps_tracks_has_bounds = None
+
+    def _table_has_column(self, table_name: str, column_name: str) -> bool:
+        try:
+            self.cursor.execute(f"PRAGMA table_info({table_name})")
+            columns = [row[1] for row in self.cursor.fetchall()]  # row[1] = name
+            return column_name in columns
+        except Exception:
+            return False
+
+    def gps_tracks_supports_bounds(self) -> bool:
+        if self._gps_tracks_has_bounds is None:
+            self._gps_tracks_has_bounds = (
+                self._table_has_column("gps_tracks", "min_lat")
+                and self._table_has_column("gps_tracks", "min_lon")
+                and self._table_has_column("gps_tracks", "max_lat")
+                and self._table_has_column("gps_tracks", "max_lon")
+            )
+        return bool(self._gps_tracks_has_bounds)
 
     def create_table(self):
         create_maps_sql = '''
@@ -64,6 +83,10 @@ class Database:
             username TEXT NOT NULL,
             gpx_data BLOB NOT NULL,
             description TEXT,
+            min_lat REAL,
+            min_lon REAL,
+            max_lat REAL,
+            max_lon REAL,
             FOREIGN KEY (username) REFERENCES users(username) ON DELETE CASCADE
         )
         '''
@@ -102,14 +125,23 @@ class Database:
         result = self.cursor.fetchone()
         return {"username": result[0]} if result else None
 
-    def insert_gps_track(self, username, gpx_data, description=None):
+    def insert_gps_track(self, username, gpx_data, description=None, min_lat=None, min_lon=None, max_lat=None, max_lon=None):
         if not self.get_user_by_username(username):
             raise ValueError(f"User '{username}' does not exist. Create the user before inserting tracks.")
-        insert_sql = '''
-        INSERT INTO gps_tracks (username, gpx_data, description)
-        VALUES (?, ?, ?)
-        '''
-        self.cursor.execute(insert_sql, (username, gpx_data, description))
+
+        if self.gps_tracks_supports_bounds():
+            insert_sql = '''
+            INSERT INTO gps_tracks (username, gpx_data, description, min_lat, min_lon, max_lat, max_lon)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+            '''
+            self.cursor.execute(insert_sql, (username, gpx_data, description, min_lat, min_lon, max_lat, max_lon))
+        else:
+            insert_sql = '''
+            INSERT INTO gps_tracks (username, gpx_data, description)
+            VALUES (?, ?, ?)
+            '''
+            self.cursor.execute(insert_sql, (username, gpx_data, description))
+
         self.connection.commit()
         return self.cursor.lastrowid
 
@@ -119,41 +151,94 @@ class Database:
         return self.insert_gps_track(username, gpx_data, description)
 
     def list_gps_tracks(self, username):
-        select_sql = '''
-        SELECT track_id, username, description
-        FROM gps_tracks
-        WHERE username = ?
-        ORDER BY track_id ASC
-        '''
-        self.cursor.execute(select_sql, (username,))
-        rows = self.cursor.fetchall()
-        return [
-            {
-                "track_id": track_id,
-                "username": user,
-                "description": description
-            }
-            for track_id, user, description in rows
-        ]
+        if self.gps_tracks_supports_bounds():
+            select_sql = '''
+            SELECT track_id, username, description, min_lat, min_lon, max_lat, max_lon
+            FROM gps_tracks
+            WHERE username = ?
+            ORDER BY track_id ASC
+            '''
+            self.cursor.execute(select_sql, (username,))
+            rows = self.cursor.fetchall()
+            return [
+                {
+                    "track_id": track_id,
+                    "username": user,
+                    "description": description,
+                    "min_lat": min_lat,
+                    "min_lon": min_lon,
+                    "max_lat": max_lat,
+                    "max_lon": max_lon
+                }
+                for track_id, user, description, min_lat, min_lon, max_lat, max_lon in rows
+            ]
+        else:
+            select_sql = '''
+            SELECT track_id, username, description
+            FROM gps_tracks
+            WHERE username = ?
+            ORDER BY track_id ASC
+            '''
+            self.cursor.execute(select_sql, (username,))
+            rows = self.cursor.fetchall()
+            return [
+                {
+                    "track_id": track_id,
+                    "username": user,
+                    "description": description,
+                    "min_lat": None,
+                    "min_lon": None,
+                    "max_lat": None,
+                    "max_lon": None
+                }
+                for track_id, user, description in rows
+            ]
 
     def get_gps_track_by_id(self, username, track_id):
-        select_sql = '''
-        SELECT track_id, username, gpx_data, description
-        FROM gps_tracks
-        WHERE username = ? AND track_id = ?
-        LIMIT 1
-        '''
-        self.cursor.execute(select_sql, (username, track_id))
-        result = self.cursor.fetchone()
-        if not result:
-            return None
-        track_id, user, gpx_blob, description = result
-        return {
-            "track_id": track_id,
-            "username": user,
-            "gpx_data": gpx_blob,
-            "description": description
-        }
+        if self.gps_tracks_supports_bounds():
+            select_sql = '''
+            SELECT track_id, username, gpx_data, description, min_lat, min_lon, max_lat, max_lon
+            FROM gps_tracks
+            WHERE username = ? AND track_id = ?
+            LIMIT 1
+            '''
+            self.cursor.execute(select_sql, (username, track_id))
+            result = self.cursor.fetchone()
+            if not result:
+                return None
+            track_id, user, gpx_blob, description, min_lat, min_lon, max_lat, max_lon = result
+            return {
+                "track_id": track_id,
+                "username": user,
+                "gpx_data": gpx_blob,
+                "description": description,
+                "min_lat": min_lat,
+                "min_lon": min_lon,
+                "max_lat": max_lat,
+                "max_lon": max_lon
+            }
+        else:
+            select_sql = '''
+            SELECT track_id, username, gpx_data, description
+            FROM gps_tracks
+            WHERE username = ? AND track_id = ?
+            LIMIT 1
+            '''
+            self.cursor.execute(select_sql, (username, track_id))
+            result = self.cursor.fetchone()
+            if not result:
+                return None
+            track_id, user, gpx_blob, description = result
+            return {
+                "track_id": track_id,
+                "username": user,
+                "gpx_data": gpx_blob,
+                "description": description,
+                "min_lat": None,
+                "min_lon": None,
+                "max_lat": None,
+                "max_lon": None
+            }
 
     def create_session(self, username, session_key, expires_at):
         insert_sql = '''

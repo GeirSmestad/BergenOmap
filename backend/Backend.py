@@ -343,6 +343,42 @@ def get_overlay_coordinates():
 from Database import Database
 from gpx_parser import parse_strava_gpx
 
+def compute_gpx_bounds(parsed_gpx):
+    """
+    Computes min/max lat/lon by iterating all points in the parsed GPX structure.
+    Returns (min_lat, min_lon, max_lat, max_lon) or None if no valid points.
+    """
+    min_lat = None
+    min_lon = None
+    max_lat = None
+    max_lon = None
+
+    tracks = parsed_gpx.get("tracks", []) if isinstance(parsed_gpx, dict) else []
+    for track in tracks:
+        points = track.get("points", []) if isinstance(track, dict) else []
+        for point in points:
+            if not isinstance(point, dict):
+                continue
+            lat = point.get("lat")
+            lon = point.get("lon")
+            if lat is None or lon is None:
+                continue
+            try:
+                lat = float(lat)
+                lon = float(lon)
+            except (TypeError, ValueError):
+                continue
+
+            min_lat = lat if min_lat is None else min(min_lat, lat)
+            max_lat = lat if max_lat is None else max(max_lat, lat)
+            min_lon = lon if min_lon is None else min(min_lon, lon)
+            max_lon = lon if max_lon is None else max(max_lon, lon)
+
+    if min_lat is None:
+        return None
+
+    return (min_lat, min_lon, max_lat, max_lon)
+
 def get_db():
     if 'db' not in g:
         g.db = Database()
@@ -399,6 +435,10 @@ def get_gps_track(username, track_id):
         "track_id": track["track_id"],
         "username": track["username"],
         "description": track["description"],
+        "min_lat": track.get("min_lat"),
+        "min_lon": track.get("min_lon"),
+        "max_lat": track.get("max_lat"),
+        "max_lon": track.get("max_lon"),
         "gpx": parsed_gpx
     }
     return jsonify(response)
@@ -424,9 +464,22 @@ def insert_gps_track():
     except ET.ParseError as exc:
         return jsonify({"error": f"Invalid GPX file: {exc}"}), 400
 
+    bounds = compute_gpx_bounds(parsed_preview)
+    if bounds is None:
+        return jsonify({"error": "No valid coordinates found in GPX file"}), 400
+    min_lat, min_lon, max_lat, max_lon = bounds
+
     db = get_db()
     try:
-        track_id = db.insert_gps_track(username, gpx_bytes, description)
+        track_id = db.insert_gps_track(
+            username,
+            gpx_bytes,
+            description,
+            min_lat=min_lat,
+            min_lon=min_lon,
+            max_lat=max_lat,
+            max_lon=max_lon
+        )
     except ValueError as exc:
         return jsonify({"error": str(exc)}), 400
 
@@ -438,6 +491,10 @@ def insert_gps_track():
         "track_id": track_id,
         "username": username,
         "description": description,
+        "min_lat": min_lat,
+        "min_lon": min_lon,
+        "max_lat": max_lat,
+        "max_lon": max_lon,
         "preview": {
             "metadata": parsed_preview.get("metadata", {}),
             "track_count": preview_track_count,

@@ -51,7 +51,7 @@ export function createGpxListPanel({
   }
 
   function filterTracksContainedWithinSelectedMap(state, tracks) {
-    const { selectedMapName, mapDefinitions, trackBoundsById } = state;
+    const { selectedMapName, mapDefinitions } = state;
     if (!selectedMapName) {
       return [];
     }
@@ -65,22 +65,9 @@ export function createGpxListPanel({
       return [];
     }
 
-    const boundsMap = trackBoundsById ?? {};
-
     return tracks.filter((track) => {
-      const trackId = track?.track_id;
-      if (typeof trackId !== 'number') {
-        return false;
-      }
-      if (!Object.prototype.hasOwnProperty.call(boundsMap, trackId)) {
-        // Bounds not computed yet.
-        return false;
-      }
-      const bounds = boundsMap[trackId];
-      if (!bounds) {
-        return false;
-      }
-      return isBoundsContained(bounds, mapBounds);
+      const trackBounds = getTrackBounds(track);
+      return trackBounds ? isBoundsContained(trackBounds, mapBounds) : false;
     });
   }
 
@@ -142,7 +129,7 @@ export function createGpxListPanel({
     }
 
     const state = store.getState();
-    const { selectedTrackId, selectedMapName, trackBoundsById } = state;
+    const { selectedTrackId, selectedMapName } = state;
     const visibleTracks = getVisibleTracks(state);
 
     const fragment = document.createDocumentFragment();
@@ -160,12 +147,10 @@ export function createGpxListPanel({
       } else if (listMode === LIST_MODE.ON_MAP && !selectedMapName) {
         emptyItem.textContent = 'Velg et kart for å se spor i kartet';
       } else if (listMode === LIST_MODE.ON_MAP) {
-        const pendingCount = countPendingBounds(state.gpxTracks, trackBoundsById);
-        if (pendingCount > 0) {
-          emptyItem.textContent = `Laster spor for kartet... (${pendingCount} gjenstår)`;
-        } else {
-          emptyItem.textContent = 'Ingen GPX-spor i valgt kart';
-        }
+        const hasAnyBounds = Array.isArray(state.gpxTracks) && state.gpxTracks.some((track) => Boolean(getTrackBounds(track)));
+        emptyItem.textContent = hasAnyBounds
+          ? 'Ingen GPX-spor i valgt kart'
+          : 'GPX-spor mangler koordinatgrenser i databasen (kjør migrasjon/backfill)';
       } else {
         emptyItem.textContent = 'Ingen GPX-spor tilgjengelig';
       }
@@ -283,10 +268,6 @@ export function createGpxListPanel({
       renderIfVisible();
     }
 
-    if (change?.type === 'trackBounds' && listMode === LIST_MODE.ON_MAP) {
-      renderIfVisible();
-    }
-
     if (
       change?.type === 'selectedTrackId' &&
       state.selectedTrackId !== prevState.selectedTrackId
@@ -346,6 +327,23 @@ function getMapBounds(mapDefinition) {
   };
 }
 
+function getTrackBounds(track) {
+  if (!track) {
+    return null;
+  }
+
+  const minLat = Number(track.min_lat);
+  const minLon = Number(track.min_lon);
+  const maxLat = Number(track.max_lat);
+  const maxLon = Number(track.max_lon);
+
+  if (![minLat, minLon, maxLat, maxLon].every(Number.isFinite)) {
+    return null;
+  }
+
+  return { minLat, minLon, maxLat, maxLon };
+}
+
 function isBoundsContained(inner, outer) {
   return (
     inner.minLat >= outer.minLat &&
@@ -353,23 +351,5 @@ function isBoundsContained(inner, outer) {
     inner.minLon >= outer.minLon &&
     inner.maxLon <= outer.maxLon
   );
-}
-
-function countPendingBounds(tracks, trackBoundsById) {
-  if (!Array.isArray(tracks) || tracks.length === 0) {
-    return 0;
-  }
-  const boundsMap = trackBoundsById ?? {};
-  let pending = 0;
-  tracks.forEach((track) => {
-    const trackId = track?.track_id;
-    if (typeof trackId !== 'number') {
-      return;
-    }
-    if (!Object.prototype.hasOwnProperty.call(boundsMap, trackId)) {
-      pending += 1;
-    }
-  });
-  return pending;
 }
 
