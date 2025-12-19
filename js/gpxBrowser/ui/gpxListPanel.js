@@ -66,8 +66,14 @@ export function createGpxListPanel({
     }
 
     return tracks.filter((track) => {
-      const trackBounds = getTrackBounds(track);
-      return trackBounds ? isBoundsContained(trackBounds, mapBounds) : false;
+      const trackBounds = {
+        minLat: Number(track.min_lat),
+        minLon: Number(track.min_lon),
+        maxLat: Number(track.max_lat),
+        maxLon: Number(track.max_lon)
+      };
+
+      return isBoundsContained(trackBounds, mapBounds);
     });
   }
 
@@ -147,10 +153,7 @@ export function createGpxListPanel({
       } else if (listMode === LIST_MODE.ON_MAP && !selectedMapName) {
         emptyItem.textContent = 'Velg et kart for å se spor i kartet';
       } else if (listMode === LIST_MODE.ON_MAP) {
-        const hasAnyBounds = Array.isArray(state.gpxTracks) && state.gpxTracks.some((track) => Boolean(getTrackBounds(track)));
-        emptyItem.textContent = hasAnyBounds
-          ? 'Ingen GPX-spor i valgt kart'
-          : 'GPX-spor mangler koordinatgrenser i databasen (kjør migrasjon/backfill)';
+        emptyItem.textContent = 'Ingen GPX-spor i valgt kart';
       } else {
         emptyItem.textContent = 'Ingen GPX-spor tilgjengelig';
       }
@@ -325,23 +328,6 @@ function getMapBounds(mapDefinition) {
     minLon: Math.min(lonA, lonB),
     maxLon: Math.max(lonA, lonB)
   };
-}
-
-function getTrackBounds(track) {
-  if (!track) {
-    return null;
-  }
-
-  const minLat = Number(track.min_lat);
-  const minLon = Number(track.min_lon);
-  const maxLat = Number(track.max_lat);
-  const maxLon = Number(track.max_lon);
-
-  if (![minLat, minLon, maxLat, maxLon].every(Number.isFinite)) {
-    return null;
-  }
-
-  return { minLat, minLon, maxLat, maxLon };
 }
 
 function isBoundsContained(inner, outer) {
