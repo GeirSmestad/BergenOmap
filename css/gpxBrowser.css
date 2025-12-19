@@ -112,6 +112,7 @@
 }
 
 .gpx-selector-search__input {
+  box-sizing: border-box;
   width: 100%;
   border: none;
   border-radius: 8px;
