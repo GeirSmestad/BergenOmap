@@ -332,10 +332,10 @@ Grov plan: Få inn alle områder, og ett B-kart fra alle som har. Deretter A for
 
 - [ ] Dobbeltsjekk om alle flex-reglene i 59f7c05 var nødvendige; tror mange kan fjernes
 
-- [ ] Trekke felles kode ut i felles moduler? (Usikker på om jeg ønsker dette; greit vedlikeholdbart som det er)
 - [ ] Felles environment-config på tvers av sider? (har nå dette for registerMap, men ikke kartvisningen)
-- [ ] Refaktorere Python-kode i bedre modul-struktur
 
+- [x] Refaktorere Python-kode i bedre modul-struktur
+- [x] Trekke felles kode ut i felles moduler? (Usikker på om jeg ønsker dette; greit vedlikeholdbart som det er)
 - [x] Kan hende jeg må refaktorere kart-visningen på et tidspunkt. Flere steg her.
 - [x] Bruke ecmascript-moduler?
 - [x] Refaktorere registerMap til EcmaScript-moduler

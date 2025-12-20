@@ -210,6 +210,22 @@ The feature is not critical to non-mobile widths, so if required due to complexi
 
 
 
+## Strava integration
+
+-Store STRAVA_CLIENT_SECRET somewhere safe. DB table?
+-Need DB table with auth information for each user (connected to user ID)
+-Need DB table with all activities we have previously fetched from Strava, for each user + converted GPX
+
+-Display Strava connection information somewhere on the page & orchestrate connection approval
+
+-Display DB table with all activities fetched from strava in one view
+-Display list of all available Strava activities in different view + filters + download button
+-One filter for available Strava activities: "Select all activities that start on one of my maps".
+
+
+-Display downloaded Strava GPXes in GPX browser list
+
+
 ## Scratchpad
 
 When dragging markers in the overlayView, the "point" of the marker that defines the selected pixel and the cursor/finger position when dragging are identical.
