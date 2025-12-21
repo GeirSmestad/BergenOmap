@@ -29,17 +29,20 @@ document.addEventListener('DOMContentLoaded', async () => {
     importedCount: document.getElementById('importedCount'),
     importSelectedBtn: document.getElementById('importSelectedButton'),
     importSelectedOverwriteBtn: document.getElementById('importSelectedOverwriteButton'),
+    selectAllBtn: document.getElementById('selectAllButton'),
     // Pill filter buttons
     filterRunBtn: document.getElementById('filterRun'),
     filterRaceBtn: document.getElementById('filterRace'),
     filterOnMyMapsBtn: document.getElementById('filterOnMyMaps'),
     // Date filters
     dateFromInput: document.getElementById('dateFrom'),
-    dateToInput: document.getElementById('dateTo')
+    dateToInput: document.getElementById('dateTo'),
+    clearDatesBtn: document.getElementById('clearDatesBtn')
   };
 
   const selected = new Set();
   let currentStatus = null;
+  let lastVisibleAvailableActivities = [];
 
   // Pill filter state (løping on by default)
   const pillFilters = {
@@ -354,7 +357,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     activities = applyDateFilters(activities);
 
     els.activitiesList.innerHTML = '';
-    els.availableCount.textContent = `${activities.length}`;
+    els.availableCount.textContent = `(${activities.length})`;
+    lastVisibleAvailableActivities = activities;
 
     activities.forEach((a) => {
       els.activitiesList.appendChild(buildActivityRow(a, { mode: 'available' }));
@@ -370,7 +374,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     imported = applyDateFilters(imported);
 
     els.importedList.innerHTML = '';
-    els.importedCount.textContent = `${imported.length}`;
+    els.importedCount.textContent = `(${imported.length})`;
     imported.forEach((a) => {
       els.importedList.appendChild(buildActivityRow(a, { mode: 'imported' }));
     });
@@ -420,6 +424,12 @@ document.addEventListener('DOMContentLoaded', async () => {
   els.dateFromInput?.addEventListener('change', handleDateChange);
   els.dateToInput?.addEventListener('change', handleDateChange);
 
+  els.clearDatesBtn?.addEventListener('click', () => {
+    if (els.dateFromInput) els.dateFromInput.value = '';
+    if (els.dateToInput) els.dateToInput.value = '';
+    handleDateChange();
+  });
+
   els.filterSelect.addEventListener('change', async () => {
     try {
       await refreshAvailable();
@@ -461,6 +471,19 @@ document.addEventListener('DOMContentLoaded', async () => {
       selected.clear();
       updateImportButtons();
       await refreshLists();
+    } catch (e) {
+      showError(e.message);
+    }
+  });
+
+  els.selectAllBtn?.addEventListener('click', async () => {
+    try {
+      showError(null);
+      lastVisibleAvailableActivities.forEach((a) => {
+        if (a && a.activity_id != null) selected.add(a.activity_id);
+      });
+      updateImportButtons();
+      await refreshAvailable(); // re-render checkboxes for visible list
     } catch (e) {
       showError(e.message);
     }

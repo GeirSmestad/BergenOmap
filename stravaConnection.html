@@ -40,6 +40,9 @@
           <label for="dateTo" class="date-label">Til</label>
           <input type="date" id="dateTo" class="input date-input">
         </div>
+        <button id="clearDatesBtn" class="button button--secondary button--icon" type="button" title="Nullstill datoer" aria-label="Nullstill datoer">
+          &times;
+        </button>
       </section>
 
       <section class="pill-filters" aria-label="Aktivitetsfiltre">
@@ -51,7 +54,10 @@
       <section class="grid">
         <section class="card" aria-labelledby="availableTitle">
           <div class="card__header">
-            <h2 id="availableTitle" class="card__title">Aktiviteter</h2>
+            <div class="card__title-row" aria-labelledby="availableTitle">
+              <h2 id="availableTitle" class="card__title">Aktiviteter</h2>
+              <span id="availableCount" class="card__count">(0)</span>
+            </div>
             <div class="row">
               <select id="filterSelect" class="select" aria-label="Filter">
                 <option value="all">Alle</option>
@@ -63,7 +69,9 @@
           </div>
           <div class="card__body">
             <div class="row row--wrap row--space">
-              <div class="muted" id="availableCount">0</div>
+              <div>
+                <button id="selectAllButton" class="button button--secondary" type="button">Velg alle</button>
+              </div>
               <div class="row row--wrap">
                 <button id="importSelectedButton" class="button button--primary" type="button" disabled>Importer valgte</button>
                 <button id="importSelectedOverwriteButton" class="button button--secondary" type="button" disabled>Importer på nytt</button>
@@ -75,8 +83,10 @@
 
         <section class="card" aria-labelledby="importedTitle">
           <div class="card__header">
-            <h2 id="importedTitle" class="card__title">Importert</h2>
-            <div class="muted" id="importedCount">0</div>
+            <div class="card__title-row" aria-labelledby="importedTitle">
+              <h2 id="importedTitle" class="card__title">Importert</h2>
+              <span id="importedCount" class="card__count">(0)</span>
+            </div>
           </div>
           <div class="card__body">
             <ul id="importedList" class="list" aria-live="polite"></ul>

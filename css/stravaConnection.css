@@ -67,6 +67,19 @@ body.strava-connection {
   font-size: 1.1rem;
 }
 
+.card__title-row {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.card__count {
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.65);
+  white-space: nowrap;
+}
+
 .card__body {
   padding: 1rem;
 }
