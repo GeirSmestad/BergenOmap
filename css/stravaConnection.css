@@ -40,9 +40,119 @@ body.strava-connection {
   margin-top: 1rem;
 }
 
+/* Toggle Control (Mobile Only) */
+.view-toggle {
+  display: flex;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 4px;
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.view-toggle__btn {
+  flex: 1;
+  border: none;
+  background: none;
+  color: rgba(255, 255, 255, 0.6);
+  padding: 10px;
+  border-radius: 9px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.view-toggle__btn:hover {
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.view-toggle__btn--active {
+  background: rgba(255, 255, 255, 0.12) !important;
+  color: #fff !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.badge {
+  font-size: 0.85rem;
+  opacity: 0.7;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Mobile: Tabbed View Logic */
+@media (max-width: 979px) {
+  .grid {
+    display: block; /* Stack (but we hide one) */
+    margin-top: 0.5rem;
+  }
+
+  /* By default (or when body data-view="available"), hide imported */
+  body:not([data-view="imported"]) .card[aria-labelledby="importedTitle"] {
+    display: none;
+  }
+
+  /* When imported active, hide available */
+  body[data-view="imported"] .card[aria-labelledby="availableTitle"] {
+    display: none;
+  }
+  
+  /* Hide card headers on mobile since tabs serve as headers */
+  .card__header {
+    display: none;
+  }
+  
+  /* Bring back search/filter controls for Available card even if header is hidden */
+  /* We need a special way to show the controls inside the header for Available */
+  body:not([data-view="imported"]) .card[aria-labelledby="availableTitle"] .card__header {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    background: transparent;
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+  
+  body:not([data-view="imported"]) .card[aria-labelledby="availableTitle"] .card__title-row {
+    display: none; /* Hide the title "Aktiviteter" text itself */
+  }
+
+  /* Adjust inputs in card header (search/filter) for mobile */
+  .card__header .input {
+    width: auto;
+    min-width: 0;
+    flex: 1; /* Take most space */
+  }
+  
+  .card__header .select {
+    width: auto;
+    flex: 0 0 auto; /* Only take needed space */
+    max-width: 45%; /* Prevent squeezing search too much */
+  }
+  
+  .card__header .row {
+    width: 100%;
+    margin-top: 0.5rem;
+  }
+
+  /* Explicitly hide imported card header on mobile */
+  .card[aria-labelledby="importedTitle"] .card__header {
+    display: none !important;
+  }
+}
+
 @media (min-width: 980px) {
   .grid {
     grid-template-columns: 2fr 1fr;
+  }
+
+  .view-toggle {
+    display: none;
   }
 }
 

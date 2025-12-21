@@ -36,7 +36,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Date filters
     dateFromInput: document.getElementById('dateFrom'),
     dateToInput: document.getElementById('dateTo'),
-    clearDatesBtn: document.getElementById('clearDatesBtn')
+    clearDatesBtn: document.getElementById('clearDatesBtn'),
+    // Mobile view toggles
+    viewAvailableBtn: document.getElementById('viewAvailableBtn'),
+    viewImportedBtn: document.getElementById('viewImportedBtn'),
+    mobileAvailableCount: document.getElementById('mobileAvailableCount'),
+    mobileImportedCount: document.getElementById('mobileImportedCount')
   };
 
   const selected = new Set();
@@ -353,7 +358,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     activities = applyDateFilters(activities);
 
     els.activitiesList.innerHTML = '';
-    els.availableCount.textContent = `(${activities.length})`;
+    const countText = `(${activities.length})`;
+    els.availableCount.textContent = countText;
+    if (els.mobileAvailableCount) els.mobileAvailableCount.textContent = countText;
+    
     lastVisibleAvailableActivities = activities;
 
     activities.forEach((a) => {
@@ -370,7 +378,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     imported = applyDateFilters(imported);
 
     els.importedList.innerHTML = '';
-    els.importedCount.textContent = `(${imported.length})`;
+    const countText = `(${imported.length})`;
+    els.importedCount.textContent = countText;
+    if (els.mobileImportedCount) els.mobileImportedCount.textContent = countText;
+    
     imported.forEach((a) => {
       els.importedList.appendChild(buildActivityRow(a, { mode: 'imported' }));
     });
@@ -515,6 +526,26 @@ document.addEventListener('DOMContentLoaded', async () => {
       showError(e.message);
     }
   });
+
+  // Mobile view toggle handlers
+  function setMobileView(view) {
+    document.body.dataset.view = view;
+    
+    if (view === 'available') {
+      els.viewAvailableBtn.classList.add('view-toggle__btn--active');
+      els.viewAvailableBtn.setAttribute('aria-pressed', 'true');
+      els.viewImportedBtn.classList.remove('view-toggle__btn--active');
+      els.viewImportedBtn.setAttribute('aria-pressed', 'false');
+    } else {
+      els.viewAvailableBtn.classList.remove('view-toggle__btn--active');
+      els.viewAvailableBtn.setAttribute('aria-pressed', 'false');
+      els.viewImportedBtn.classList.add('view-toggle__btn--active');
+      els.viewImportedBtn.setAttribute('aria-pressed', 'true');
+    }
+  }
+
+  els.viewAvailableBtn?.addEventListener('click', () => setMobileView('available'));
+  els.viewImportedBtn?.addEventListener('click', () => setMobileView('imported'));
 
   // Initialize pill button visual states
   syncPillButtonStates();

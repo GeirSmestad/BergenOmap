@@ -26,6 +26,7 @@
             <button id="disconnectButton" class="button button--danger" type="button" hidden>Koble fra</button>
             <button id="syncButton" class="button button--secondary" type="button" disabled>Hent mine aktiviteter fra Strava</button>
           </div>
+          <p id="connectionDetails" class="muted"></p>
           <p id="errorBanner" class="error" role="status" aria-live="polite" hidden></p>
         </div>
       </section>
@@ -49,6 +50,15 @@
         <button id="filterRace" class="pill-toggle" type="button" aria-pressed="false">Konkurranse</button>
         <button id="filterOnMyMaps" class="pill-toggle" type="button" aria-pressed="false">På mine kart</button>
       </section>
+
+      <div class="view-toggle mobile-only">
+        <button id="viewAvailableBtn" class="view-toggle__btn view-toggle__btn--active" type="button" aria-pressed="true">
+          Tilgjengelige aktiviteter <span id="mobileAvailableCount" class="badge">(0)</span>
+        </button>
+        <button id="viewImportedBtn" class="view-toggle__btn" type="button" aria-pressed="false">
+          Importerte aktiviteter <span id="mobileImportedCount" class="badge">(0)</span>
+        </button>
+      </div>
 
       <section class="grid">
         <section class="card" aria-labelledby="availableTitle">
