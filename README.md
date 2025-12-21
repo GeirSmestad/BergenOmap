@@ -165,9 +165,12 @@ Shortlist: Legge inn flere kart
 
 Se Strava-integrasjonschat i ChatGPT: https://chatgpt.com/c/693a0201-57cc-8326-9b89-7af8fc56102f
 
-- [ ] Dato-velger i filter; fra og til
-- [ ] Mer konsistent styling, Dark Mode krasjer med utseendet ellers i appen. La Gemini kikke på den?
 
+- [ ] Date-picker vil helst være litt mer brukervennlig, men dette er flisespikkeri akkurat nå
+- [ ] Mer konsistent styling, Dark Mode krasjer med utseendet ellers i appen. La Gemini kikke på den?
+- [ ] Vil sannsynligvis ha en enklere måte å velge om vi skal se Strava-aktivitetene eller de importerte.
+
+- [x] Dato-velger i filter; fra og til
 - [x] Lever strava-aktiviteter med kjent navnekonvensjon til GPX-leser (gjør dette direkte i API)
 - [x] Filtrer tilgjengelige aktiviteter på løpstype, aktivitetstype, dato. Filtervisning med checkbox/toggle, ikke nedtrekk.
 - [x] Hent løpstype ("race") fra Strava, hent detaljert tekst om aktiviteten (kommer trolig først i activity-kallet)

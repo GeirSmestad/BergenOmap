@@ -49,8 +49,15 @@ export async function disconnectStrava() {
   return requestJson('/api/strava/disconnect', { method: 'POST', body: {} });
 }
 
-export async function syncActivities() {
-  return requestJson('/api/strava/sync_activities', { method: 'POST', body: {} });
+export async function syncActivities({ after = null, before = null } = {}) {
+  const body = {};
+  if (typeof after === 'number' && Number.isFinite(after)) {
+    body.after = after;
+  }
+  if (typeof before === 'number' && Number.isFinite(before)) {
+    body.before = before;
+  }
+  return requestJson('/api/strava/sync_activities', { method: 'POST', body });
 }
 
 export async function listActivities({ filter = 'all', text = '' } = {}) {

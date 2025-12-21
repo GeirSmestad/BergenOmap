@@ -35,8 +35,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     filterOnMyMapsBtn: document.getElementById('filterOnMyMaps'),
     // Date filters
     dateFromInput: document.getElementById('dateFrom'),
-    dateToInput: document.getElementById('dateTo'),
-    clearDatesBtn: document.getElementById('clearDatesBtn')
+    dateToInput: document.getElementById('dateTo')
   };
 
   const selected = new Set();
@@ -167,6 +166,51 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     return result;
+  }
+
+  function _parseIsoDateOnlyToUtcMs(dateOnly) {
+    // Expects "YYYY-MM-DD"
+    if (!dateOnly || typeof dateOnly !== 'string') return null;
+    const parts = dateOnly.split('-').map((x) => Number(x));
+    if (parts.length !== 3) return null;
+    const [y, m, d] = parts;
+    if (![y, m, d].every(Number.isFinite)) return null;
+    // UTC midnight
+    return Date.UTC(y, m - 1, d, 0, 0, 0, 0);
+  }
+
+  function getSelectedDateRange() {
+    const fromStr = els.dateFromInput?.value || '';
+    const toStr = els.dateToInput?.value || '';
+
+    const fromUtcMs = _parseIsoDateOnlyToUtcMs(fromStr);
+    const toUtcMs = _parseIsoDateOnlyToUtcMs(toStr);
+
+    // Inclusive "to" in UI, implemented as < (to + 1 day at 00:00 UTC)
+    const toExclusiveUtcMs = toUtcMs != null ? (toUtcMs + 24 * 60 * 60 * 1000) : null;
+
+    return {
+      fromUtcMs: fromUtcMs,
+      toExclusiveUtcMs: toExclusiveUtcMs
+    };
+  }
+
+  function applyDateFilters(activities) {
+    const { fromUtcMs, toExclusiveUtcMs } = getSelectedDateRange();
+    if (fromUtcMs == null && toExclusiveUtcMs == null) {
+      return activities;
+    }
+
+    return activities.filter((a) => {
+      const start = a?.start_date;
+      if (!start) return true; // best-effort: keep unknowns
+      const dt = new Date(start);
+      const ms = dt.getTime();
+      if (!Number.isFinite(ms)) return true;
+      if (fromUtcMs != null && ms < fromUtcMs) return false;
+      if (toExclusiveUtcMs != null && ms >= toExclusiveUtcMs) return false;
+      return true;
+    });
   }
 
   function buildActivityRow(activity, { mode }) {
@@ -306,6 +350,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Apply pill filters on the frontend
     activities = await applyPillFilters(activities);
+    // Apply date filters on the frontend
+    activities = applyDateFilters(activities);
 
     els.activitiesList.innerHTML = '';
     els.availableCount.textContent = `${activities.length}`;
@@ -320,6 +366,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Apply pill filters on the frontend
     imported = await applyPillFilters(imported);
+    // Apply date filters on the frontend
+    imported = applyDateFilters(imported);
 
     els.importedList.innerHTML = '';
     els.importedCount.textContent = `${imported.length}`;
@@ -353,7 +401,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     try {
       showError(null);
       els.syncBtn.disabled = true;
-      await syncActivities();
+      const { fromUtcMs, toExclusiveUtcMs } = getSelectedDateRange();
+      const after = fromUtcMs != null ? Math.floor(fromUtcMs / 1000) : null;
+      const before = toExclusiveUtcMs != null ? Math.floor(toExclusiveUtcMs / 1000) : null;
+      await syncActivities({ after, before });
       await refreshLists();
     } catch (e) {
       showError(e.message);
@@ -361,6 +412,13 @@ document.addEventListener('DOMContentLoaded', async () => {
       els.syncBtn.disabled = !(currentStatus && currentStatus.connected);
     }
   });
+
+  function handleDateChange() {
+    refreshLists().catch((e) => showError(e.message));
+  }
+
+  els.dateFromInput?.addEventListener('change', handleDateChange);
+  els.dateToInput?.addEventListener('change', handleDateChange);
 
   els.filterSelect.addEventListener('change', async () => {
     try {
