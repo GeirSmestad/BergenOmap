@@ -7,7 +7,8 @@ import {
   gpxDownloadUrl,
   importActivities,
   listActivities,
-  syncActivities
+  syncActivities,
+  listMaps
 } from './services/stravaService.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -27,11 +28,25 @@ document.addEventListener('DOMContentLoaded', async () => {
     importedList: document.getElementById('importedList'),
     importedCount: document.getElementById('importedCount'),
     importSelectedBtn: document.getElementById('importSelectedButton'),
-    importSelectedOverwriteBtn: document.getElementById('importSelectedOverwriteButton')
+    importSelectedOverwriteBtn: document.getElementById('importSelectedOverwriteButton'),
+    // Pill filter buttons
+    filterRunBtn: document.getElementById('filterRun'),
+    filterRaceBtn: document.getElementById('filterRace'),
+    filterOnMyMapsBtn: document.getElementById('filterOnMyMaps')
   };
 
   const selected = new Set();
   let currentStatus = null;
+
+  // Pill filter state (løping on by default)
+  const pillFilters = {
+    run: true,
+    race: false,
+    onMyMaps: false
+  };
+
+  // Map bounds cache for "på mine kart" filter
+  let mapBoundsCache = null;
 
   function showError(message) {
     if (!message) {
@@ -67,6 +82,87 @@ document.addEventListener('DOMContentLoaded', async () => {
     const has = selected.size > 0;
     els.importSelectedBtn.disabled = !has;
     els.importSelectedOverwriteBtn.disabled = !has;
+  }
+
+  function updatePillButtonState(btn, active) {
+    if (active) {
+      btn.classList.add('pill-toggle--active');
+      btn.setAttribute('aria-pressed', 'true');
+    } else {
+      btn.classList.remove('pill-toggle--active');
+      btn.setAttribute('aria-pressed', 'false');
+    }
+  }
+
+  function syncPillButtonStates() {
+    updatePillButtonState(els.filterRunBtn, pillFilters.run);
+    updatePillButtonState(els.filterRaceBtn, pillFilters.race);
+    updatePillButtonState(els.filterOnMyMapsBtn, pillFilters.onMyMaps);
+  }
+
+  async function loadMapBounds() {
+    if (mapBoundsCache !== null) return mapBoundsCache;
+    try {
+      const maps = await listMaps();
+      mapBoundsCache = maps.map((m) => {
+        const nw = m.nw_coords;
+        const se = m.se_coords;
+        if (!Array.isArray(nw) || !Array.isArray(se) || nw.length !== 2 || se.length !== 2) {
+          return null;
+        }
+        const nwLat = parseFloat(nw[0]);
+        const nwLon = parseFloat(nw[1]);
+        const seLat = parseFloat(se[0]);
+        const seLon = parseFloat(se[1]);
+        if ([nwLat, nwLon, seLat, seLon].some(Number.isNaN)) return null;
+        return {
+          minLat: Math.min(nwLat, seLat),
+          maxLat: Math.max(nwLat, seLat),
+          minLon: Math.min(nwLon, seLon),
+          maxLon: Math.max(nwLon, seLon)
+        };
+      }).filter(Boolean);
+    } catch (e) {
+      console.error('Failed to load map bounds:', e);
+      mapBoundsCache = [];
+    }
+    return mapBoundsCache;
+  }
+
+  function pointInAnyMapBounds(lat, lon, bounds) {
+    if (lat == null || lon == null) return false;
+    const latF = parseFloat(lat);
+    const lonF = parseFloat(lon);
+    if (Number.isNaN(latF) || Number.isNaN(lonF)) return false;
+    return bounds.some((b) => latF >= b.minLat && latF <= b.maxLat && lonF >= b.minLon && lonF <= b.maxLon);
+  }
+
+  async function applyPillFilters(activities) {
+    let result = activities;
+
+    // Filter by type=Run (case-insensitive)
+    if (pillFilters.run) {
+      result = result.filter((a) => {
+        const type = (a.type || '').toLowerCase();
+        return type === 'run';
+      });
+    }
+
+    // Filter by workout_type containing "race" (case-insensitive)
+    if (pillFilters.race) {
+      result = result.filter((a) => {
+        const wt = (a.workout_type || '').toLowerCase();
+        return wt.includes('race');
+      });
+    }
+
+    // Filter by start point being on one of my maps
+    if (pillFilters.onMyMaps) {
+      const bounds = await loadMapBounds();
+      result = result.filter((a) => pointInAnyMapBounds(a.start_lat, a.start_lon, bounds));
+    }
+
+    return result;
   }
 
   function buildActivityRow(activity, { mode }) {
@@ -202,7 +298,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   async function refreshAvailable() {
     const filter = els.filterSelect.value;
     const text = els.searchInput.value.trim();
-    const activities = await listActivities({ filter, text });
+    let activities = await listActivities({ filter, text });
+
+    // Apply pill filters on the frontend
+    activities = await applyPillFilters(activities);
 
     els.activitiesList.innerHTML = '';
     els.availableCount.textContent = `${activities.length}`;
@@ -213,7 +312,11 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   async function refreshImported() {
-    const imported = await listActivities({ filter: 'imported', text: '' });
+    let imported = await listActivities({ filter: 'imported', text: '' });
+
+    // Apply pill filters on the frontend
+    imported = await applyPillFilters(imported);
+
     els.importedList.innerHTML = '';
     els.importedCount.textContent = `${imported.length}`;
     imported.forEach((a) => {
@@ -300,6 +403,40 @@ document.addEventListener('DOMContentLoaded', async () => {
       showError(e.message);
     }
   });
+
+  // Pill filter toggle handlers
+  els.filterRunBtn.addEventListener('click', async () => {
+    pillFilters.run = !pillFilters.run;
+    syncPillButtonStates();
+    try {
+      await refreshLists();
+    } catch (e) {
+      showError(e.message);
+    }
+  });
+
+  els.filterRaceBtn.addEventListener('click', async () => {
+    pillFilters.race = !pillFilters.race;
+    syncPillButtonStates();
+    try {
+      await refreshLists();
+    } catch (e) {
+      showError(e.message);
+    }
+  });
+
+  els.filterOnMyMapsBtn.addEventListener('click', async () => {
+    pillFilters.onMyMaps = !pillFilters.onMyMaps;
+    syncPillButtonStates();
+    try {
+      await refreshLists();
+    } catch (e) {
+      showError(e.message);
+    }
+  });
+
+  // Initialize pill button visual states
+  syncPillButtonStates();
 
   updateImportButtons();
 

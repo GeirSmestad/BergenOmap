@@ -75,4 +75,8 @@ export function gpxDownloadUrl(activityId) {
   return `${API_BASE}/api/strava/gpx/${activityId}`;
 }
 
+export async function listMaps() {
+  return requestJson('/api/dal/list_maps');
+}
+
 

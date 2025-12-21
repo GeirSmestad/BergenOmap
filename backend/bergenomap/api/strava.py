@@ -9,7 +9,7 @@ from flask import Blueprint, current_app, jsonify, redirect, request
 
 from bergenomap.api.common import is_local_request
 from bergenomap.integrations.strava_client import StravaApiError, StravaClient
-from bergenomap.repositories import maps_repo, sessions_repo, strava_repo
+from bergenomap.repositories import sessions_repo, strava_repo
 from bergenomap.repositories.db import get_db
 from bergenomap.services import strava_sync_service
 
@@ -206,22 +206,6 @@ def list_activities():
         activities = [a for a in activities if a.get("has_gpx")]
     elif filter_mode == "notImported":
         activities = [a for a in activities if not a.get("has_gpx")]
-    elif filter_mode == "startsOnMyMaps":
-        map_bounds = _load_map_bounds(db)
-        filtered = []
-        for a in activities:
-            lat = a.get("start_lat")
-            lon = a.get("start_lon")
-            if lat is None or lon is None:
-                continue
-            try:
-                lat_f = float(lat)
-                lon_f = float(lon)
-            except (TypeError, ValueError):
-                continue
-            if _point_in_any_bounds(lat_f, lon_f, map_bounds):
-                filtered.append(a)
-        activities = filtered
 
     imports = {imp["activity_id"]: imp for imp in strava_repo.list_imports(db, username)}
     for a in activities:
@@ -237,37 +221,6 @@ def list_activities():
             }
 
     return jsonify(activities), 200
-
-
-def _load_map_bounds(db) -> list[tuple[float, float, float, float]]:
-    """
-    Returns a list of (min_lat, min_lon, max_lat, max_lon) for all maps.
-    """
-    maps = maps_repo.list_maps(db)
-    bounds: list[tuple[float, float, float, float]] = []
-    for m in maps:
-        nw = m.get("nw_coords") if isinstance(m, dict) else None
-        se = m.get("se_coords") if isinstance(m, dict) else None
-        if not isinstance(nw, list) or not isinstance(se, list) or len(nw) != 2 or len(se) != 2:
-            continue
-        try:
-            nw_lat, nw_lon = float(nw[0]), float(nw[1])
-            se_lat, se_lon = float(se[0]), float(se[1])
-        except (TypeError, ValueError):
-            continue
-        min_lat = min(nw_lat, se_lat)
-        max_lat = max(nw_lat, se_lat)
-        min_lon = min(nw_lon, se_lon)
-        max_lon = max(nw_lon, se_lon)
-        bounds.append((min_lat, min_lon, max_lat, max_lon))
-    return bounds
-
-
-def _point_in_any_bounds(lat: float, lon: float, bounds: list[tuple[float, float, float, float]]) -> bool:
-    for (min_lat, min_lon, max_lat, max_lon) in bounds:
-        if min_lat <= lat <= max_lat and min_lon <= lon <= max_lon:
-            return True
-    return False
 
 
 @bp.route("/api/strava/import", methods=["POST"])

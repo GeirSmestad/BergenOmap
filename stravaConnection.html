@@ -30,6 +30,12 @@
         </div>
       </section>
 
+      <section class="pill-filters" aria-label="Aktivitetsfiltre">
+        <button id="filterRun" class="pill-toggle pill-toggle--active" type="button" aria-pressed="true">Løping</button>
+        <button id="filterRace" class="pill-toggle" type="button" aria-pressed="false">Konkurranse</button>
+        <button id="filterOnMyMaps" class="pill-toggle" type="button" aria-pressed="false">På mine kart</button>
+      </section>
+
       <section class="grid">
         <section class="card" aria-labelledby="availableTitle">
           <div class="card__header">
@@ -37,7 +43,6 @@
             <div class="row">
               <select id="filterSelect" class="select" aria-label="Filter">
                 <option value="all">Alle</option>
-                <option value="startsOnMyMaps">Starter på mine kart</option>
                 <option value="notImported">Ikke importert</option>
                 <option value="imported">Importert</option>
               </select>
