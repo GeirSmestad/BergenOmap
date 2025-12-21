@@ -22,21 +22,21 @@ default:
 # SCP my app to the server without the database + restart (smart sync - only changed files)
 deploy-app:
     @echo "Deploying app code to {{server}} (smart sync)..."
-    {{python}} utils/smart_deploy.py --server {{server}} --remote-path {{remote_path}} --paths "*.html" js css backend
+    {{python}} utils/smart_deploy.py --server {{server}} --remote-path {{remote_path}} --paths favicon.ico requirements.txt bootstrap.sh "*.html" js css backend
     ssh {{server}} "sudo systemctl restart {{service_name}}"
     @echo "App deployment complete."
 
 # SCP my app to the server without the database + restart (but also copy unchanged files)
 deploy-app-including-unchanged:
     @echo "Deploying app code to {{server}}..."
-    scp -r *.html js css backend {{server}}:{{remote_path}}/
+    scp -r favicon.ico requirements.txt bootstrap.sh *.html js css backend {{server}}:{{remote_path}}/
     ssh {{server}} "sudo systemctl restart {{service_name}}"
     @echo "App deployment complete."
 
 # SCP my app to the server without the database + restart (force full copy)
 deploy-app-full:
     @echo "Deploying app code to {{server}} (full copy)..."
-    scp -r *.html js css backend {{server}}:{{remote_path}}/
+    scp -r favicon.ico requirements.txt bootstrap.sh *.html js css backend {{server}}:{{remote_path}}/
     ssh {{server}} "sudo systemctl restart {{service_name}}"
     @echo "App deployment complete."
 

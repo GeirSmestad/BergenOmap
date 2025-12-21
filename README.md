@@ -136,6 +136,7 @@ Shortlist: Legge inn flere kart
 
 ## GPX-viewer
 
+- [ ] Vis tidsfelt med tid fra start i tillegg til klokkeslett
 - [ ] Bytt farge på track til rosa + halvgjennomsiktig
 - [ ] Knapp for å velge flyfoto
 - [ ] Penere styling av GPX-opplastingsdialogboks
