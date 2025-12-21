@@ -1,0 +1,227 @@
+/* Strava connection page - simple, mobile-first UI */
+
+:root {
+  color-scheme: dark;
+}
+
+body.strava-connection {
+  margin: 0;
+  background: #0f1115;
+  color: rgba(255, 255, 255, 0.9);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 1rem;
+  padding-bottom: 7rem; /* room for app menu */
+}
+
+.header {
+  margin-bottom: 1rem;
+}
+
+.header__title {
+  margin: 0;
+  font-size: 1.8rem;
+  letter-spacing: -0.02em;
+}
+
+.header__subtitle {
+  margin: 0.35rem 0 0;
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+@media (min-width: 980px) {
+  .grid {
+    grid-template-columns: 2fr 1fr;
+  }
+}
+
+.card {
+  background: rgba(20, 20, 20, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
+}
+
+.card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.9rem 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.card__title {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.card__body {
+  padding: 1rem;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.row--wrap {
+  flex-wrap: wrap;
+}
+
+.row--space {
+  justify-content: space-between;
+}
+
+.button {
+  appearance: none;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.9);
+  border-radius: 12px;
+  padding: 0.6rem 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.button--primary {
+  background: rgba(76, 175, 80, 0.85);
+  border-color: rgba(76, 175, 80, 0.95);
+}
+
+.button--secondary {
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.button--danger {
+  background: rgba(244, 67, 54, 0.75);
+  border-color: rgba(244, 67, 54, 0.9);
+}
+
+.input, .select {
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.9);
+  border-radius: 12px;
+  padding: 0.6rem 0.75rem;
+}
+
+.input {
+  min-width: 160px;
+  flex: 1 1 200px;
+}
+
+.select {
+  flex: 0 0 auto;
+}
+
+.muted {
+  color: rgba(255, 255, 255, 0.65);
+  margin: 0.5rem 0 0;
+  font-size: 0.95rem;
+}
+
+.error {
+  margin: 0.75rem 0 0;
+  padding: 0.75rem;
+  background: rgba(244, 67, 54, 0.12);
+  border: 1px solid rgba(244, 67, 54, 0.25);
+  border-radius: 12px;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.pill {
+  font-size: 0.85rem;
+  padding: 0.35rem 0.55rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.pill--ok {
+  background: rgba(76, 175, 80, 0.15);
+  border-color: rgba(76, 175, 80, 0.35);
+}
+
+.pill--warn {
+  background: rgba(255, 193, 7, 0.12);
+  border-color: rgba(255, 193, 7, 0.35);
+}
+
+.pill--neutral {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.list {
+  list-style: none;
+  margin: 0.75rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.list-item {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+}
+
+.list-item__main {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.list-item__title {
+  margin: 0;
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.list-item__meta {
+  margin: 0.2rem 0 0;
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 0.9rem;
+}
+
+.list-item__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+
+.checkbox {
+  margin-right: 0.55rem;
+  transform: translateY(2px);
+}
+
+.link {
+  color: rgba(180, 220, 255, 0.95);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(180, 220, 255, 0.35);
+}
+
+

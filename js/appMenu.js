@@ -7,6 +7,7 @@ export class AppMenu {
     this.items = [
       { label: '🗺️ Kartvisning', url: 'map.html' },
       { label: '🛰️ Vis GPX', url: 'gpxBrowser.html' },
+      { label: '🔥 Strava', url: 'stravaConnection.html' },
       { label: '📝 Registrer nytt kart', url: 'registerMap.html' },
       // { label: '🏃 Besøk poster', url: '#' } // Future placeholder
     ];

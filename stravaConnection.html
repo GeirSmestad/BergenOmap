@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="no">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>Strava</title>
+    <link rel="stylesheet" href="css/appMenu.css">
+    <link rel="stylesheet" href="css/stravaConnection.css">
+  </head>
+  <body class="strava-connection">
+    <main class="page">
+      <header class="header">
+        <h1 class="header__title">Strava</h1>
+        <p class="header__subtitle">Koble til, synk og importer aktiviteter.</p>
+      </header>
+
+      <section class="card" aria-labelledby="connectionTitle">
+        <div class="card__header">
+          <h2 id="connectionTitle" class="card__title">Tilkobling</h2>
+          <div id="connectionStatusPill" class="pill pill--neutral" aria-live="polite">Laster…</div>
+        </div>
+        <div class="card__body">
+          <div class="row row--wrap">
+            <button id="connectButton" class="button button--primary" type="button">Koble til Strava</button>
+            <button id="disconnectButton" class="button button--danger" type="button" hidden>Koble fra</button>
+            <button id="syncButton" class="button button--secondary" type="button" disabled>Synk aktiviteter</button>
+          </div>
+          <p id="connectionDetails" class="muted"></p>
+          <p id="errorBanner" class="error" role="status" aria-live="polite" hidden></p>
+        </div>
+      </section>
+
+      <section class="grid">
+        <section class="card" aria-labelledby="availableTitle">
+          <div class="card__header">
+            <h2 id="availableTitle" class="card__title">Aktiviteter</h2>
+            <div class="row">
+              <select id="filterSelect" class="select" aria-label="Filter">
+                <option value="all">Alle</option>
+                <option value="startsOnMyMaps">Starter på mine kart</option>
+                <option value="notImported">Ikke importert</option>
+                <option value="imported">Importert</option>
+              </select>
+              <input id="searchInput" class="input" type="search" placeholder="Søk…" aria-label="Søk">
+            </div>
+          </div>
+          <div class="card__body">
+            <div class="row row--wrap row--space">
+              <div class="muted" id="availableCount">0</div>
+              <div class="row row--wrap">
+                <button id="importSelectedButton" class="button button--primary" type="button" disabled>Importer valgte</button>
+                <button id="importSelectedOverwriteButton" class="button button--secondary" type="button" disabled>Importer på nytt</button>
+              </div>
+            </div>
+            <ul id="activitiesList" class="list" aria-live="polite"></ul>
+          </div>
+        </section>
+
+        <section class="card" aria-labelledby="importedTitle">
+          <div class="card__header">
+            <h2 id="importedTitle" class="card__title">Importert</h2>
+            <div class="muted" id="importedCount">0</div>
+          </div>
+          <div class="card__body">
+            <ul id="importedList" class="list" aria-live="polite"></ul>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <script type="module" src="js/stravaConnection/main.js"></script>
+  </body>
+</html>
+
+

@@ -46,7 +46,8 @@ class Database:
         self.cursor.execute(create_map_files_sql)
         self.create_users_table()
         self.create_gps_tracks_table()
-        self.ensure_user_exists('geir.smestad')
+        self.create_internal_kv_table()
+        self.create_strava_tables()
         self.connection.commit()
 
     def create_users_table(self):
@@ -73,6 +74,347 @@ class Database:
         '''
         self.cursor.execute(create_gps_tracks_sql)
         self.create_sessions_table()
+
+    def create_internal_kv_table(self):
+        create_kv_sql = '''
+        CREATE TABLE IF NOT EXISTS internal_kv (
+            key TEXT PRIMARY KEY,
+            value TEXT NOT NULL
+        )
+        '''
+        self.cursor.execute(create_kv_sql)
+
+    def create_strava_tables(self):
+        create_connections_sql = '''
+        CREATE TABLE IF NOT EXISTS strava_connections (
+            username TEXT PRIMARY KEY,
+            athlete_id INTEGER,
+            access_token TEXT,
+            refresh_token TEXT,
+            expires_at INTEGER,
+            scope TEXT,
+            connected_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            revoked_at DATETIME,
+            FOREIGN KEY (username) REFERENCES users(username) ON DELETE CASCADE
+        )
+        '''
+        create_activities_sql = '''
+        CREATE TABLE IF NOT EXISTS strava_activities (
+            username TEXT NOT NULL,
+            activity_id INTEGER NOT NULL,
+            name TEXT,
+            type TEXT,
+            start_date TEXT,
+            start_lat REAL,
+            start_lon REAL,
+            distance REAL,
+            elapsed_time INTEGER,
+            updated_at TEXT,
+            last_fetched_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            gpx_data BLOB NOT NULL,
+            on_map_cached BOOLEAN,
+            PRIMARY KEY (username, activity_id),
+            FOREIGN KEY (username) REFERENCES users(username) ON DELETE CASCADE
+        )
+        '''
+        create_imports_sql = '''
+        CREATE TABLE IF NOT EXISTS strava_imports (
+            username TEXT NOT NULL,
+            activity_id INTEGER NOT NULL,
+            imported_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            last_imported_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            min_lat REAL,
+            min_lon REAL,
+            max_lat REAL,
+            max_lon REAL,
+            PRIMARY KEY (username, activity_id),
+            FOREIGN KEY (username) REFERENCES users(username) ON DELETE CASCADE
+        )
+        '''
+        self.cursor.execute(create_connections_sql)
+        self.cursor.execute(create_activities_sql)
+        self.cursor.execute(create_imports_sql)
+
+    def kv_set(self, key: str, value: str) -> None:
+        insert_sql = '''
+        INSERT INTO internal_kv (key, value)
+        VALUES (?, ?)
+        ON CONFLICT(key) DO UPDATE SET value = excluded.value
+        '''
+        self.cursor.execute(insert_sql, (key, value))
+        self.connection.commit()
+
+    def kv_get(self, key: str):
+        select_sql = '''
+        SELECT value
+        FROM internal_kv
+        WHERE key = ?
+        LIMIT 1
+        '''
+        self.cursor.execute(select_sql, (key,))
+        row = self.cursor.fetchone()
+        return row[0] if row else None
+
+    def get_strava_connection(self, username: str):
+        select_sql = '''
+        SELECT username, athlete_id, access_token, refresh_token, expires_at, scope, connected_at, updated_at, revoked_at
+        FROM strava_connections
+        WHERE username = ?
+        LIMIT 1
+        '''
+        self.cursor.execute(select_sql, (username,))
+        row = self.cursor.fetchone()
+        if not row:
+            return None
+        (username, athlete_id, access_token, refresh_token, expires_at, scope, connected_at, updated_at, revoked_at) = row
+        return {
+            "username": username,
+            "athlete_id": athlete_id,
+            "access_token": access_token,
+            "refresh_token": refresh_token,
+            "expires_at": expires_at,
+            "scope": scope,
+            "connected_at": connected_at,
+            "updated_at": updated_at,
+            "revoked_at": revoked_at,
+        }
+
+    def upsert_strava_connection(
+        self,
+        username: str,
+        *,
+        athlete_id: int | None,
+        access_token: str | None,
+        refresh_token: str | None,
+        expires_at: int | None,
+        scope: str | None,
+    ) -> None:
+        if not self.get_user_by_username(username):
+            raise ValueError(f"User '{username}' does not exist. Create the user before inserting Strava connections.")
+
+        insert_sql = '''
+        INSERT INTO strava_connections (
+            username, athlete_id, access_token, refresh_token, expires_at, scope, connected_at, updated_at, revoked_at
+        )
+        VALUES (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, NULL)
+        ON CONFLICT(username) DO UPDATE SET
+            athlete_id = excluded.athlete_id,
+            access_token = excluded.access_token,
+            refresh_token = excluded.refresh_token,
+            expires_at = excluded.expires_at,
+            scope = excluded.scope,
+            updated_at = CURRENT_TIMESTAMP,
+            revoked_at = NULL
+        '''
+        self.cursor.execute(
+            insert_sql,
+            (username, athlete_id, access_token, refresh_token, expires_at, scope),
+        )
+        self.connection.commit()
+
+    def disconnect_strava(self, username: str) -> None:
+        update_sql = '''
+        UPDATE strava_connections
+        SET
+            access_token = NULL,
+            refresh_token = NULL,
+            expires_at = NULL,
+            updated_at = CURRENT_TIMESTAMP,
+            revoked_at = CURRENT_TIMESTAMP
+        WHERE username = ?
+        '''
+        self.cursor.execute(update_sql, (username,))
+        self.connection.commit()
+
+    def upsert_strava_activity(
+        self,
+        username: str,
+        *,
+        activity_id: int,
+        name: str | None,
+        activity_type: str | None,
+        start_date: str | None,
+        start_lat: float | None,
+        start_lon: float | None,
+        distance: float | None,
+        elapsed_time: int | None,
+        updated_at: str | None,
+        gpx_data: bytes,
+    ) -> None:
+        if not self.get_user_by_username(username):
+            raise ValueError(f"User '{username}' does not exist. Create the user before inserting Strava activities.")
+
+        insert_sql = '''
+        INSERT INTO strava_activities (
+            username, activity_id, name, type, start_date, start_lat, start_lon,
+            distance, elapsed_time, updated_at, last_fetched_at, gpx_data, on_map_cached
+        )
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, ?, NULL)
+        ON CONFLICT(username, activity_id) DO UPDATE SET
+            name = excluded.name,
+            type = excluded.type,
+            start_date = excluded.start_date,
+            start_lat = excluded.start_lat,
+            start_lon = excluded.start_lon,
+            distance = excluded.distance,
+            elapsed_time = excluded.elapsed_time,
+            updated_at = excluded.updated_at,
+            last_fetched_at = CURRENT_TIMESTAMP
+        '''
+        self.cursor.execute(
+            insert_sql,
+            (
+                username,
+                activity_id,
+                name,
+                activity_type,
+                start_date,
+                start_lat,
+                start_lon,
+                distance,
+                elapsed_time,
+                updated_at,
+                gpx_data,
+            ),
+        )
+        self.connection.commit()
+
+    def set_strava_activity_gpx(self, username: str, activity_id: int, gpx_data: bytes) -> None:
+        update_sql = '''
+        UPDATE strava_activities
+        SET gpx_data = ?, last_fetched_at = CURRENT_TIMESTAMP
+        WHERE username = ? AND activity_id = ?
+        '''
+        self.cursor.execute(update_sql, (gpx_data, username, activity_id))
+        self.connection.commit()
+
+    def clear_strava_activity_gpx(self, username: str, activity_id: int) -> None:
+        update_sql = '''
+        UPDATE strava_activities
+        SET gpx_data = ?
+        WHERE username = ? AND activity_id = ?
+        '''
+        self.cursor.execute(update_sql, (b"", username, activity_id))
+        self.connection.commit()
+
+    def list_strava_activities(self, username: str):
+        select_sql = '''
+        SELECT
+            a.activity_id,
+            a.name,
+            a.type,
+            a.start_date,
+            a.start_lat,
+            a.start_lon,
+            a.distance,
+            a.elapsed_time,
+            a.updated_at,
+            a.last_fetched_at,
+            length(a.gpx_data) as gpx_len
+        FROM strava_activities a
+        WHERE a.username = ?
+        ORDER BY a.start_date DESC
+        '''
+        self.cursor.execute(select_sql, (username,))
+        rows = self.cursor.fetchall()
+        results = []
+        for row in rows:
+            (
+                activity_id,
+                name,
+                activity_type,
+                start_date,
+                start_lat,
+                start_lon,
+                distance,
+                elapsed_time,
+                updated_at,
+                last_fetched_at,
+                gpx_len,
+            ) = row
+            results.append(
+                {
+                    "activity_id": activity_id,
+                    "name": name,
+                    "type": activity_type,
+                    "start_date": start_date,
+                    "start_lat": start_lat,
+                    "start_lon": start_lon,
+                    "distance": distance,
+                    "elapsed_time": elapsed_time,
+                    "updated_at": updated_at,
+                    "last_fetched_at": last_fetched_at,
+                    "has_gpx": bool(gpx_len and gpx_len > 0),
+                }
+            )
+        return results
+
+    def get_strava_activity_gpx(self, username: str, activity_id: int):
+        select_sql = '''
+        SELECT gpx_data
+        FROM strava_activities
+        WHERE username = ? AND activity_id = ?
+        LIMIT 1
+        '''
+        self.cursor.execute(select_sql, (username, activity_id))
+        row = self.cursor.fetchone()
+        return row[0] if row else None
+
+    def upsert_strava_import(
+        self,
+        username: str,
+        *,
+        activity_id: int,
+        min_lat: float | None,
+        min_lon: float | None,
+        max_lat: float | None,
+        max_lon: float | None,
+    ) -> None:
+        insert_sql = '''
+        INSERT INTO strava_imports (
+            username, activity_id, imported_at, last_imported_at, min_lat, min_lon, max_lat, max_lon
+        )
+        VALUES (?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, ?, ?, ?, ?)
+        ON CONFLICT(username, activity_id) DO UPDATE SET
+            last_imported_at = CURRENT_TIMESTAMP,
+            min_lat = excluded.min_lat,
+            min_lon = excluded.min_lon,
+            max_lat = excluded.max_lat,
+            max_lon = excluded.max_lon
+        '''
+        self.cursor.execute(insert_sql, (username, activity_id, min_lat, min_lon, max_lat, max_lon))
+        self.connection.commit()
+
+    def list_strava_imports(self, username: str):
+        select_sql = '''
+        SELECT activity_id, imported_at, last_imported_at, min_lat, min_lon, max_lat, max_lon
+        FROM strava_imports
+        WHERE username = ?
+        ORDER BY last_imported_at DESC
+        '''
+        self.cursor.execute(select_sql, (username,))
+        rows = self.cursor.fetchall()
+        return [
+            {
+                "activity_id": activity_id,
+                "imported_at": imported_at,
+                "last_imported_at": last_imported_at,
+                "min_lat": min_lat,
+                "min_lon": min_lon,
+                "max_lat": max_lat,
+                "max_lon": max_lon,
+            }
+            for (activity_id, imported_at, last_imported_at, min_lat, min_lon, max_lat, max_lon) in rows
+        ]
+
+    def delete_strava_import(self, username: str, activity_id: int) -> None:
+        delete_sql = '''
+        DELETE FROM strava_imports
+        WHERE username = ? AND activity_id = ?
+        '''
+        self.cursor.execute(delete_sql, (username, activity_id))
+        self.connection.commit()
 
     def create_sessions_table(self):
         create_sessions_sql = '''
