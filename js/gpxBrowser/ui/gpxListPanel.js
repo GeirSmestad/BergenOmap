@@ -172,7 +172,15 @@ export function createGpxListPanel({
 
         const descriptionEl = document.createElement('span');
         descriptionEl.className = 'gpx-selector-item__description';
-        descriptionEl.textContent = track.description || `Spor ${track.track_id}`;
+
+        const descriptionText = track.description || `Spor ${track.track_id}`;
+        if (track.source === 'strava') {
+          const badge = document.createElement('span');
+          badge.className = 'gpx-track-source-badge';
+          badge.textContent = 'S';
+          descriptionEl.appendChild(badge);
+        }
+        descriptionEl.appendChild(document.createTextNode(descriptionText));
 
         const metaEl = document.createElement('span');
         metaEl.className = 'gpx-selector-item__meta';

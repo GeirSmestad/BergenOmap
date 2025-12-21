@@ -164,10 +164,20 @@ Shortlist: Legge inn flere kart
 
 Se Strava-integrasjonschat i ChatGPT: https://chatgpt.com/c/693a0201-57cc-8326-9b89-7af8fc56102f
 
-- [ ] Strava-integrasjon. Egen side i appen. Få godkjenning mot Strava og lagre athlete_id og refresh_token i DB.
-- [ ] Grensesnitt som henter alle Strava-aktiviteter i valgt tidsrom med API, lagrer dem i database
-- [ ] Sjekk koordinater på aktiviteter mot eksisterende kart; rask måte å få inn alle
-- [ ] Henter ut data fra Strava-aktiviteter, oversetter dem til GPX, legger dem inn i GPX-database.
+
+
+- [ ] .gpx som fil-etternavn når vi laster ned GPX
+- [ ] Hent løpstype ("race") fra Strava, hent detaljert tekst om aktiviteten (kommer trolig først i activity-kallet)
+
+- [ ] Filtrer tilgjengelige aktiviteter på løpstype, aktivitetstype, dato. Filtervisning med checkbox/toggle, ikke nedtrekk.
+
+- [ ] Mer konsistent styling, Dark Mode krasjer med utseendet ellers i appen. La Gemini kikke på den?
+
+- [x] Henter ut data fra Strava-aktiviteter, oversetter dem til GPX
+- [x] Vis importerte aktiviteter i vår GPX-database, med et like "S"-ikon for å vise at de er fra Strava
+- [x] Strava-integrasjon. Egen side i appen. Få godkjenning mot Strava og lagre athlete_id og refresh_token i DB.
+- [x] Grensesnitt som henter alle Strava-aktiviteter i valgt tidsrom med API, lagrer dem i database
+- [x] Sjekk koordinater på aktiviteter mot eksisterende kart; rask måte å få inn alle
 
 ## Trenings-app
 
@@ -326,14 +336,15 @@ Grov plan: Få inn alle områder, og ett B-kart fra alle som har. Deretter A for
 
 ## Refaktorering
 
-- [ ] "GPX-spor for dette kartet": Featuren laster nå ned alle GPX-spor ved første kart-lasting. Flytt algoritme og "boundaries" for kart til DB/backend. Husk å be LLM fjerne nå-ubrukt kode for concurrent nettverks-kall og annen kode relatert til dette fra gpxBrowser/main.js. maybePrefetchTrackBounds, hasOwn og runWithConcurrency.
+
 
 - [ ] Splitte registerMap opp i mobil og desktop-versjon
-
 - [ ] Dobbeltsjekk om alle flex-reglene i 59f7c05 var nødvendige; tror mange kan fjernes
-
 - [ ] Felles environment-config på tvers av sider? (har nå dette for registerMap, men ikke kartvisningen)
 
+- [ ] Flytte database-kode fra Database.py inn i repository-mappene; koden bør faktisk *leve* der og ikke bare være linket derfra
+
+- [x] "GPX-spor for dette kartet": Featuren laster nå ned alle GPX-spor ved første kart-lasting. Flytt algoritme og "boundaries" for kart til DB/backend.
 - [x] Refaktorere Python-kode i bedre modul-struktur
 - [x] Trekke felles kode ut i felles moduler? (Usikker på om jeg ønsker dette; greit vedlikeholdbart som det er)
 - [x] Kan hende jeg må refaktorere kart-visningen på et tidspunkt. Flere steg her.
@@ -410,6 +421,9 @@ brew install just (OS X)
 For deploy, se Justfile for detaljer. 
 Enkel deploy er fx. "just deploy-app"
 
+Kjøring av SQL-script fra Windows:
+
+Get-Content .\006_update_track_bounds.sql | ssh bergenomap "sqlite3 -bail /srv/bergenomap/data/database.db"
 
 
 ## Kart-kilder -- flyfoto og topografiske kart

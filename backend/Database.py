@@ -408,6 +408,38 @@ class Database:
             for (activity_id, imported_at, last_imported_at, min_lat, min_lon, max_lat, max_lon) in rows
         ]
 
+    def list_strava_imports_with_details(self, username: str):
+        select_sql = '''
+        SELECT 
+            i.activity_id, 
+            a.name, 
+            a.start_date, 
+            i.min_lat, 
+            i.min_lon, 
+            i.max_lat, 
+            i.max_lon,
+            a.type
+        FROM strava_imports i
+        JOIN strava_activities a ON i.username = a.username AND i.activity_id = a.activity_id
+        WHERE i.username = ?
+        ORDER BY a.start_date DESC
+        '''
+        self.cursor.execute(select_sql, (username,))
+        rows = self.cursor.fetchall()
+        return [
+            {
+                "activity_id": activity_id,
+                "name": name,
+                "start_date": start_date,
+                "min_lat": min_lat,
+                "min_lon": min_lon,
+                "max_lat": max_lat,
+                "max_lon": max_lon,
+                "type": activity_type,
+            }
+            for (activity_id, name, start_date, min_lat, min_lon, max_lat, max_lon, activity_type) in rows
+        ]
+
     def delete_strava_import(self, username: str, activity_id: int) -> None:
         delete_sql = '''
         DELETE FROM strava_imports
@@ -415,6 +447,38 @@ class Database:
         '''
         self.cursor.execute(delete_sql, (username, activity_id))
         self.connection.commit()
+
+    def list_strava_imports_with_details(self, username: str):
+        select_sql = '''
+        SELECT
+            i.activity_id,
+            a.name,
+            a.type,
+            a.start_date,
+            i.min_lat,
+            i.min_lon,
+            i.max_lat,
+            i.max_lon
+        FROM strava_imports i
+        JOIN strava_activities a ON i.username = a.username AND i.activity_id = a.activity_id
+        WHERE i.username = ?
+        ORDER BY i.last_imported_at DESC
+        '''
+        self.cursor.execute(select_sql, (username,))
+        rows = self.cursor.fetchall()
+        return [
+            {
+                "activity_id": activity_id,
+                "name": name,
+                "type": activity_type,
+                "start_date": start_date,
+                "min_lat": min_lat,
+                "min_lon": min_lon,
+                "max_lat": max_lat,
+                "max_lon": max_lon,
+            }
+            for (activity_id, name, activity_type, start_date, min_lat, min_lon, max_lat, max_lon) in rows
+        ]
 
     def create_sessions_table(self):
         create_sessions_sql = '''

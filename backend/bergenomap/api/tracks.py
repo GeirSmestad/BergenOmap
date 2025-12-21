@@ -5,7 +5,7 @@ import xml.etree.ElementTree as ET
 from flask import Blueprint, jsonify, request
 
 from bergenomap.repositories.db import get_db
-from bergenomap.repositories import tracks_repo, users_repo
+from bergenomap.repositories import strava_repo, tracks_repo, users_repo
 from bergenomap.services.track_service import compute_gpx_bounds
 from gpx_parser import parse_strava_gpx
 
@@ -21,13 +21,99 @@ def list_gps_tracks(username: str):
         return jsonify({"error": f"User '{username}' not found"}), 404
 
     tracks = tracks_repo.list_gps_tracks(db, username)
-    return jsonify(tracks)
+    for t in tracks:
+        if isinstance(t, dict):
+            t["source"] = "local"
+
+    # Add Strava imports as "virtual tracks" with negative track_id values.
+    # This keeps the GPX browser's numeric trackId assumptions intact.
+    strava_imports = strava_repo.list_imports(db, username)
+    strava_activities = strava_repo.list_activities(db, username)
+    strava_activity_by_id = {
+        a.get("activity_id"): a for a in strava_activities if isinstance(a, dict) and a.get("activity_id") is not None
+    }
+
+    strava_tracks = []
+    for imp in strava_imports:
+        if not isinstance(imp, dict):
+            continue
+        activity_id = imp.get("activity_id")
+        if activity_id is None:
+            continue
+        try:
+            activity_id_int = int(activity_id)
+        except (TypeError, ValueError):
+            continue
+
+        activity = strava_activity_by_id.get(activity_id_int) or {}
+        name = activity.get("name") if isinstance(activity, dict) else None
+        if not name:
+            name = str(activity_id_int)
+
+        strava_tracks.append(
+            {
+                "track_id": -activity_id_int,
+                "username": username,
+                "description": f"strava-{name}",
+                "min_lat": imp.get("min_lat"),
+                "min_lon": imp.get("min_lon"),
+                "max_lat": imp.get("max_lat"),
+                "max_lon": imp.get("max_lon"),
+                "source": "strava",
+                "strava_activity_id": activity_id_int,
+            }
+        )
+
+    merged = tracks + strava_tracks
+    return jsonify(merged)
 
 
-@bp.route("/api/gps-tracks/<username>/<int:track_id>", methods=["GET"])
-def get_gps_track(username: str, track_id: int):
+@bp.route("/api/gps-tracks/<username>/<track_id>", methods=["GET"])
+def get_gps_track(username: str, track_id: str):
     db = get_db()
-    track = tracks_repo.get_gps_track_by_id(db, username, track_id)
+    try:
+        track_id_int = int(track_id)
+    except (TypeError, ValueError):
+        return jsonify({"error": "Invalid track_id"}), 400
+
+    if track_id_int < 0: # Negative-numbered tracks are virtual, from Strava integration
+        activity_id = -track_id_int
+        gpx_bytes = strava_repo.get_activity_gpx(db, username, activity_id)
+        if not gpx_bytes:
+            return jsonify({"error": "Track not found"}), 404
+
+        try:
+            parsed_gpx = parse_strava_gpx(gpx_bytes)
+        except ET.ParseError as exc:
+            return jsonify({"error": f"Unable to parse GPX payload: {exc}"}), 500
+
+        bounds = compute_gpx_bounds(parsed_gpx) or (None, None, None, None)
+        min_lat, min_lon, max_lat, max_lon = bounds
+        # Best-effort description from cached Strava activities table.
+        name = None
+        for a in strava_repo.list_activities(db, username):
+            if isinstance(a, dict) and a.get("activity_id") == activity_id:
+                name = a.get("name")
+                break
+        if not name:
+            name = str(activity_id)
+
+        response = {
+            "track_id": track_id_int,
+            "username": username,
+            "description": f"strava-{name}",
+            "min_lat": min_lat,
+            "min_lon": min_lon,
+            "max_lat": max_lat,
+            "max_lon": max_lon,
+            "source": "strava",
+            "strava_activity_id": activity_id,
+            "gpx": parsed_gpx,
+        }
+        return jsonify(response)
+
+    # Positive-numbered tracks are from GPX tracks uploaded by the user
+    track = tracks_repo.get_gps_track_by_id(db, username, track_id_int)
     if not track:
         return jsonify({"error": "Track not found"}), 404
 
@@ -44,6 +130,7 @@ def get_gps_track(username: str, track_id: int):
         "min_lon": track.get("min_lon"),
         "max_lat": track.get("max_lat"),
         "max_lon": track.get("max_lon"),
+        "source": "local",
         "gpx": parsed_gpx,
     }
     return jsonify(response)
@@ -103,6 +190,7 @@ def insert_gps_track():
                 "min_lon": min_lon,
                 "max_lat": max_lat,
                 "max_lon": max_lon,
+                "source": "local",
                 "preview": {
                     "metadata": parsed_preview.get("metadata", {}),
                     "track_count": preview_track_count,

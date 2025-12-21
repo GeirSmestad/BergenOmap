@@ -109,6 +109,10 @@ def list_imports(db: Database, username: str) -> list[dict]:
     return db.list_strava_imports(username)
 
 
+def list_imports_with_details(db: Database, username: str) -> list[dict]:
+    return db.list_strava_imports_with_details(username)
+
+
 def delete_import(db: Database, username: str, activity_id: int) -> None:
     db.delete_strava_import(username, activity_id)
 
