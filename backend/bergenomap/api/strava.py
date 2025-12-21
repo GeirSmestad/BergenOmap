@@ -310,6 +310,8 @@ def download_gpx(activity_id: int):
     gpx = strava_repo.get_activity_gpx(db, username, activity_id)
     if not gpx:
         return jsonify({"error": "No GPX stored for this activity"}), 404
-    return current_app.response_class(gpx, mimetype="application/gpx+xml")
+    response = current_app.response_class(gpx, mimetype="application/gpx+xml")
+    response.headers["Content-Disposition"] = f"attachment; filename=strava_{activity_id}.gpx"
+    return response
 
 
