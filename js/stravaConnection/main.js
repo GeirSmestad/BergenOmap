@@ -16,7 +16,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   const els = {
     statusPill: document.getElementById('connectionStatusPill'),
-    details: document.getElementById('connectionDetails'),
     error: document.getElementById('errorBanner'),
     connectBtn: document.getElementById('connectButton'),
     disconnectBtn: document.getElementById('disconnectButton'),
@@ -322,7 +321,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   async function refreshStatus() {
     setPill('neutral', 'Laster…');
-    els.details.textContent = '';
     els.syncBtn.disabled = true;
     els.disconnectBtn.hidden = true;
     els.connectBtn.hidden = false;
@@ -336,13 +334,11 @@ document.addEventListener('DOMContentLoaded', async () => {
       els.connectBtn.hidden = true;
       els.disconnectBtn.hidden = false;
       els.syncBtn.disabled = false;
-      els.details.textContent = status.athlete_id ? `Athlete ID: ${status.athlete_id}` : 'Tilkoblet.';
     } else {
       setPill('warn', 'Ikke tilkoblet');
       els.connectBtn.hidden = false;
       els.disconnectBtn.hidden = true;
       els.syncBtn.disabled = true;
-      els.details.textContent = 'Koble til Strava for å kunne synkronisere aktiviteter.';
     }
   }
 
