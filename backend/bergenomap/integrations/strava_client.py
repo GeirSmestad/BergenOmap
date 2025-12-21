@@ -99,6 +99,22 @@ class StravaClient:
             raise StravaApiError("Unexpected response from Strava athlete/activities (expected list)", payload=data)
         return data
 
+    def get_activity(
+        self,
+        *,
+        access_token: str,
+        activity_id: int,
+    ) -> dict:
+        """
+        Fetch detailed activity info from Strava.
+        Returns the full activity object including workout_type and description.
+        """
+        url = f"{self.API_BASE}/activities/{activity_id}"
+        data = self._get_json(url, access_token=access_token)
+        if not isinstance(data, dict):
+            raise StravaApiError("Unexpected response from Strava activity detail", payload=data)
+        return data
+
     def get_activity_streams(
         self,
         *,

@@ -53,6 +53,8 @@ def upsert_activity(
     elapsed_time: int | None,
     updated_at: str | None,
     gpx_data: bytes,
+    workout_type: str | None = None,
+    description: str | None = None,
 ) -> None:
     db.upsert_strava_activity(
         username,
@@ -66,6 +68,8 @@ def upsert_activity(
         elapsed_time=elapsed_time,
         updated_at=updated_at,
         gpx_data=gpx_data,
+        workout_type=workout_type,
+        description=description,
     )
 
 

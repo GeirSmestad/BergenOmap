@@ -114,6 +114,8 @@ class Database:
             last_fetched_at DATETIME DEFAULT CURRENT_TIMESTAMP,
             gpx_data BLOB NOT NULL,
             on_map_cached BOOLEAN,
+            workout_type TEXT,
+            description TEXT,
             PRIMARY KEY (username, activity_id),
             FOREIGN KEY (username) REFERENCES users(username) ON DELETE CASCADE
         )
@@ -241,6 +243,8 @@ class Database:
         elapsed_time: int | None,
         updated_at: str | None,
         gpx_data: bytes,
+        workout_type: str | None = None,
+        description: str | None = None,
     ) -> None:
         if not self.get_user_by_username(username):
             raise ValueError(f"User '{username}' does not exist. Create the user before inserting Strava activities.")
@@ -248,9 +252,10 @@ class Database:
         insert_sql = '''
         INSERT INTO strava_activities (
             username, activity_id, name, type, start_date, start_lat, start_lon,
-            distance, elapsed_time, updated_at, last_fetched_at, gpx_data, on_map_cached
+            distance, elapsed_time, updated_at, last_fetched_at, gpx_data, on_map_cached,
+            workout_type, description
         )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, ?, NULL)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, ?, NULL, ?, ?)
         ON CONFLICT(username, activity_id) DO UPDATE SET
             name = excluded.name,
             type = excluded.type,
@@ -260,7 +265,9 @@ class Database:
             distance = excluded.distance,
             elapsed_time = excluded.elapsed_time,
             updated_at = excluded.updated_at,
-            last_fetched_at = CURRENT_TIMESTAMP
+            last_fetched_at = CURRENT_TIMESTAMP,
+            workout_type = excluded.workout_type,
+            description = excluded.description
         '''
         self.cursor.execute(
             insert_sql,
@@ -276,6 +283,8 @@ class Database:
                 elapsed_time,
                 updated_at,
                 gpx_data,
+                workout_type,
+                description,
             ),
         )
         self.connection.commit()
@@ -311,7 +320,9 @@ class Database:
             a.elapsed_time,
             a.updated_at,
             a.last_fetched_at,
-            length(a.gpx_data) as gpx_len
+            length(a.gpx_data) as gpx_len,
+            a.workout_type,
+            a.description
         FROM strava_activities a
         WHERE a.username = ?
         ORDER BY a.start_date DESC
@@ -332,6 +343,8 @@ class Database:
                 updated_at,
                 last_fetched_at,
                 gpx_len,
+                workout_type,
+                description,
             ) = row
             results.append(
                 {
@@ -346,6 +359,8 @@ class Database:
                     "updated_at": updated_at,
                     "last_fetched_at": last_fetched_at,
                     "has_gpx": bool(gpx_len and gpx_len > 0),
+                    "workout_type": workout_type,
+                    "description": description,
                 }
             )
         return results

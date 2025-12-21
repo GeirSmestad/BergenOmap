@@ -26,6 +26,28 @@ from gpx_parser import parse_strava_gpx
 STRAVA_CLIENT_ID_KEY = "STRAVA_CLIENT_ID"
 STRAVA_CLIENT_SECRET_KEY = "STRAVA_CLIENT_SECRET"
 
+# Mapping of Strava workout_type integer to human-readable text
+# Only these values are stored; others are left as NULL
+WORKOUT_TYPE_MAP = {
+    0: "Default run",
+    1: "Race",
+    2: "Long run",
+    3: "Workout",
+    10: "Default ride",
+    11: "Race ride",
+    12: "Workout ride",
+}
+
+
+def map_workout_type(workout_type_raw: int | None) -> str | None:
+    """
+    Map Strava's numeric workout_type to a human-readable string.
+    Returns None if the value is not in our known mapping.
+    """
+    if workout_type_raw is None:
+        return None
+    return WORKOUT_TYPE_MAP.get(workout_type_raw)
+
 
 @dataclass(frozen=True)
 class ImportResult:
@@ -114,6 +136,7 @@ def sync_activity_summaries(
                 continue
 
             start_lat, start_lon = _extract_start_latlon(activity)
+            workout_type = map_workout_type(_maybe_int(activity.get("workout_type")))
             strava_repo.upsert_activity(
                 db,
                 username,
@@ -127,6 +150,7 @@ def sync_activity_summaries(
                 elapsed_time=_maybe_int(activity.get("elapsed_time")),
                 updated_at=activity.get("updated_at"),
                 gpx_data=b"",
+                workout_type=workout_type,
             )
             total += 1
 
@@ -163,6 +187,11 @@ def import_activities(
         start_date = meta.get("start_date") if meta else None
 
         try:
+            # Fetch detailed activity info for description and workout_type
+            activity_detail = client.get_activity(access_token=access_token, activity_id=activity_id_int)
+            description = activity_detail.get("description") if isinstance(activity_detail, dict) else None
+            workout_type = map_workout_type(_maybe_int(activity_detail.get("workout_type"))) if isinstance(activity_detail, dict) else None
+
             streams = client.get_activity_streams(access_token=access_token, activity_id=activity_id_int)
             gpx_bytes = _streams_to_gpx_bytes(activity_id=activity_id_int, start_date=start_date, streams=streams)
             parsed_preview = parse_strava_gpx(gpx_bytes)
@@ -177,8 +206,8 @@ def import_activities(
                     db,
                     username,
                     activity_id=activity_id_int,
-                    name=None,
-                    activity_type=None,
+                    name=activity_detail.get("name") if isinstance(activity_detail, dict) else None,
+                    activity_type=activity_detail.get("type") if isinstance(activity_detail, dict) else None,
                     start_date=start_date,
                     start_lat=None,
                     start_lon=None,
@@ -186,6 +215,26 @@ def import_activities(
                     elapsed_time=None,
                     updated_at=None,
                     gpx_data=b"",
+                    workout_type=workout_type,
+                    description=description,
+                )
+            else:
+                # Update existing activity with description and workout_type from detail
+                strava_repo.upsert_activity(
+                    db,
+                    username,
+                    activity_id=activity_id_int,
+                    name=meta.get("name"),
+                    activity_type=meta.get("type"),
+                    start_date=meta.get("start_date"),
+                    start_lat=meta.get("start_lat"),
+                    start_lon=meta.get("start_lon"),
+                    distance=meta.get("distance"),
+                    elapsed_time=meta.get("elapsed_time"),
+                    updated_at=meta.get("updated_at"),
+                    gpx_data=b"",
+                    workout_type=workout_type,
+                    description=description,
                 )
             strava_repo.set_activity_gpx(db, username, activity_id_int, gpx_bytes)
             strava_repo.upsert_import(
