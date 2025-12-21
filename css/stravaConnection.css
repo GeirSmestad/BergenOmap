@@ -115,6 +115,17 @@ body.strava-connection {
   border-color: rgba(244, 67, 54, 0.9);
 }
 
+.button--icon {
+  padding: 0.6rem;
+  line-height: 1;
+  font-size: 1.2rem;
+  width: 40px;
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .input, .select {
   border: 1px solid rgba(255, 255, 255, 0.15);
   background: rgba(255, 255, 255, 0.06);
@@ -125,7 +136,7 @@ body.strava-connection {
 
 .input {
   min-width: 160px;
-  flex: 1 1 200px;
+  flex: 1 1 20px;
 }
 
 .select {
@@ -229,7 +240,7 @@ body.strava-connection {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
-  margin-top: 1rem;
+  margin-top: 1.0rem;
   margin-bottom: 0.5rem;
 }
 
@@ -261,4 +272,37 @@ body.strava-connection {
   background: rgba(76, 175, 80, 0.35);
 }
 
+/* Date filters */
+.date-filters {
+  display: flex;
+  align-items: flex-end;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  flex-wrap: wrap;
+}
 
+.date-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.date-label {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.65);
+  font-weight: 500;
+  margin-left: 0.2rem;
+}
+
+.date-input {
+  min-width: 140px;
+  max-width: 180px;
+  font-family: inherit;
+}
+
+/* Fix for WebKit calendar icon color */
+::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+  opacity: 0.6;
+  cursor: pointer;
+}

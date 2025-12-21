@@ -32,7 +32,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Pill filter buttons
     filterRunBtn: document.getElementById('filterRun'),
     filterRaceBtn: document.getElementById('filterRace'),
-    filterOnMyMapsBtn: document.getElementById('filterOnMyMaps')
+    filterOnMyMapsBtn: document.getElementById('filterOnMyMaps'),
+    // Date filters
+    dateFromInput: document.getElementById('dateFrom'),
+    dateToInput: document.getElementById('dateTo'),
+    clearDatesBtn: document.getElementById('clearDatesBtn')
   };
 
   const selected = new Set();
