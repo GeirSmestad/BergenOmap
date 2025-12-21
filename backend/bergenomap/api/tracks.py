@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import xml.etree.ElementTree as ET
+import re
 
 from flask import Blueprint, jsonify, request
 
@@ -11,6 +12,25 @@ from gpx_parser import parse_strava_gpx
 
 
 bp = Blueprint("tracks", __name__)
+
+
+_ISO_DATE_RE = re.compile(r"^\d{4}-\d{2}-\d{2}")
+
+
+def _format_strava_track_description(*, start_date: str | None, name: str, workout_type: str | None) -> str:
+    date_part = "unknown-date"
+    if isinstance(start_date, str):
+        m = _ISO_DATE_RE.match(start_date)
+        if m:
+            date_part = m.group(0)
+
+    desc = f"strava-{date_part}-{name}"
+
+    wt = workout_type.strip() if isinstance(workout_type, str) else ""
+    if wt != "Default run":
+        desc = f"{desc}-{wt}"
+
+    return desc
 
 
 @bp.route("/api/gps-tracks/<username>", methods=["GET"])
@@ -50,11 +70,18 @@ def list_gps_tracks(username: str):
         if not name:
             name = str(activity_id_int)
 
+        start_date = activity.get("start_date") if isinstance(activity, dict) else None
+        workout_type = activity.get("workout_type") if isinstance(activity, dict) else None
+
         strava_tracks.append(
             {
                 "track_id": -activity_id_int,
                 "username": username,
-                "description": f"strava-{name}",
+                "description": _format_strava_track_description(
+                    start_date=start_date,
+                    name=str(name),
+                    workout_type=workout_type,
+                ),
                 "min_lat": imp.get("min_lat"),
                 "min_lon": imp.get("min_lon"),
                 "max_lat": imp.get("max_lat"),
@@ -90,18 +117,26 @@ def get_gps_track(username: str, track_id: str):
         bounds = compute_gpx_bounds(parsed_gpx) or (None, None, None, None)
         min_lat, min_lon, max_lat, max_lon = bounds
         # Best-effort description from cached Strava activities table.
-        name = None
+        activity: dict = {}
         for a in strava_repo.list_activities(db, username):
             if isinstance(a, dict) and a.get("activity_id") == activity_id:
-                name = a.get("name")
+                activity = a
                 break
+
+        name = activity.get("name") if isinstance(activity, dict) else None
         if not name:
             name = str(activity_id)
+        start_date = activity.get("start_date") if isinstance(activity, dict) else None
+        workout_type = activity.get("workout_type") if isinstance(activity, dict) else None
 
         response = {
             "track_id": track_id_int,
             "username": username,
-            "description": f"strava-{name}",
+            "description": _format_strava_track_description(
+                start_date=start_date,
+                name=str(name),
+                workout_type=workout_type,
+            ),
             "min_lat": min_lat,
             "min_lon": min_lon,
             "max_lat": max_lat,

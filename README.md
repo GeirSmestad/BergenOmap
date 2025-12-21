@@ -165,15 +165,13 @@ Shortlist: Legge inn flere kart
 
 Se Strava-integrasjonschat i ChatGPT: https://chatgpt.com/c/693a0201-57cc-8326-9b89-7af8fc56102f
 
-
-
-- [ ] .gpx som fil-etternavn når vi laster ned GPX
-- [ ] Hent løpstype ("race") fra Strava, hent detaljert tekst om aktiviteten (kommer trolig først i activity-kallet)
-
-- [ ] Filtrer tilgjengelige aktiviteter på løpstype, aktivitetstype, dato. Filtervisning med checkbox/toggle, ikke nedtrekk.
-
+- [ ] Dato-velger i filter; fra og til
 - [ ] Mer konsistent styling, Dark Mode krasjer med utseendet ellers i appen. La Gemini kikke på den?
 
+- [x] Lever strava-aktiviteter med kjent navnekonvensjon til GPX-leser (gjør dette direkte i API)
+- [x] Filtrer tilgjengelige aktiviteter på løpstype, aktivitetstype, dato. Filtervisning med checkbox/toggle, ikke nedtrekk.
+- [x] Hent løpstype ("race") fra Strava, hent detaljert tekst om aktiviteten (kommer trolig først i activity-kallet)
+- [x] .gpx som fil-etternavn når vi laster ned GPX
 - [x] Henter ut data fra Strava-aktiviteter, oversetter dem til GPX
 - [x] Vis importerte aktiviteter i vår GPX-database, med et like "S"-ikon for å vise at de er fra Strava
 - [x] Strava-integrasjon. Egen side i appen. Få godkjenning mot Strava og lagre athlete_id og refresh_token i DB.
@@ -190,7 +188,6 @@ Se Strava-integrasjonschat i ChatGPT: https://chatgpt.com/c/693a0201-57cc-8326-9
 - [ ] Mauell stempling (registrer avstand og presisjon fra GPS)
 
 ## Infrastruktur
-
 
 - [ ] Database-nøkkel som gir versjonen av et bestemt kart, slik at jeg kan cache i nettleseren til brukeren
 
@@ -260,6 +257,7 @@ Grov plan: Få inn alle områder, og ett B-kart fra alle som har. Deretter A for
 - [ ] Cache Leaflet-filer, orienteringskart, og kart-definisjoner lokalt i appen i tilfelle brudd i nettverk (Cache Storage API?)
 - [ ] Finjuster UI for kart-registrering på mobil mtp. marginer og andre detaljer; mye finpuss man kan gjøre
 - [ ] Bedre ytelse ved registrering; går ganske treigt på mobil. Trolig både overflødig opplasting og beregning som tar tid.
+- [ ] Trenger nok snart dokumentasjon av prosjektet for at LLMene skal finne raskere fram.
 
 - [x] Rename eksisterende registreringer med navne-konvensjonen jeg har på bcup-kartene (all relevant info i kartnavn)
 - [x] Eksponer de ulike controllerne for nettleseren, for bedre debugging
