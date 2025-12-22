@@ -60,6 +60,17 @@ export async function syncActivities({ after = null, before = null } = {}) {
   return requestJson('/api/strava/sync_activities', { method: 'POST', body });
 }
 
+export async function syncActivitiesPage({ after = null, before = null, page = 1, perPage = 200 } = {}) {
+  const body = { page, per_page: perPage };
+  if (typeof after === 'number' && Number.isFinite(after)) {
+    body.after = after;
+  }
+  if (typeof before === 'number' && Number.isFinite(before)) {
+    body.before = before;
+  }
+  return requestJson('/api/strava/sync_activities_page', { method: 'POST', body });
+}
+
 export async function listActivities({ filter = 'all', text = '' } = {}) {
   const qs = new URLSearchParams();
   if (filter) qs.set('filter', filter);

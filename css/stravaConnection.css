@@ -234,8 +234,8 @@ body.strava-connection {
 }
 
 .button--danger {
-  background: rgba(244, 67, 54, 0.75);
-  border-color: rgba(244, 67, 54, 0.9);
+  background: rgb(87, 10, 10);
+  border-color: rgb(125, 9, 0);
 }
 
 .button--icon {

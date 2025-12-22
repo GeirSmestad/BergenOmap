@@ -185,6 +185,51 @@ def sync_activities():
     return jsonify(result), 200
 
 
+@bp.route("/api/strava/sync_activities_page", methods=["POST"])
+def sync_activities_page():
+    """
+    Fetch exactly one page of Strava activities and upsert into our cache.
+    Intended for UI progress updates.
+    """
+    username = _current_username()
+    db = get_db()
+    client = StravaClient()
+
+    payload = request.get_json(silent=True) or {}
+    after = payload.get("after")
+    before = payload.get("before")
+    page = payload.get("page", 1)
+    per_page = payload.get("per_page", 200)
+
+    try:
+        after_i = int(after) if after is not None else None
+        before_i = int(before) if before is not None else None
+        page_i = int(page)
+        per_page_i = int(per_page)
+    except (TypeError, ValueError):
+        return jsonify({"error": "after/before/page/per_page must be ints"}), 400
+
+    if page_i < 1:
+        return jsonify({"error": "page must be >= 1"}), 400
+    if per_page_i < 1 or per_page_i > 200:
+        return jsonify({"error": "per_page must be between 1 and 200"}), 400
+
+    try:
+        result = strava_sync_service.sync_activity_summaries_page(
+            db,
+            username,
+            client=client,
+            page=page_i,
+            per_page=per_page_i,
+            after=after_i,
+            before=before_i,
+        )
+    except (ValueError, StravaApiError) as exc:
+        return jsonify({"error": str(exc)}), 400
+
+    return jsonify(result), 200
+
+
 @bp.route("/api/strava/activities", methods=["GET"])
 def list_activities():
     username = _current_username()

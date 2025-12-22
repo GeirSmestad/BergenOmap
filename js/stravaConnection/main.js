@@ -8,6 +8,7 @@ import {
   importActivities,
   listActivities,
   syncActivities,
+  syncActivitiesPage,
   listMaps
 } from './services/stravaService.js';
 
@@ -17,6 +18,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const els = {
     statusPill: document.getElementById('connectionStatusPill'),
     error: document.getElementById('errorBanner'),
+    progress: document.getElementById('progressIndicator'),
     connectBtn: document.getElementById('connectButton'),
     disconnectBtn: document.getElementById('disconnectButton'),
     syncBtn: document.getElementById('syncButton'),
@@ -66,6 +68,18 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
     els.error.hidden = false;
     els.error.textContent = message;
+  }
+
+  function setProgress(message) {
+    if (!els.progress) return;
+    const text = (message || '').trim();
+    if (!text) {
+      els.progress.hidden = true;
+      els.progress.textContent = '';
+      return;
+    }
+    els.progress.hidden = false;
+    els.progress.textContent = text;
   }
 
   function setPill(mode, text) {
@@ -271,10 +285,13 @@ document.addEventListener('DOMContentLoaded', async () => {
       importBtn.addEventListener('click', async () => {
         try {
           showError(null);
+          setProgress(`Henter 1 økt...`);
           await importActivities([activity.activity_id], { overwrite: Boolean(activity.has_gpx) });
           await refreshLists();
         } catch (e) {
           showError(e.message);
+        } finally {
+          setProgress('');
         }
       });
       actions.appendChild(importBtn);
@@ -294,10 +311,13 @@ document.addEventListener('DOMContentLoaded', async () => {
       reimportBtn.addEventListener('click', async () => {
         try {
           showError(null);
+          setProgress(`Henter 1 økt...`);
           await importActivities([activity.activity_id], { overwrite: true });
           await refreshLists();
         } catch (e) {
           showError(e.message);
+        } finally {
+          setProgress('');
         }
       });
 
@@ -412,14 +432,38 @@ document.addEventListener('DOMContentLoaded', async () => {
     try {
       showError(null);
       els.syncBtn.disabled = true;
+
       const { fromUtcMs, toExclusiveUtcMs } = getSelectedDateRange();
       const after = fromUtcMs != null ? Math.floor(fromUtcMs / 1000) : null;
       const before = toExclusiveUtcMs != null ? Math.floor(toExclusiveUtcMs / 1000) : null;
-      await syncActivities({ after, before });
+
+      // Page-by-page sync so we can display progress.
+      let page = 1;
+      let totalSynced = 0;
+      const perPage = 200;
+
+      for (let i = 0; i < 200; i++) { // hard cap to avoid infinite loops
+        setProgress(`Henter aktiviteter fra Strava...`);
+
+        if (totalSynced != 0) {
+          setProgress(`Lastet ned ${totalSynced} aktiviteter fra Strava...`);
+        }
+        
+        const res = await syncActivitiesPage({ after, before, page, perPage });
+        const received = Number(res?.received_count ?? -1);
+        const synced = Number(res?.synced_count ?? -1);
+        if (Number.isFinite(synced)) totalSynced += synced;
+
+        if (!received) {
+          break;
+        }
+        page += 1;
+      }
       await refreshLists();
     } catch (e) {
       showError(e.message);
     } finally {
+      setProgress('');
       els.syncBtn.disabled = !(currentStatus && currentStatus.connected);
     }
   });
@@ -461,12 +505,18 @@ document.addEventListener('DOMContentLoaded', async () => {
     try {
       showError(null);
       const ids = Array.from(selected);
-      await importActivities(ids, { overwrite: false });
+      const total = ids.length;
+      for (let idx = 0; idx < total; idx++) {
+        setProgress(`Henter økt ${idx + 1} av ${total}…`);
+        await importActivities([ids[idx]], { overwrite: false });
+      }
       selected.clear();
       updateImportButtons();
       await refreshLists();
     } catch (e) {
       showError(e.message);
+    } finally {
+      setProgress('');
     }
   });
 
@@ -474,12 +524,18 @@ document.addEventListener('DOMContentLoaded', async () => {
     try {
       showError(null);
       const ids = Array.from(selected);
-      await importActivities(ids, { overwrite: true });
+      const total = ids.length;
+      for (let idx = 0; idx < total; idx++) {
+        setProgress(`Henter økt ${idx + 1} av ${total}…`);
+        await importActivities([ids[idx]], { overwrite: true });
+      }
       selected.clear();
       updateImportButtons();
       await refreshLists();
     } catch (e) {
       showError(e.message);
+    } finally {
+      setProgress('');
     }
   });
 

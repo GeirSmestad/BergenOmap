@@ -157,6 +157,66 @@ def sync_activity_summaries(
     return {"synced_count": total, "pages": pages}
 
 
+def sync_activity_summaries_page(
+    db: Database,
+    username: str,
+    *,
+    client: StravaClient,
+    page: int,
+    per_page: int = 200,
+    after: int | None = None,
+    before: int | None = None,
+) -> dict:
+    """
+    Fetch a single page of activity summaries from Strava and upsert into our cache table.
+    Returns counts so the UI can show progress.
+    """
+    access_token = ensure_valid_access_token(db, username, client=client)
+    activities = client.list_activities(
+        access_token=access_token,
+        page=page,
+        per_page=per_page,
+        after=after,
+        before=before,
+    )
+
+    received = len(activities) if isinstance(activities, list) else 0
+    synced = 0
+
+    if isinstance(activities, list):
+        for activity in activities:
+            if not isinstance(activity, dict):
+                continue
+            activity_id = activity.get("id")
+            if activity_id is None:
+                continue
+            try:
+                activity_id_int = int(activity_id)
+            except (TypeError, ValueError):
+                continue
+
+            start_lat, start_lon = _extract_start_latlon(activity)
+            workout_type = map_workout_type(_maybe_int(activity.get("workout_type")))
+            strava_repo.upsert_activity(
+                db,
+                username,
+                activity_id=activity_id_int,
+                name=activity.get("name"),
+                activity_type=activity.get("type"),
+                start_date=activity.get("start_date"),
+                start_lat=start_lat,
+                start_lon=start_lon,
+                distance=_maybe_float(activity.get("distance")),
+                elapsed_time=_maybe_int(activity.get("elapsed_time")),
+                updated_at=activity.get("updated_at"),
+                gpx_data=b"",
+                workout_type=workout_type,
+            )
+            synced += 1
+
+    return {"page": page, "received_count": received, "synced_count": synced}
+
+
 def import_activities(
     db: Database,
     username: str,

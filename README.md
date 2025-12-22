@@ -168,9 +168,11 @@ Se Strava-integrasjonschat i ChatGPT: https://chatgpt.com/c/693a0201-57cc-8326-9
 
 - [ ] Date-picker vil helst være litt mer brukervennlig, men dette er flisespikkeri akkurat nå
 - [ ] Mer konsistent styling, Dark Mode krasjer med utseendet ellers i appen. La Gemini kikke på den?
-- [ ] Mindre høylytt rødfarge på "koble fra"-knappen
-- [ ] Vis framdrift ved henting av aktiviteter og import av aktiviteter. Dette tar tid, mange nettverkskall. Fint å kunne følge med.
+- [ ] Bedre utseende på telefon; pr. nå snubler elementene litt i hverandre når det blir smal skjerm.
+- [ ] Lenke til selve Strava-aktiviteten fra kortene på siden?
 
+- [x] Vis framdrift ved henting av aktiviteter og import av aktiviteter. Dette tar tid, mange nettverkskall. Fint å kunne følge med.
+- [x] Mindre høylytt rødfarge på "koble fra"-knappen
 - [x] (0) La knappe-filtrene også styres hva som hentes med Strava-APIet (Umulig).
 - [x] Vil sannsynligvis ha en enklere måte å velge om vi skal se Strava-aktivitetene eller de importerte.
 - [x] Dato-velger i filter; fra og til
