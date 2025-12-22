@@ -264,30 +264,8 @@ Please start sketching the plan for this, I will modify it based on your suggest
 
 ## Scratchpad
 
-When dragging markers in the overlayView, the "point" of the marker that defines the selected pixel and the cursor/finger position when dragging are identical.
 
-Ideally, I'd want the cursor/finger location to be centered on the *body* of the teardrop marker, with the selected pixel still being the one at the "point" on the bottom of the marker.
-
-See if there is a clean fix that accomplishes this. Note that it needs to work with the zoom & pan functionality that already exists. If it becomes too complex to implement, we will just skip it. This is not a critical feature, and I'm trying to manage the complexity of this feature.
-
-Just for debugging, I'd like you to paint pixels in the image that have been selected as pink, using the image pixel coordinates that will be reported to consumers. This is for visual verification that the feature works as intended.
-
-
-
-
-Great, now sort the buttons in the list on data-map-id (descending) whenever there is text in this field. (Otherwise, sort alphabetically)
-
-
-Is there currently any code to sort the buttons in preExistingMapSelector? I notice they appear alphabetically, but maybe that's just what the SQL query gives us directly from the database.
-
-
-
-Good job. For your information, I have made some additional adjustments to the "Sentrer kart" button (colors), the padding of the "clear searchbox" button, and a couple of other small details.
-
-Please implement the changes that we have made in this chat, to the map browser in gpxBrowser.html. I want the exact same behavior there. Let me know if there are complications or differences I should be aware of.
-
-
-I know we're kinda re-implementing rsync here, but I don't have it on Windows. Can you do a kind of checksum on files on both ends in "just deploy-app", so that we only have to copy the files that have changed?
+We did a refactor a while ago, which extracted the DAL layer of our database logic to the backend/bergenomap/repositories folder. A quick investigation indicates that these are mostly stubs, with the real DB DAL code still residing in Database.py. Do you agree with this assessment? I'd like to move the DAL code from Database.py into their respective DAL files, so the behavior actually resides where it's intended.
 
 
 
