@@ -1,380 +1,344 @@
-MY QUESTION TO CHATGPT: Please sketch in human language how I'd connect to Strava with an app, including permissions/authentication.
+My prompt: I want to split registerMap into a desktop and a mobile version. I notice that the most recent changes have frequently introduced regressions in desktop mode when introducing mobile changes, and vice versa.
 
-Here’s the “human-language” version of how you hook an app up to Strava and get permission to read activities, etc.
+Please read the code and investigate how you would implement this change. My objective is to simplify the technical implementation for each platform, and better support the user experience on each. Key to this being in particular mobile layout with tabs, and how the overlayView works with panning, zooming and marker placement behavior.
 
-1. Create an app in your Strava account
+HTML and CSS would be the core target of the simplifications once this is done, but Javascript simplifications are also welcome if applicable. Although I do imagine there would be quite a bit of code reuse in the components that can non-problematically share code.
 
-Log in to Strava in a browser.
 
-Go to Settings → My API Application (or directly to the API settings page). 
-Strava Utviklere
-+1
 
-Fill in:
 
-App name, logo, category
 
-Website (can be http://localhost for local dev)
 
-Authorization callback domain – the domain Strava is allowed to redirect back to (e.g. localhost or your real domain).
 
-Strava then gives you:
 
-Client ID
+Got it. I’m going to scan the current `registerMap` HTML/CSS and the controllers that drive overlay pan/zoom + marker placement, then map out where desktop/mobile behaviors diverge (especially tabs and overlay interactions). After that I’ll propose a concrete split strategy (separate entrypoints/layouts + shared core modules) and call out the specific files/DOM seams to refactor around.
 
-Client secret (keep this secret, server-side only) 
-Strava Utviklere
-+1
+[14 tools called]
 
-2. Decide what you want access to (scopes)
+I found the core HTML + CSS: `registerMap.html` is already a “hybrid” page (desktop side-by-side + mobile tab nav), and `css/register-map.css` has a big `@media (max-width: 768px)` block that essentially redefines the whole layout. Next I’m going to pull up the actual JS under `js/registerMap/` (my first read used the wrong folder), especially the overlay pan/zoom + marker managers, to see exactly where DOM/layout assumptions leak between desktop and mobile.
 
-Strava uses OAuth scopes to control what your app can do. Common ones: 
-Strava Utviklere
-+1
+[29 tools called]
 
-read – basic public data.
+### What’s coupled today (and why regressions happen)
+Right now `registerMap.html` is a **single hybrid UI** that contains *both* desktop structure (all sections visible, two map panels side-by-side) and mobile structure (tab panels + bottom tab bar):
 
-activity:read – read non-private activities.
+```40:170:C:/Source/BergenOmap/registerMap.html
+  <!-- Tab Panel: Start (upload new map or pick existing) -->
+  <section id="tab-content-start" class="tab-panel ... data-tab="start">
+  ...
+  <div class="registration-map-views">
+    <div id="tab-content-terrain" class="tab-panel ..." data-tab="terrain">
+      ...
+    </div>
+    <div id="tab-content-overlay" class="tab-panel ..." data-tab="overlay">
+      ...
+      <img id="overlayView" alt="Overlay map preview"/>
+    </div>
+  </div>
+  ...
+  <section id="tab-content-metadata" class="tab-panel ..." data-tab="metadata">
+  ...
+  <nav id="mobileTabNav" class="mobile-tab-nav">...</nav>
+```
 
-activity:read_all – read all activities (including “Only Me”).
+And `css/register-map.css` contains **two largely different layout systems in one file**, with the mobile half essentially “rebooting” the page into a fixed-height, tab-driven app:
 
-profile:read_all, profile:write, etc., for profile changes.
+```600:706:C:/Source/BergenOmap/css/register-map.css
+@media (max-width: 768px) {
+  body { ... display: flex; height: 100vh; overflow: hidden; }
+  ...
+  .tab-panel[data-tab="start"],
+  .tab-panel[data-tab="terrain"],
+  .tab-panel[data-tab="overlay"],
+  .tab-panel[data-tab="metadata"] {
+    display: none !important;
+    ...
+  }
+  ...
+  .tab-panel[data-tab="start"].tab-content--active,
+  ... { display: flex !important; }
+  ...
+}
+```
 
-For “download my runs and reconstruct GPX”, you typically want activity:read_all (plus read).
+Finally, the JS entrypoint initializes **both desktop-ish and mobile-ish behaviors together**:
 
-3. Send the user to Strava to approve access
+```1:75:C:/Source/BergenOmap/js/registerMap/main.js
+const DESKTOP_MEDIA_QUERY = '(min-width: 769px)';
+...
+document.addEventListener('DOMContentLoaded', () => {
+  ...
+  initPaletteStickyOffset();
+  const mobileTabs = initMobileTabs();
+  ...
+});
+```
 
-Your app builds an authorize URL like:
+This setup makes regressions likely because a “small” tweak for mobile often touches shared DOM/CSS selectors/IDs that desktop depends on, and vice versa.
 
-https://www.strava.com/oauth/authorize?client_id=YOUR_CLIENT_ID&response_type=code&redirect_uri=YOUR_REDIRECT_URI&approval_prompt=force&scope=read,activity:read_all 
-Strava Utviklere
-+1
+---
 
-Flow:
+### The cleanest split: two pages + a tiny “router” page
+I’d implement the split as **two separate HTML/CSS entrypoints** and keep `registerMap.html` as a *launcher* that chooses one at load time:
 
-User clicks “Connect with Strava” in your app.
+- **`registerMap.desktop.html`**
+  - Desktop-only markup (no mobile tab bar, no `data-tab` panels needed)
+  - Loads `css/register-map.desktop.css`
+  - Loads `js/registerMap/main.desktop.js`
 
-You redirect them to that Strava URL.
+- **`registerMap.mobile.html`**
+  - Mobile-only markup (tabbed/wizard layout)
+  - Loads `css/register-map.mobile.css`
+  - Loads `js/registerMap/main.mobile.js`
 
-Strava shows a page: “App X wants to read your activities…”.
+- **Keep `registerMap.html`**
+  - Very small: redirects once based on `matchMedia('(max-width: 768px)')`
+  - This preserves your existing menu link (`js/appMenu.js` points to `registerMap.html`).
 
-User approves or cancels.
+This gives you the strongest guarantee: **mobile changes cannot accidentally alter desktop layout**, because they no longer share the same CSS/DOM.
 
-If they approve, Strava redirects the browser back to your redirect_uri, with a query param like:
+I would *not* auto-redirect on resize/orientation-change after load; treat desktop/mobile as distinct apps and keep the user where they started.
 
-?code=AUTHORIZATION_CODE&scope=read,activity:read_all
+---
 
-4. Exchange the code for tokens (server-side)
+### What can remain shared (high reuse with low risk)
+Your “core” registration logic is already fairly platform-agnostic and can stay shared with minimal or no changes:
 
-Your backend then calls Strava’s token endpoint:
+- **Stores**
+  - `js/registerMap/state/coordinateStore.js`
+  - `js/registerMap/state/registrationStore.js` (note: reads metadata by element IDs)
 
-POST https://www.strava.com/oauth/token
+- **Map + overlay behavior**
+  - `js/registerMap/controllers/mapViewController.js` (Leaflet)
+  - `js/registerMap/controllers/mapMarkerManager.js`
+  - `js/registerMap/controllers/overlayController.js`
+  - `js/registerMap/controllers/overlayPanZoomController.js`
+  - `js/registerMap/controllers/overlayMarkerManager.js`
 
-with body / params roughly:
+- **Services + actions**
+  - `js/registerMap/services/apiClient.js`
+  - `js/registerMap/services/fileDropService.js`
+  - `js/registerMap/actions/registerActions.js`
+  - `js/registerMap/controllers/existingMapController.js`
 
-client_id
+To maximize reuse, keep the **same element IDs** in both pages for:
+- `registrationMapBrowser`, `overlayView`
+- `mapMarkerPalette`, `overlayMarkerPalette`
+- `computeRegistrationButton`, `saveMapButton`, `registrationPreviewButton`, `basemapToggleButton`, `registrationStatus`
+- metadata field IDs (`mapName`, `filename`, …)
+- upload + existing-map IDs (`fileUploadInput`, `drop-area`, `preExistingMapList`, `preExistingMapFilter`, `clearMapFilterButton`)
 
-client_secret
+That lets almost all shared modules keep working unchanged.
 
-code (the one from the redirect)
+---
 
-grant_type=authorization_code 
-Strava Utviklere
-+1
+### What should become platform-specific (reduces desktop/mobile regressions)
+#### 1) Tabs / navigation (mobile-only)
+`initMobileTabs()` toggles panels and sets `body.dataset.mobileTab`:
 
-Strava responds with JSON containing:
+```1:71:C:/Source/BergenOmap/js/registerMap/ui/mobileTabController.js
+function switchToTab(tabName) {
+  ...
+  document.body.dataset.mobileTab = tabName;
+  ...
+  section.classList.add('tab-content--active');
+  if (key === 'terrain' && window.map) setTimeout(() => window.map.invalidateSize(), 100);
+}
+```
 
-access_token – short-lived (about 6 hours).
+This is exactly the kind of coupling you want to avoid in desktop.
 
-refresh_token – long-lived, used to get new access tokens.
+In the split:
+- desktop JS: does **not** import/initialize `mobileTabController.js`
+- mobile JS: owns tabs and “map needs resize” handling
 
-expires_at – timestamp when the access token dies.
+Also, mobile tabs currently depend on the global `window.map`. In a mobile-only entrypoint you can eliminate that by passing the Leaflet map (or a callback) into the tab controller.
 
-Info about the athlete who just connected.
+#### 2) “sticky palette offset” (desktop-only)
+This is inherently desktop UI behavior:
 
-You store (securely):
+```13:58:C:/Source/BergenOmap/js/registerMap/main.js
+const initPaletteStickyOffset = () => { ... matchMedia('(min-width: 769px)') ... };
+```
 
-Athlete ID
+Move this into `main.desktop.js` only.
 
-Their refresh token
+#### 3) Overlay DOM structure (good candidate to simplify in both)
+`overlayController` dynamically wraps `#overlayView` into wrapper/canvas/layer nodes:
 
-Maybe last sync time, etc.
+```4:45:C:/Source/BergenOmap/js/registerMap/controllers/overlayController.js
+const ensureOverlayWrapper = (overlayElement) => { ... create div.overlay-view-wrapper ... };
+const ensurePanZoomCanvas = (...) => { ... create div.overlay-panzoom-canvas ... };
+const ensureMarkerLayer = (...) => { ... create div.overlay-marker-layer ... };
+```
 
-5. Use the access token in API calls
+Once you have separate HTML files, you can **render this structure directly in HTML** (especially for mobile), and then `overlayController` becomes simpler (no DOM surgery, fewer layout surprises). Even if you keep the “ensure*” functions, pre-rendering reduces fragility.
 
-For any Strava API request on behalf of that user, you send:
+---
 
-Authorization: Bearer ACCESS_TOKEN
+### Overlay pan/zoom + marker placement: what to tailor per platform
+You called out overlay interactions specifically. The logic is mostly solid and nicely separated:
 
+- Pan/zoom controller handles gestures + suppresses accidental placement via `skipNextClick`:
 
-in the header. 
-Strava Utviklere
-+1
+```8:42:C:/Source/BergenOmap/js/registerMap/controllers/overlayPanZoomController.js
+const DRAG_THRESHOLD_PX = 4;
+...
+let skipNextClick = false;
+...
+canvasElement.style.setProperty('--overlay-marker-scale', String(1 / state.scale));
+```
 
-Examples:
+- Marker placement uses the pan/zoom coordinate resolver and respects the click suppression:
 
-GET /api/v3/athlete – who is this.
+```159:180:C:/Source/BergenOmap/js/registerMap/controllers/overlayMarkerManager.js
+if (typeof shouldIgnoreClick === 'function' && shouldIgnoreClick()) return;
+const coords = resolveCoordsFromEvent(event);
+coordinateStore.setImageCoordinateAt(currentXYIndex, coords.imageX, coords.imageY);
+```
 
-GET /api/v3/athlete/activities – list their activities, using the scopes you got. 
-Strava Utviklere
-+1
+Where I’d diverge between desktop/mobile *after the split*:
 
-From there you can pull activity streams and build your own GPX.
+- **Mobile**: consider a higher `DRAG_THRESHOLD_PX` (touch jitter is real), or a “placement mode” that temporarily disables single-finger pan while you’re trying to tap a marker location.
+- **Desktop**: keep wheel zoom sensitivity and low drag threshold; right-click delete is fine.
+- **Mobile delete UX**: `contextmenu`-to-delete won’t be reliable everywhere on touch; mobile could use tap-to-select marker + “Remove” button (platform-specific UI, shared store update).
 
-6. Refreshing tokens
+These changes become much safer once the two platforms no longer share the same CSS/DOM.
 
-When the access token expires:
+---
 
-Your app notices expires_at has passed.
+### A concrete restructuring plan (minimal churn, high payoff)
+- **Step 1 (safe, big win)**: split entrypoints
+  - Create `js/registerMap/main.desktop.js` and `js/registerMap/main.mobile.js`
+  - Extract most of current `main.js` into a shared `initRegisterMapCore()` that takes small hooks (e.g. “onAfterOverlayLoaded”, “onAfterMapCreated”).
+  - Keep IDs stable.
 
-It calls the same token endpoint with:
+- **Step 2**: split the HTML
+  - Duplicate `registerMap.html` into `registerMap.desktop.html` / `registerMap.mobile.html`
+  - Remove mobile-only DOM from desktop page (bottom tab bar, tab panel wrappers if you want)
+  - Remove desktop-only clutter from mobile page (e.g. drag-drop area if you never want it on mobile)
 
-grant_type=refresh_token
+- **Step 3**: split CSS
+  - `register-map.shared.css` (tokens, cards, markers, overlay wrapper/canvas/layer styles)
+  - `register-map.desktop.css` (layout, sticky header/palettes)
+  - `register-map.mobile.css` (tabs, fixed viewport behaviors)
 
-refresh_token=STORED_REFRESH_TOKEN 
-stravalib.readthedocs.io
-+1
+- **Step 4**: make `registerMap.html` a launcher
+  - Redirect to the right page once on load
+  - Keep `js/appMenu.js` unchanged (still links to `registerMap.html`)
 
-Strava returns a new access token (and often a new refresh token).
+If you want, tell me which direction you prefer for the mobile UX (tabs staying as-is vs turning it into a stricter step-by-step “wizard”), and I can outline the exact DOM structure and which JS modules would own each responsibility in that model.
 
-You update the stored token(s).
 
-The user doesn’t have to re-approve; this is all background.
 
-7. Permissions / safety model
 
-Users can revoke your app’s access from their Strava settings at any time.
 
-Your app only sees what its scopes allow.
 
-You must keep the client secret, access tokens, and refresh tokens on the server and out of client-side JS or public repos. 
-Strava Utviklere
-+1
 
-If you tell me what stack you’re using (Python/Flask, Node, etc.), I can translate this into a concrete “one file” auth flow sketch for that ecosystem.
+My remarks: I suspect we might need a more comprehensive split for the overlay behavior JS code in particular. On-device testing gives me the impression that there are tweaks here that might risk regressions on desktop, and vice versa. Do you have any thoughts about this, after reading the code? I'm thinking panning/zooming, marker placement and marker interactions. Does your judgement indicate that we would be fine with simply distinguishing between mobile/desktop in various if clauses in the JS code, rather than splitting the JS code into distinct mobile/desktop versions?
 
-MY QUESTION TO CHATGPT: What do I need to store in my app's database to be able to maintain this integration?
 
-At minimum, per Strava athlete (user) you want to store enough to (a) refresh tokens forever and (b) know what you’ve already synced.
 
-Must-have (per connected Strava user)
 
-strava_athlete_id (the stable Strava user id)
 
-refresh_token (long-lived; lets you mint new access tokens)
 
-access_token (optional to store, but convenient)
 
-expires_at (epoch timestamp; so you know when to refresh)
 
-granted_scopes (string/array, e.g. read,activity:read_all) — useful to detect missing permissions
 
-connected_at / updated_at timestamps
+### My judgement: don’t scatter `if (isMobile)` inside the overlay controllers
+You *could* do it, but based on what’s in the overlay stack today, I think it’s **high risk long-term** and will recreate the same “fix mobile, break desktop” pattern—just inside JS instead of CSS/HTML.
 
-Highly recommended
+The overlay interaction code is already doing a lot of nuanced input arbitration (tap-to-place vs drag-to-pan vs pinch-to-zoom), and the parts you’ll want to tune are exactly the ones where **desktop and mobile feel “right” with different thresholds and even different interaction affordances**.
 
-token_last_refreshed_at (debugging / rate-limit correlation)
+### Where mobile/desktop will want to diverge (from the code you have)
+#### 1) Tap vs pan suppression threshold
+Right now pan begins only after a small movement threshold:
 
-revoked_at / disconnected_at (set when API calls start failing with auth errors, or user disconnects)
+```8:175:C:/Source/BergenOmap/js/registerMap/controllers/overlayPanZoomController.js
+const DRAG_THRESHOLD_PX = 4;
+...
+if (!skipNextClick && pointerDistanceFromStart(pointer) > DRAG_THRESHOLD_PX) {
+  skipNextClick = true;
+}
+...
+if (skipNextClick) {
+  panBy(dx, dy);
+  event.preventDefault();
+}
+```
 
-last_activity_sync_at (or last_activity_start_date) so you can do incremental syncs
+On touch devices, “finger jitter” frequently exceeds 4px even for an intended tap. That makes **marker placement feel flaky** because the click is suppressed.
 
-strava_webhook_subscription_id (if you use webhooks) + webhook verify token / secret handling (secret shouldn’t be in DB unless you rotate; usually env config)
+#### 2) Wheel zoom & sensitivity (desktop-only UX expectation)
+Desktop trackpads/mice want wheel zoom; mobile doesn’t.
 
-If you store activities locally
+```8:209:C:/Source/BergenOmap/js/registerMap/controllers/overlayPanZoomController.js
+const WHEEL_SENSITIVITY = 0.0025;
+...
+wrapperElement.addEventListener('wheel', handleWheel, { passive: false });
+```
 
-Per activity you typically store:
+You’ll likely tune wheel behavior independently of pinch behavior. Doing that with scattered `if` checks tends to get messy quickly.
 
-strava_activity_id (unique)
+#### 3) “Delete marker” interaction is fundamentally different
+Overlay markers delete on `contextmenu`:
 
-athlete_id (FK)
+```182:187:C:/Source/BergenOmap/js/registerMap/controllers/overlayMarkerManager.js
+const handleMarkerContextMenu = (index, event) => {
+  event.preventDefault();
+  event.stopPropagation();
+  coordinateStore.clearImageCoordinateAt(index);
+  removeMarker(index);
+};
+```
 
-start_date, type, name
+That’s great on desktop; on mobile it’s unreliable/undiscoverable. Mobile usually wants **tap marker → action sheet / delete button**, or a long-press gesture (which then conflicts with pan).
 
-last_updated_at (from Strava) or etag/hash so you can resync when it changes
+#### 4) Placement event type: `click` is not ideal on mobile
+Placement uses `imageElement.addEventListener('click', ...)`:
 
-Optional: a cached GPX blob you generated (or store the decoded track/points)
+```159:180:C:/Source/BergenOmap/js/registerMap/controllers/overlayMarkerManager.js
+imageElement.addEventListener('click', handleImageClick);
+...
+if (typeof shouldIgnoreClick === 'function' && shouldIgnoreClick()) {
+  return;
+}
+```
 
-That’s basically it: athlete id + refresh token + expiry bookkeeping + sync cursor. Access tokens are replaceable; refresh tokens are the crown jewels.
+On mobile browsers, `click` is a synthesized event after pointer/touch sequences; it’s often the first place where “I panned a tiny bit and now taps don’t place markers” shows up.
 
-What rate limits does Strava documentation mention, for fetching activities? If any
+### Recommendation: split overlay behavior by *module boundary*, not by *if-clauses*
+The sweet spot is:
 
-Here’s what the official Strava documentation says about API rate limits (as of the current docs):
+- **Keep shared math + coordinate mapping** (the hard part) shared:
+  - `overlayPanZoomController`’s transform math and `toImageCoordinates()` are good to reuse.
+  - `overlayMarkerManager`’s “store natural image coords + position markers by percent” is good to reuse.
 
-📊 Official documented limits
+- **Make interaction policy platform-specific** in thin wrappers/config:
+  - A `createOverlayPanZoomController(..., options)` where options cover:
+    - `dragThresholdPx` (mobile higher)
+    - `enableWheelZoom` (desktop true, mobile false)
+    - wheel sensitivity
+    - possibly “tap places marker” vs “explicit place mode”
+  - A platform-specific marker interaction layer:
+    - desktop: keep `contextmenu` delete + pointer drag
+    - mobile: replace `contextmenu` delete with an explicit UI affordance (button), and likely use `pointerup`/tap handling tuned for touch
 
-Default rate limit:
-• 200 requests per 15 minutes
-• 2,000 requests per day
-Strava calls this the overall rate limit for an application. 
-developers.strava.com
-+1
+Structurally, that means **two small platform files** and one shared core, rather than forking everything:
+- `overlayPanZoomController.shared.js` (existing core)
+- `overlayPanZoomController.desktop.js` (calls shared with desktop options)
+- `overlayPanZoomController.mobile.js` (calls shared with mobile options)
 
-There’s also a “non-upload” limit which, by default, is lower:
-• 100 requests per 15 minutes
-• 1,000 requests per day
-The non-upload category includes most GET calls like fetching activities and streams. 
-developers.strava.com
+Same pattern for marker interactions if needed:
+- `overlayMarkerManager.shared.js`
+- `overlayMarkerManager.desktopInteractions.js`
+- `overlayMarkerManager.mobileInteractions.js`
 
-📈 Header feedback
+### Why this beats “if-clauses everywhere”
+- **Local reasoning**: you can change mobile tap/drag heuristics without touching desktop code paths.
+- **Less regression surface**: fewer conditionals inside pointer/gesture state machines.
+- **Better UX freedom**: you can adopt mobile-only affordances (explicit “Delete”, “Place marker” mode, etc.) without constantly guarding desktop behavior.
 
-Every API response includes two headers that tell you your current usage and limits:
-
-X-RateLimit-Limit — e.g., 100, 1000 meaning 100 per 15m and 1000 per day
-
-X-RateLimit-Usage — how many you’ve used so far
-That lets your app throttle before hitting the hard cap. 
-communityhub.strava.com
-
-⚠️ Exceeding the limit
-
-If you go over:
-
-The API returns HTTP 429 Too Many Requests.
-
-You need to wait for the next 15-minute block (or next day for the daily cap) before more calls will succeed. 
-developers.strava.com
-
-🔧 Notes & gotchas
-
-Strava may adjust limits for larger apps on review—but there’s no guarantee; you typically have to ask them through their developer contact process. 
-communityhub.strava.com
-
-Community reports vary a bit because rate limits have changed over time; some older sources mention 600/15 min & 30 000/day, but the official current doc shows 200/15 min and 2 000/day. Always check your own X-RateLimit headers to confirm per-app values. 
-developers.strava.com
-
-If you want, I can outline a way to build a client that watches those headers and auto-throttles to stay under these limits.
-
-MY QUESTION TO CHATGPT: I need API calls for listing available activities and listing a stream for a given activity. Can you list the API calls I might use?
-
-These are the exact Strava API endpoints you’d typically use for that use-case, with brief notes on what each is good for.
-
-1. List activities for the authenticated user
-
-Endpoint
-
-GET https://www.strava.com/api/v3/athlete/activities
-
-
-Purpose
-
-Lists the user’s activities (runs, rides, hikes, etc.)
-
-This is how you discover activity IDs
-
-Required scope
-
-activity:read (public activities)
-
-activity:read_all (includes private / “Only Me”)
-
-Common query parameters
-
-before – Unix timestamp (upper bound on activity start time)
-
-after – Unix timestamp (lower bound)
-
-page – pagination (starts at 1)
-
-per_page – up to 200 (important for rate efficiency)
-
-Returns
-
-Array of activity summaries:
-
-id
-
-name
-
-type
-
-start_date
-
-distance, time, elevation, etc.
-
-No track points here — just metadata.
-
-2. (Optional but useful) Get full activity details
-
-Endpoint
-
-GET https://www.strava.com/api/v3/activities/{activity_id}
-
-
-Purpose
-
-Fetches richer metadata for a single activity
-
-Still not the full GPS track
-
-Required scope
-
-Same as above (activity:read[_all])
-
-Returns
-
-Everything from the summary plus:
-
-gear, splits, laps, map polyline (simplified), etc.
-
-3. Fetch streams (this is where GPS lives)
-
-Endpoint
-
-GET https://www.strava.com/api/v3/activities/{activity_id}/streams
-
-
-Purpose
-
-Fetch time-series data needed to reconstruct GPX
-
-Required scope
-
-activity:read or activity:read_all
-
-Key query parameter
-
-keys=latlng,time,altitude,heartrate,cadence
-
-
-(You choose what you need.)
-
-Optional:
-
-key_by_type=true
-
-
-→ returns a dict keyed by stream name instead of a list
-
-Important streams
-
-latlng – array of [lat, lon]
-
-time – seconds since activity start
-
-altitude – meters
-
-heartrate, cadence – optional extras
-
-Returns
-
-Ordered arrays with equal length → easy to zip into GPX <trkpt> entries
-
-4. Auth header (for all of the above)
-
-Every request needs:
-
-Authorization: Bearer ACCESS_TOKEN
-
-Typical minimal flow (what you’ll actually do)
-
-GET /athlete/activities
-→ store (activity_id, start_date, type, last_updated)
-
-For each new activity:
-
-GET /activities/{id}/streams?keys=latlng,time,altitude
-
-Convert streams → GPX
-
-Cache result locally to avoid re-hitting rate limits
+### Bottom line
+- **If your tweaks are limited to 1–2 constants** (e.g., just `DRAG_THRESHOLD_PX`), then an `if (isMobile)` *in one place* is probably fine.
+- But based on what you’re describing (panning/zooming feel + placement reliability + marker interactions), I’d expect **multiple coordinated tweaks**. In that case, I strongly recommend **distinct mobile/desktop overlay modules (or at least distinct configs + small wrappers)**, while keeping the underlying coordinate/transform logic shared.
