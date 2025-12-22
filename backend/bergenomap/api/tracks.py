@@ -24,13 +24,8 @@ def _format_strava_track_description(*, start_date: str | None, name: str, worko
         if m:
             date_part = m.group(0)
 
-    desc = f"strava-{date_part}-{name}"
 
-    wt = workout_type.strip() if isinstance(workout_type, str) else ""
-    if wt != "Default run":
-        desc = f"{desc}-{wt}"
-
-    return desc
+    return f"strava-{date_part}-{name}"
 
 
 @bp.route("/api/gps-tracks/<username>", methods=["GET"])
