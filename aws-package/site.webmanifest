@@ -1,0 +1,21 @@
+{
+  "name": "Twerk-maps",
+  "short_name": "Twerk-maps",
+  "description": "Orienteringskart for Bergen, med GPS-støtte for oppdagelsesferd i fremmed skog.",
+  "lang": "no",
+  "start_url": "map.html",
+  "scope": ".",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#fafafa",
+  "icons": [
+    {
+      "src": "../manifest/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
+
+
