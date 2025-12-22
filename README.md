@@ -170,6 +170,7 @@ Se Strava-integrasjonschat i ChatGPT: https://chatgpt.com/c/693a0201-57cc-8326-9
 - [ ] Mer konsistent styling, Dark Mode krasjer med utseendet ellers i appen. La Gemini kikke på den?
 - [ ] Bedre utseende på telefon; pr. nå snubler elementene litt i hverandre når det blir smal skjerm.
 - [ ] Lenke til selve Strava-aktiviteten fra kortene på siden?
+- [ ] Få inn informasjon fra dato-velger i framdrifts-indikator når man henter listen med aktiviteter
 
 - [x] Vis framdrift ved henting av aktiviteter og import av aktiviteter. Dette tar tid, mange nettverkskall. Fint å kunne følge med.
 - [x] Mindre høylytt rødfarge på "koble fra"-knappen
