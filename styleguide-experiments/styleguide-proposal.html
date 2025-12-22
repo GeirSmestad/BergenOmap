@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forest Shade - Visual Design Proposal</title>
+    <style>
+        /* 
+         * DESIGN SYSTEM TOKENS 
+         */
+        :root {
+            /* Palette - The Shade */
+            --color-bg-main: #1A2621;      /* Deep Forest */
+            --color-bg-surface: #25362E;   /* Canopy Green */
+            --color-bg-overlay: rgba(26, 38, 33, 0.95); /* High opacity overlay */
+            
+            /* Palette - The Sunlight */
+            --color-primary: #F2C94C;      /* Sunlight Gold */
+            --color-primary-hover: #F5D575;
+            --color-primary-text: #1A2621; /* Text on primary button */
+
+            /* Palette - Text */
+            --color-text-main: #F0F4F1;    /* Mist White */
+            --color-text-muted: #A3B8AD;   /* Lichen Grey */
+            
+            /* Palette - Accents */
+            --color-accent-danger: #D97D54; /* Warm Earth/Terracotta */
+            --color-border: #3A5245;       /* Moss Border */
+
+            /* Spacing & Shapes */
+            --radius-sm: 4px;
+            --radius-md: 8px;
+            --radius-lg: 16px;
+            --radius-full: 999px;
+            
+            --space-xs: 4px;
+            --space-sm: 8px;
+            --space-md: 16px;
+            --space-lg: 24px;
+            --space-xl: 32px;
+
+            /* Shadows */
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.3);
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.3);
+            --shadow-lg: 0 8px 24px rgba(0,0,0,0.4);
+
+            /* Typography */
+            --font-main: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        /* 
+         * GLOBAL RESETS 
+         */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            background-color: var(--color-bg-main);
+            color: var(--color-text-main);
+            font-family: var(--font-main);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        h1, h2, h3, h4 {
+            font-weight: 600;
+            color: var(--color-text-main);
+            margin-bottom: var(--space-sm);
+        }
+
+        h1 { font-size: 2rem; letter-spacing: -0.02em; }
+        h2 { font-size: 1.5rem; color: var(--color-primary); } /* Gold Headers? Or just White? Let's try White with Gold accent lines if needed. Or keep simple. */
+        h3 { font-size: 1.1rem; color: var(--color-text-muted); text-transform: uppercase; letter-spacing: 0.05em; font-size: 0.85rem; margin-top: var(--space-lg); }
+
+        p { margin-bottom: var(--space-md); color: var(--color-text-muted); }
+
+        /* 
+         * COMPONENT CLASSES 
+         */
+
+        /* Containers */
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: var(--space-xl);
+        }
+
+        .section {
+            margin-bottom: var(--space-xl);
+            padding-bottom: var(--space-xl);
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        /* Cards */
+        .card {
+            background-color: var(--color-bg-surface);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            border: 1px solid var(--color-border);
+            box-shadow: var(--shadow-sm);
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--space-sm) var(--space-lg);
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            border: none;
+            gap: var(--space-sm);
+        }
+
+        .btn-primary {
+            background-color: var(--color-primary);
+            color: var(--color-primary-text);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .btn-primary:hover {
+            background-color: var(--color-primary-hover);
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--color-text-main);
+            border: 1px solid var(--color-border);
+        }
+        .btn-secondary:hover {
+            background-color: rgba(255,255,255,0.05);
+            border-color: var(--color-text-muted);
+        }
+
+        .btn-danger {
+            background-color: rgba(217, 125, 84, 0.15);
+            color: var(--color-accent-danger);
+            border: 1px solid var(--color-accent-danger);
+        }
+        .btn-danger:hover {
+            background-color: var(--color-accent-danger);
+            color: #fff;
+        }
+
+        .btn-icon {
+            width: 40px;
+            height: 40px;
+            padding: 0;
+            border-radius: 50%;
+        }
+
+        /* Inputs */
+        .input-group {
+            margin-bottom: var(--space-md);
+        }
+        .label {
+            display: block;
+            margin-bottom: var(--space-xs);
+            font-size: 0.85rem;
+            color: var(--color-text-muted);
+        }
+        .input {
+            width: 100%;
+            padding: var(--space-sm) var(--space-md);
+            background-color: rgba(0,0,0,0.2);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            color: var(--color-text-main);
+            font-size: 1rem;
+        }
+        .input:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 2px rgba(242, 201, 76, 0.1);
+        }
+
+        /* Map UI Specifics */
+        .mock-app-view {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            height: 600px;
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            border: 1px solid var(--color-border);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .sidebar {
+            background-color: var(--color-bg-surface);
+            padding: var(--space-md);
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid var(--color-border);
+        }
+
+        .map-area {
+            position: relative;
+            background-color: #e0e0e0;
+            background-image: url('../aws-package/floyen_latest.png'); /* Trying relative path */
+            background-size: cover;
+            background-position: center;
+            overflow: hidden;
+        }
+        /* Fallback if image fails */
+        .map-area::before {
+            content: "Map Area (Image not loaded)";
+            position: absolute;
+            top: 50%; left: 50%; transform: translate(-50%, -50%);
+            color: #333;
+            z-index: 0;
+        }
+
+        .map-overlay-panel {
+            position: absolute;
+            top: var(--space-md);
+            left: var(--space-md);
+            background-color: var(--color-bg-overlay);
+            backdrop-filter: blur(8px);
+            padding: var(--space-md);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--color-border);
+            width: 250px;
+            color: var(--color-text-main);
+        }
+
+        .map-controls {
+            position: absolute;
+            bottom: var(--space-md);
+            right: var(--space-md);
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-sm);
+        }
+        
+        .map-fab {
+            width: 48px;
+            height: 48px;
+            background-color: var(--color-bg-overlay);
+            border: 1px solid var(--color-border);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--color-text-main);
+            cursor: pointer;
+            box-shadow: var(--shadow-md);
+        }
+        .map-fab:hover {
+            background-color: var(--color-bg-surface);
+            color: var(--color-primary);
+        }
+        .map-fab.active {
+            background-color: var(--color-primary);
+            color: var(--color-primary-text);
+            border-color: var(--color-primary);
+        }
+
+        /* List Items */
+        .list-item {
+            display: flex;
+            align-items: center;
+            padding: var(--space-sm);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            color: var(--color-text-muted);
+            margin-bottom: 2px;
+        }
+        .list-item:hover {
+            background-color: rgba(255,255,255,0.05);
+            color: var(--color-text-main);
+        }
+        .list-item.selected {
+            background-color: rgba(242, 201, 76, 0.1); /* Low opacity gold */
+            color: var(--color-primary);
+            border-left: 3px solid var(--color-primary);
+        }
+        .list-item .icon { margin-right: var(--space-sm); }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header style="margin-bottom: 40px;">
+            <h1>Forest Shade Design System</h1>
+            <p>A visual profile inspired by the cool, peaceful focus of a Nordic forest.</p>
+        </header>
+
+        <!-- PALETTE DEMO -->
+        <div class="section">
+            <h3>Color Palette</h3>
+            <div style="display: flex; gap: 20px; flex-wrap: wrap; margin-top: 20px;">
+                <!-- Swatch Generator -->
+                <div style="width: 100px;">
+                    <div style="height: 100px; background: var(--color-bg-main); border: 1px solid var(--color-border); border-radius: var(--radius-md);"></div>
+                    <div style="margin-top: 8px; font-size: 12px; color: var(--color-text-muted);">Deep Forest<br>#1A2621</div>
+                </div>
+                <div style="width: 100px;">
+                    <div style="height: 100px; background: var(--color-bg-surface); border-radius: var(--radius-md);"></div>
+                    <div style="margin-top: 8px; font-size: 12px; color: var(--color-text-muted);">Canopy<br>#25362E</div>
+                </div>
+                <div style="width: 100px;">
+                    <div style="height: 100px; background: var(--color-primary); border-radius: var(--radius-md);"></div>
+                    <div style="margin-top: 8px; font-size: 12px; color: var(--color-text-muted);">Sunlight<br>#F2C94C</div>
+                </div>
+                <div style="width: 100px;">
+                    <div style="height: 100px; background: var(--color-text-main); border-radius: var(--radius-md); border: 1px solid #ddd;"></div>
+                    <div style="margin-top: 8px; font-size: 12px; color: var(--color-text-muted);">Mist White<br>#F0F4F1</div>
+                </div>
+                <div style="width: 100px;">
+                    <div style="height: 100px; background: var(--color-accent-danger); border-radius: var(--radius-md);"></div>
+                    <div style="margin-top: 8px; font-size: 12px; color: var(--color-text-muted);">Earth Red<br>#D97D54</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- BUTTONS DEMO -->
+        <div class="section">
+            <h3>Elements</h3>
+            <div class="card" style="margin-top: 20px;">
+                <h4 style="margin-bottom: 16px;">Buttons & Interactions</h4>
+                <div style="display: flex; gap: 16px; align-items: center; flex-wrap: wrap;">
+                    <button class="btn btn-primary">Primary Action</button>
+                    <button class="btn btn-secondary">Secondary Action</button>
+                    <button class="btn btn-danger">Destructive</button>
+                    <button class="btn btn-secondary btn-icon" style="border-radius: 50%;">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    </button>
+                </div>
+
+                <h4 style="margin-bottom: 16px; margin-top: 32px;">Form Controls</h4>
+                <div style="max-width: 400px;">
+                    <div class="input-group">
+                        <label class="label">Map Name</label>
+                        <input type="text" class="input" placeholder="e.g. Fløyen West">
+                    </div>
+                    <div class="input-group">
+                        <label class="label">Description</label>
+                        <input type="text" class="input" value="A beautiful run in the evening sun." style="border-color: var(--color-primary);">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MOCK APP VIEW -->
+        <div class="section" style="border-bottom: none;">
+            <h3>Mock App Interface</h3>
+            <p>Demonstrating contrast against an orienteering map.</p>
+            
+            <div class="mock-app-view" style="margin-top: 20px;">
+                <!-- Sidebar -->
+                <div class="sidebar">
+                    <h2 style="font-size: 1.2rem; margin-bottom: 20px; color: var(--color-text-main);">Map Browser</h2>
+                    
+                    <div class="input-group">
+                        <input type="text" class="input" placeholder="Search maps..." style="padding: 6px 12px; font-size: 0.9rem;">
+                    </div>
+
+                    <div style="flex: 1;">
+                        <div class="list-item">
+                            <span class="icon">📍</span> Fløyen 2024
+                        </div>
+                        <div class="list-item selected">
+                            <span class="icon">📍</span> Munkebotn
+                        </div>
+                        <div class="list-item">
+                            <span class="icon">📍</span> Sandviksfjellet
+                        </div>
+                        <div class="list-item">
+                            <span class="icon">📍</span> Løvstakken
+                        </div>
+                    </div>
+
+                    <div style="border-top: 1px solid var(--color-border); padding-top: 16px;">
+                        <button class="btn btn-primary" style="width: 100%;">Upload GPX Track</button>
+                    </div>
+                </div>
+
+                <!-- Map Area -->
+                <div class="map-area">
+                    <!-- Overlay Panel (e.g. Track Details) -->
+                    <div class="map-overlay-panel">
+                        <h4 style="margin-bottom: 8px;">Munkebotn</h4>
+                        <p style="font-size: 0.9rem; margin-bottom: 12px;">5.2km • 230m climb</p>
+                        <div style="display: flex; gap: 8px;">
+                            <button class="btn btn-sm btn-primary" style="padding: 4px 12px; font-size: 0.85rem;">Edit</button>
+                            <button class="btn btn-sm btn-secondary" style="padding: 4px 12px; font-size: 0.85rem;">Hide</button>
+                        </div>
+                    </div>
+
+                    <!-- Map Controls (FABs) -->
+                    <div class="map-controls">
+                        <button class="map-fab active" title="Current Location">
+                            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm0 18a8 8 0 100-16 8 8 0 000 16zm0-13a5 5 0 100 10 5 5 0 000-10z"></path></svg>
+                        </button>
+                        <button class="map-fab" title="Zoom In">
+                            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+                        </button>
+                        <button class="map-fab" title="Zoom Out">
+                            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14"></path></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>
+
