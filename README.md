@@ -169,6 +169,7 @@ Se Strava-integrasjonschat i ChatGPT: https://chatgpt.com/c/693a0201-57cc-8326-9
 - [ ] Date-picker vil helst være litt mer brukervennlig, men dette er flisespikkeri akkurat nå
 - [ ] Mer konsistent styling, Dark Mode krasjer med utseendet ellers i appen. La Gemini kikke på den?
 - [ ] Mindre høylytt rødfarge på "koble fra"-knappen
+- [ ] Vis framdrift ved henting av aktiviteter og import av aktiviteter. Dette tar tid, mange nettverkskall. Fint å kunne følge med.
 
 - [x] (0) La knappe-filtrene også styres hva som hentes med Strava-APIet (Umulig).
 - [x] Vil sannsynligvis ha en enklere måte å velge om vi skal se Strava-aktivitetene eller de importerte.
@@ -263,6 +264,7 @@ Grov plan: Få inn alle områder, og ett B-kart fra alle som har. Deretter A for
 - [ ] Finjuster UI for kart-registrering på mobil mtp. marginer og andre detaljer; mye finpuss man kan gjøre
 - [ ] Bedre ytelse ved registrering; går ganske treigt på mobil. Trolig både overflødig opplasting og beregning som tar tid.
 - [ ] Trenger nok snart dokumentasjon av prosjektet for at LLMene skal finne raskere fram.
+- [ ] Flytt ikonene til en egen mappe, teit at de ligger i rotmappen. Inkludert å gå gjennom smart_deploy.py og Justfile, og deploye dem fra ny mappe samlet
 
 - [x] Rename eksisterende registreringer med navne-konvensjonen jeg har på bcup-kartene (all relevant info i kartnavn)
 - [x] Eksponer de ulike controllerne for nettleseren, for bedre debugging
@@ -316,8 +318,9 @@ Grov plan: Få inn alle områder, og ett B-kart fra alle som har. Deretter A for
 - [ ] Ifm. henting av metadata fra kart: Ekstra DB-felt for kartets målestokk (og integrer det med auto-målestokk-knapp)
 - [ ] Maskinlærings-system for å identifisere post-posisjoner på registrerte kart og regne disse om til ekte koordinater
 
-- [ ] Strava-integrasjon med tillatelser, for å hente ut GPX-spor
 - [ ] Hvis jeg skal gjøre mer enn prototyping og personlig bruk med Strava, trenger jeg en dedikert Strava-konto
+- [ ] Strava: Fornuftig feilhåndtering i tilfelle throttling-limits. Sende til kø på server, kjøre request og DB-insert offline?
+
 - [ ] Logge track på turen du har gått så langt, med usikkerhet i GPS-mottak
 - [ ] Lagring på S3 er mye billigere per gigabyte hvis appen skal brukes av andre, men jeg har mye å gå på enda.
 
@@ -328,6 +331,7 @@ Grov plan: Få inn alle områder, og ett B-kart fra alle som har. Deretter A for
 - [ ] Når jeg får veldig mange kart, vil jeg kanskje ha et avansert filter for kart, som lar meg filtrere på metadata.
 - [ ] Ta ned den gamle kart-appen, den nye appen er mye bedre
 
+- [x] Strava-integrasjon med tillatelser, for å hente ut GPX-spor
 - [x] Kan velge å fjerne original-bildene fra prod-databasen for å spare båndbredde, de vil pr. nå aldri bli brukt der
 - [x] Menysystem for å velge flere kart, hvis de overlapper i terrenget
 - [x] Et mer ordentlig system for hosting og deploy, når det blir nødvendig
