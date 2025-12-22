@@ -1,0 +1,653 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Sunny Glen — Light Theme Styleguide Demo</title>
+  <style>
+    :root{
+      /* Core */
+      --bg:#F4F6F1;
+      --surface:#FFFFFF;
+      --surface-2:#EEF3EE;
+
+      --text:#131815;
+      --muted:#5B675F;
+      --border:#D7DED5;
+
+      /* Brand */
+      --primary:#1F3A2D;
+      --primary-hover:#254535;
+      --accent:#FF6A2B;
+
+      /* Semantics */
+      --success:#2F7D4C;
+      --warning:#C98A1A;
+      --danger:#C2413A;
+
+      /* Map overlays */
+      --glass:rgba(255,255,255,0.82);
+      --glass-border:rgba(31,58,45,0.14);
+
+      /* Selected */
+      --selected-bg:rgba(31,58,45,0.08);
+
+      /* Layout + shape */
+      --r-card:14px;
+      --r-control:12px;
+      --r-pill:999px;
+
+      --shadow-1: 0 8px 24px rgba(19,24,21,0.08);
+      --shadow-2: 0 14px 38px rgba(19,24,21,0.12);
+
+      --focus-ring: 0 0 0 4px rgba(255,106,43,0.35);
+      --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+
+    /* Base */
+    * { box-sizing: border-box; }
+    html, body { height:100%; }
+    body{
+      margin:0;
+      font-family:var(--font);
+      background: var(--bg);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+      color-scheme: light;
+    }
+    a{ color:inherit; }
+    .container{
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 24px 16px 56px;
+    }
+    .grid{
+      display:grid;
+      gap:16px;
+    }
+    .grid.two{
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    @media (max-width: 920px){
+      .grid.two{ grid-template-columns: 1fr; }
+    }
+
+    /* Type scale */
+    .title{ font-size:22px; line-height:28px; font-weight:650; margin: 0 0 8px; }
+    .h2{ font-size:18px; line-height:24px; font-weight:650; margin: 0 0 12px; }
+    .body{ font-size:16px; line-height:22px; }
+    .caption{ font-size:13px; line-height:16px; color: var(--muted); }
+    .muted{ color: var(--muted); }
+
+    /* Cards / sections */
+    .card{
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-card);
+      box-shadow: var(--shadow-1);
+      padding: 16px;
+    }
+    .card.soft{
+      background: var(--surface-2);
+      box-shadow: none;
+    }
+    .section{
+      display:flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap:12px;
+      margin-bottom: 12px;
+    }
+
+    /* Top bar */
+    .topbar{
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      backdrop-filter: blur(8px);
+      background: rgba(244,246,241,0.78);
+      border-bottom: 1px solid rgba(215,222,213,0.7);
+    }
+    .topbar-inner{
+      max-width:1100px;
+      margin:0 auto;
+      padding: 12px 16px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+    }
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      font-weight:700;
+      letter-spacing: 0.2px;
+      color: var(--primary);
+    }
+    .brand-badge{
+      width: 28px;
+      height: 28px;
+      border-radius: 10px;
+      background: var(--primary);
+      box-shadow: var(--shadow-1);
+      position: relative;
+    }
+    .brand-badge:after{
+      content:"";
+      position:absolute;
+      inset:7px;
+      border-radius: 7px;
+      background: rgba(255,255,255,0.14);
+    }
+
+    /* Controls */
+    .row{ display:flex; gap:10px; align-items:center; flex-wrap: wrap; }
+
+    .btn{
+      appearance:none;
+      border:1px solid transparent;
+      border-radius: var(--r-control);
+      height: 42px;
+      padding: 0 14px;
+      font-size: 15px;
+      font-weight: 650;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      cursor:pointer;
+      user-select:none;
+      transition: transform 0.06s ease, background 0.12s ease, border-color 0.12s ease, box-shadow 0.12s ease;
+      background: transparent;
+      color: var(--text);
+    }
+    .btn:active{ transform: translateY(1px); }
+    .btn:focus-visible{ outline:none; box-shadow: var(--focus-ring); }
+
+    .btn.primary{ background: var(--primary); color:#fff; }
+    .btn.primary:hover{ background: var(--primary-hover); }
+
+    .btn.secondary{
+      background: var(--surface);
+      color: var(--primary);
+      border-color: rgba(31,58,45,0.25);
+    }
+    .btn.secondary:hover{ background: rgba(31,58,45,0.06); }
+
+    .btn.ghost{
+      color: var(--primary);
+      border-color: transparent;
+    }
+    .btn.ghost:hover{ background: rgba(31,58,45,0.06); }
+
+    .btn.danger{
+      background: var(--danger);
+      color:#fff;
+    }
+    .btn.danger:hover{ filter: brightness(0.96); }
+
+    .iconbtn{
+      width: 42px;
+      height: 42px;
+      padding: 0;
+      border-radius: 12px;
+      border: 1px solid rgba(31,58,45,0.22);
+      background: var(--surface);
+      color: var(--primary);
+    }
+    .iconbtn:hover{ background: rgba(31,58,45,0.06); }
+
+    /* Inputs */
+    .input, .select{
+      height: 44px;
+      border-radius: var(--r-control);
+      border: 1px solid rgba(31,58,45,0.22);
+      background: var(--surface);
+      padding: 0 12px;
+      font-size: 15px;
+      min-width: 220px;
+      transition: box-shadow 0.12s ease, border-color 0.12s ease;
+    }
+    .input:focus, .select:focus{
+      outline:none;
+      border-color: rgba(255,106,43,0.70);
+      box-shadow: var(--focus-ring);
+    }
+    .textarea{
+      border-radius: var(--r-control);
+      border: 1px solid rgba(31,58,45,0.22);
+      background: var(--surface);
+      padding: 10px 12px;
+      font-size: 15px;
+      width: 100%;
+      min-height: 92px;
+      resize: vertical;
+      transition: box-shadow 0.12s ease, border-color 0.12s ease;
+    }
+    .textarea:focus{
+      outline:none;
+      border-color: rgba(255,106,43,0.70);
+      box-shadow: var(--focus-ring);
+    }
+
+    /* Chips */
+    .chip{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      height: 34px;
+      padding: 0 12px;
+      border-radius: var(--r-pill);
+      border: 1px solid rgba(31,58,45,0.18);
+      background: rgba(255,255,255,0.70);
+      color: var(--primary);
+      font-weight: 650;
+      font-size: 13px;
+      cursor:pointer;
+      user-select:none;
+    }
+    .chip:hover{ background: rgba(31,58,45,0.06); }
+    .chip.selected{
+      background: var(--selected-bg);
+      border-color: rgba(31,58,45,0.30);
+      box-shadow: inset 0 0 0 1px rgba(31,58,45,0.10);
+    }
+    .chip:focus-visible{ outline:none; box-shadow: var(--focus-ring); }
+
+    /* List rows */
+    .list{
+      border: 1px solid var(--border);
+      border-radius: var(--r-card);
+      overflow:hidden;
+      background: var(--surface);
+    }
+    .rowitem{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border);
+    }
+    .rowitem:last-child{ border-bottom:none; }
+    .rowitem.selected{
+      background: var(--selected-bg);
+      position: relative;
+    }
+    .rowitem.selected:before{
+      content:"";
+      position:absolute;
+      left:0; top:0; bottom:0;
+      width: 4px;
+      background: var(--primary);
+    }
+    .rowitem .left{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      min-width:0;
+    }
+    .rowitem .meta{
+      min-width:0;
+    }
+    .truncate{
+      white-space: nowrap;
+      overflow:hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Alerts */
+    .alert{
+      border-radius: var(--r-card);
+      border: 1px solid var(--border);
+      padding: 12px 14px;
+      display:flex;
+      gap:12px;
+      align-items:flex-start;
+      background: var(--surface);
+    }
+    .alert.info{
+      border-color: rgba(31,58,45,0.22);
+      background: rgba(31,58,45,0.06);
+    }
+    .alert.warning{
+      border-color: rgba(201,138,26,0.35);
+      background: rgba(201,138,26,0.10);
+    }
+    .alert.danger{
+      border-color: rgba(194,65,58,0.35);
+      background: rgba(194,65,58,0.10);
+    }
+
+    /* Small SVG icons */
+    .svg{
+      width: 18px;
+      height: 18px;
+      display:inline-block;
+    }
+    .svg.lg{ width: 22px; height: 22px; }
+
+    /* Map demo */
+    .map-shell{
+      height: 360px;
+      border-radius: var(--r-card);
+      border: 1px solid var(--border);
+      overflow:hidden;
+      position:relative;
+      box-shadow: var(--shadow-1);
+      background:
+        radial-gradient(1200px 500px at 20% 30%, rgba(79,111,82,0.30), transparent 55%),
+        radial-gradient(900px 500px at 65% 55%, rgba(47,125,76,0.20), transparent 60%),
+        radial-gradient(800px 500px at 40% 80%, rgba(201,138,26,0.12), transparent 60%),
+        linear-gradient(180deg, #fdfdfb, #f3f7f2);
+    }
+    .fake-map-lines{
+      position:absolute; inset:0;
+      background:
+        repeating-linear-gradient(22deg, rgba(19,24,21,0.06), rgba(19,24,21,0.06) 2px, transparent 2px, transparent 18px),
+        repeating-linear-gradient(-18deg, rgba(31,58,45,0.05), rgba(31,58,45,0.05) 1px, transparent 1px, transparent 22px);
+      mix-blend-mode: multiply;
+      opacity: 0.55;
+      pointer-events:none;
+    }
+    .map-overlay{
+      position:absolute;
+      top: 14px;
+      left: 14px;
+      right: 14px;
+      display:flex;
+      gap:12px;
+      align-items:flex-start;
+      justify-content:space-between;
+      pointer-events:none;
+    }
+    .glasspanel{
+      pointer-events:auto;
+      background: var(--glass);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--r-card);
+      box-shadow: var(--shadow-2);
+      padding: 10px;
+      backdrop-filter: blur(10px);
+    }
+    .stack{ display:flex; flex-direction:column; gap:8px; }
+    .segmented{
+      display:flex;
+      background: rgba(255,255,255,0.65);
+      border: 1px solid rgba(31,58,45,0.18);
+      border-radius: 12px;
+      overflow:hidden;
+    }
+    .segmented button{
+      border:0;
+      background: transparent;
+      height: 38px;
+      padding: 0 12px;
+      cursor:pointer;
+      color: var(--primary);
+      font-weight:650;
+      transition: background 0.12s ease;
+    }
+    .segmented button:hover{ background: rgba(31,58,45,0.06); }
+    .segmented button.selected{ background: rgba(31,58,45,0.12); }
+
+    .marker{
+      position:absolute;
+      left: 55%;
+      top: 54%;
+      transform: translate(-50%, -100%);
+      width: 18px;
+      height: 18px;
+      border-radius: 999px;
+      background: var(--accent);
+      box-shadow:
+        0 10px 24px rgba(19,24,21,0.18);
+      outline: 4px solid rgba(255,255,255,0.92); /* halo */
+    }
+    .marker:after{
+      content:"";
+      position:absolute;
+      left: 50%;
+      top: 100%;
+      transform: translateX(-50%);
+      width: 10px;
+      height: 10px;
+      background: var(--accent);
+      clip-path: polygon(50% 100%, 0 0, 100% 0);
+      outline: 4px solid rgba(255,255,255,0.92);
+      outline-offset: -4px;
+      filter: drop-shadow(0 10px 24px rgba(19,24,21,0.18));
+    }
+
+    /* Reduced motion */
+    @media (prefers-reduced-motion: reduce){
+      * { transition: none !important; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <div class="brand-badge" aria-hidden="true"></div>
+        <div>Sunny Glen UI</div>
+      </div>
+      <div class="row">
+        <button class="btn ghost">Docs</button>
+        <button class="btn secondary">Import</button>
+        <button class="btn primary">
+          <svg class="svg" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          New Map
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div style="margin-bottom:16px;">
+      <h1 class="title">Styleguide demo (single light theme)</h1>
+      <div class="caption">Purpose: show consistent tokens + components for map and non-map pages.</div>
+    </div>
+
+    <div class="grid two">
+      <div class="card">
+        <div class="section">
+          <div>
+            <div class="h2">Palette & states</div>
+            <div class="caption">Primary = pine, Accent = orange, Danger = red (rare).</div>
+          </div>
+        </div>
+
+        <div class="row" style="gap:8px;">
+          <span class="chip selected">Selected chip</span>
+          <span class="chip">Filter</span>
+          <span class="chip">Layer</span>
+          <span class="chip">Track</span>
+        </div>
+
+        <div style="height:14px;"></div>
+
+        <div class="row">
+          <button class="btn primary">
+            <svg class="svg" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M4 12h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <path d="M12 4v16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            Primary action
+          </button>
+          <button class="btn secondary">Secondary</button>
+          <button class="btn ghost">Ghost</button>
+          <button class="btn danger">Delete</button>
+          <button class="btn iconbtn" aria-label="Settings">
+            <svg class="svg lg" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z" stroke="currentColor" stroke-width="2"/>
+              <path d="M19.4 15a8 8 0 0 0 .1-6l-2 1.1a6 6 0 0 1 0 2.8l2 1.1Z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <path d="M4.5 9a8 8 0 0 0-.1 6l2-1.1a6 6 0 0 1 0-2.8L4.5 9Z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+
+        <div style="height:18px;"></div>
+
+        <div class="grid" style="gap:10px;">
+          <div class="alert info">
+            <svg class="svg" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Z" stroke="currentColor" stroke-width="2"/>
+              <path d="M12 10v7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <path d="M12 7h.01" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+            </svg>
+            <div>
+              <div style="font-weight:650;">Info banner</div>
+              <div class="caption">Use for neutral guidance and context.</div>
+            </div>
+          </div>
+
+          <div class="alert warning">
+            <svg class="svg" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M12 3 1.8 20.5h20.4L12 3Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+              <path d="M12 9v5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <path d="M12 17h.01" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+            </svg>
+            <div>
+              <div style="font-weight:650;">Warning banner</div>
+              <div class="caption">Use for risky operations or GPS uncertainty.</div>
+            </div>
+          </div>
+
+          <div class="alert danger">
+            <svg class="svg" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M12 3 2 21h20L12 3Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+              <path d="M12 9v5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <path d="M12 17h.01" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+            </svg>
+            <div>
+              <div style="font-weight:650;">Danger banner</div>
+              <div class="caption">Rare. Use for destructive actions and irreversible states.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="section">
+          <div>
+            <div class="h2">Non-map pages</div>
+            <div class="caption">Solid surfaces, same spacing + typography + buttons.</div>
+          </div>
+          <button class="btn secondary">Create</button>
+        </div>
+
+        <div class="list" role="list">
+          <div class="rowitem selected">
+            <div class="left">
+              <svg class="svg lg" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M6 20V8l6-4 6 4v12" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                <path d="M9 20v-7h6v7" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+              </svg>
+              <div class="meta" style="min-width:0;">
+                <div class="truncate" style="font-weight:650;">Alvøen — training maps</div>
+                <div class="caption truncate">12 maps · last used yesterday</div>
+              </div>
+            </div>
+            <button class="btn ghost">Open</button>
+          </div>
+
+          <div class="rowitem">
+            <div class="left">
+              <svg class="svg lg" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M4 19V6a2 2 0 0 1 2-2h9l5 5v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2Z" stroke="currentColor" stroke-width="2"/>
+                <path d="M13 4v6h6" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+              </svg>
+              <div class="meta" style="min-width:0;">
+                <div class="truncate" style="font-weight:650;">GPS tracks</div>
+                <div class="caption truncate">Import, tag and compare splits</div>
+              </div>
+            </div>
+            <button class="btn secondary">Import</button>
+          </div>
+
+          <div class="rowitem">
+            <div class="left">
+              <svg class="svg lg" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M4 6h16M7 12h10M10 18h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+              <div class="meta" style="min-width:0;">
+                <div class="truncate" style="font-weight:650;">Settings</div>
+                <div class="caption truncate">Units, map defaults, privacy</div>
+              </div>
+            </div>
+            <button class="btn ghost">Edit</button>
+          </div>
+        </div>
+
+        <div style="height:16px;"></div>
+
+        <div class="card soft">
+          <div class="h2" style="margin-bottom:10px;">Form styling</div>
+          <div class="row" style="margin-bottom:10px;">
+            <input class="input" placeholder="Search maps…" aria-label="Search maps" />
+            <select class="select" aria-label="Sort">
+              <option>Sort: Recently used</option>
+              <option>Sort: Name</option>
+              <option>Sort: Date</option>
+            </select>
+          </div>
+          <textarea class="textarea" placeholder="Notes…" aria-label="Notes"></textarea>
+          <div class="row" style="margin-top:10px;">
+            <button class="btn secondary">Cancel</button>
+            <button class="btn primary">Save</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="height:16px;"></div>
+
+    <div class="card">
+      <div class="section">
+        <div>
+          <div class="h2">Map page demo</div>
+          <div class="caption">Same buttons, but controls sit on glass panels and use halos for markers.</div>
+        </div>
+      </div>
+
+      <div class="map-shell" aria-label="Map view demo">
+        <div class="fake-map-lines" aria-hidden="true"></div>
+
+        <div class="map-overlay">
+          <div class="glasspanel">
+            <div class="segmented" role="tablist" aria-label="Mode">
+              <button class="selected" aria-selected="true">Browse</button>
+              <button aria-selected="false">Analyze</button>
+              <button aria-selected="false">Draw</button>
+            </div>
+          </div>
+
+          <div class="glasspanel stack" style="align-items:flex-end;">
+            <button class="btn iconbtn" aria-label="Center on GPS">
+              <svg class="svg lg" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M12 2v3M12 19v3M2 12h3M19 12h3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                <path d="M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8Z" stroke="currentColor" stroke-width="2"/>
+              </svg>
+            </button>
+            <button class="btn iconbtn" aria-label="Layers">
+              <svg class="svg lg" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M12 3 2 8l10 5 10-5-10-5Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                <path d="M2 12l10 5 10-5" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                <path d="M2 16l10 5 10-5" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="marker" aria-label="Selected position marker"></div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

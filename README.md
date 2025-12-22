@@ -196,6 +196,15 @@ Se Strava-integrasjonschat i ChatGPT: https://chatgpt.com/c/693a0201-57cc-8326-9
 - [ ] Automatisk stempling (med minste avstand til post, og GPS-presisjon)
 - [ ] Mauell stempling (registrer avstand og presisjon fra GPS)
 
+## Multi-brukerstøtte
+
+- [ ] Mulighet for å logge inn med flere brukere
+- [ ] Knytning av registrerte kart til enkelt-brukere
+- [ ] Isolasjon av oppførsel til hver bruker, for GPX-tracks, Strava-integrasjoner, kart og registrering
+- [ ] Side for registrering av ny bruker
+- [ ] Nye brukere kan prøve appen uten registrering, få et midlertidig brukernavn. Registrere kart, GPX og Strava.
+- [ ] Landings-side med info om app og "try it out now"
+
 ## Infrastruktur
 
 - [ ] Database-nøkkel som gir versjonen av et bestemt kart, slik at jeg kan cache i nettleseren til brukeren
@@ -267,8 +276,8 @@ Grov plan: Få inn alle områder, og ett B-kart fra alle som har. Deretter A for
 - [ ] Finjuster UI for kart-registrering på mobil mtp. marginer og andre detaljer; mye finpuss man kan gjøre
 - [ ] Bedre ytelse ved registrering; går ganske treigt på mobil. Trolig både overflødig opplasting og beregning som tar tid.
 - [ ] Trenger nok snart dokumentasjon av prosjektet for at LLMene skal finne raskere fram.
-- [ ] Flytt ikonene til en egen mappe, teit at de ligger i rotmappen. Inkludert å gå gjennom smart_deploy.py og Justfile, og deploye dem fra ny mappe samlet
 
+- [x] Flytt ikonene til en egen mappe, teit at de ligger i rotmappen. Inkludert å gå gjennom smart_deploy.py og Justfil
 - [x] Rename eksisterende registreringer med navne-konvensjonen jeg har på bcup-kartene (all relevant info i kartnavn)
 - [x] Eksponer de ulike controllerne for nettleseren, for bedre debugging
 - [x] Redirect til login hvis API returnerer feilkode som indikerer manglende login
@@ -317,12 +326,18 @@ Grov plan: Få inn alle områder, og ett B-kart fra alle som har. Deretter A for
 
 ## Langsiktige ambisjoner
 
+- [ ] Analysere hva jeg kan gjøre av helhetlig visuell profil; fargevalg; UI-elementer
+- [ ] Localization til norsk eller engelsk
+- [ ] Finne Leaflet-kartkilde som fungerer for hele verden
+
 - [ ] Innsending av database-kart + kjente metadata til AI-modell for setting av metadata i database (hent all tekst)
 - [ ] Ifm. henting av metadata fra kart: Ekstra DB-felt for kartets målestokk (og integrer det med auto-målestokk-knapp)
 - [ ] Maskinlærings-system for å identifisere post-posisjoner på registrerte kart og regne disse om til ekte koordinater
 
 - [ ] Hvis jeg skal gjøre mer enn prototyping og personlig bruk med Strava, trenger jeg en dedikert Strava-konto
 - [ ] Strava: Fornuftig feilhåndtering i tilfelle throttling-limits. Sende til kø på server, kjøre request og DB-insert offline?
+- [ ] Gjøre research på hva som trengs av cookie-varsler og GDPR
+
 
 - [ ] Logge track på turen du har gått så langt, med usikkerhet i GPS-mottak
 - [ ] Lagring på S3 er mye billigere per gigabyte hvis appen skal brukes av andre, men jeg har mye å gå på enda.
