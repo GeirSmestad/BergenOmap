@@ -248,16 +248,18 @@ Grov plan: Få inn alle områder, og ett B-kart fra alle som har. Deretter A for
 - [x] Registrere alle fra 2020
 - [x] Registrere alle fra 2019
 - [x] Registrere alle fra 2018
-- [ ] 34 gjenstående bcup-kart jeg skal scanne ett B-løp fra, før jeg har fått inn ett fra alle *løp*
+- [ ] Registrere alle fra 2017
+- [ ] 24 gjenstående bcup-kart jeg skal scanne ett B-løp fra, før jeg har fått inn ett fra alle *løp*
 
-- [ ] Registrere alle prototypings-kartene som jeg ikke har originaler i databasen for
+- [ ] Registrere alle prototypings-kartene som jeg ikke har originaler i databasen for; mangler originalene
 
 - [ ] Løyper fra løp jeg har allerede (gjenbruk eksisterende registrering): A-løypene fra 2022-2024
 - [ ] Løyper fra løp jeg har allerede: B-løypene fra 2025
 - [ ] Løyper fra løp jeg har allerede: A-løypene fra 2012-2021 (se registration-work-in-progress.txt for fullstendig liste)
 
-- [ ] Legg inn GPX-spor fra alle de løpene mine fra Strava
-
+- [ ] Importer GPX-spor fra Strava-løpene jeg glemte å merke som "Race" (de er allerede i DB)
+- [x] Legg inn GPX-spor fra alle de løpene mine fra Strava
+- [x] Registrer monster-kartet fra Vidden
 - [x] Registrere alle tur-orienteringskartene
 - [x] Registrere alle kartene som ikke er fra bedriftscuppen (mappe O-kart under Scans)
 - [x] Jeg mangler løpene fra Dyreparken i 2024, vet ikke hvor de kartene har blitt av.

@@ -48,20 +48,20 @@ en A- eller B-løype, eller er et nytt område.
 2018:
 
 
-bcup-2018-09-12-Fløyen-B
-bcup-2018-05-30-Fløyen-B
+    bcup-2018-09-12-Fløyen-B
+    bcup-2018-05-30-Fløyen-B
 
-bcup-2018-05-14-Dyngeland-N (Godt kart av området)
+    bcup-2018-05-14-Dyngeland-N (Godt kart av området)
 
-bcup-2018-04-11-Skjold-B (nytt, sprint)
+    bcup-2018-04-11-Skjold-B (nytt, sprint)
     bcup-2018-06-20-Sædalen-B
     bcup-2018-09-26-SlettebakkenFantoft-B
 
-bcup-2018-09-05-Stendskogen-B
+    bcup-2018-09-05-Stendskogen-B
     
-bcup-2018-08-22-Vardefjell-B (halv-nytt; Os)
-bcup-2018-04-18-Varden-B
-bcup-2018-05-23-Ytrebygda-B (Skage)
+    bcup-2018-08-22-Vardefjell-N (halv-nytt; Os)
+    bcup-2018-04-18-Varden-B
+    bcup-2018-05-23-Ytrebygda-B (Skage)
 
 
 2017:
@@ -98,7 +98,7 @@ bcup-2015-06-10-Kanadaskogen-B
 bcup-2015-05-27-Kokstad-B
 bcup-2015-10-14-Krohnegården-B
 bcup-2015-08-19-Osterøy-B
-bcup-2015-09-16-Stendskogen-B (1:10000 av HELE stendskogen! Kan få egen status)
+    bcup-2015-09-16-Stendskogen-N (1:10000 av HELE stendskogen! Kan få egen status)
 
 2014:
 
