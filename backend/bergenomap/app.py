@@ -16,7 +16,9 @@ def create_app() -> Flask:
 
     # Use cross-origin resource sharing in return headers, to tell browser to allow
     # responses from different origin.
-    CORS(app)
+    # Needed for local dev where the UI may be served from a different origin (port)
+    # than the API, but sessions are cookie-based.
+    CORS(app, supports_credentials=True)
 
     # Register API surface (paths must stay stable).
     app.register_blueprint(auth_bp)

@@ -6,6 +6,7 @@ export async function fetchMapDefinitions(baseUrl = API_BASE) {
 
   const response = await fetch(requestUrl, {
     method: 'GET',
+    credentials: 'include',
     headers: {
       'Content-Type': 'application/json'
     }

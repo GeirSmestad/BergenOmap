@@ -3,7 +3,7 @@ from __future__ import annotations
 import uuid
 from datetime import datetime, timedelta
 
-from flask import Blueprint, current_app, g, jsonify, request
+from flask import Blueprint, g, jsonify, request
 
 from bergenomap.repositories.db import get_db
 from bergenomap.repositories import sessions_repo, users_repo
@@ -92,25 +92,15 @@ def register():
     Payload:
       - username (email) OR email
       - password
-      - password_repeat (or repeat_password / passwordRepeat)
     """
     data = request.get_json(silent=True) or {}
     raw_username = (data.get("username") or data.get("email") or "").strip()
     password = data.get("password") or ""
-    password_repeat = (
-        data.get("password_repeat")
-        or data.get("repeat_password")
-        or data.get("passwordRepeat")
-        or ""
-    )
-
     username = raw_username.lower()
     if not username or "@" not in username:
         return jsonify({"error": "username must be an email address"}), 400
     if not password:
         return jsonify({"error": "password is required"}), 400
-    if password != password_repeat:
-        return jsonify({"error": "passwords do not match"}), 400
 
     db = get_db()
     try:

@@ -6,7 +6,7 @@ const JSON_HEADERS = {
 };
 
 async function getJson(path) {
-  const response = await fetch(`${API_BASE}${path}`);
+  const response = await fetch(`${API_BASE}${path}`, { credentials: 'include' });
 
   if (!response.ok) {
     redirectToLoginOnExpiredSession(response);
@@ -17,7 +17,7 @@ async function getJson(path) {
 }
 
 async function getBlob(path) {
-  const response = await fetch(`${API_BASE}${path}`);
+  const response = await fetch(`${API_BASE}${path}`, { credentials: 'include' });
 
   if (!response.ok) {
     redirectToLoginOnExpiredSession(response);
@@ -30,6 +30,7 @@ async function getBlob(path) {
 async function postJson(path, payload) {
   const response = await fetch(`${API_BASE}${path}`, {
     method: 'POST',
+    credentials: 'include',
     headers: JSON_HEADERS,
     body: JSON.stringify(payload)
   });
@@ -45,6 +46,7 @@ async function postJson(path, payload) {
 async function postForm(path, formData) {
   const response = await fetch(`${API_BASE}${path}`, {
     method: 'POST',
+    credentials: 'include',
     body: formData
   });
 

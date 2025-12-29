@@ -118,18 +118,24 @@
             const errorMessage = document.getElementById('errorMessage');
 
             try {
+                if (password !== passwordRepeat) {
+                    errorMessage.style.display = 'block';
+                    errorMessage.textContent = 'Passordene er ikke like.';
+                    return;
+                }
+
                 const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
                 const apiUrl = isLocalhost ? 'http://127.0.0.1:5000/api/register' : '/api/register';
 
                 const response = await fetch(apiUrl, {
                     method: 'POST',
+                    credentials: 'include',
                     headers: {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
                         username: email,
-                        password,
-                        password_repeat: passwordRepeat
+                        password
                     })
                 });
 

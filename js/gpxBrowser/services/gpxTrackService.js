@@ -12,6 +12,7 @@ export async function fetchUserTracks(baseUrl = API_BASE, username) {
 
   const response = await fetch(requestUrl, {
     method: 'GET',
+    credentials: 'include',
     headers: {
       'Content-Type': 'application/json'
     }
@@ -44,6 +45,7 @@ export async function fetchTrackDetail(baseUrl = API_BASE, username, trackId) {
   const requestPromise = (async () => {
     const response = await fetch(requestUrl, {
       method: 'GET',
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json'
       }
@@ -83,6 +85,7 @@ export async function uploadTrack(baseUrl = API_BASE, username, description, fil
 
   const response = await fetch(`${baseUrl}/api/gps-tracks`, {
     method: 'POST',
+    credentials: 'include',
     body: formData
   });
 

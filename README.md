@@ -198,12 +198,18 @@ Se Strava-integrasjonschat i ChatGPT: https://chatgpt.com/c/693a0201-57cc-8326-9
 
 ## Multi-brukerstøtte
 
-- [ ] Mulighet for å logge inn med flere brukere
-- [ ] Knytning av registrerte kart til enkelt-brukere
-- [ ] Isolasjon av oppførsel til hver bruker, for GPX-tracks, Strava-integrasjoner, kart og registrering
-- [ ] Side for registrering av ny bruker
+- [ ] Oppdatere DB-skjema for multi-brukerstøtte på stasjonær-maskinen min
+
 - [ ] Nye brukere kan prøve appen uten registrering, få et midlertidig brukernavn. Registrere kart, GPX og Strava.
 - [ ] Landings-side med info om app og "try it out now"
+- [ ] Fjern spesial-håndteringen av kartnavnet; tillat duplikater og bruk ID som nøkkel
+- [ ] API for GPX-filer tillater brukernavn supplert av frontend; fiks det sikkerhetshullet
+- [ ] auth.py har noe som heter full_name for bakoverkompatibilitet; det kan vi fjerne
+
+- [x] Mulighet for å logge inn med flere brukere
+- [x] Knytning av registrerte kart til enkelt-brukere
+- [x] Isolasjon av oppførsel til hver bruker, for GPX-tracks, Strava-integrasjoner, kart og registrering
+- [x] Side for registrering av ny bruker
 
 ## Infrastruktur
 
@@ -332,6 +338,10 @@ Grov plan: Få inn alle områder, og ett B-kart fra alle som har. Deretter A for
 - [ ] Localization til norsk eller engelsk
 - [ ] Finne Leaflet-kartkilde som fungerer for hele verden
 
+- [ ] Enhetstester på backend
+- [ ] Enhetstester på frontend
+- [ ] Gjennomgang av databaseskjema; er det på god normalform og fornuftig?
+
 - [ ] Innsending av database-kart + kjente metadata til AI-modell for setting av metadata i database (hent all tekst)
 - [ ] Ifm. henting av metadata fra kart: Ekstra DB-felt for kartets målestokk (og integrer det med auto-målestokk-knapp)
 - [ ] Maskinlærings-system for å identifisere post-posisjoner på registrerte kart og regne disse om til ekte koordinater
@@ -363,6 +373,7 @@ Grov plan: Få inn alle områder, og ett B-kart fra alle som har. Deretter A for
 - [x] Årstall for kart i JSON-format [dette går i attribution-feltet]
 
 ## Refaktorering
+
 
 
 

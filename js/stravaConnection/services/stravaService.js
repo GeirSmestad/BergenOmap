@@ -5,6 +5,7 @@ async function requestJson(path, { method = 'GET', body = null, headers = {} } =
   const url = `${API_BASE}${path}`;
   const options = {
     method,
+    credentials: 'include',
     headers: {
       'Content-Type': 'application/json',
       ...headers

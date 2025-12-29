@@ -14,6 +14,7 @@ import { redirectToLoginOnExpiredSession } from '../utils/apiUtils.js';
 async function fetchCurrentUsername() {
   const response = await fetch(`${API_BASE}/api/auth/me`, {
     method: 'GET',
+    credentials: 'include',
     headers: {
       'Content-Type': 'application/json'
     }
