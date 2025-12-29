@@ -104,6 +104,7 @@ Shortlist: Legge inn flere kart
 
 
 - [ ] Linjal som viser skala
+- [ ] Skala-velger støtter faktisk målestokk for kartet
 
 - [x] Løp et treningsløp i skogen med appen som guide (det funket som et oljet uvær)
 - [x] Teste ut kompass (vil trolig ikke virke)
@@ -203,9 +204,9 @@ Se Strava-integrasjonschat i ChatGPT: https://chatgpt.com/c/693a0201-57cc-8326-9
 - [ ] Nye brukere kan prøve appen uten registrering, få et midlertidig brukernavn. Registrere kart, GPX og Strava.
 - [ ] Landings-side med info om app og "try it out now"
 - [ ] Fjern spesial-håndteringen av kartnavnet; tillat duplikater og bruk ID som nøkkel
-- [ ] API for GPX-filer tillater brukernavn supplert av frontend; fiks det sikkerhetshullet
-- [ ] auth.py har noe som heter full_name for bakoverkompatibilitet; det kan vi fjerne
 
+- [x] auth.py har noe som heter full_name for bakoverkompatibilitet; det kan vi fjerne
+- [x] API for GPX-filer tillater brukernavn supplert av frontend; fiks det sikkerhetshullet
 - [x] Mulighet for å logge inn med flere brukere
 - [x] Knytning av registrerte kart til enkelt-brukere
 - [x] Isolasjon av oppførsel til hver bruker, for GPX-tracks, Strava-integrasjoner, kart og registrering
@@ -214,6 +215,7 @@ Se Strava-integrasjonschat i ChatGPT: https://chatgpt.com/c/693a0201-57cc-8326-9
 ## Infrastruktur
 
 - [ ] Database-nøkkel som gir versjonen av et bestemt kart, slik at jeg kan cache i nettleseren til brukeren
+- [ ] OpenAI-integrasjon for å tolke OCR fra kart til database-felter (med fallback dersom nede)
 
 - [x] Slå sammen igjen databaser fra disk, hvor du slettet originalkartene i den ene
 - [x] Make eller tilsvarende system, som gjør deploy-prosessene mine og virker på både Windows og OS X
@@ -278,6 +280,7 @@ Grov plan: Få inn alle områder, og ett B-kart fra alle som har. Deretter A for
 
 ## Generelle forbedringer
 
+- [ ] Videreutvikle styleguide, velge et tema og starte implementering av det
 - [ ] Jeg har noen renamings-TODOer i koden; gjennomfør disse. Cursor tar dem sikkert one-shot, bare oppgi presise navn på rename.
 - [ ] Kjøre gjennom database og re-generer roterte bilder med gjennomsiktige områder på alle steder som er utenfor selve kartet
 - [ ] Cache Leaflet-filer, orienteringskart, og kart-definisjoner lokalt i appen i tilfelle brudd i nettverk (Cache Storage API?)
@@ -334,15 +337,8 @@ Grov plan: Få inn alle områder, og ett B-kart fra alle som har. Deretter A for
 
 ## Langsiktige ambisjoner
 
-- [ ] Analysere hva jeg kan gjøre av helhetlig visuell profil; fargevalg; UI-elementer
 - [ ] Localization til norsk eller engelsk
 - [ ] Finne Leaflet-kartkilde som fungerer for hele verden
-
-- [ ] Enhetstester på backend
-- [ ] Enhetstester på frontend
-- [ ] Gjennomgang av databaseskjema; er det på god normalform og fornuftig?
-
-- [ ] Dokumentasjon for Cursor
 
 - [ ] Innsending av database-kart + kjente metadata til AI-modell for setting av metadata i database (hent all tekst)
 - [ ] Ifm. henting av metadata fra kart: Ekstra DB-felt for kartets målestokk (og integrer det med auto-målestokk-knapp)
@@ -352,17 +348,17 @@ Grov plan: Få inn alle områder, og ett B-kart fra alle som har. Deretter A for
 - [ ] Strava: Fornuftig feilhåndtering i tilfelle throttling-limits. Sende til kø på server, kjøre request og DB-insert offline?
 - [ ] Gjøre research på hva som trengs av cookie-varsler og GDPR
 
-
 - [ ] Logge track på turen du har gått så langt, med usikkerhet i GPS-mottak
 - [ ] Lagring på S3 er mye billigere per gigabyte hvis appen skal brukes av andre, men jeg har mye å gå på enda.
 
 - [ ] Jeg konverterer vektor-PDF-kart i 144 DPI. 300-400 er best. Innfør ny database-rad for original-PDFene
 - [ ] ...og bestem hvorvidt du vil re-generere bildene i DB, eller gjøre det on-the-fly, evt. hvis brukeren ønsker.
 
-- [ ] Kreditere kart-tegneren i grensesnittet, kanskje på placeholder-bildene før kartet lastes
-- [ ] Når jeg får veldig mange kart, vil jeg kanskje ha et avansert filter for kart, som lar meg filtrere på metadata.
 - [ ] Ta ned den gamle kart-appen, den nye appen er mye bedre
 
+- [x] (0) Når jeg får veldig mange kart, vil jeg kanskje ha et avansert filter for kart, som lar meg filtrere på metadata.
+- [x] (0) Kreditere kart-tegneren i grensesnittet, kanskje på placeholder-bildene før kartet lastes
+- [x] Analysere hva jeg kan gjøre av helhetlig visuell profil; fargevalg; UI-elementer
 - [x] Strava-integrasjon med tillatelser, for å hente ut GPX-spor
 - [x] Kan velge å fjerne original-bildene fra prod-databasen for å spare båndbredde, de vil pr. nå aldri bli brukt der
 - [x] Menysystem for å velge flere kart, hvis de overlapper i terrenget
@@ -377,7 +373,10 @@ Grov plan: Få inn alle områder, og ett B-kart fra alle som har. Deretter A for
 ## Refaktorering
 
 
-
+- [ ] Enhetstester på backend
+- [ ] Enhetstester på frontend
+- [ ] Gjennomgang av databaseskjema; er det på god normalform og fornuftig?
+- [ ] Dokumentasjon på konvensjoner og kode, for Cursor
 
 - [ ] Splitte registerMap opp i mobil og desktop-versjon (chat-historikk, desktop: "RegisterMap -> Desktop/Mobile", nå SCRATCHPAD.MD)
 - [ ] Dobbeltsjekk om alle flex-reglene i 59f7c05 var nødvendige; tror mange kan fjernes
