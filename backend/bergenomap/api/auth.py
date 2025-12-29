@@ -45,7 +45,7 @@ def check_authentication():
 def login():
     data = request.get_json(silent=True) or {}
 
-    raw_username = (data.get("username") or data.get("email") or data.get("full_name") or "").strip()
+    raw_username = (data.get("username") or data.get("email") or "").strip()
     password = data.get("password") or ""
 
     # Temporary special case: entering the creator's full name logs you in as geir.smestad.
