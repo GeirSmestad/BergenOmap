@@ -3,7 +3,7 @@ from __future__ import annotations
 import xml.etree.ElementTree as ET
 import re
 
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, g, jsonify, request
 
 from bergenomap.repositories.db import get_db
 from bergenomap.repositories import strava_repo, tracks_repo, users_repo
@@ -30,6 +30,8 @@ def _format_strava_track_description(*, start_date: str | None, name: str, worko
 
 @bp.route("/api/gps-tracks/<username>", methods=["GET"])
 def list_gps_tracks(username: str):
+    if username != g.username:
+        return jsonify({"error": "Forbidden"}), 403
     db = get_db()
     user = users_repo.get_user_by_username(db, username)
     if not user:
@@ -92,6 +94,8 @@ def list_gps_tracks(username: str):
 
 @bp.route("/api/gps-tracks/<username>/<track_id>", methods=["GET"])
 def get_gps_track(username: str, track_id: str):
+    if username != g.username:
+        return jsonify({"error": "Forbidden"}), 403
     db = get_db()
     try:
         track_id_int = int(track_id)
@@ -169,13 +173,14 @@ def get_gps_track(username: str, track_id: str):
 @bp.route("/api/gps-tracks", methods=["POST"])
 def insert_gps_track():
     uploaded_file = request.files.get("file")
-    username = request.form.get("username")
+    username_from_client = request.form.get("username")
+    username = g.username
     description = request.form.get("description", "")
 
     if not uploaded_file or uploaded_file.filename == "":
         return jsonify({"error": "A GPX file is required"}), 400
-    if not username:
-        return jsonify({"error": "username is required"}), 400
+    if username_from_client and username_from_client != username:
+        return jsonify({"error": "Forbidden"}), 403
 
     gpx_bytes = uploaded_file.read()
     if not gpx_bytes:

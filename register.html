@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Logg inn - BergenOmap</title>
+    <title>Registrer bruker - BergenOmap</title>
     <link rel="icon" href="/manifest/favicon.ico" sizes="any">
     <link rel="icon" href="/manifest/icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/manifest/icon.png">
@@ -20,34 +20,34 @@
             height: 100vh;
             margin: 0;
         }
-        
+
         .login-container {
             background-color: #2a2a2a;
             padding: 2rem;
             border-radius: 8px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
             width: 100%;
-            max-width: 287px;
+            max-width: 320px;
             text-align: center;
         }
-        
+
         h1 {
             margin-top: 0;
             font-size: 1.5rem;
             margin-bottom: 1.5rem;
         }
-        
+
         p {
             margin-bottom: 1.5rem;
             line-height: 1.5;
             color: #ccc;
         }
-        
+
         .form-group {
-            margin-bottom: 1.5rem;
+            margin-bottom: 1rem;
         }
-        
-        input[type="text"] {
+
+        input[type="text"], input[type="password"] {
             width: 100%;
             padding: 10px;
             border-radius: 4px;
@@ -57,12 +57,12 @@
             box-sizing: border-box;
             font-size: 1rem;
         }
-        
-        input[type="text"]:focus {
+
+        input:focus {
             outline: none;
             border-color: #66afe9;
         }
-        
+
         button {
             background-color: #4CAF50;
             color: white;
@@ -74,11 +74,11 @@
             width: 100%;
             transition: background-color 0.2s;
         }
-        
+
         button:hover {
             background-color: #45a049;
         }
-        
+
         .error-message {
             color: #ff6b6b;
             margin-top: 1rem;
@@ -88,55 +88,64 @@
 </head>
 <body>
     <div class="login-container">
-        <h1>Twerk-maps</h1>
-        <p>For å logge inn, skriv fullt navn på personen som har laget appen.<br><br>
-        (du er veldig veldig velkommen til å bruke den!)</p>
-        <p>Appen ber om tilgang til posisjon for å vise deg hvor du er. Denne informasjonen forlater aldri enheten din.</p>
-        <form id="loginForm">
+        <h1>Registrer bruker</h1>
+        <p>Skriv inn e-post og passord.</p>
+        <form id="registerForm">
             <div class="form-group">
-                <input type="text" id="username" name="username" placeholder="Brukernavn" required autocomplete="username">
+                <input type="text" id="email" name="email" placeholder="E-post..." required autocomplete="email">
             </div>
             <div class="form-group">
-                <input type="password" id="password" name="password" placeholder="Passord..." autocomplete="current-password">
+                <input type="password" id="password" name="password" placeholder="Passord..." required autocomplete="new-password">
             </div>
-            <button type="submit">Logg inn</button>
-            <div id="errorMessage" class="error-message">Feil navn, prøv igjen.</div>
+            <div class="form-group">
+                <input type="password" id="passwordRepeat" name="passwordRepeat" placeholder="Gjenta passord..." required autocomplete="new-password">
+            </div>
+            <button type="submit">Registrer</button>
+            <div id="errorMessage" class="error-message">Kunne ikke registrere.</div>
         </form>
         <p style="margin-top: 1rem; margin-bottom: 0;">
-            Har du ikke konto? <a href="/register.html" style="color:#66afe9; text-decoration:none;">Registrer deg</a>
+            Har du allerede konto? <a href="/login.html" style="color:#66afe9; text-decoration:none;">Logg inn</a>
         </p>
     </div>
 
     <script>
-        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+        document.getElementById('registerForm').addEventListener('submit', async function(e) {
             e.preventDefault();
-            
-            const username = document.getElementById('username').value;
+
+            const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
+            const passwordRepeat = document.getElementById('passwordRepeat').value;
             const errorMessage = document.getElementById('errorMessage');
-            
+
             try {
-                // Determine API URL based on environment
                 const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-                const apiUrl = isLocalhost ? 'http://127.0.0.1:5000/api/login' : '/api/login';
+                const apiUrl = isLocalhost ? 'http://127.0.0.1:5000/api/register' : '/api/register';
 
                 const response = await fetch(apiUrl, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ username, password })
+                    body: JSON.stringify({
+                        username: email,
+                        password,
+                        password_repeat: passwordRepeat
+                    })
                 });
-                
+
                 if (response.ok) {
-                    // Redirect to map on success
                     window.location.href = '/map.html';
                 } else {
                     errorMessage.style.display = 'block';
-                    errorMessage.textContent = 'Feil brukernavn eller passord.';
+                    try {
+                        const data = await response.json();
+                        errorMessage.textContent = data?.error || 'Kunne ikke registrere.';
+                    } catch (_) {
+                        errorMessage.textContent = 'Kunne ikke registrere.';
+                    }
                 }
             } catch (error) {
-                console.error('Login error:', error);
+                console.error('Register error:', error);
                 errorMessage.style.display = 'block';
                 errorMessage.textContent = 'En feil oppstod. Prøv igjen senere.';
             }
@@ -144,3 +153,5 @@
     </script>
 </body>
 </html>
+
+

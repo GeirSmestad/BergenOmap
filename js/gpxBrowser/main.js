@@ -9,12 +9,33 @@ import { createGpxTrackRenderer } from './controllers/gpxTrackRenderer.js';
 import { getSegmentLatLngs } from './utils/gpxTrackUtils.js';
 import { createGpxUploadDialog } from './ui/gpxUploadDialog.js';
 import { createGpxMapSelectorPanel } from './ui/mapSelectorPanel.js';
+import { redirectToLoginOnExpiredSession } from '../utils/apiUtils.js';
 
-const DEFAULT_USERNAME = 'geir.smestad';
+async function fetchCurrentUsername() {
+  const response = await fetch(`${API_BASE}/api/auth/me`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  });
+
+  if (!response.ok) {
+    redirectToLoginOnExpiredSession(response);
+    throw new Error(`Failed to resolve current user: ${response.status} ${response.statusText}`);
+  }
+
+  const data = await response.json();
+  if (!data?.username) {
+    throw new Error('Missing username from /api/auth/me');
+  }
+  return data.username;
+}
 
 document.addEventListener('DOMContentLoaded', async () => {
   const appMenu = new AppMenu();
   const store = new GpxBrowserStore();
+
+  const currentUsername = await fetchCurrentUsername();
 
   const mapSelectorElements = {
     toggleButton: document.getElementById('mapSelectorToggle'),
@@ -121,7 +142,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     store.setTrackLoading(true, null);
 
     try {
-      const trackDetail = await fetchTrackDetail(API_BASE, DEFAULT_USERNAME, trackId);
+      const trackDetail = await fetchTrackDetail(API_BASE, currentUsername, trackId);
 
       if (requestId !== activeTrackRequest) {
         return;
@@ -170,7 +191,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       submitButton: document.getElementById('gpxUploadSubmitButton')
     },
     onSubmit: async ({ file, description }) => {
-      const response = await uploadTrack(API_BASE, DEFAULT_USERNAME, description, file);
+      const response = await uploadTrack(API_BASE, currentUsername, description, file);
       await refreshTrackList();
       if (response?.track_id) {
         await handleNewTrackSelection(response.track_id);
@@ -193,7 +214,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   async function refreshTrackList() {
-    const tracks = await fetchUserTracks(API_BASE, DEFAULT_USERNAME);
+    const tracks = await fetchUserTracks(API_BASE, currentUsername);
     store.setGpxTracks(tracks);
     gpxListPanel.renderIfVisible();
     return tracks;

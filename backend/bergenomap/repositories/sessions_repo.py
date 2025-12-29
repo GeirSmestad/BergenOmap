@@ -33,3 +33,12 @@ def validate_session(db: Database, session_key: str) -> dict | None:
     return {"username": username, "expires_at": expires_at, "is_active": is_active}
 
 
+def deactivate_session(db: Database, session_key: str) -> None:
+    update_sql = """
+    UPDATE sessions
+    SET is_active = 0
+    WHERE session_key = ?
+    """
+    db.cursor.execute(update_sql, (session_key,))
+    db.connection.commit()
+

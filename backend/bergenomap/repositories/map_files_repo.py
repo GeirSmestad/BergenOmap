@@ -25,15 +25,15 @@ def insert_final(db: Database, map_id: int, mapfile_final: bytes) -> None:
     db.connection.commit()
 
 
-def get_original_by_name(db: Database, map_name: str) -> bytes | None:
-    map_id = maps_repo.get_map_id_by_name(db, map_name)
+def get_original_by_name(db: Database, username: str, map_name: str) -> bytes | None:
+    map_id = maps_repo.get_map_id_by_name(db, map_name, username=username)
     if map_id is None:
         return None
     return get_original_by_id(db, map_id)
 
 
-def get_final_by_name(db: Database, map_name: str) -> bytes | None:
-    map_id = maps_repo.get_map_id_by_name(db, map_name)
+def get_final_by_name(db: Database, username: str, map_name: str) -> bytes | None:
+    map_id = maps_repo.get_map_id_by_name(db, map_name, username=username)
     if map_id is None:
         return None
     return get_final_by_id(db, map_id)

@@ -6,7 +6,7 @@ import math
 import traceback
 from io import BytesIO
 
-from flask import Blueprint, abort, jsonify, make_response, request, send_file
+from flask import Blueprint, abort, g, jsonify, make_response, request, send_file
 from PIL import Image
 
 from bergenomap.config import settings
@@ -157,7 +157,10 @@ def transform_and_store_map():
 
     map_registration_data = json.loads(imageRegistrationData)
 
-    map_id = maps_repo.insert_map(db, map_registration_data)
+    try:
+        map_id = maps_repo.insert_map(db, g.username, map_registration_data)
+    except PermissionError as exc:
+        return jsonify({"error": str(exc)}), 409
     map_files_repo.insert_original(db, map_id, original_map_io.getvalue())
     map_files_repo.insert_final(db, map_id, transformed_map_io.getvalue())
 
@@ -271,14 +274,14 @@ def get_overlay_coordinates():
 @bp.route("/api/dal/list_maps", methods=["GET"])
 def list_maps():
     db = get_db()
-    maps = maps_repo.list_maps(db)
+    maps = maps_repo.list_maps(db, g.username)
     return jsonify(maps)
 
 
 @bp.route("/api/dal/mapfile/original/<map_name>", methods=["GET"])
 def get_mapfile_original(map_name: str):
     db = get_db()
-    image_data = map_files_repo.get_original_by_name(db, map_name)
+    image_data = map_files_repo.get_original_by_name(db, g.username, map_name)
     if image_data is not None:
         return send_file(BytesIO(image_data), mimetype="image/*")
     abort(404, description="Map not found")
@@ -287,7 +290,7 @@ def get_mapfile_original(map_name: str):
 @bp.route("/api/dal/mapfile/final/<map_name>", methods=["GET"])
 def get_mapfile_final(map_name: str):
     db = get_db()
-    image_data = map_files_repo.get_final_by_name(db, map_name)
+    image_data = map_files_repo.get_final_by_name(db, g.username, map_name)
     if image_data is not None:
         return send_file(
             BytesIO(image_data),

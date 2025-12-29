@@ -5,7 +5,6 @@ from datetime import datetime, timedelta
 
 from flask import Blueprint, current_app, g, jsonify, request
 
-from bergenomap.api.common import is_local_request
 from bergenomap.repositories.db import get_db
 from bergenomap.repositories import sessions_repo, users_repo
 
@@ -27,9 +26,8 @@ def check_authentication():
     if request.path == "/api/login":
         return
 
-    # Check if we are running locally (debug mode or localhost)
-    if is_local_request() and current_app.debug:
-        g.username = "geir.smestad"
+    # Whitelist registration endpoint
+    if request.path == "/api/register":
         return
 
     session_key = request.cookies.get("session_key")
@@ -45,21 +43,37 @@ def check_authentication():
 
 @bp.route("/api/login", methods=["POST"])
 def login():
-    data = request.get_json()
-    full_name = data.get("full_name")
+    data = request.get_json(silent=True) or {}
 
-    if full_name != "Geir Smestad":
-        return jsonify({"error": "Invalid credentials"}), 401
+    raw_username = (data.get("username") or data.get("email") or data.get("full_name") or "").strip()
+    password = data.get("password") or ""
 
-    username = "geir.smestad"  # Default user for now
+    # Temporary special case: entering the creator's full name logs you in as geir.smestad.
+    # Password is ignored.
+    if raw_username == "Geir Smestad":
+        username = "geir.smestad"
+        db = get_db()
+        users_repo.ensure_user_exists(db, username)
+    else:
+        username = raw_username.lower()
+        if not username:
+            return jsonify({"error": "Invalid credentials"}), 401
+
+        db = get_db()
+        user = users_repo.get_user_with_pw_hash(db, username)
+        if not user:
+            return jsonify({"error": "Invalid credentials"}), 401
+        if user.get("pw_hash") is None:
+            return jsonify({"error": "Invalid credentials"}), 401
+        if str(user.get("pw_hash")) != str(password):
+            return jsonify({"error": "Invalid credentials"}), 401
+
     session_key = str(uuid.uuid4())
     expires_at = datetime.now() + timedelta(days=365)
 
-    db = get_db()
-    users_repo.ensure_user_exists(db, username)
     sessions_repo.create_session(db, username, session_key, expires_at)
 
-    response = jsonify({"message": "Login successful"})
+    response = jsonify({"message": "Login successful", "username": username})
     response.set_cookie(
         "session_key",
         session_key,
@@ -68,6 +82,71 @@ def login():
         samesite="Lax",
     )
     return response
+
+
+@bp.route("/api/register", methods=["POST"])
+def register():
+    """
+    Minimal registration endpoint.
+
+    Payload:
+      - username (email) OR email
+      - password
+      - password_repeat (or repeat_password / passwordRepeat)
+    """
+    data = request.get_json(silent=True) or {}
+    raw_username = (data.get("username") or data.get("email") or "").strip()
+    password = data.get("password") or ""
+    password_repeat = (
+        data.get("password_repeat")
+        or data.get("repeat_password")
+        or data.get("passwordRepeat")
+        or ""
+    )
+
+    username = raw_username.lower()
+    if not username or "@" not in username:
+        return jsonify({"error": "username must be an email address"}), 400
+    if not password:
+        return jsonify({"error": "password is required"}), 400
+    if password != password_repeat:
+        return jsonify({"error": "passwords do not match"}), 400
+
+    db = get_db()
+    try:
+        users_repo.create_user(db, username, str(password))
+    except ValueError as exc:
+        return jsonify({"error": str(exc)}), 409
+
+    session_key = str(uuid.uuid4())
+    expires_at = datetime.now() + timedelta(days=365)
+    sessions_repo.create_session(db, username, session_key, expires_at)
+
+    response = jsonify({"message": "Registered", "username": username})
+    response.set_cookie(
+        "session_key",
+        session_key,
+        expires=expires_at,
+        httponly=False,
+        samesite="Lax",
+    )
+    return response, 201
+
+
+@bp.route("/api/logout", methods=["POST"])
+def logout():
+    """
+    Deactivate the current session and clear cookie.
+    """
+    session_key = request.cookies.get("session_key")
+    if session_key:
+        db = get_db()
+        sessions_repo.deactivate_session(db, session_key)
+
+    response = jsonify({"message": "Logged out"})
+    # Clear cookie for browser clients.
+    response.set_cookie("session_key", "", expires=0)
+    return response, 200
 
 
 @bp.route("/api/auth/me", methods=["GET"])

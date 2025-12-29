@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import traceback
 
-from flask import Blueprint, abort, jsonify, render_template_string, request
+from flask import Blueprint, abort, g, jsonify, render_template_string, request
 
 from bergenomap.api.common import is_local_request
 from bergenomap.config import settings
@@ -20,7 +20,7 @@ def insert_map():
 
     map_data = request.json
     db = get_db()
-    map_id = maps_repo.insert_map(db, map_data)
+    map_id = maps_repo.insert_map(db, g.username, map_data)
     return jsonify({"message": "Map added successfully", "map_id": map_id}), 201
 
 

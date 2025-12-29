@@ -5,11 +5,10 @@ import json
 from datetime import datetime, timezone
 from urllib.parse import urlparse
 
-from flask import Blueprint, current_app, jsonify, redirect, request
+from flask import Blueprint, current_app, g, jsonify, redirect, request
 
-from bergenomap.api.common import is_local_request
 from bergenomap.integrations.strava_client import StravaApiError, StravaClient
-from bergenomap.repositories import sessions_repo, strava_repo
+from bergenomap.repositories import strava_repo
 from bergenomap.repositories.db import get_db
 from bergenomap.services import strava_sync_service
 
@@ -19,22 +18,9 @@ bp = Blueprint("strava", __name__)
 
 def _current_username() -> str:
     """
-    Resolve the logged-in user from session cookie.
-
-    Note: auth middleware already enforces this for /api routes in production,
-    but local debug can bypass it, so we keep a safe fallback.
+    Resolve the logged-in user from auth middleware (session cookie validated in `api/auth.py`).
     """
-    session_key = request.cookies.get("session_key")
-    if not session_key:
-        if is_local_request() and current_app.debug:
-            return "geir.smestad"
-        raise ValueError("Missing session_key cookie")
-
-    db = get_db()
-    session = sessions_repo.validate_session(db, session_key)
-    if not session:
-        raise ValueError("Invalid session")
-    return session["username"]
+    return g.username
 
 
 def _encode_state(state_obj: dict) -> str:

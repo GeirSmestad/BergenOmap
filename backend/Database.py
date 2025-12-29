@@ -25,9 +25,13 @@ class Database:
         self.cursor = self.connection.cursor()
 
     def create_table(self) -> None:
+        # Important: create `users` before tables that reference it via FK.
+        self.create_users_table()
+
         create_maps_sql = """
         CREATE TABLE IF NOT EXISTS maps (
             map_id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT NOT NULL,
             map_name TEXT NOT NULL UNIQUE,
             nw_coords_lat REAL,
             nw_coords_lon REAL,
@@ -46,7 +50,8 @@ class Database:
             map_course TEXT,
             map_club TEXT,
             map_course_planner TEXT,
-            map_attribution TEXT
+            map_attribution TEXT,
+            FOREIGN KEY (username) REFERENCES users(username) ON DELETE CASCADE
         )
         """
         create_map_files_sql = """
@@ -58,8 +63,8 @@ class Database:
         )
         """
         self.cursor.execute(create_maps_sql)
+        self.cursor.execute("CREATE INDEX IF NOT EXISTS idx_maps_username ON maps(username)")
         self.cursor.execute(create_map_files_sql)
-        self.create_users_table()
         self.create_gps_tracks_table()
         self.create_internal_kv_table()
         self.create_strava_tables()
@@ -68,7 +73,8 @@ class Database:
     def create_users_table(self) -> None:
         create_users_sql = """
         CREATE TABLE IF NOT EXISTS users (
-            username TEXT PRIMARY KEY
+            username TEXT PRIMARY KEY,
+            pw_hash TEXT
         )
         """
         self.cursor.execute(create_users_sql)
