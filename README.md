@@ -342,6 +342,8 @@ Grov plan: Få inn alle områder, og ett B-kart fra alle som har. Deretter A for
 - [ ] Enhetstester på frontend
 - [ ] Gjennomgang av databaseskjema; er det på god normalform og fornuftig?
 
+- [ ] Dokumentasjon for Cursor
+
 - [ ] Innsending av database-kart + kjente metadata til AI-modell for setting av metadata i database (hent all tekst)
 - [ ] Ifm. henting av metadata fra kart: Ekstra DB-felt for kartets målestokk (og integrer det med auto-målestokk-knapp)
 - [ ] Maskinlærings-system for å identifisere post-posisjoner på registrerte kart og regne disse om til ekte koordinater
@@ -459,9 +461,12 @@ brew install just (OS X)
 For deploy, se Justfile for detaljer. 
 Enkel deploy er fx. "just deploy-app"
 
-Kjøring av SQL-script fra Windows:
+Kjøring av SQL-script fra Windows og Mac:
 
 Get-Content .\006_update_track_bounds.sql | ssh bergenomap "sqlite3 -bail /srv/bergenomap/data/database.db"
+
+ssh bergenomap 'sqlite3 -bail /srv/bergenomap/data/database.db' < 006_update_track_bounds.sql
+
 
 
 ## Kart-kilder -- flyfoto og topografiske kart
