@@ -90,12 +90,22 @@ def compress_database(*, quality: int, method: int, lossless: bool, keep_origina
                      print(f"Skipping map_id {map_id} original: {exc}")
 
             if updates:
-                set_clause = ", ".join(f"{col} = ?" for col in updates.keys())
-                values = list(updates.values()) + [map_id]
-                conn.execute(
-                    f"UPDATE map_files SET {set_clause} WHERE map_id = ?",
-                    values
-                )
+                # Keep SQL fully parameterized; do not interpolate column names.
+                if "mapfile_final" in updates and "mapfile_original" in updates:
+                    conn.execute(
+                        "UPDATE map_files SET mapfile_final = ?, mapfile_original = ? WHERE map_id = ?",
+                        (updates["mapfile_final"], updates["mapfile_original"], map_id),
+                    )
+                elif "mapfile_final" in updates:
+                    conn.execute(
+                        "UPDATE map_files SET mapfile_final = ? WHERE map_id = ?",
+                        (updates["mapfile_final"], map_id),
+                    )
+                elif "mapfile_original" in updates:
+                    conn.execute(
+                        "UPDATE map_files SET mapfile_original = ? WHERE map_id = ?",
+                        (updates["mapfile_original"], map_id),
+                    )
                 converted_count += 1
                 print(f"Converted #{converted_count}: {map_name}")
 
