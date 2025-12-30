@@ -212,11 +212,6 @@ body[data-mobile-tab="metadata"] .registration-map-views {
   flex-direction: column;
 }
 
-/* Hide drag/drop on mobile; rely on file picker. */
-#drop-area {
-  display: none !important;
-}
-
 .mobile-upload-container {
   display: none;
   padding: 1rem 0;
