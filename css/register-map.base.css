@@ -1,0 +1,423 @@
+/* =============================================================================
+   register-map.base.css
+   ---------------------------------------------------------------------------
+   Shared styles for registerMap (desktop + mobile pages).
+   Platform-specific layout belongs in:
+   - register-map.desktop.css
+   - register-map.mobile.css
+   ========================================================================== */
+
+:root {
+  color-scheme: light;
+
+  --page-bg: #f5f6fa;
+  --card-bg: #ffffff;
+  --card-border: #dcdfe6;
+  --card-radius: 12px;
+  --card-padding: 1.25rem;
+
+  --body-padding-desktop: 1.5rem;
+  --section-padding: 1rem;
+
+  --tab-bar-height: 60px;
+  --header-padding: 0.5rem;
+  --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+
+  /* Desktop sticky palette offset is computed in JS on desktop. */
+  --palette-sticky-offset: 96px;
+}
+
+html {
+  font-size: 16px;
+  line-height: 1.5;
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  color: #1c1c1c;
+  background: var(--page-bg);
+}
+
+img,
+canvas {
+  max-width: 100%;
+}
+
+.tab-panel {
+  width: 100%;
+}
+
+.safe-padding {
+  padding: var(--section-padding);
+}
+
+.card-panel {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--card-radius);
+  padding: var(--card-padding);
+  box-shadow: 0 8px 24px rgba(16, 24, 40, 0.06);
+}
+
+/* == Buttons / Controls =================================================== */
+
+.registrationButton {
+  appearance: none;
+  border: none;
+  border-radius: 999px;
+  padding: 0.55rem 1rem;
+  font-weight: 600;
+  font-size: 0.95rem;
+  background: #1c64f2;
+  color: #fff;
+  cursor: pointer;
+  transition: transform 120ms ease, box-shadow 160ms ease, background 160ms ease;
+}
+
+.registrationButton:active {
+  transform: translateY(1px);
+  box-shadow: 0 6px 18px rgba(28, 100, 242, 0.3);
+}
+
+.registrationStatus {
+  font-family: "Consolas", "SFMono-Regular", "Menlo", monospace;
+  background: #f6f8fb;
+  border: 1px solid #e4e7ec;
+  border-radius: 10px;
+  padding: 0.65rem 0.85rem;
+  margin: 0;
+  color: #475467;
+  min-height: 2.25rem;
+  display: flex;
+  align-items: center;
+}
+
+/* == Inputs =============================================================== */
+
+label {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #3a3f4b;
+  display: block;
+}
+
+input[type="text"],
+textarea {
+  width: 100%;
+  border-radius: 8px;
+  border: 1px solid #cfd5e3;
+  padding: 0.6rem 0.75rem;
+  margin-top: 0.35rem;
+  font-size: 0.95rem;
+  transition: border-color 120ms ease, box-shadow 120ms ease;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+input[type="text"]:focus,
+textarea:focus {
+  outline: none;
+  border-color: #1c64f2;
+  box-shadow: 0 0 0 3px rgba(28, 100, 242, 0.15);
+}
+
+textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.inputFields {
+  margin-bottom: 1rem;
+}
+
+/* == Upload / Existing map list ========================================== */
+
+.file-select-btn {
+  background: #fff;
+  border: 1px solid #dcdfe6;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 0.9rem;
+  color: #1c64f2;
+  cursor: pointer;
+  margin-top: 0.5rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.file-select-btn:hover {
+  background: #eff4ff;
+  border-color: #1c64f2;
+}
+
+#drop-area {
+  border: 2px dashed #c5ccd6;
+  border-radius: 12px;
+  width: min(360px, 100%);
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: #8c95a3;
+  margin-top: 1rem;
+  transition: border-color 140ms ease, color 140ms ease, background 140ms ease;
+  flex-direction: column;
+}
+
+#drop-area.highlight {
+  border-color: #1b5ad1;
+  background: rgba(27, 90, 209, 0.05);
+  color: #1b5ad1;
+}
+
+.filter-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.pre-existing-map-filter {
+  padding-right: 2.5rem;
+}
+
+.clear-filter-btn {
+  position: absolute;
+  right: 0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  margin-top: 0.175rem;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: #8c95a3;
+  cursor: pointer;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: color 0.2s, background 0.2s;
+}
+
+.clear-filter-btn:hover {
+  color: #374151;
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.clear-filter-btn:active {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.pre-existing-map-selector__intro {
+  margin: 0;
+  font-weight: 600;
+  color: #1c1c1c;
+}
+
+.pre-existing-map-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.pre-existing-map-card {
+  border: 1px solid #dcdfe6;
+  border-radius: 10px;
+  padding: 0.75rem;
+  background: #fff;
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 140ms ease, box-shadow 140ms ease, background 140ms ease;
+}
+
+.pre-existing-map-card:hover {
+  border-color: #1c64f2;
+  box-shadow: 0 6px 18px rgba(28, 100, 242, 0.15);
+}
+
+.pre-existing-map-card--active {
+  border-color: #1c64f2;
+  background: rgba(28, 100, 242, 0.08);
+}
+
+.pre-existing-map-card__title {
+  margin: 0;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.pre-existing-map-card__meta {
+  margin: 0.35rem 0 0;
+  font-size: 0.85rem;
+  color: #475467;
+}
+
+/* == Map palettes & markers ============================================== */
+
+#mapMarkerPalette,
+#overlayMarkerPalette {
+  display: flex;
+  gap: 0.75rem;
+  min-height: 70px;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+.marker-palette-item {
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  opacity: 0.7;
+  padding: 4px;
+  margin: 4px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.marker-palette-item:hover {
+  opacity: 1;
+  transform: translateY(-2px);
+  background: rgba(0, 0, 0, 0.03);
+}
+
+.marker-palette-item--active {
+  opacity: 1;
+  transform: translateY(-2px);
+  background: rgba(28, 100, 242, 0.1);
+  box-shadow: 0 0 0 2px #1c64f2;
+}
+
+.marker-palette-item svg {
+  display: block;
+  width: 36px;
+  height: 52px;
+}
+
+.registration-marker {
+  width: 36px;
+  height: 52px;
+  cursor: pointer;
+  touch-action: none;
+  user-select: none;
+  display: block;
+}
+
+.registration-marker--map {
+  cursor: pointer;
+}
+
+.registration-marker--anchored {
+  position: absolute;
+  transform: translate(-50%, -100%);
+  transform-origin: 50% 100%;
+  z-index: 10;
+}
+
+/* Overlay zoom: keep markers (and their hitboxes) constant size on screen. */
+.overlay-panzoom-canvas .registration-marker--anchored {
+  transform: translate(-50%, -100%) scale(var(--overlay-marker-scale, 1));
+}
+
+.registration-marker__svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  filter: drop-shadow(0 6px 15px rgba(15, 23, 42, 0.35));
+}
+
+/* SVG drop-shadow filters often get rasterized under nested transforms (zoom + inverse-zoom). */
+.overlay-panzoom-canvas .registration-marker__svg {
+  filter: none;
+  shape-rendering: geometricPrecision;
+  text-rendering: geometricPrecision;
+}
+
+.registration-marker__svg-label {
+  font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  font-weight: 700;
+  font-size: 15px;
+  fill: #ffffff;
+}
+
+.registration-marker:active {
+  cursor: grabbing;
+}
+
+/* == Overlay view interaction layer ====================================== */
+
+#overlayView {
+  width: 100%;
+  border-radius: 12px;
+  object-fit: contain;
+  border: 1px solid #d7dce5;
+  display: block;
+}
+
+.overlay-view-wrapper {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  touch-action: none;
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+.overlay-panzoom-canvas {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  flex: 1;
+  transform-origin: top left;
+  will-change: transform;
+}
+
+.overlay-panzoom-canvas > img {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: contain;
+  z-index: 1;
+  -webkit-user-drag: none;
+  -webkit-touch-callout: none;
+  user-select: none;
+}
+
+.overlay-view-wrapper,
+.overlay-panzoom-canvas,
+.overlay-marker-layer {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.overlay-marker-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.overlay-marker-layer .registration-marker {
+  pointer-events: auto;
+}
+
+.mobile-upload-container {
+  display: none;
+}
+
+.mobile-tab-nav {
+  display: none;
+}
+
