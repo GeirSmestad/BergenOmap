@@ -199,12 +199,11 @@ Se Strava-integrasjonschat i ChatGPT: https://chatgpt.com/c/693a0201-57cc-8326-9
 
 ## Multi-brukerstøtte
 
-- [ ] Oppdatere DB-skjema for multi-brukerstøtte på stasjonær-maskinen min
-
 - [ ] Nye brukere kan prøve appen uten registrering, få et midlertidig brukernavn. Registrere kart, GPX og Strava.
 - [ ] Landings-side med info om app og "try it out now"
 - [ ] Fjern spesial-håndteringen av kartnavnet; tillat duplikater og bruk ID som nøkkel
 
+- [x] Oppdatere DB-skjema for multi-brukerstøtte på stasjonær-maskinen min
 - [x] auth.py har noe som heter full_name for bakoverkompatibilitet; det kan vi fjerne
 - [x] API for GPX-filer tillater brukernavn supplert av frontend; fiks det sikkerhetshullet
 - [x] Mulighet for å logge inn med flere brukere
@@ -265,7 +264,7 @@ Grov plan: Få inn alle områder, og ett B-kart fra alle som har. Deretter A for
 - [ ] Løyper fra løp jeg har allerede: B-løypene fra 2025
 - [ ] Løyper fra løp jeg har allerede: A-løypene fra 2012-2021 (se registration-work-in-progress.txt for fullstendig liste)
 
-- [ ] Importer GPX-spor fra Strava-løpene jeg glemte å merke som "Race" (de er allerede i DB)
+- [x] Importer GPX-spor fra Strava-løpene jeg glemte å merke som "Race" (de er allerede i DB)
 - [x] Legg inn GPX-spor fra alle de løpene mine fra Strava
 - [x] Registrer monster-kartet fra Vidden
 - [x] Registrere alle tur-orienteringskartene
@@ -372,16 +371,15 @@ Grov plan: Få inn alle områder, og ett B-kart fra alle som har. Deretter A for
 
 ## Refaktorering
 
-
 - [ ] Enhetstester på backend
 - [ ] Enhetstester på frontend
 - [ ] Gjennomgang av databaseskjema; er det på god normalform og fornuftig?
 - [ ] Dokumentasjon på konvensjoner og kode, for Cursor
 
-- [ ] Splitte registerMap opp i mobil og desktop-versjon (chat-historikk, desktop: "RegisterMap -> Desktop/Mobile", nå SCRATCHPAD.MD)
 - [ ] Dobbeltsjekk om alle flex-reglene i 59f7c05 var nødvendige; tror mange kan fjernes
 - [ ] Felles environment-config på tvers av sider? (har nå dette for registerMap, men ikke kartvisningen)
 
+- [x] Splitte registerMap opp i mobil og desktop-versjon (chat-historikk, desktop: "RegisterMap -> Desktop/Mobile", nå SCRATCHPAD.MD)
 - [x] Flytte database-kode fra Database.py inn i repository-mappene; koden bør faktisk *leve* der og ikke bare være linket derfra
 - [x] "GPX-spor for dette kartet": Featuren laster nå ned alle GPX-spor ved første kart-lasting. Flytt algoritme og "boundaries" for kart til DB/backend.
 - [x] Refaktorere Python-kode i bedre modul-struktur
