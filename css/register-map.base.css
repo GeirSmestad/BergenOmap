@@ -308,6 +308,8 @@ textarea {
   height: 52px;
   cursor: pointer;
   touch-action: none;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
   user-select: none;
   display: block;
 }
@@ -420,4 +422,3 @@ textarea {
 .mobile-tab-nav {
   display: none;
 }
-
