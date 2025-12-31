@@ -38,6 +38,7 @@ export function initRegisterActions({
     saving: 'Saving map...',
     done: 'Done.',
     fitComplete: "Map fit completed. Review the fit in the terrain view, and edit the map details before saving with 'Save map'.",
+    saveComplete: 'Map saved.',
     computeError: 'Failed to compute registration.',
     saveError: 'Failed to save map.',
     missingRegistration: 'Please compute a registration before saving.'
@@ -177,7 +178,7 @@ export function initRegisterActions({
       return;
     }
 
-    setStatusBarMessage(STATUS_MESSAGES.done);
+    setStatusBarMessage(STATUS_MESSAGES.saveComplete);
   }
 
   async function exportDatabaseSnapshot() {
