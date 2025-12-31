@@ -7,6 +7,17 @@ export function initfileDropService({
   onOverlayReady,
   onStatusMessage
 }) {
+  const STATUS_MESSAGES = {
+    uploadingOverlay: 'Uploading orienteering map...',
+    uploadComplete: "Finished uploading map. To register the map, please select three points in the terrain view and their three corresponding locations in the map view. Press 'Compute registration' when done."
+  };
+
+  const setStatusMessage = (message) => {
+    if (typeof onStatusMessage === 'function' && typeof message === 'string') {
+      onStatusMessage(message);
+    }
+  };
+
   if (fileInput) {
     fileInput.addEventListener('change', async (event) => {
       const files = event.target.files;
@@ -50,6 +61,7 @@ export function initfileDropService({
     }
 
     try {
+      setStatusMessage(STATUS_MESSAGES.uploadingOverlay);
       const imageFile = await ensureImageFile(file);
       registrationStore.setDroppedImage(imageFile);
       populateDefaultFields(imageFile.name);
@@ -58,6 +70,7 @@ export function initfileDropService({
       if (typeof onOverlayReady === 'function') {
         onOverlayReady(overlayUrl);
       }
+      setStatusMessage(STATUS_MESSAGES.uploadComplete);
     } catch (error) {
       console.error('Error while handling dropped file:', error);
       if (typeof onStatusMessage === 'function') {

@@ -224,7 +224,7 @@ export function initRegisterMapApp({
         }
 
         advanceToTerrain();
-        setStatusBarMessage(`Loaded "${mapLabel}". Preview enabled.`);
+        setStatusBarMessage(`Loaded "${mapLabel}". You can adjust the registration or map details if you want.`);
       })
       .catch((error) => {
         if (requestId !== activeMapLoadToken) {
@@ -268,7 +268,7 @@ export function initRegisterMapApp({
       previewController.clearPreview();
       advanceToTerrain();
     },
-    onStatusMessage: (message) => console.warn(message)
+    onStatusMessage: (message) => setStatusBarMessage(message)
   });
 
   preExistingMapController.loadAvailableMaps();
