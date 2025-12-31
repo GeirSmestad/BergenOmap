@@ -30,122 +30,126 @@
 <body>
   <script type="module" src="js/registerMap/main.mobile.js"></script>
 
-  <!-- Tab Panel: Start (upload new map or pick existing) -->
-  <section id="tab-content-start"
-           class="tab-panel tab-panel--start image-input-wrapper safe-padding"
-           data-tab="start"
-           aria-label="Upload or select existing map">
-    <div class="start-status-container safe-padding">
-      <p id="registrationStatusStart" class="registrationStatus" aria-live="polite">
+  <!-- Shared Header (visible on terrain/overlay/metadata tabs) -->
+  <header class="registration-map-header">
+    <div class="registration-map-controls">
+      <button id="computeRegistrationButton" class="registrationButton">Compute registration</button>
+      <button id="saveMapButton" class="registrationButton">Save map</button>
+      <button id="registrationPreviewButton" class="registrationButton">Toggle preview</button>
+      <button id="basemapToggleButton" class="registrationButton">Switch to aerial photos</button>
+    </div>
+    <div id="registrationData">
+      <p id="registrationStatus" class="registrationStatus" aria-live="polite">
         Upload or select a map to start registration. 
         Please mark three points in the terrain and their corresponding location on the orienteering map.
         'Compute registration' previews the selected registration and 'Save map' stores it in the database.
       </p>
     </div>
-    <div id="imageInput" class="card-panel">
-      <p>Please choose an input map.</p>
-      <input type="file" id="fileUploadInput" accept="image/*,.pdf" style="display: none">
-      <div id="mobile-upload-area" class="mobile-upload-container">
-        <button type="button" class="file-select-btn mobile-upload-btn" onclick="document.getElementById('fileUploadInput').click()">
-          Select File to Upload
-        </button>
-      </div>
-    </div>
+  </header>
 
-    <div id="preExistingMapSelector" class="card-panel" aria-live="polite">
-      <p class="pre-existing-map-selector__intro">Or you can select an existing map to edit here.</p>
-      <div class="filter-input-wrapper">
-        <input type="text" id="preExistingMapFilter" class="pre-existing-map-filter" placeholder="Filter maps..." aria-label="Filter maps">
-        <button type="button" id="clearMapFilterButton" class="clear-filter-btn" aria-label="Clear filter" title="Clear filter">&times;</button>
-      </div>
-      <div id="preExistingMapList" class="pre-existing-map-list" role="listbox" aria-label="Existing maps"></div>
-    </div>
-  </section>
-
-  <!-- Shared controls + map views (terrain & overlay) -->
-  <div class="registration-map-section">
-    <div class="registration-map-header">
-      <div class="registration-map-controls">
-        <button id="computeRegistrationButton" class="registrationButton">Compute registration</button>
-        <button id="saveMapButton" class="registrationButton">Save map</button>
-        <button id="registrationPreviewButton" class="registrationButton">Toggle preview</button>
-        <button id="basemapToggleButton" class="registrationButton">Switch to aerial photos</button>
-      </div>
-      <div id="registrationData">
-        <p id="registrationStatus" class="registrationStatus" aria-live="polite">
+  <!-- Main Content Wrapper (Flex item filling remaining space) -->
+  <main class="mobile-main-content">
+    
+    <!-- Tab 1: Map selection (Start) -->
+    <section id="tab-content-start"
+             class="tab-panel tab-panel--start image-input-wrapper safe-padding"
+             data-tab="start"
+             aria-label="Upload or select existing map">
+      <div class="start-status-container safe-padding">
+        <p id="registrationStatusStart" class="registrationStatus" aria-live="polite">
           Upload or select a map to start registration. 
           Please mark three points in the terrain and their corresponding location on the orienteering map.
           'Compute registration' previews the selected registration and 'Save map' stores it in the database.
         </p>
       </div>
+      <div id="imageInput" class="card-panel">
+        <p>Please choose an input map.</p>
+        <input type="file" id="fileUploadInput" accept="image/*,.pdf" style="display: none">
+        <div id="mobile-upload-area" class="mobile-upload-container">
+          <button type="button" class="file-select-btn mobile-upload-btn" onclick="document.getElementById('fileUploadInput').click()">
+            Select File to Upload
+          </button>
+        </div>
+      </div>
+
+      <div id="preExistingMapSelector" class="card-panel" aria-live="polite">
+        <p class="pre-existing-map-selector__intro">Or you can select an existing map to edit here.</p>
+        <div class="filter-input-wrapper">
+          <input type="text" id="preExistingMapFilter" class="pre-existing-map-filter" placeholder="Filter maps..." aria-label="Filter maps">
+          <button type="button" id="clearMapFilterButton" class="clear-filter-btn" aria-label="Clear filter" title="Clear filter">&times;</button>
+        </div>
+        <div id="preExistingMapList" class="pre-existing-map-list" role="listbox" aria-label="Existing maps"></div>
+      </div>
+    </section>
+
+    <!-- Tab 2: Terrain Map -->
+    <div id="tab-content-terrain"
+         class="tab-panel registration-map-views__panel"
+         data-tab="terrain"
+         aria-label="Terrain map tools">
+      <div id="mapMarkerPalette"></div>
+      <div id="registrationMapBrowser"></div>
     </div>
 
-    <div class="registration-map-views">
-      <div id="tab-content-terrain"
-           class="tab-panel registration-map-views__panel"
-           data-tab="terrain"
-           aria-label="Terrain map tools">
-        <div id="mapMarkerPalette"></div>
-        <div id="registrationMapBrowser"></div>
-      </div>
-      <div id="tab-content-overlay"
-           class="tab-panel registration-map-views__panel registration-map-views__panel--overlay"
-           data-tab="overlay"
-           aria-label="Overlay map tools">
-        <div id="overlayMarkerPalette"></div>
-        <img id="overlayView" alt="Overlay map preview"/>
-      </div>
+    <!-- Tab 3: Overlay Map -->
+    <div id="tab-content-overlay"
+         class="tab-panel registration-map-views__panel registration-map-views__panel--overlay"
+         data-tab="overlay"
+         aria-label="Overlay map tools">
+      <div id="overlayMarkerPalette"></div>
+      <img id="overlayView" alt="Overlay map preview"/>
     </div>
-  </div>
 
-  <!-- Tab Panel: Metadata / data entry -->
-  <section id="tab-content-metadata"
-           class="tab-panel tab-panel--metadata safe-padding"
-           data-tab="metadata"
-           aria-label="Map metadata form">
-    <div id="registrationInput" class="card-panel">
-      <div class="inputFields">
-        <label for="mapName">Map name:</label>
-        <input type="text" id="mapName" name="mapName">
+    <!-- Tab 4: Metadata -->
+    <section id="tab-content-metadata"
+             class="tab-panel tab-panel--metadata safe-padding"
+             data-tab="metadata"
+             aria-label="Map metadata form">
+      <div id="registrationInput" class="card-panel">
+        <div class="inputFields">
+          <label for="mapName">Map name:</label>
+          <input type="text" id="mapName" name="mapName">
+        </div>
+        <div class="inputFields">
+          <label for="filename">Filename:</label>
+          <input type="text" id="filename" name="filename">
+        </div>
+        <div class="inputFields">
+          <label for="attribution">Attribution:</label>
+          <input type="text" id="attribution" name="attribution">
+        </div>
+        <div class="inputFields">
+          <label for="mapArea">Map area:</label>
+          <input type="text" id="mapArea" name="mapArea">
+        </div>
+        <div class="inputFields">
+          <label for="mapEvent">Map event:</label>
+          <input type="text" id="mapEvent" name="mapEvent">
+        </div>
+        <div class="inputFields">
+          <label for="mapDate">Map date:</label>
+          <input type="text" id="mapDate" name="mapDate">
+        </div>
+        <div class="inputFields">
+          <label for="mapCourse">Map course:</label>
+          <input type="text" id="mapCourse" name="mapCourse">
+        </div>
+        <div class="inputFields">
+          <label for="mapClub">Map club:</label>
+          <input type="text" id="mapClub" name="mapClub">
+        </div>
+        <div class="inputFields">
+          <label for="mapCoursePlanner">Map course planner:</label>
+          <input type="text" id="mapCoursePlanner" name="mapCoursePlanner">
+        </div>
+        <div class="inputFields">
+          <label for="mapAttribution">Map attribution:</label>
+          <input type="text" id="mapAttribution" name="mapAttribution">
+        </div>
       </div>
-      <div class="inputFields">
-        <label for="filename">Filename:</label>
-        <input type="text" id="filename" name="filename">
-      </div>
-      <div class="inputFields">
-        <label for="attribution">Attribution:</label>
-        <input type="text" id="attribution" name="attribution">
-      </div>
-      <div class="inputFields">
-        <label for="mapArea">Map area:</label>
-        <input type="text" id="mapArea" name="mapArea">
-      </div>
-      <div class="inputFields">
-        <label for="mapEvent">Map event:</label>
-        <input type="text" id="mapEvent" name="mapEvent">
-      </div>
-      <div class="inputFields">
-        <label for="mapDate">Map date:</label>
-        <input type="text" id="mapDate" name="mapDate">
-      </div>
-      <div class="inputFields">
-        <label for="mapCourse">Map course:</label>
-        <input type="text" id="mapCourse" name="mapCourse">
-      </div>
-      <div class="inputFields">
-        <label for="mapClub">Map club:</label>
-        <input type="text" id="mapClub" name="mapClub">
-      </div>
-      <div class="inputFields">
-        <label for="mapCoursePlanner">Map course planner:</label>
-        <input type="text" id="mapCoursePlanner" name="mapCoursePlanner">
-      </div>
-      <div class="inputFields">
-        <label for="mapAttribution">Map attribution:</label>
-        <input type="text" id="mapAttribution" name="mapAttribution">
-      </div>
-    </div>
-  </section>
+    </section>
+
+  </main>
 
   <!-- Tab switcher for mobile -->
   <nav id="mobileTabNav" class="mobile-tab-nav" aria-label="Registration steps">
