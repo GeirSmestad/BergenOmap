@@ -20,7 +20,7 @@ const createMarkerIcon = (index) => {
 
 export function createMapMarkerManager({ map, coordinateStore }) {
   if (!map) {
-    throw new Error('createMapMarkerManager requires a Leaflet map instance');
+    throw new Error('createMapMarkerManager requires a Leaflet map instance (terrain view)');
   }
 
   const markersByIndex = new Map();

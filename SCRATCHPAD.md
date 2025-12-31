@@ -23,7 +23,7 @@ I found the core HTML + CSS: `registerMap.html` is already a “hybrid” page (
 Right now `registerMap.html` is a **single hybrid UI** that contains *both* desktop structure (all sections visible, two map panels side-by-side) and mobile structure (tab panels + bottom tab bar):
 
 ```40:170:C:/Source/BergenOmap/registerMap.html
-  <!-- Tab Panel: Start (upload new map or pick existing) -->
+  <!-- Tab Panel: Map selection (upload new map or pick existing) -->
   <section id="tab-content-start" class="tab-panel ... data-tab="start">
   ...
   <div class="registration-map-views">
@@ -32,7 +32,7 @@ Right now `registerMap.html` is a **single hybrid UI** that contains *both* desk
     </div>
     <div id="tab-content-overlay" class="tab-panel ..." data-tab="overlay">
       ...
-      <img id="overlayView" alt="Overlay map preview"/>
+      <img id="overlayView" alt="Map view preview"/>
     </div>
   </div>
   ...

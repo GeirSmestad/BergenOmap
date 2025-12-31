@@ -16,6 +16,8 @@ import { fetchOriginalMapFile, fetchFinalMapFile, processDroppedImage } from './
  * Keep this file platform-neutral: no tab UI and no desktop-only layout logic.
  */
 export function initRegisterMapApp({
+  onAdvanceToTerrainView,
+  // Backwards-compatible alias (older entrypoints)
   onAdvanceToTerrain
 } = {}) {
   const coordinateStore = new CoordinateStore();
@@ -118,7 +120,7 @@ export function initRegisterMapApp({
     });
   };
 
-  const focusLeafletMap = (mapEntry) => {
+  const focusTerrainViewMap = (mapEntry) => {
     const { nw_coords: nwCoords, se_coords: seCoords } = mapEntry;
     if (!Array.isArray(nwCoords) || !Array.isArray(seCoords)) {
       return;
@@ -196,14 +198,15 @@ export function initRegisterMapApp({
     updateMetadataInputs(mapEntry);
     hydrateStoresFromEntryFromDatabaseEntry(mapEntry);
     registrationStore.setDroppedImage(originalFile);
-    focusLeafletMap(mapEntry);
+    focusTerrainViewMap(mapEntry);
 
     previewController.showPreview();
   };
 
-  const advanceToTerrain = () => {
-    if (typeof onAdvanceToTerrain === 'function') {
-      onAdvanceToTerrain();
+  const advanceToTerrainView = () => {
+    const callback = onAdvanceToTerrainView ?? onAdvanceToTerrain;
+    if (typeof callback === 'function') {
+      callback();
     }
   };
 
@@ -223,7 +226,7 @@ export function initRegisterMapApp({
           return;
         }
 
-        advanceToTerrain();
+        advanceToTerrainView();
         setStatusBarMessage(`Loaded "${mapLabel}". You can adjust the terrain fit by dragging the markers and clicking 'Fit map to terrain', or edit the map details if you want.`);
       })
       .catch((error) => {
@@ -266,7 +269,7 @@ export function initRegisterMapApp({
       overlayController.setSource(url);
       registrationStore.setOverlayImageUrl(null);
       previewController.clearPreview();
-      advanceToTerrain();
+      advanceToTerrainView();
     },
     onStatusMessage: (message) => setStatusBarMessage(message)
   });

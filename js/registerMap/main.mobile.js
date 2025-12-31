@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const mobileTabs = initMobileTabs();
 
   initRegisterMapApp({
-    onAdvanceToTerrain: () => {
+    onAdvanceToTerrainView: () => {
       mobileTabs?.switchToTab?.('terrain');
     }
   });

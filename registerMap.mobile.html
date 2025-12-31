@@ -30,7 +30,7 @@
 <body>
   <script type="module" src="js/registerMap/main.mobile.js"></script>
 
-  <!-- Shared Header (visible on terrain/overlay/metadata tabs) -->
+  <!-- Shared Header (visible on Terrain view / Map view / Details tabs) -->
   <header class="registration-map-header">
     <div class="registration-map-controls">
       <button id="computeRegistrationButton" class="registrationButton">Fit map to terrain</button>
@@ -48,7 +48,7 @@
   <!-- Main Content Wrapper (Flex item filling remaining space) -->
   <main class="mobile-main-content">
     
-    <!-- Tab 1: Map selection (Start) -->
+    <!-- Tab 1: Map selection -->
     <section id="tab-content-start"
              class="tab-panel tab-panel--start image-input-wrapper safe-padding"
              data-tab="start"
@@ -78,7 +78,7 @@
       </div>
     </section>
 
-    <!-- Tab 2: Terrain Map -->
+    <!-- Tab 2: Terrain view -->
     <div id="tab-content-terrain"
          class="tab-panel registration-map-views__panel"
          data-tab="terrain"
@@ -87,16 +87,16 @@
       <div id="registrationMapBrowser"></div>
     </div>
 
-    <!-- Tab 3: Overlay Map -->
+    <!-- Tab 3: Map view -->
     <div id="tab-content-overlay"
          class="tab-panel registration-map-views__panel registration-map-views__panel--overlay"
          data-tab="overlay"
-         aria-label="Overlay map tools">
+         aria-label="Map view tools">
       <div id="overlayMarkerPalette"></div>
-      <img id="overlayView" alt="Overlay map preview"/>
+      <img id="overlayView" alt="Map view preview"/>
     </div>
 
-    <!-- Tab 4: Metadata -->
+    <!-- Tab 4: Details -->
     <section id="tab-content-metadata"
              class="tab-panel tab-panel--metadata safe-padding"
              data-tab="metadata"

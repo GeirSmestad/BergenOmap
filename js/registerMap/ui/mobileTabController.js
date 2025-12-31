@@ -6,6 +6,14 @@ export function initMobileTabs() {
 
   if (!tabNav) return;
 
+  // Internal tab keys (data-tab values) vs UI labels:
+  // - start    => "Map selection"
+  // - terrain  => "Terrain view"
+  // - overlay  => "Map view"
+  // - metadata => "Details"
+  const DEFAULT_TAB = 'start';
+  const TERRAIN_VIEW_TAB = 'terrain';
+
   function switchToTab(targetTabName) {
     // 1. Update Tab Buttons (visual state)
     tabs.forEach(tab => {
@@ -24,8 +32,8 @@ export function initMobileTabs() {
       
       panel.classList.toggle('tab-content--active', isActive);
 
-      // Special handling: Trigger map resize when switching to terrain tab
-      if (isActive && panelTabName === 'terrain' && window.map) {
+      // Special handling: Trigger map resize when switching to Terrain view tab
+      if (isActive && panelTabName === TERRAIN_VIEW_TAB && window.map) {
          setTimeout(() => window.map.invalidateSize(), 100);
       }
     });
@@ -39,7 +47,7 @@ export function initMobileTabs() {
   });
 
   // Initialize
-  switchToTab('start');
+  switchToTab(DEFAULT_TAB);
 
   return { switchToTab };
 }
