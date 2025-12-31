@@ -212,6 +212,16 @@ body[data-mobile-tab="metadata"] .registration-map-views {
   flex-direction: column;
 }
 
+.start-status-container {
+  position: sticky;
+  top: env(safe-area-inset-top, 0px);
+  z-index: 1600;
+  background: var(--page-bg);
+  padding-bottom: 0.5rem;
+  box-shadow: 0 10px 18px rgba(16, 24, 40, 0.06);
+  min-height: 74px;
+}
+
 .mobile-upload-container {
   display: none;
   padding: 1rem 0;

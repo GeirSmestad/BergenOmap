@@ -22,8 +22,18 @@ export function initRegisterActions({
     statusBar
   } = elements;
 
+  const statusBarElements = (() => {
+    if (!statusBar) return [];
+    if (Array.isArray(statusBar)) return statusBar.filter(Boolean);
+    // NodeList / HTMLCollection / etc.
+    if (typeof statusBar.length === 'number' && typeof statusBar !== 'string') {
+      return Array.from(statusBar).filter(Boolean);
+    }
+    return [statusBar].filter(Boolean);
+  })();
+
   const STATUS_MESSAGES = {
-    idle: "Please mark three points in the terrain and their corresponding location on the orienteering map. 'Compute registration' previews the selected registration and 'Save map' stores it in the database.",
+    idle: "Upload or select a map to start registration. Please mark three points in the terrain and their corresponding location on the orienteering map. 'Compute registration' previews the selected registration and 'Save map' stores it in the database.",
     computing: 'Calculating registration...',
     saving: 'Saving map...',
     done: 'Done.',
@@ -33,9 +43,10 @@ export function initRegisterActions({
   };
 
   const setStatusBarMessage = (message) => {
-    if (statusBar && typeof message === 'string') {
-      statusBar.textContent = message;
-    }
+    if (typeof message !== 'string') return;
+    statusBarElements.forEach((element) => {
+      element.textContent = message;
+    });
   };
 
   if (computeRegistrationButton) {

@@ -51,7 +51,7 @@ export function initRegisterMapApp({
   const preExistingMapListElement = document.getElementById('preExistingMapList');
   const preExistingMapFilterElement = document.getElementById('preExistingMapFilter');
   const clearMapFilterButton = document.getElementById('clearMapFilterButton');
-  const statusBarElement = document.getElementById('registrationStatus');
+  const statusBarElements = Array.from(document.querySelectorAll('.registrationStatus'));
 
   const metadataFieldMappings = [
     ['mapName', 'map_name'],
@@ -72,9 +72,12 @@ export function initRegisterMapApp({
   let activeMapLoadToken = 0;
 
   const setStatusBarMessage = (message) => {
-    if (statusBarElement && typeof message === 'string') {
-      statusBarElement.textContent = message;
-    }
+    if (typeof message !== 'string') return;
+    statusBarElements.forEach((element) => {
+      if (element) {
+        element.textContent = message;
+      }
+    });
   };
 
   const updateMetadataInputs = (mapEntry) => {
@@ -250,7 +253,7 @@ export function initRegisterMapApp({
       saveMapButton: document.getElementById('saveMapButton'),
       registrationPreviewButton: document.getElementById('registrationPreviewButton'),
       outputDatabaseButton: document.getElementById('outputDatabaseButton'),
-      statusBar: statusBarElement
+      statusBar: statusBarElements
     }
   });
 

@@ -35,6 +35,13 @@
            class="tab-panel tab-panel--start image-input-wrapper safe-padding"
            data-tab="start"
            aria-label="Upload or select existing map">
+    <div class="start-status-container safe-padding">
+      <p id="registrationStatusStart" class="registrationStatus" aria-live="polite">
+        Upload or select a map to start registration. 
+        Please mark three points in the terrain and their corresponding location on the orienteering map.
+        'Compute registration' previews the selected registration and 'Save map' stores it in the database.
+      </p>
+    </div>
     <div id="imageInput" class="card-panel">
       <p>Please choose an input map.</p>
       <input type="file" id="fileUploadInput" accept="image/*,.pdf" style="display: none">
@@ -66,6 +73,7 @@
       </div>
       <div id="registrationData">
         <p id="registrationStatus" class="registrationStatus" aria-live="polite">
+          Upload or select a map to start registration. 
           Please mark three points in the terrain and their corresponding location on the orienteering map.
           'Compute registration' previews the selected registration and 'Save map' stores it in the database.
         </p>
@@ -143,7 +151,7 @@
   <nav id="mobileTabNav" class="mobile-tab-nav" aria-label="Registration steps">
     <button type="button" class="mobile-tab-item" data-tab="start">
       <svg class="mobile-tab-icon" viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M9 16h6v-6h4l-7-7-7 7h4v6zm-4 2h14v2H5z"/></svg>
-      <span>Start</span>
+      <span>Map selection</span>
     </button>
     <button type="button" class="mobile-tab-item" data-tab="terrain">
       <svg class="mobile-tab-icon" viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M20.5 3l-.16.03L15 5.1 9 3 3.36 4.9c-.21.07-.36.25-.36.48V20.5c0 .28.22.5.5.5l.16-.03L9 18.9l6 2.1 5.64-1.9c.21-.07.36-.25.36-.48V3.5c0-.28-.22-.5-.5-.5zM15 19l-6-2.11V5l6 2.11V19z"/></svg>
@@ -151,7 +159,7 @@
     </button>
     <button type="button" class="mobile-tab-item" data-tab="overlay">
       <svg class="mobile-tab-icon" viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>
-      <span>Overlay</span>
+      <span>Orienteering map</span>
     </button>
     <button type="button" class="mobile-tab-item" data-tab="metadata">
       <svg class="mobile-tab-icon" viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
