@@ -55,7 +55,25 @@ const disableNativeDragBehavior = (imageElement) => {
   return () => imageElement.removeEventListener('dragstart', handleDragStart);
 };
 
-export function createOverlayController({ // TODO: Can rename to orienteeringMapController? Overlay isn't accurately descriptive
+const ensurePlaceholder = (wrapperElement) => {
+  const existingPlaceholder = wrapperElement.querySelector('.overlay-placeholder');
+  if (existingPlaceholder) {
+    return existingPlaceholder;
+  }
+
+  const placeholder = document.createElement('div');
+  placeholder.className = 'overlay-placeholder';
+  
+  const content = document.createElement('div');
+  content.className = 'overlay-placeholder-content';
+  content.textContent = 'Load a map to commence registration';
+  
+  placeholder.appendChild(content);
+  wrapperElement.appendChild(placeholder);
+  return placeholder;
+};
+
+export function createOverlayController({
   coordinateStore,
   onOverlayLoaded
 }) {
@@ -69,6 +87,28 @@ export function createOverlayController({ // TODO: Can rename to orienteeringMap
   const cleanupDragHandler = disableNativeDragBehavior(overlayElement);
   const panZoomCanvas = ensurePanZoomCanvas(overlayWrapper, overlayElement);
   const markerLayer = ensureMarkerLayer(panZoomCanvas);
+  
+  // Create placeholder (hidden if image already present/loaded)
+  // We'll manage visibility based on load events and source setting.
+  const placeholder = ensurePlaceholder(overlayWrapper);
+
+  const togglePlaceholder = (show) => {
+    placeholder.style.display = show ? 'flex' : 'none';
+  };
+
+  // Initially show placeholder if no src
+  if (!overlayElement.src || overlayElement.src === window.location.href) {
+    togglePlaceholder(true);
+  } else {
+    // If src is set, it might be loaded or loading.
+    // If already complete, hide.
+    if (overlayElement.complete && overlayElement.naturalWidth > 0) {
+      togglePlaceholder(false);
+    } else {
+      togglePlaceholder(true);
+    }
+  }
+
   const panZoomController = createOverlayPanZoomController({
     wrapperElement: overlayWrapper,
     canvasElement: panZoomCanvas,
@@ -86,6 +126,7 @@ export function createOverlayController({ // TODO: Can rename to orienteeringMap
 
   const handleOverlayLoad = () => {
     panZoomController.reset();
+    togglePlaceholder(false);
     if (typeof onOverlayLoaded === 'function') {
       onOverlayLoaded();
     }
@@ -98,7 +139,14 @@ export function createOverlayController({ // TODO: Can rename to orienteeringMap
   return {
     getElement: () => overlayElement,
     setSource: (src) => {
-      overlayElement.src = src;
+      if (!src) {
+        overlayElement.removeAttribute('src');
+        togglePlaceholder(true);
+      } else {
+        overlayElement.src = src;
+        // Keep placeholder visible until 'load' fires
+        togglePlaceholder(true);
+      }
     },
     markerManager,
     destroy: () => {

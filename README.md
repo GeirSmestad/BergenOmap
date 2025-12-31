@@ -22,6 +22,8 @@ Shortlist: Legge inn flere kart
 ## Registrering av kart
 
 - [ ] Layout-justering på desktop: Sentrer kart-valg og opplasting, bedre marginer
+- [ ] Desktop: tab-content-overlay må ha minimums-høyde lik Leaflet-containeren, for å se bra ut før et kart er lastet
+
 - [ ] Gjennomgang av API-flyt ved kartregistrering. Vil helst ha den raskere, alternativt mer granulære statusbar-tekster som viser framdriften.
 
 - [x] Layout-justeringer for mobil: Bedre marginer
@@ -111,9 +113,11 @@ Shortlist: Legge inn flere kart
 
 ## Navigasjons-app
 
-- [ ] Få tilbake "sentrer på første posisjon hvis bruker ikke har interagert med kartet enda"
 - [ ] Linjal som viser skala
 - [ ] Skala-velger støtter faktisk målestokk for kartet
+
+- [ ] Få tilbake "sentrer på første posisjon hvis bruker ikke har interagert med kartet enda"
+- [ ] Kart overlapper *halvveis* med URL-bar på Safari på iPhone; gjør det enten-eller
 
 - [x] Løp et treningsløp i skogen med appen som guide (det funket som et oljet uvær)
 - [x] Teste ut kompass (vil trolig ikke virke)
