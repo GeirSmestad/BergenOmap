@@ -24,7 +24,7 @@ Shortlist: Legge inn flere kart
 - [ ] Layout-justering på desktop: Sentrer kart-valg og opplasting, bedre marginer
 - [ ] Gjennomgang av API-flyt ved kartregistrering. Vil helst ha den raskere, alternativt mer granulære statusbar-tekster som viser framdriften.
 
-- [ ] Layout-justeringer for mobil: Bedre marginer
+- [x] Layout-justeringer for mobil: Bedre marginer
 - [x] Korrekt sentrering og zoom på Leaflet-kart når vi har lastet et eksisterende kart
 - [x] Vise plasserte markører i paletten
 - [x] Teste mer i Safari, kanskje på Mac for bedre debugging. Markør-grab og dobbelt-trykk er fortsatt dårlig på mobil
