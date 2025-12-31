@@ -215,7 +215,11 @@ body[data-mobile-tab="start"] .registration-map-header {
   opacity: 1;
 }
 
-/* == Component Overrides for Mobile ======================================= */
+/* Hide Leaflet zoom controls on mobile */
+.leaflet-control-zoom.leaflet-bar.leaflet-control {
+  display: none;
+}
+
 
 .mobile-upload-container {
   display: flex;
