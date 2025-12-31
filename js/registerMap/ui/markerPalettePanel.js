@@ -11,6 +11,14 @@ export function initMarkerPalettePanel({
 
   const isMap = type === 'map';
 
+  const clearMarker = (index) => {
+    if (isMap) {
+      coordinateStore.clearLatLonAt(index);
+    } else {
+      coordinateStore.clearImageCoordinateAt(index);
+    }
+  };
+
   const render = (snapshot = coordinateStore.getSnapshot()) => {
     const {
       latLonOccupancy,
@@ -25,23 +33,30 @@ export function initMarkerPalettePanel({
     element.innerHTML = '';
 
     occupancy.forEach((isOccupied, index) => {
-      // Hide markers that are already placed
-      if (isOccupied) {
-        return;
-      }
-
       const markerWrapper = document.createElement('div');
       markerWrapper.className = 'marker-palette-item';
       markerWrapper.dataset.index = index;
-      markerWrapper.title = `Select marker ${index + 1}`;
 
-      if (index === currentIndex) {
-        markerWrapper.classList.add('marker-palette-item--active');
+      if (isOccupied) {
+        markerWrapper.classList.add('marker-palette-item--placed');
+        markerWrapper.title = `Marker ${index + 1} already placed. Click to remove.`;
+      } else {
+        markerWrapper.title = `Select marker ${index + 1}`;
+        if (index === currentIndex) {
+          markerWrapper.classList.add('marker-palette-item--active');
+        }
       }
 
       markerWrapper.innerHTML = buildMarkerSvgMarkup(index);
       
-      markerWrapper.addEventListener('click', () => {
+      markerWrapper.addEventListener('click', (event) => {
+        if (isOccupied) {
+          // Click to remove/reset placed marker
+          clearMarker(index);
+          return;
+        }
+
+        // Click to select available marker
         if (isMap) {
           coordinateStore.selectLatLonIndex(index);
         } else {
@@ -63,4 +78,3 @@ export function initMarkerPalettePanel({
     render
   };
 }
-
