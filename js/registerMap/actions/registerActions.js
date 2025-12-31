@@ -33,7 +33,7 @@ export function initRegisterActions({
   })();
 
   const STATUS_MESSAGES = {
-    idle: "Upload or select a map to start registration. Please mark three points in the terrain and their corresponding location on the orienteering map. 'Compute registration' previews the selected registration and 'Save map' stores it in the database.",
+    idle: "Upload or select a map to start registration.",
     computing: 'Calculating registration...',
     saving: 'Saving map...',
     done: 'Done.',
