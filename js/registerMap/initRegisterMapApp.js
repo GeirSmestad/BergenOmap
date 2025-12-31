@@ -224,7 +224,7 @@ export function initRegisterMapApp({
         }
 
         advanceToTerrain();
-        setStatusBarMessage(`Loaded "${mapLabel}". You can adjust the registration or map details if you want.`);
+        setStatusBarMessage(`Loaded "${mapLabel}". You can adjust the terrain fit by dragging the markers and clicking 'Fit map to terrain', or edit the map details if you want.`);
       })
       .catch((error) => {
         if (requestId !== activeMapLoadToken) {

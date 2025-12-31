@@ -21,13 +21,14 @@ Shortlist: Legge inn flere kart
 
 ## Registrering av kart
 
-- [ ] Legg inn duplikat av status-bar på Data-tabben
-- [ ] Få inn fil-lasting i status-bar, juster første melding for å forklare flyten
-- [ ] "Start"-siden sine elementer kommer side-by-side på iPhone 15 Pro
 - [ ] Teste mer i Safari, kanskje på Mac for bedre debugging. Markør-grab og dobbelt-trykk er fortsatt dårlig på mobil
 
-- [ ] Fjern muligheten for å velge på overlay-siden med langt trykk; hender at bildet blir valgt på iphone
-- [ ] Fjern muligheten for long-press for å slette markører på mobil. Forvirrende. Kan evt. gjøre sletting fra "palletten" hvis nødvendig.
+- [x] Legg inn duplikat av status-bar på Data-tabben
+- [x] Få inn fil-lasting i status-bar, juster første melding for å forklare flyten
+- [x] "Start"-siden sine elementer kommer side-by-side på iPhone 15 Pro
+- [x] Fjern muligheten for å velge på overlay-siden med langt trykk; hender at bildet blir valgt på iphone
+- [x] Fjern muligheten for long-press for å slette markører på mobil. Forvirrende. Kan evt. gjøre sletting fra "palletten" hvis nødvendig.
+
 
 - [X] Markøren på overlay-kartet må gripes over den faktiske markøren på mobil, for å se under fingertuppen hvor markøren lander
 - [x] Få denne markør-oppførselen på Leaflet-kartet også
