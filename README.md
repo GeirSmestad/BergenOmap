@@ -26,7 +26,11 @@ Shortlist: Legge inn flere kart
 - [ ] "Start"-siden sine elementer kommer side-by-side på iPhone 15 Pro
 - [ ] Teste mer i Safari, kanskje på Mac for bedre debugging. Markør-grab og dobbelt-trykk er fortsatt dårlig på mobil
 
+- [ ] Fjern muligheten for å velge på overlay-siden med langt trykk; hender at bildet blir valgt på iphone
+- [ ] Fjern muligheten for long-press for å slette markører på mobil. Forvirrende. Kan evt. gjøre sletting fra "palletten" hvis nødvendig.
+
 - [X] Markøren på overlay-kartet må gripes over den faktiske markøren på mobil, for å se under fingertuppen hvor markøren lander
+- [x] Få denne markør-oppførselen på Leaflet-kartet også
 - [x] Shit. Innlesningen av PDF-er er med for lav DPI. Betyr at alle bcup-kartene er lav oppløsning. Finn ut av dette.
 - [x] Endre auto-zoom ved valg av registrert map til en mer fornuftig verdi
 - [x] Filter i "or you can select an existing map" - velger, som filtrer på streng-navn

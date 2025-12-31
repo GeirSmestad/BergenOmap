@@ -3,6 +3,10 @@ import { buildMarkerSvgMarkup } from '../markers/markerDefinitions.js';
 const MARKER_ICON_SIZE = [36, 52];
 const MARKER_ICON_ANCHOR = [18, 52];
 
+// Mobile drag UX: keep the finger away from the marker tip pixel while dragging.
+// 0 means "grab at the very top of the marker". Negative values mean "grab above the marker".
+const MARKER_GRAB_Y_RATIO_TOUCH = -0.3;
+
 const createMarkerIcon = (index) => {
   const markerHtml = buildMarkerSvgMarkup(index);
 
@@ -20,6 +24,76 @@ export function createMapMarkerManager({ map, coordinateStore }) {
   }
 
   const markersByIndex = new Map();
+
+  const isMobileRegisterUi = () => Boolean(document.getElementById('mobileTabNav'));
+
+  const attachMobileDragGrabBehavior = (marker) => {
+    if (!isMobileRegisterUi()) {
+      return;
+    }
+
+    const element = marker.getElement();
+    if (!element) {
+      marker.once('add', () => attachMobileDragGrabBehavior(marker));
+      return;
+    }
+
+    let lastTouchOffsetY = null;
+    let lastMarkerHeight = null;
+
+    const captureTouchOffset = (clientY) => {
+      const rect = element.getBoundingClientRect();
+      lastMarkerHeight = rect.height || MARKER_ICON_SIZE[1];
+      lastTouchOffsetY = clientY - rect.top;
+    };
+
+    const handlePointerDown = (event) => {
+      if (event.pointerType === 'touch' || event.pointerType === 'pen') {
+        captureTouchOffset(event.clientY);
+      }
+    };
+
+    const handleTouchStart = (event) => {
+      const touch = event.touches?.[0];
+      if (touch) {
+        captureTouchOffset(touch.clientY);
+      }
+    };
+
+    element.addEventListener('pointerdown', handlePointerDown, { capture: true });
+    element.addEventListener('touchstart', handleTouchStart, { capture: true });
+
+    const handleDragStart = () => {
+      if (typeof lastTouchOffsetY !== 'number') {
+        return;
+      }
+
+      const markerHeight = lastMarkerHeight || MARKER_ICON_SIZE[1];
+      const desiredY = markerHeight * MARKER_GRAB_Y_RATIO_TOUCH;
+      const dy = lastTouchOffsetY - desiredY;
+
+      const draggable = marker.dragging?._draggable;
+      const startPoint = draggable?._startPoint;
+      if (startPoint && typeof startPoint.y === 'number') {
+        // Shift drag start so the marker sits lower than the finger.
+        startPoint.y -= dy;
+      }
+    };
+
+    const resetTouchOffset = () => {
+      lastTouchOffsetY = null;
+      lastMarkerHeight = null;
+    };
+
+    marker.on('dragstart', handleDragStart);
+    marker.on('dragend', resetTouchOffset);
+    marker.on('remove', () => {
+      element.removeEventListener('pointerdown', handlePointerDown, { capture: true });
+      element.removeEventListener('touchstart', handleTouchStart, { capture: true });
+      marker.off('dragstart', handleDragStart);
+      marker.off('dragend', resetTouchOffset);
+    });
+  };
 
   const handleMapClick = (event) => {
     const { currentLatLonIndex } = coordinateStore.getCurrentIndices();
@@ -70,6 +144,7 @@ export function createMapMarkerManager({ map, coordinateStore }) {
     marker.on('dragend', () => handleMarkerDragEnd(index, marker));
     marker.on('contextmenu', (event) => handleMarkerContextMenu(index, event));
     marker.addTo(map);
+    attachMobileDragGrabBehavior(marker);
 
     markersByIndex.set(index, marker);
     return marker;
