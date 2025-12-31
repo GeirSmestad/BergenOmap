@@ -2,71 +2,44 @@
 export function initMobileTabs() {
   const tabNav = document.getElementById('mobileTabNav');
   const tabs = document.querySelectorAll('.mobile-tab-item');
-  const contentSections = {
-    start: document.getElementById('tab-content-start'),
-    terrain: document.getElementById('tab-content-terrain'),
-    overlay: document.getElementById('tab-content-overlay'),
-    metadata: document.getElementById('tab-content-metadata')
-  };
-  const header = document.querySelector('.registration-map-header');
+  const panels = document.querySelectorAll('.tab-panel');
 
   if (!tabNav) return;
 
-  function switchToTab(tabName) {
-    // Update tab buttons
+  function switchToTab(targetTabName) {
+    // 1. Update Tab Buttons (visual state)
     tabs.forEach(tab => {
-      if (tab.dataset.tab === tabName) {
-        tab.classList.add('mobile-tab-item--active');
-        tab.setAttribute('aria-selected', 'true');
-      } else {
-        tab.classList.remove('mobile-tab-item--active');
-        tab.setAttribute('aria-selected', 'false');
-      }
+      const isActive = tab.dataset.tab === targetTabName;
+      tab.classList.toggle('mobile-tab-item--active', isActive);
+      tab.setAttribute('aria-selected', isActive);
     });
 
-    // Set data attribute on body for global styling access
-    document.body.dataset.mobileTab = tabName;
+    // 2. Set global state for CSS-based layout adjustments (e.g. hiding header)
+    document.body.dataset.mobileTab = targetTabName;
 
-    // Toggle content sections
-    Object.keys(contentSections).forEach(key => {
-      const section = contentSections[key];
-      if (section) {
-        if (key === tabName) {
-          section.classList.add('tab-content--active');
-          // Trigger a resize event for maps when switching tabs
-          if (key === 'terrain' && window.map) {
-             setTimeout(() => window.map.invalidateSize(), 100);
-          }
-        } else {
-          section.classList.remove('tab-content--active');
-        }
+    // 3. Toggle Content Panels
+    panels.forEach(panel => {
+      const panelTabName = panel.dataset.tab;
+      const isActive = panelTabName === targetTabName;
+      
+      panel.classList.toggle('tab-content--active', isActive);
+
+      // Special handling: Trigger map resize when switching to terrain tab
+      if (isActive && panelTabName === 'terrain' && window.map) {
+         setTimeout(() => window.map.invalidateSize(), 100);
       }
     });
-
-    // Toggle header visibility
-    // Deprecated: CSS now handles this via body[data-mobile-tab="start"]
-    // if (header) {
-    //   if (tabName === 'start') {
-    //     header.classList.add('registration-map-header--hidden');
-    //   } else {
-    //     header.classList.remove('registration-map-header--hidden');
-    //   }
-    // }
   }
 
-  // Add click listeners
+  // Bind click events
   tabs.forEach(tab => {
     tab.addEventListener('click', () => {
-      const tabName = tab.dataset.tab;
-      switchToTab(tabName);
+      switchToTab(tab.dataset.tab);
     });
   });
 
-  // Initialize to start tab
+  // Initialize
   switchToTab('start');
 
-  return {
-    switchToTab
-  };
+  return { switchToTab };
 }
-
