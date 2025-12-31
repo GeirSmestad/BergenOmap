@@ -212,6 +212,7 @@ Se Strava-integrasjonschat i ChatGPT: https://chatgpt.com/c/693a0201-57cc-8326-9
 
 ## Multi-brukerstøtte
 
+- [ ] Slutt å lagre passord i plaintext
 - [ ] Nye brukere kan prøve appen uten registrering, få et midlertidig brukernavn. Registrere kart, GPX og Strava.
 - [ ] Landings-side med info om app og "try it out now"
 - [ ] Fjern spesial-håndteringen av kartnavnet; tillat duplikater og bruk ID som nøkkel
@@ -480,7 +481,7 @@ Kjøring av SQL-script fra Windows og Mac:
 Get-Content .\006_update_track_bounds.sql | ssh bergenomap "sqlite3 -bail /srv/bergenomap/data/database.db"
 
 ssh bergenomap 'sqlite3 -bail /srv/bergenomap/data/database.db' < 006_update_track_bounds.sql
-
+ssh bergenomap 'sqlite3 /srv/bergenomap/data/database.db "SELECT * FROM users;"'
 
 
 ## Kart-kilder -- flyfoto og topografiske kart
