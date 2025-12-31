@@ -413,7 +413,6 @@ textarea {
   height: 100%;
   flex: 1;
   transform-origin: top left;
-  will-change: transform;
 }
 
 .overlay-panzoom-canvas > img {

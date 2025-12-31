@@ -9,6 +9,7 @@ const MIN_ZOOM = 1;
 const MAX_ZOOM = 8;
 const WHEEL_SENSITIVITY = 0.0025;
 const DRAG_THRESHOLD_PX = 4;
+const POST_ZOOM_REDRAW_DELAY_MS = 90;
 
 export function createOverlayPanZoomController({
   wrapperElement,
@@ -32,12 +33,43 @@ export function createOverlayPanZoomController({
   let lastPanPoint = null;
   let pinchSnapshot = null;
   let lastPinchMidpoint = null;
+  let scheduledRedrawTimeout = null;
 
   const applyTransform = () => {
     canvasElement.style.transform = `matrix(${state.scale}, 0, 0, ${state.scale}, ${state.translateX}, ${state.translateY})`;
     // Keep overlay markers a constant on-screen size by letting CSS apply an inverse scale.
     // (Markers live inside the scaled canvas, so without this they grow/shrink with zoom.)
     canvasElement.style.setProperty('--overlay-marker-scale', String(1 / state.scale));
+  };
+
+  // iOS Safari (and occasionally Chromium) may rasterize large transformed layers at a lower
+  // resolution during continuous zooming/panning, making both the bitmap overlay and SVG
+  // markers look pixelated until a layout visibility change forces a re-raster.
+  //
+  // Workaround: after zoom settles (debounced), briefly drop the compositor hint and force
+  // a repaint by toggling transform to 'none' and back within the same task.
+  const forceCrispRedraw = () => {
+    const currentTransform = canvasElement.style.transform;
+    if (!currentTransform || currentTransform === 'none') {
+      return;
+    }
+
+    canvasElement.style.willChange = 'auto';
+    canvasElement.style.transform = 'none';
+    // Force synchronous style/layout flush.
+    void canvasElement.offsetHeight;
+    canvasElement.style.transform = currentTransform;
+  };
+
+  const schedulePostZoomRedraw = () => {
+    if (scheduledRedrawTimeout) {
+      clearTimeout(scheduledRedrawTimeout);
+    }
+
+    scheduledRedrawTimeout = setTimeout(() => {
+      scheduledRedrawTimeout = null;
+      forceCrispRedraw();
+    }, POST_ZOOM_REDRAW_DELAY_MS);
   };
 
   const clampTranslation = () => {
@@ -81,6 +113,9 @@ export function createOverlayPanZoomController({
       return;
     }
 
+    // Promote to its own layer while actively zooming for smoother interaction.
+    canvasElement.style.willChange = 'transform';
+
     const rect = wrapperElement.getBoundingClientRect();
     const resolvedAnchorX = typeof anchorX === 'number' ? anchorX : rect.width / 2;
     const resolvedAnchorY = typeof anchorY === 'number' ? anchorY : rect.height / 2;
@@ -90,6 +125,7 @@ export function createOverlayPanZoomController({
     state.translateY = resolvedAnchorY - scaleRatio * (resolvedAnchorY - state.translateY);
     state.scale = targetScale;
     updateTransform();
+    schedulePostZoomRedraw();
   };
 
   const clientPointToWrapperPoint = (point) => {
@@ -112,6 +148,7 @@ export function createOverlayPanZoomController({
       return;
     }
 
+    canvasElement.style.willChange = 'transform';
     pointerState.set(event.pointerId, { x: event.clientX, y: event.clientY });
     if (pointerState.size === 1) {
       singlePointerId = event.pointerId;
@@ -188,6 +225,11 @@ export function createOverlayPanZoomController({
       pinchSnapshot = null;
       lastPinchMidpoint = null;
     }
+
+    if (pointerState.size === 0) {
+      // End of gesture: let the browser re-raster at full detail.
+      schedulePostZoomRedraw();
+    }
   };
 
   const handleWheel = (event) => {
@@ -200,12 +242,14 @@ export function createOverlayPanZoomController({
     }
 
     event.preventDefault();
+    canvasElement.style.willChange = 'transform';
     const rect = wrapperElement.getBoundingClientRect();
     const anchorX = event.clientX - rect.left;
     const anchorY = event.clientY - rect.top;
     const scaleFactor = Math.exp(-event.deltaY * WHEEL_SENSITIVITY);
     setScale(state.scale * scaleFactor, anchorX, anchorY);
     skipNextClick = true;
+    schedulePostZoomRedraw();
   };
 
   // The overlay image uses CSS object-fit: contain, meaning the actual rendered image content
@@ -295,6 +339,7 @@ export function createOverlayPanZoomController({
     state.translateX = 0;
     state.translateY = 0;
     skipNextClick = false;
+    canvasElement.style.willChange = 'auto';
     updateTransform();
   };
 
@@ -325,6 +370,11 @@ export function createOverlayPanZoomController({
     window.removeEventListener('pointerup', handlePointerUp);
     window.removeEventListener('pointercancel', handlePointerUp);
     wrapperElement.removeEventListener('wheel', handleWheel);
+
+    if (scheduledRedrawTimeout) {
+      clearTimeout(scheduledRedrawTimeout);
+      scheduledRedrawTimeout = null;
+    }
 
     if (resizeObserver) {
       resizeObserver.disconnect();
