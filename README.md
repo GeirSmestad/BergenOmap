@@ -21,15 +21,17 @@ Shortlist: Legge inn flere kart
 
 ## Registrering av kart
 
-- [ ] Teste mer i Safari, kanskje på Mac for bedre debugging. Markør-grab og dobbelt-trykk er fortsatt dårlig på mobil
+- [ ] Layout-justering på desktop: Sentrer kart-valg og opplasting, bedre marginer
+- [ ] Layout-justeringer for mobil: Bedre marginer
 
+- [x] Korrekt sentrering og zoom på Leaflet-kart når vi har lastet et eksisterende kart
+- [x] Vise plasserte markører i paletten
+- [x] Teste mer i Safari, kanskje på Mac for bedre debugging. Markør-grab og dobbelt-trykk er fortsatt dårlig på mobil
 - [x] Legg inn duplikat av status-bar på Data-tabben
 - [x] Få inn fil-lasting i status-bar, juster første melding for å forklare flyten
 - [x] "Start"-siden sine elementer kommer side-by-side på iPhone 15 Pro
 - [x] Fjern muligheten for å velge på overlay-siden med langt trykk; hender at bildet blir valgt på iphone
 - [x] Fjern muligheten for long-press for å slette markører på mobil. Forvirrende. Kan evt. gjøre sletting fra "palletten" hvis nødvendig.
-
-
 - [X] Markøren på overlay-kartet må gripes over den faktiske markøren på mobil, for å se under fingertuppen hvor markøren lander
 - [x] Få denne markør-oppførselen på Leaflet-kartet også
 - [x] Shit. Innlesningen av PDF-er er med for lav DPI. Betyr at alle bcup-kartene er lav oppløsning. Finn ut av dette.
@@ -108,7 +110,7 @@ Shortlist: Legge inn flere kart
 
 ## Navigasjons-app
 
-
+- [ ] Få tilbake "sentrer på første posisjon hvis bruker ikke har interagert med kartet enda"
 - [ ] Linjal som viser skala
 - [ ] Skala-velger støtter faktisk målestokk for kartet
 

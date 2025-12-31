@@ -126,12 +126,24 @@ export function initRegisterMapApp({
       return;
     }
 
-    try {
-      mapViewController.map.fitBounds([nwCoords, seCoords], { padding: [40, 40] });
-    } catch (error) {
-      console.warn('Failed to fit bounds for selected map.', error);
-      mapViewController.map.setView(nwCoords);
+    // Calculate center
+    const lat1 = parseFloat(nwCoords[0]);
+    const lon1 = parseFloat(nwCoords[1]);
+    const lat2 = parseFloat(seCoords[0]);
+    const lon2 = parseFloat(seCoords[1]);
+
+    if (isNaN(lat1) || isNaN(lon1) || isNaN(lat2) || isNaN(lon2)) {
+      console.warn('Invalid coordinates for map centering', nwCoords, seCoords);
+      return;
     }
+
+    const centerLat = (lat1 + lat2) / 2;
+    const centerLon = (lon1 + lon2) / 2;
+
+    // Use a fixed zoom level (13) to ensure the map is contained/visible.
+    // We use setView instead of fitBounds because the map element might be hidden (display: none)
+    // when this is called (during tab switch), causing fitBounds to fail or misbehave.
+    mapViewController.map.setView([centerLat, centerLon], 13);
   };
 
   const releaseStoredMapUrls = () => {
@@ -290,4 +302,3 @@ export function initRegisterMapApp({
     }
   };
 }
-
