@@ -2,6 +2,10 @@ import { buildMarkerSvgMarkup } from '../markers/markerDefinitions.js';
 
 const clamp = value => Math.min(1, Math.max(0, value));
 const MARKER_BODY_CENTER_Y_RATIO = 21 / 54; // Matches the SVG label baseline, a good proxy for "body center".
+// When dragging on touch devices, keep the finger away from the marker tip pixel.
+// 0 means "grab at the very top of the marker". Negative values would mean "grab above the marker".
+const MARKER_GRAB_Y_RATIO_TOUCH = -0.3;
+const MARKER_GRAB_Y_RATIO_MOUSE = MARKER_BODY_CENTER_Y_RATIO;
 
 export function createOverlayMarkerManager({
   imageElement,
@@ -197,12 +201,20 @@ export function createOverlayMarkerManager({
     marker.setPointerCapture(event.pointerId);
     const rect = marker.getBoundingClientRect();
     const markerHeight = rect.height || 52;
-    // During dragging we want the pointer to sit on the marker "body", while the stored
-    // image coordinate remains the sharp tip pixel. The marker is anchored at the tip,
-    // so we translate pointer -> tip by adding a constant downward screen offset.
+
+    // During dragging we want the stored image coordinate to remain the sharp tip pixel.
+    // The marker is anchored at the tip, so we translate pointer -> tip by adding a
+    // constant downward screen offset.
+    //
+    // On touch devices the finger covers the tip; prefer grabbing the marker by its top
+    // so the tip pixel stays visible under the finger.
+    const grabYRatio = (event.pointerType === 'touch' || event.pointerType === 'pen')
+      ? MARKER_GRAB_Y_RATIO_TOUCH
+      : MARKER_GRAB_Y_RATIO_MOUSE;
+
     pointerState.dragClientOffset = {
       x: 0,
-      y: markerHeight * (1 - MARKER_BODY_CENTER_Y_RATIO)
+      y: markerHeight * (1 - grabYRatio)
     };
     pointerState.active = true;
     pointerState.index = index;
