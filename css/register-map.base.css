@@ -59,6 +59,7 @@ canvas {
   border-radius: var(--card-radius);
   padding: var(--card-padding);
   box-shadow: 0 8px 24px rgba(16, 24, 40, 0.06);
+  box-sizing: border-box;
 }
 
 /* == Buttons / Controls =================================================== */
@@ -225,9 +226,13 @@ textarea {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
+  margin-top: 0.8rem;
 }
 
 .pre-existing-map-card {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
   border: 1px solid #dcdfe6;
   border-radius: 10px;
   padding: 0.75rem;
@@ -251,12 +256,16 @@ textarea {
   margin: 0;
   font-weight: 600;
   color: #0f172a;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 .pre-existing-map-card__meta {
   margin: 0.35rem 0 0;
   font-size: 0.85rem;
   color: #475467;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 /* == Map palettes & markers ============================================== */

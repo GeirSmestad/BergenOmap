@@ -107,7 +107,7 @@ body[data-mobile-tab="start"] .registration-map-header {
 
 /* -- Start Tab Specifics -- */
 .tab-panel[data-tab="start"] {
-  padding: 1rem;
+  padding: 0rem 0rem;
   overflow-y: auto;
   overscroll-behavior-y: contain; /* Prevent scroll chaining to parent/body */
   -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
@@ -129,7 +129,7 @@ body[data-mobile-tab="start"] .registration-map-header {
 
 /* -- Metadata Tab Specifics -- */
 .tab-panel[data-tab="metadata"] {
-  padding: 1rem;
+  padding: 0rem 0rem;
   overflow-y: auto;
   overscroll-behavior-y: contain; /* Prevent scroll chaining to parent/body */
   -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
