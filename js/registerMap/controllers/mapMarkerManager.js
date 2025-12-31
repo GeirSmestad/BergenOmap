@@ -130,6 +130,12 @@ export function createMapMarkerManager({ map, coordinateStore }) {
       event.originalEvent.preventDefault();
       event.originalEvent.stopPropagation();
     }
+
+    // Disable right-click/long-press removal on mobile
+    if (isMobileRegisterUi()) {
+      return;
+    }
+
     coordinateStore.clearLatLonAt(index);
     removeMarker(index);
   };
@@ -185,4 +191,3 @@ export function createMapMarkerManager({ map, coordinateStore }) {
     destroy
   };
 }
-

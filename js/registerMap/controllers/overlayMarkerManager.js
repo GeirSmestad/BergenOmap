@@ -22,6 +22,8 @@ export function createOverlayMarkerManager({
   const markersByIndex = new Map();
   let latestSnapshot = coordinateStore.getSnapshot();
 
+  const isMobileRegisterUi = () => Boolean(document.getElementById('mobileTabNav'));
+
   const pointerState = {
     active: false,
     index: null,
@@ -186,6 +188,12 @@ export function createOverlayMarkerManager({
   const handleMarkerContextMenu = (index, event) => {
     event.preventDefault();
     event.stopPropagation();
+    
+    // Disable right-click/long-press removal on mobile
+    if (isMobileRegisterUi()) {
+      return;
+    }
+
     coordinateStore.clearImageCoordinateAt(index);
     removeMarker(index);
   };
@@ -320,4 +328,3 @@ export function createOverlayMarkerManager({
     destroy
   };
 }
-
