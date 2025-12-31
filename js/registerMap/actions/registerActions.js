@@ -34,14 +34,14 @@ export function initRegisterActions({
 
   const STATUS_MESSAGES = {
     idle: "Upload or select a map to start registration.",
-    computing: 'Calculating registration...',
-    saving: 'Saving map...',
+    computing: 'Calculating registration, please wait...',
+    saving: 'Saving map, please wait...',
     done: 'Done.',
     fitComplete: "Map fit completed. Review the fit in the terrain view, and edit the map details before saving with 'Save map'.",
     saveComplete: 'Map saved.',
     computeError: 'Failed to compute registration.',
     saveError: 'Failed to save map.',
-    missingRegistration: 'Please compute a registration before saving.'
+    missingRegistration: 'Please fit the map to terrain before saving.'
   };
 
   const setStatusBarMessage = (message) => {

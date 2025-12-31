@@ -8,7 +8,7 @@ export function initfileDropService({
   onStatusMessage
 }) {
   const STATUS_MESSAGES = {
-    uploadingOverlay: 'Uploading map...',
+    uploadingOverlay: 'Uploading map, please wait...',
     uploadComplete: "Finished uploading map. To fit the map to the terrain, please select three points in the terrain view and their three corresponding locations in the map view. Press 'Fit map to terrain' when done."
   };
 
