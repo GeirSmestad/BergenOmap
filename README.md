@@ -296,10 +296,12 @@ Grov plan: Få inn alle områder, og ett B-kart fra alle som har. Deretter A for
 - [ ] Jeg har noen renamings-TODOer i koden; gjennomfør disse. Cursor tar dem sikkert one-shot, bare oppgi presise navn på rename.
 - [ ] Kjøre gjennom database og re-generer roterte bilder med gjennomsiktige områder på alle steder som er utenfor selve kartet
 - [ ] Cache Leaflet-filer, orienteringskart, og kart-definisjoner lokalt i appen i tilfelle brudd i nettverk (Cache Storage API?)
-- [ ] Finjuster UI for kart-registrering på mobil mtp. marginer og andre detaljer; mye finpuss man kan gjøre
+
 - [ ] Bedre ytelse ved registrering; går ganske treigt på mobil. Trolig både overflødig opplasting og beregning som tar tid.
 - [ ] Trenger nok snart dokumentasjon av prosjektet for at LLMene skal finne raskere fram.
+- [ ] Cursor.MD: Pragmatisme, leselighet, tydelige variabelnavn, vær eksplisitt heller enn å bruke implisitt true/false-testing i Javascript. Forsøk å gjøre koden godt leselig med god navngivning. Skriv kommentarer der hvor du ikke klarer å få *intensjonen* eller *hensikten* med en bit av kode til å komme klart nok fram av koden alene. Ikke overdriv kommenteringen, men kommenter der hvor vedlikeholderen ville begynne å ønske at de visste tanken bak. Ren JS, Python og Sqlite med deploy til generisk VPS.
 
+- [x] Finjuster UI for kart-registrering på mobil mtp. marginer og andre detaljer; mye finpuss man kan gjøre
 - [x] Flytt ikonene til en egen mappe, teit at de ligger i rotmappen. Inkludert å gå gjennom smart_deploy.py og Justfil
 - [x] Rename eksisterende registreringer med navne-konvensjonen jeg har på bcup-kartene (all relevant info i kartnavn)
 - [x] Eksponer de ulike controllerne for nettleseren, for bedre debugging
@@ -362,6 +364,8 @@ Grov plan: Få inn alle områder, og ett B-kart fra alle som har. Deretter A for
 
 - [ ] Logge track på turen du har gått så langt, med usikkerhet i GPS-mottak
 - [ ] Lagring på S3 er mye billigere per gigabyte hvis appen skal brukes av andre, men jeg har mye å gå på enda.
+
+- [ ] Bedre navn og domene, for publisering
 
 - [ ] Jeg konverterer vektor-PDF-kart i 144 DPI. 300-400 er best. Innfør ny database-rad for original-PDFene
 - [ ] ...og bestem hvorvidt du vil re-generere bildene i DB, eller gjøre det on-the-fly, evt. hvis brukeren ønsker.

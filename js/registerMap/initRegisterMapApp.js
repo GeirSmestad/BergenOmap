@@ -263,6 +263,9 @@ export function initRegisterMapApp({
     registrationStore,
     overlayController,
     previewController,
+    onRegistrationComplete: () => {
+      advanceToTerrainView();
+    },
     elements: {
       computeRegistrationButton: document.getElementById('computeRegistrationButton'),
       saveMapButton: document.getElementById('saveMapButton'),

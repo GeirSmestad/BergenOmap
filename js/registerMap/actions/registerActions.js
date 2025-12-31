@@ -12,6 +12,7 @@ export function initRegisterActions({
   registrationStore,
   overlayController,
   previewController,
+  onRegistrationComplete,
   elements
 }) {
   const {
@@ -144,6 +145,10 @@ export function initRegisterActions({
       const blob = await transformMap(formData); // TODO: TransformData should maybe be renamed to "getRegisteredMap" or something. Also don't like "blob".
       handleTransformResult(blob);
       showLatestPreview();
+      
+      if (typeof onRegistrationComplete === 'function') {
+        onRegistrationComplete();
+      }
     } catch (error) {
       console.error('Error computing registration:', error);
       setStatusBarMessage(STATUS_MESSAGES.computeError);
