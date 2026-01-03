@@ -1,0 +1,138 @@
+<!doctype html>
+<html class="no-js" lang="">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title>Register map (desktop)</title>
+  <meta name="description" content="">
+
+  <link rel="icon" href="/manifest/favicon.ico" sizes="any">
+  <link rel="icon" href="/manifest/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/manifest/icon.png">
+
+  <link rel="manifest" href="/manifest/site.webmanifest">
+  <meta name="theme-color" content="#fafafa">
+
+  <link rel="stylesheet" href="css/themes/theme_forest_shade.css">
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+        crossorigin=""/>
+
+  <!-- Make sure you put this AFTER Leaflet's CSS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+          integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+          crossorigin=""></script>
+</head>
+
+<body>
+  <script type="module" src="js/registerMap/main.desktop.js"></script>
+
+  <!-- Map selection (upload new map or pick existing) -->
+  <section id="tab-content-start"
+           class="image-input-wrapper"
+           aria-label="Upload or select existing map">
+    <div id="imageInput" class="card-panel">
+      <p>Please choose an input map.</p>
+      <div id="drop-area">
+        Drop image here
+        <br>
+        <button type="button" class="file-select-btn" onclick="document.getElementById('fileUploadInput').click()">Select File</button>
+        <input type="file" id="fileUploadInput" accept="image/*,.pdf" style="display: none">
+      </div>
+    </div>
+
+    <div id="preExistingMapSelector" class="card-panel" aria-live="polite">
+      <p class="pre-existing-map-selector__intro">Or you can select an existing map to edit:</p>
+      <div class="filter-input-wrapper">
+        <input type="text" id="preExistingMapFilter" class="pre-existing-map-filter" placeholder="Filter maps..." aria-label="Filter maps">
+        <button type="button" id="clearMapFilterButton" class="clear-filter-btn" aria-label="Clear filter" title="Clear filter">&times;</button>
+      </div>
+      <div id="preExistingMapList" class="pre-existing-map-list" role="listbox" aria-label="Existing maps"></div>
+    </div>
+  </section>
+
+  <!-- Controls + map views (Terrain view & Map view) -->
+  <div class="registration-map-section">
+    <div class="registration-map-header">
+      <div class="registration-map-controls">
+        <button id="computeRegistrationButton" class="registrationButton">Compute registration</button>
+        <button id="saveMapButton" class="registrationButton">Save map</button>
+        <button id="registrationPreviewButton" class="registrationButton">Toggle preview</button>
+        <button id="basemapToggleButton" class="registrationButton">Switch to aerial photos</button>
+      </div>
+      <div id="registrationData">
+        <p id="registrationStatus" class="registrationStatus" aria-live="polite">
+          Upload or select a map to start registration.
+        </p>
+      </div>
+    </div>
+
+    <div class="registration-map-views">
+      <div id="tab-content-terrain"
+           class="registration-map-views__panel"
+           aria-label="Terrain map tools">
+        <div id="mapMarkerPalette"></div>
+        <div id="registrationMapBrowser"></div>
+      </div>
+
+      <div id="tab-content-overlay"
+           class="registration-map-views__panel registration-map-views__panel--overlay"
+           aria-label="Map view tools">
+        <div id="overlayMarkerPalette"></div>
+        <img id="overlayView" alt="Map view preview"/>
+      </div>
+    </div>
+  </div>
+
+  <!-- Details / metadata entry -->
+  <section id="tab-content-metadata"
+           class="tab-panel--metadata"
+           aria-label="Map metadata form">
+    <div id="registrationInput" class="card-panel">
+      <div class="inputFields">
+        <label for="mapName">Map name:</label>
+        <input type="text" id="mapName" name="mapName">
+      </div>
+      <div class="inputFields">
+        <label for="filename">Filename:</label>
+        <input type="text" id="filename" name="filename">
+      </div>
+      <div class="inputFields">
+        <label for="attribution">Attribution:</label>
+        <input type="text" id="attribution" name="attribution">
+      </div>
+      <div class="inputFields">
+        <label for="mapArea">Map area:</label>
+        <input type="text" id="mapArea" name="mapArea">
+      </div>
+      <div class="inputFields">
+        <label for="mapEvent">Map event:</label>
+        <input type="text" id="mapEvent" name="mapEvent">
+      </div>
+      <div class="inputFields">
+        <label for="mapDate">Map date:</label>
+        <input type="text" id="mapDate" name="mapDate">
+      </div>
+      <div class="inputFields">
+        <label for="mapCourse">Map course:</label>
+        <input type="text" id="mapCourse" name="mapCourse">
+      </div>
+      <div class="inputFields">
+        <label for="mapClub">Map club:</label>
+        <input type="text" id="mapClub" name="mapClub">
+      </div>
+      <div class="inputFields">
+        <label for="mapCoursePlanner">Map course planner:</label>
+        <input type="text" id="mapCoursePlanner" name="mapCoursePlanner">
+      </div>
+      <div class="inputFields">
+        <label for="mapAttribution">Map attribution:</label>
+        <input type="text" id="mapAttribution" name="mapAttribution">
+      </div>
+    </div>
+  </section>
+</body>
+
+</html>

@@ -1,0 +1,153 @@
+/* css/themes/theme_mist.css - "Morning Mist" (Wildcard)
+   High key, soft blur, peaceful, pastel tones. Minimalist & Zen. */
+
+@import url("../register-map.base.css");
+@import url("../register-map.mobile.css");
+
+:root {
+  /* -- Palette -- */
+  --mist-bg: #f5f7fa;
+  --mist-white: #ffffff;
+  --mist-fog: #e4e7eb;
+  --mist-text: #52606d;
+  --mist-dark: #323f4b;
+  --mist-accent: #7b8794; /* Soft slate grey */
+  --mist-highlight: #a0aec0;
+
+  /* -- Overrides -- */
+  --page-bg: var(--mist-bg);
+  --card-bg: rgba(255, 255, 255, 0.7);
+  --card-border: transparent; /* No borders, just shadows/blur */
+  --text-main: var(--mist-text);
+  
+  --card-radius: 24px; /* Super rounded */
+  --btn-radius: 999px;
+}
+
+body {
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  color: var(--text-main);
+  font-family: system-ui, -apple-system, sans-serif;
+  font-weight: 300; /* Light font weight */
+}
+
+h1, h2, h3, .pre-existing-map-card__title {
+    color: var(--mist-dark);
+    font-weight: 400;
+}
+
+/* -- Glassmorphism everywhere -- */
+.card-panel,
+.map-selector-panel,
+.registrationStatus {
+    background: rgba(255, 255, 255, 0.6) !important;
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.5) !important;
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07) !important;
+}
+
+/* -- Controls -- */
+.map-control-button,
+.app-menu-toggle {
+    background: rgba(255, 255, 255, 0.8) !important;
+    color: var(--mist-dark) !important;
+    border: none !important;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05) !important;
+    transition: all 0.3s ease;
+}
+
+.map-control-button:hover,
+.app-menu-toggle:hover {
+    background: white !important;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1) !important;
+}
+
+.map-control-button.is-active {
+    background: var(--mist-dark) !important;
+    color: white !important;
+}
+
+/* -- Inputs -- */
+.map-selector-search__input,
+input[type="text"],
+textarea {
+    background: rgba(255, 255, 255, 0.5) !important;
+    border: none !important;
+    border-radius: 12px !important;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+}
+
+.map-selector-search__input:focus,
+input[type="text"]:focus {
+    background: white !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+/* -- Buttons -- */
+.registrationButton {
+    background: var(--mist-dark);
+    color: white;
+    box-shadow: 0 4px 15px rgba(50, 63, 75, 0.2);
+}
+.registrationButton:hover {
+    background: #1f2933;
+    transform: translateY(-1px);
+}
+
+.map-selector-item__center-btn {
+    background: var(--mist-highlight) !important;
+    border-radius: 50% !important;
+}
+
+/* =========================================
+   LOGIN & STRAVA OVERRIDES
+   ========================================= */
+
+/* Shared */
+input, button, .input, .button {
+    border-radius: 999px !important;
+}
+.button--primary, button[type="submit"] {
+    background: linear-gradient(135deg, #a0aec0 0%, #7b8794 100%) !important;
+    border: none !important;
+    box-shadow: 0 4px 15px rgba(123, 135, 148, 0.3);
+}
+
+/* Login */
+.login-container {
+    background: rgba(255, 255, 255, 0.5) !important;
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07) !important;
+    border-radius: 24px !important;
+}
+
+/* Strava */
+body.strava-connection {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%) !important;
+    color: var(--mist-dark) !important;
+}
+.strava-connection .card {
+    background: rgba(255, 255, 255, 0.5) !important;
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.5) !important;
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.05) !important;
+    border-radius: 24px !important;
+}
+.strava-connection .pill, .strava-connection .pill-toggle {
+    background: rgba(255,255,255,0.4) !important;
+    border: 1px solid rgba(255,255,255,0.6) !important;
+    color: var(--mist-text) !important;
+}
+.strava-connection .pill--active, .strava-connection .pill-toggle--active {
+    background: #fff !important;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    color: var(--mist-dark) !important;
+}
+.strava-connection .list-item {
+    background: rgba(255,255,255,0.3) !important;
+    border: none !important;
+    border-radius: 16px !important;
+}

@@ -1,0 +1,169 @@
+<!doctype html>
+<html class="no-js" lang="">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <title>Register map (mobile)</title>
+  <meta name="description" content="">
+
+  <link rel="icon" href="/manifest/favicon.ico" sizes="any">
+  <link rel="icon" href="/manifest/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/manifest/icon.png">
+
+  <link rel="manifest" href="/manifest/site.webmanifest">
+  <meta name="theme-color" content="#fafafa">
+
+  <link rel="stylesheet" href="css/themes/theme_mesa_mobile.css">
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+        crossorigin=""/>
+
+  <!-- Make sure you put this AFTER Leaflet's CSS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+          integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+          crossorigin=""></script>
+</head>
+
+<body>
+  <script type="module" src="js/registerMap/main.mobile.js"></script>
+
+  <!-- Shared Header (visible on Terrain view / Map view / Details tabs) -->
+  <header class="registration-map-header">
+    <div class="registration-map-controls">
+      <button id="computeRegistrationButton" class="registrationButton">Fit map to terrain</button>
+      <button id="saveMapButton" class="registrationButton">Save map</button>
+      <button id="registrationPreviewButton" class="registrationButton">Toggle preview</button>
+      <button id="basemapToggleButton" class="registrationButton">Switch to aerial photos</button>
+    </div>
+    <div id="registrationData">
+      <p id="registrationStatus" class="registrationStatus" aria-live="polite">
+        Upload or select a map to start registration.
+      </p>
+    </div>
+  </header>
+
+  <!-- Main Content Wrapper (Flex item filling remaining space) -->
+  <main class="mobile-main-content">
+    
+    <!-- Tab 1: Map selection -->
+    <section id="tab-content-start"
+             class="tab-panel tab-panel--start image-input-wrapper safe-padding"
+             data-tab="start"
+             aria-label="Upload or select existing map">
+      <div class="start-status-container safe-padding">
+        <p id="registrationStatusStart" class="registrationStatus" aria-live="polite">
+          Upload or select a map to start registration.
+        </p>
+      </div>
+      <div id="imageInput" class="card-panel">
+        <input type="file" id="fileUploadInput" accept="image/*,.pdf" style="display: none">
+        <div id="mobile-upload-area" class="mobile-upload-container">
+          <button type="button" class="file-select-btn mobile-upload-btn" onclick="document.getElementById('fileUploadInput').click()">
+            Upload new map file
+          </button>
+        </div>
+      </div>
+
+      <div id="preExistingMapSelector" class="card-panel" aria-live="polite">
+        <p class="pre-existing-map-selector__intro">Or you can select an existing map to edit:</p>
+        <div class="filter-input-wrapper">
+          <input type="text" id="preExistingMapFilter" class="pre-existing-map-filter" placeholder="Filter maps..." aria-label="Filter maps">
+          <button type="button" id="clearMapFilterButton" class="clear-filter-btn" aria-label="Clear filter" title="Clear filter">&times;</button>
+        </div>
+        <div id="preExistingMapList" class="pre-existing-map-list" role="listbox" aria-label="Existing maps"></div>
+      </div>
+    </section>
+
+    <!-- Tab 2: Terrain view -->
+    <div id="tab-content-terrain"
+         class="tab-panel registration-map-views__panel"
+         data-tab="terrain"
+         aria-label="Terrain map tools">
+      <div id="mapMarkerPalette"></div>
+      <div id="registrationMapBrowser"></div>
+    </div>
+
+    <!-- Tab 3: Map view -->
+    <div id="tab-content-overlay"
+         class="tab-panel registration-map-views__panel registration-map-views__panel--overlay"
+         data-tab="overlay"
+         aria-label="Map view tools">
+      <div id="overlayMarkerPalette"></div>
+      <img id="overlayView" alt="Map view preview"/>
+    </div>
+
+    <!-- Tab 4: Details -->
+    <section id="tab-content-metadata"
+             class="tab-panel tab-panel--metadata safe-padding"
+             data-tab="metadata"
+             aria-label="Map metadata form">
+      <div id="registrationInput" class="card-panel">
+        <div class="inputFields">
+          <label for="mapName">Map name:</label>
+          <input type="text" id="mapName" name="mapName">
+        </div>
+        <div class="inputFields">
+          <label for="filename">Filename:</label>
+          <input type="text" id="filename" name="filename">
+        </div>
+        <div class="inputFields">
+          <label for="attribution">Attribution:</label>
+          <input type="text" id="attribution" name="attribution">
+        </div>
+        <div class="inputFields">
+          <label for="mapArea">Map area:</label>
+          <input type="text" id="mapArea" name="mapArea">
+        </div>
+        <div class="inputFields">
+          <label for="mapEvent">Map event:</label>
+          <input type="text" id="mapEvent" name="mapEvent">
+        </div>
+        <div class="inputFields">
+          <label for="mapDate">Map date:</label>
+          <input type="text" id="mapDate" name="mapDate">
+        </div>
+        <div class="inputFields">
+          <label for="mapCourse">Map course:</label>
+          <input type="text" id="mapCourse" name="mapCourse">
+        </div>
+        <div class="inputFields">
+          <label for="mapClub">Map club:</label>
+          <input type="text" id="mapClub" name="mapClub">
+        </div>
+        <div class="inputFields">
+          <label for="mapCoursePlanner">Map course planner:</label>
+          <input type="text" id="mapCoursePlanner" name="mapCoursePlanner">
+        </div>
+        <div class="inputFields">
+          <label for="mapAttribution">Map attribution:</label>
+          <input type="text" id="mapAttribution" name="mapAttribution">
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Tab switcher for mobile -->
+  <nav id="mobileTabNav" class="mobile-tab-nav" aria-label="Registration steps">
+    <button type="button" class="mobile-tab-item" data-tab="start">
+      <svg class="mobile-tab-icon" viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M9 16h6v-6h4l-7-7-7 7h4v6zm-4 2h14v2H5z"/></svg>
+      <span>Map selection</span>
+    </button>
+    <button type="button" class="mobile-tab-item" data-tab="terrain">
+      <svg class="mobile-tab-icon" viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M20.5 3l-.16.03L15 5.1 9 3 3.36 4.9c-.21.07-.36.25-.36.48V20.5c0 .28.22.5.5.5l.16-.03L9 18.9l6 2.1 5.64-1.9c.21-.07.36-.25.36-.48V3.5c0-.28-.22-.5-.5-.5zM15 19l-6-2.11V5l6 2.11V19z"/></svg>
+      <span>Terrain view</span>
+    </button>
+    <button type="button" class="mobile-tab-item" data-tab="overlay">
+      <svg class="mobile-tab-icon" viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>
+      <span>Map view</span>
+    </button>
+    <button type="button" class="mobile-tab-item" data-tab="metadata">
+      <svg class="mobile-tab-icon" viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+      <span>Details</span>
+    </button>
+  </nav>
+</body>
+
+</html>
