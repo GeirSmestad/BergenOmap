@@ -15,11 +15,7 @@ def ensure_user_exists(db: Database, username: str) -> None:
 
 
 def create_user(db: Database, username: str, pw_hash: str) -> None:
-    """
-    Create a user.
-
-    Note: `pw_hash` is plaintext for now (we'll switch to proper hashing later).
-    """
+    """Create a user with a bcrypt-hashed password."""
     insert_sql = """
     INSERT INTO users (username, pw_hash)
     VALUES (?, ?)

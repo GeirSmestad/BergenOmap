@@ -7,6 +7,7 @@ from flask import Blueprint, g, jsonify, request
 
 from bergenomap.repositories.db import get_db
 from bergenomap.repositories import sessions_repo, users_repo
+from bergenomap.utils.password import hash_password, verify_password
 
 
 bp = Blueprint("auth", __name__)
@@ -65,7 +66,7 @@ def login():
             return jsonify({"error": "Invalid credentials"}), 401
         if user.get("pw_hash") is None:
             return jsonify({"error": "Invalid credentials"}), 401
-        if str(user.get("pw_hash")) != str(password):
+        if not verify_password(password, user.get("pw_hash")):
             return jsonify({"error": "Invalid credentials"}), 401
 
     session_key = str(uuid.uuid4())
@@ -104,7 +105,7 @@ def register():
 
     db = get_db()
     try:
-        users_repo.create_user(db, username, str(password))
+        users_repo.create_user(db, username, hash_password(password))
     except ValueError as exc:
         return jsonify({"error": str(exc)}), 409
 
