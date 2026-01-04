@@ -291,3 +291,37 @@ We did a refactor a while ago, which extracted the DAL layer of our database log
 
 
 
+## OCR
+
+We will implement functionality for running OCR on maps to detect all text on them, and use an AI model to interpret the detected groups of text and parse them into a data structure to be used when storing the map in the database. The functionality doesn't have to be perfect, but make a reasonable best guess.
+
+We will need the following:
+
+- OCR for map images, to extract all groups of text on it, for internal use
+- API integration with a suitable OpenAI model to parse the *text* received from this OCR process into a data structure containing the information we want
+- The output of this process must have sane default values if parsing fails for any reason
+- The routine will be called when a new map is saved to the database, and also in a separate utility script that will run it against selected maps in the database (all maps or specific maps, by name or database ID range)
+- Here is the information we will have the AI model extract from OCR. I will manually review the prompt after you've written the code, so make sure it can be configured:
+
+-- Map area name (map area field in DB)
+-- Event name (map event field in DB)
+-- Event date (map date field in DB)
+-- Scale / Målestokk (usually on the form 1:XXXX)
+-- Which course the map is for (typically A, B, C, H17, K40, A-OPEN or similar by orienteering convention) (map course field in DB)
+-- Credits for who created the map, denoted in a single string with both creator names and manual inspection/synfaring names (map_attribution field in DB)
+
+OCR will probably return a lot of disconnected numbers denoting controls and control descriptions, in addition to text. The text is usually computer-printed, but will be located in different locations of the image. Numbers may have decimal separators.
+
+- You have to add a map_scale field to the maps table
+
+
+
+
+
+-debugging: skriv ut data som kommer fra bildet til konsoll
+-vi vil teste dette via scriptet du har laget
+
+-We will test this via manually running the script you've written, so make sure it's easily runnable in the terminal
+-For debugging via this script, add an option that outputs an image with text regions marked and the text outputted to console. This seems a likely source of error and fine-tuning.
+-It must be easy to comment in our out this full suite of functionality where it is performed on newly saved maps. Leave it commented out here initially; this feature must be tuned before deployment.
+-The direct API integration with OpenAI must not be exposed to the web, as it potentially exposes paid API calls
