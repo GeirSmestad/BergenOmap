@@ -1,4 +1,5 @@
 import { initRegisterMapApp } from './initRegisterMapApp.js';
+import { AppMenu } from '../appMenu.js';
 
 const DESKTOP_MEDIA_QUERY = '(min-width: 769px)';
 const PALETTE_STICKY_BUFFER = 0;
@@ -48,6 +49,7 @@ const initPaletteStickyOffset = () => {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
+  new AppMenu();
   initPaletteStickyOffset();
   initRegisterMapApp();
 });

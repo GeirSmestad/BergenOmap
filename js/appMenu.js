@@ -19,6 +19,27 @@ export class AppMenu {
     this.init();
   }
 
+  /**
+   * Check if the current path matches a menu item URL.
+   * Handles special cases like registerMap.html -> registerMap.desktop.html/registerMap.mobile.html
+   */
+  isActivePath(itemUrl) {
+    if (this.currentPath === itemUrl) {
+      return true;
+    }
+    // index.html is an alias for map.html
+    if (this.currentPath === 'index.html' && itemUrl === 'map.html') {
+      return true;
+    }
+    // registerMap.html redirects to desktop/mobile variants
+    if (itemUrl === 'registerMap.html') {
+      if (this.currentPath === 'registerMap.desktop.html' || this.currentPath === 'registerMap.mobile.html') {
+        return true;
+      }
+    }
+    return false;
+  }
+
   init() {
     // 1. Create Container
     const container = document.createElement('div');
@@ -43,7 +64,7 @@ export class AppMenu {
       link.className = 'app-menu-link';
       link.textContent = item.label;
       
-      if (this.currentPath === item.url || (this.currentPath === 'index.html' && item.url === 'map.html')) {
+      if (this.isActivePath(item.url)) {
         link.classList.add('is-active');
       }
       

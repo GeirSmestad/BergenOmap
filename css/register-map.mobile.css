@@ -238,3 +238,8 @@ body[data-mobile-tab="start"] .registration-map-header {
   max-width: none;
   width: 100%;
 }
+
+/* Raise app menu above the bottom tab navigation */
+.app-menu-container {
+  bottom: 5.2rem;
+}

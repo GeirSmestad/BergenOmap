@@ -1,5 +1,6 @@
 import { initRegisterMapApp } from './initRegisterMapApp.js';
 import { initMobileTabs } from './ui/mobileTabController.js';
+import { AppMenu } from '../appMenu.js';
 
 function syncMobileAppHeight() {
   const height = window.visualViewport?.height ?? window.innerHeight;
@@ -9,6 +10,8 @@ function syncMobileAppHeight() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  new AppMenu();
+
   // iOS Safari: keep layout locked to the *visual* viewport so the bottom tab bar
   // doesn't slip under the URL/toolbars on load/scroll/orientation changes.
   syncMobileAppHeight();

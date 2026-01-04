@@ -300,7 +300,7 @@ Grov plan: Få inn alle områder, og ett B-kart fra alle som har. Deretter A for
 
 - [ ] Bedre ytelse ved registrering; går ganske treigt på mobil. Trolig både overflødig opplasting og beregning som tar tid.
 - [ ] Trenger nok snart dokumentasjon av prosjektet for at LLMene skal finne raskere fram.
-- [ ] Cursor.MD: Pragmatisme, leselighet, tydelige variabelnavn, vær eksplisitt heller enn å bruke implisitt true/false-testing i Javascript. Forsøk å gjøre koden godt leselig med god navngivning. Skriv kommentarer der hvor du ikke klarer å få *intensjonen* eller *hensikten* med en bit av kode til å komme klart nok fram av koden alene. Ikke overdriv kommenteringen, men kommenter der hvor vedlikeholderen ville begynne å ønske at de visste tanken bak. Ren JS, Python og Sqlite med deploy til generisk VPS.
+- [ ] Cursor.MD: Pragmatisme, leselighet, tydelige variabelnavn, vær eksplisitt heller enn å bruke implisitt true/false-testing i Javascript. Forsøk å gjøre koden godt leselig med god navngivning. Skriv kommentarer der hvor du ikke klarer å få *intensjonen* eller *hensikten* med en bit av kode til å komme klart nok fram av koden alene. Ikke overdriv kommenteringen, men kommenter der hvor vedlikeholderen ville begynne å ønske at de visste tanken bak. Ren JS, Python og Sqlite med deploy til generisk VPS. Hvor instrukser om backend/deploy-miljø er.
 
 - [x] Finjuster UI for kart-registrering på mobil mtp. marginer og andre detaljer; mye finpuss man kan gjøre
 - [x] Flytt ikonene til en egen mappe, teit at de ligger i rotmappen. Inkludert å gå gjennom smart_deploy.py og Justfil
