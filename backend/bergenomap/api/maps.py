@@ -166,6 +166,27 @@ def transform_and_store_map():
 
     print(f"Registered map \"{map_registration_data['map_name']}\" added to database with id {map_id}.")
 
+    # OCR + AI metadata extraction (DISABLED by default)
+    #
+    # This is intentionally commented out while we tune OCR parameters + prompts.
+    # The intended workflow is to run `scripts/run_map_ocr_ai_backfill.py` against
+    # selected maps, inspect the debug outputs, and only then enable this block.
+    #
+    # IMPORTANT: Do not expose OpenAI calls via public API endpoints.
+    #
+    # try:
+    #     from bergenomap.services.map_metadata_ocr_pipeline import run_map_metadata_pipeline
+    #
+    #     result = run_map_metadata_pipeline(processed_image)
+    #     maps_repo.update_map_metadata_if_default(
+    #         db,
+    #         username=g.username,
+    #         map_id=map_id,
+    #         metadata=result.metadata,
+    #     )
+    # except Exception:
+    #     traceback.print_exc()
+
     return send_file(transformed_map_io, mimetype="image/png")
 
 

@@ -325,3 +325,16 @@ OCR will probably return a lot of disconnected numbers denoting controls and con
 -For debugging via this script, add an option that outputs an image with text regions marked and the text outputted to console. This seems a likely source of error and fine-tuning.
 -It must be easy to comment in our out this full suite of functionality where it is performed on newly saved maps. Leave it commented out here initially; this feature must be tuned before deployment.
 -The direct API integration with OpenAI must not be exposed to the web, as it potentially exposes paid API calls
+
+
+
+- Remove defensive code that doesn't assume map_scale exists. Assume the column exists. Unhandled exception perfectly okay if it doesn't.
+
+Testing:
+
+OPENAI_API_KEY=... python3 scripts/run_map_ocr_ai_backfill.py \
+  --db data/database.db \
+  --map-name "Some map" \
+  --dry-run \
+  --debug-print-ocr \
+  --debug-image-out /tmp/ocr_debug

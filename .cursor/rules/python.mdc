@@ -7,3 +7,4 @@ globs: ["**/*.py"]
 
 - Follow existing patterns in `backend/bergenomap/`
 - Use the repository pattern for database access
+- When modifying the database schema, *write DB interface code that assumes migration scripts have been run*. No defensive code that accepts multiple versions of the schema, unless explicitly prompted.

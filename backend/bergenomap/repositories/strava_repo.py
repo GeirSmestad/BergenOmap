@@ -2,29 +2,16 @@ from __future__ import annotations
 
 from Database import Database
 
+from bergenomap.repositories import internal_kv_repo
 from bergenomap.repositories import users_repo
 
 
 def kv_get(db: Database, key: str) -> str | None:
-    select_sql = """
-    SELECT value
-    FROM internal_kv
-    WHERE key = ?
-    LIMIT 1
-    """
-    db.cursor.execute(select_sql, (key,))
-    row = db.cursor.fetchone()
-    return row[0] if row else None
+    return internal_kv_repo.kv_get(db, key)
 
 
 def kv_set(db: Database, key: str, value: str) -> None:
-    insert_sql = """
-    INSERT INTO internal_kv (key, value)
-    VALUES (?, ?)
-    ON CONFLICT(key) DO UPDATE SET value = excluded.value
-    """
-    db.cursor.execute(insert_sql, (key, value))
-    db.connection.commit()
+    internal_kv_repo.kv_set(db, key, value)
 
 
 def get_connection(db: Database, username: str) -> dict | None:

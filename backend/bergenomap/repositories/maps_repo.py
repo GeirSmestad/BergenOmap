@@ -57,6 +57,7 @@ def insert_map(db: Database, username: str, map_data: Dict[str, Any]) -> int:
         map_data.get("map_area", ""),
         map_data.get("map_event", ""),
         map_data.get("map_date", ""),
+        map_data.get("map_scale", ""),
         map_data.get("map_course", ""),
         map_data.get("map_club", ""),
         map_data.get("map_course_planner", ""),
@@ -87,12 +88,13 @@ def insert_map(db: Database, username: str, map_data: Dict[str, Any]) -> int:
                 map_area,
                 map_event,
                 map_date,
+                map_scale,
                 map_course,
                 map_club,
                 map_course_planner,
                 map_attribution
             )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """
         db.cursor.execute(insert_sql, common_values)
         map_id = get_map_id_by_name(db, map_data["map_name"], username=username)
@@ -120,6 +122,7 @@ def insert_map(db: Database, username: str, map_data: Dict[str, Any]) -> int:
                 map_area = ?,
                 map_event = ?,
                 map_date = ?,
+                map_scale = ?,
                 map_course = ?,
                 map_club = ?,
                 map_course_planner = ?,
@@ -149,7 +152,7 @@ def list_maps(db: Database, username: str | None = None) -> List[Dict[str, Any]]
                 attribution,
                 selected_pixel_coords, selected_realworld_coords,
                 map_filename,
-                map_area, map_event, map_date, map_course,
+                map_area, map_event, map_date, map_scale, map_course,
                 map_club, map_course_planner, map_attribution
             FROM maps
             """
@@ -168,7 +171,7 @@ def list_maps(db: Database, username: str | None = None) -> List[Dict[str, Any]]
                 attribution,
                 selected_pixel_coords, selected_realworld_coords,
                 map_filename,
-                map_area, map_event, map_date, map_course,
+                map_area, map_event, map_date, map_scale, map_course,
                 map_club, map_course_planner, map_attribution
             FROM maps
             WHERE username = ?
@@ -196,6 +199,7 @@ def list_maps(db: Database, username: str | None = None) -> List[Dict[str, Any]]
             map_area,
             map_event,
             map_date,
+            map_scale,
             map_course,
             map_club,
             map_course_planner,
@@ -218,6 +222,7 @@ def list_maps(db: Database, username: str | None = None) -> List[Dict[str, Any]]
                 "map_area": map_area,
                 "map_event": map_event,
                 "map_date": map_date,
+                "map_scale": map_scale,
                 "map_course": map_course,
                 "map_club": map_club,
                 "map_course_planner": map_course_planner,
@@ -246,5 +251,99 @@ def get_map_id_by_name(db: Database, map_name: str, *, username: str | None = No
         db.cursor.execute(select_sql, (map_name, username))
     result = db.cursor.fetchone()
     return int(result[0]) if result else None
+
+
+def get_map_metadata(db: Database, *, map_id: int) -> dict | None:
+    select_sql = """
+    SELECT
+        map_area,
+        map_event,
+        map_date,
+        map_scale,
+        map_course,
+        map_attribution
+    FROM maps
+    WHERE map_id = ?
+    LIMIT 1
+    """
+    db.cursor.execute(select_sql, (int(map_id),))
+
+    row = db.cursor.fetchone()
+    if not row:
+        return None
+    map_area, map_event, map_date, map_scale, map_course, map_attribution = row
+    return {
+        "map_area": map_area or "",
+        "map_event": map_event or "",
+        "map_date": map_date or "",
+        "map_scale": map_scale or "",
+        "map_course": map_course or "",
+        "map_attribution": map_attribution or "",
+    }
+
+
+def update_map_metadata_if_default(
+    db: Database,
+    *,
+    username: str,
+    map_id: int,
+    metadata: Dict[str, Any],
+) -> bool:
+    """
+    Update map metadata fields, but only when the current DB value is empty/whitespace.
+
+    Returns True if any field was updated.
+    """
+
+    current = get_map_metadata(db, map_id=int(map_id))
+    if current is None:
+        return False
+
+    def normalize_value(value: Any) -> str:
+        if value is None:
+            return ""
+        if isinstance(value, (int, float)):
+            return str(value)
+        if isinstance(value, str):
+            return value.strip()
+        return ""
+
+    def is_default(value: Any) -> bool:
+        if value is None:
+            return True
+        if isinstance(value, str):
+            return value.strip() == ""
+        return False
+
+    desired = {
+        "map_area": normalize_value(metadata.get("map_area")),
+        "map_event": normalize_value(metadata.get("map_event")),
+        "map_date": normalize_value(metadata.get("map_date")),
+        "map_scale": normalize_value(metadata.get("map_scale")),
+        "map_course": normalize_value(metadata.get("map_course")),
+        "map_attribution": normalize_value(metadata.get("map_attribution")),
+    }
+
+    updates: dict[str, str] = {}
+    for key, new_value in desired.items():
+        if not new_value:
+            continue
+        if is_default(current.get(key)):
+            updates[key] = new_value
+
+    if not updates:
+        return False
+
+    # Ensure ownership, consistent with insert/update logic elsewhere.
+    owner = _get_map_owner_by_id(db, int(map_id))
+    if owner != username:
+        raise PermissionError("Cannot update a map owned by a different user")
+
+    set_parts = ", ".join([f"{k} = ?" for k in updates.keys()])
+    params = list(updates.values()) + [int(map_id)]
+
+    db.cursor.execute(f"UPDATE maps SET {set_parts} WHERE map_id = ?", params)
+    db.connection.commit()
+    return True
 
 
