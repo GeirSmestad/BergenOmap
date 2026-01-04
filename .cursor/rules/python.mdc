@@ -1,0 +1,9 @@
+---
+description: Python coding conventions for this project
+globs: ["**/*.py"]
+---
+
+# Python Conventions
+
+- Follow existing patterns in `backend/bergenomap/`
+- Use the repository pattern for database access
