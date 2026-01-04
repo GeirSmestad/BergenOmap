@@ -17,7 +17,7 @@ Serves fra fx. http://127.0.0.1:8000/map.html
 
 # TODO
 
-Shortlist: Legge inn flere kart
+Shortlist: OCR, visuell design
 
 ## Registrering av kart
 
@@ -293,12 +293,15 @@ Grov plan: Få inn alle områder, og ett B-kart fra alle som har. Deretter A for
 
 ## Generelle forbedringer
 
-- [ ] Videreutvikle styleguide, velge et tema og starte implementering av det
 - [ ] Jeg har noen renamings-TODOer i koden; gjennomfør disse. Cursor tar dem sikkert one-shot, bare oppgi presise navn på rename.
 - [ ] Kjøre gjennom database og re-generer roterte bilder med gjennomsiktige områder på alle steder som er utenfor selve kartet
 - [ ] Cache Leaflet-filer, orienteringskart, og kart-definisjoner lokalt i appen i tilfelle brudd i nettverk (Cache Storage API?)
 
+- [ ] Bedre styling: biings design system, eller sjekk ut themes fra mobbin.com 
 - [ ] Bedre ytelse ved registrering; går ganske treigt på mobil. Trolig både overflødig opplasting og beregning som tar tid.
+
+
+- [ ] Test OCR-funksjonalitet og hamre ut åpenbare bugs
 
 - [x] Trenger nok snart dokumentasjon av prosjektet for at LLMene skal finne raskere fram.
 - [x] AGENTS.md
