@@ -22,6 +22,7 @@ export function createMapController({
 
   if (store) {
     map.once('mousedown', () => store.setUserHasInteractedWithMap(true));
+    map.once('touchstart', () => store.setUserHasInteractedWithMap(true));
     map.once('movestart', () => store.setUserHasInteractedWithMap(true));
   }
 

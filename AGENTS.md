@@ -21,7 +21,7 @@ This file provides context and guidelines for AI agents working on this codebase
 - **Backend**: Python (Flask-based), served via `Backend.py`
 - **Database**: SQLite (`data/database.db`)
 - **Maps**: Leaflet.js with Norwegian map tiles from Kartverket
-- **Runtime/hosting**: Rebuildable (cattle-style) VPS (Lightsail) with nginx, using `Justfile` for task automation.
+- **Runtime/hosting**: Rebuildable (cattle-style) VPS (Lightsail) with nginx, using `Justfile` for task automation and `bootstrap.sh` to rebuild the server.
 
 ## Where to find more info
 
@@ -33,7 +33,7 @@ This file provides context and guidelines for AI agents working on this codebase
 
 ## How to run the app locally
 
-The development environment may be either OS X or Windows/Powershell; this might be relevant for environment-impacting questions.
+The development environment may be either OS X & Terminal or Windows & Powershell; this might be relevant for environment-impacting questions.
 
 ```bash
 # Backend (from repo root)

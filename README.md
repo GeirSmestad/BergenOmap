@@ -116,9 +116,9 @@ Shortlist: Legge inn flere kart
 - [ ] Linjal som viser skala
 - [ ] Skala-velger støtter faktisk målestokk for kartet
 
-- [ ] Få tilbake "sentrer på første posisjon hvis bruker ikke har interagert med kartet enda"
 - [ ] Kart overlapper *halvveis* med URL-bar på Safari på iPhone; gjør det enten-eller
 
+- [x] Få tilbake "sentrer på første posisjon hvis bruker ikke har interagert med kartet enda"
 - [x] Løp et treningsløp i skogen med appen som guide (det funket som et oljet uvær)
 - [x] Teste ut kompass (vil trolig ikke virke)
 - [x] Knapp for å skjule brukerens posisjon
@@ -212,11 +212,11 @@ Se Strava-integrasjonschat i ChatGPT: https://chatgpt.com/c/693a0201-57cc-8326-9
 
 ## Multi-brukerstøtte
 
-- [ ] Slutt å lagre passord i plaintext
 - [ ] Nye brukere kan prøve appen uten registrering, få et midlertidig brukernavn. Registrere kart, GPX og Strava.
 - [ ] Landings-side med info om app og "try it out now"
 - [ ] Fjern spesial-håndteringen av kartnavnet; tillat duplikater og bruk ID som nøkkel
 
+- [x] Slutt å lagre passord i plaintext
 - [x] Oppdatere DB-skjema for multi-brukerstøtte på stasjonær-maskinen min
 - [x] auth.py har noe som heter full_name for bakoverkompatibilitet; det kan vi fjerne
 - [x] API for GPX-filer tillater brukernavn supplert av frontend; fiks det sikkerhetshullet
@@ -301,7 +301,7 @@ Grov plan: Få inn alle områder, og ett B-kart fra alle som har. Deretter A for
 - [ ] Bedre ytelse ved registrering; går ganske treigt på mobil. Trolig både overflødig opplasting og beregning som tar tid.
 
 - [x] Trenger nok snart dokumentasjon av prosjektet for at LLMene skal finne raskere fram.
-- [x] Cursor.MD: Pragmatisme, leselighet, tydelige variabelnavn, vær eksplisitt heller enn å bruke implisitt true/false-testing i Javascript. Forsøk å gjøre koden godt leselig med god navngivning. Skriv kommentarer der hvor du ikke klarer å få *intensjonen* eller *hensikten* med en bit av kode til å komme klart nok fram av koden alene. Ikke overdriv kommenteringen, men kommenter der hvor vedlikeholderen ville begynne å ønske at de visste tanken bak. Ren JS, Python og Sqlite med deploy til generisk VPS. Hvor instrukser om backend/deploy-miljø er.
+- [x] AGENTS.md
 - [x] Finjuster UI for kart-registrering på mobil mtp. marginer og andre detaljer; mye finpuss man kan gjøre
 - [x] Flytt ikonene til en egen mappe, teit at de ligger i rotmappen. Inkludert å gå gjennom smart_deploy.py og Justfil
 - [x] Rename eksisterende registreringer med navne-konvensjonen jeg har på bcup-kartene (all relevant info i kartnavn)

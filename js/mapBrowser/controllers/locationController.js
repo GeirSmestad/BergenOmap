@@ -78,14 +78,17 @@ export function createLocationController({
 
       const state = store.getState();
 
-      if (!state.hasReceivedInitialLocation) {
+      const isFirstLocationEvent = !state.hasReceivedInitialLocation;
+      if (isFirstLocationEvent) {
         store.setHasReceivedInitialLocation(true);
       }
 
-      if (
-        state.toggleButtons.followPosition &&
-        isAccuracyAcceptable(event.accuracy)
-      ) {
+      const shouldCenterOnFirstLocation =
+        isFirstLocationEvent && !state.userHasInteractedWithMap;
+      const shouldFollowPosition =
+        state.toggleButtons.followPosition && isAccuracyAcceptable(event.accuracy);
+
+      if (shouldCenterOnFirstLocation || shouldFollowPosition) {
         map.setView(event.latlng, map.getZoom());
       }
     }
