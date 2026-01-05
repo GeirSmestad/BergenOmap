@@ -10,7 +10,12 @@ import { createFollowPositionButton } from './ui/followPositionButton.js';
 import { createShowPositionButton } from './ui/showPositionButton.js';
 import { createFixedZoomButton } from './ui/fixedZoomButton.js';
 import { createCompassControl } from './ui/compassControl.js';
-import { isAccuracyAcceptable, calculateZoomLevelForScale } from './utils/geo.js';
+import {
+  calculateZoomLevelForScale,
+  isAccuracyAcceptable,
+  parseMapScaleDenominator
+} from './utils/geo.js';
+import { DEFAULT_FIXED_ZOOM_SCALE_DENOMINATOR } from './config.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
   const appMenu = new AppMenu();
@@ -72,8 +77,17 @@ document.addEventListener('DOMContentLoaded', async () => {
     store,
     onToggle: (isEnabled) => {
       if (isEnabled) {
+        const state = store.getState();
+        const selectedMapName = state?.selectedMapName;
+        const selectedMap = selectedMapName
+          ? (state.mapDefinitions || []).find((d) => d?.map_name === selectedMapName)
+          : null;
+        const scaleDenominator =
+          parseMapScaleDenominator(selectedMap?.map_scale) ||
+          DEFAULT_FIXED_ZOOM_SCALE_DENOMINATOR;
+
         const center = mapController.map.getCenter();
-        const zoom = calculateZoomLevelForScale(center.lat, 7500);
+        const zoom = calculateZoomLevelForScale(center.lat, scaleDenominator);
         mapController.setFixedZoom(true, zoom);
       } else {
         mapController.setFixedZoom(false);

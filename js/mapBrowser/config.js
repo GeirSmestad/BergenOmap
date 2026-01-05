@@ -14,6 +14,8 @@ export const ONLY_FOLLOW_WHEN_ACCURACY_IS_BETTER_THAN = 100;
 export const DEFAULT_MAP_CENTER = [60.4002, 5.3411]; // Bergen
 export const DEFAULT_MAP_ZOOM = 15;
 
+export const DEFAULT_FIXED_ZOOM_SCALE_DENOMINATOR = 7500;
+
 export const TILE_LAYER_CONFIG = {
   url: 'https://cache.kartverket.no/v1/wmts/1.0.0/topo/default/webmercator/{z}/{y}/{x}.png',
   options: {

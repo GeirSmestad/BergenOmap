@@ -331,72 +331,56 @@ OCR will probably return a lot of disconnected numbers denoting controls and con
 
 Testing:
 
-python scripts/run_map_ocr_ai_backfill.py `
-  --db data/database.db `
-  --map-name "somemap" `
-  --dry-run `
-  --debug-print-ocr `
-  --debug-image-out C:\Temp\ocr_debug
 
 
-python scripts/run_map_ocr_ai_backfill.py `
-  --db data/database.db `
-  --map-name "bcup-2015-09-16-Stendskogen-N-10000" `
-  --dry-run `
-  --debug-print-ocr `
-  --debug-image-out C:\Temp\ocr_debug
+Feilet med målestokk:
+
+urbo-2021-11-30 (helt feil)
+finansmesterskapet-2022-09-17-Hoveodden-A (helt feil verdi)
 
 
-bcup-2017-06-21-Landåsfjellet-A
+turo-2025-Smørås
+=bcup-2024-05-15-Birkelandsfjell-N
+bcup-2025-05-07-Knappenfjellet-A.png
+bcup-2024-04-17-SmøråsSlåtthaug-A
 
-  python scripts/run_map_ocr_ai_backfill.py `
-  --db data/database.db `
-  --map-name "bcup-2015-09-16-Stendskogen-N-10000" `
-  --debug-print-ocr `
-  --debug-image-out C:\Temp\ocr_debug
+bcup-2025-05-26-Stendafjellet-A
+turo-2022-LandåsfjelletNord
 
+bcup-2022-09-21-Storsåta-A
+sprintcup-2024-04-23-Øvsttun-Lang
 
-  python scripts/run_map_ocr_ai_backfill.py `
-  --db data/database.db `
-  --map-name "bcup-2017-06-21-Landåsfjellet-A" `
-  --debug-print-ocr `
-  --debug-image-out C:\Temp\ocr_debug
+nattcup-2025-11-12-Nordås-A
+bcup-2021-08-18-Stemmemyren-A
 
+turo-2022-FløyenVest
+nattcup-2023-Kokstad-C
 
+fjordo-2024-07-03-Totland-AL-ÅPEN
 
+bcup-2025-06-11-Liafjellet-A
 
-  python scripts/run_map_ocr_ai_backfill.py `
-  --db data/database.db `
-  --map-name "bcup-2015-09-16-Stendskogen-N-10000" `
-  --dry-run `
-  --debug-print-ocr `
-  --debug-image-out C:\Temp\ocr_debug `
-  --tesseract-psm 11 `
-  --tesseract-min-conf 0 `
-  --tesseract-max-dim 5000
+bcup-2025-04-30-Askøy-A
+
+bcup-2025-09-03-Arboretet-N
+
+havo-2024-06-29-Telavåg-AL-ÅPEN
+havo-2024-06-30-Telavåg-AL-ÅPEN
 
 
 
-    python scripts/run_map_ocr_ai_backfill.py `
-  --db data/database.db `
-  --map-name "bcup-2017-06-21-Landåsfjellet-A" `
-  --dry-run `
-  --debug-print-ocr `
-  --debug-image-out C:\Temp\ocr_debug `
-  --tesseract-psm 11 `
-  --tesseract-min-conf 0 `
-  --tesseract-max-dim 5000
+finansmesterskapet-2024-09-22-Hamresanden-A
+finansmesterskapet-2024-09-21-Dyreparken-A
 
 
+Mange turo
 
+trening-2022-Hylkje
 
-  python scripts/run_map_ocr_ai_backfill.py `
-  --db data/database.db `
-  --map-name "bcup-2017-06-21-Landåsfjellet-A" `
-  --dry-run `
-  --debug-print-ocr `
-  --debug-print-ocr-sort-by-conf `
-  --debug-image-out C:\Temp\ocr_debug `
-  --tesseract-psm 11 `
-  --tesseract-min-conf 0 `
-  --tesseract-max-dim 6000
+bcup-2025-04-23-Kanadaskogen-A
+bcup-2025-08-27-Fanahytten-A
+bcup-2024-05-06-Storrinden-B
+
+bcup-2024-04-17-Smøråsen-B
+
+bcup-2024-04-10-Kronstad-B

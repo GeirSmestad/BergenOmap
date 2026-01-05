@@ -54,6 +54,38 @@ export function isAccuracyAcceptable(accuracyInMeters) {
   return accuracyInMeters <= ONLY_FOLLOW_WHEN_ACCURACY_IS_BETTER_THAN;
 }
 
+export function parseMapScaleDenominator(mapScale) {
+  if (mapScale === null || typeof mapScale === 'undefined') {
+    return null;
+  }
+
+  if (typeof mapScale !== 'string') {
+    return null;
+  }
+
+  const trimmed = mapScale.trim();
+  if (!trimmed) {
+    return null;
+  }
+
+  // We consider the stored value malformed unless it is strictly on the form "1:XXXX"
+  const match = trimmed.match(/^1:(\d{4,5})$/);
+  if (!match) {
+    return null;
+  }
+
+  const denominator = parseInt(match[1], 10);
+  return Number.isFinite(denominator) && denominator > 0 ? denominator : null;
+}
+
+export function formatMapScaleLabel(scaleDenominator) {
+  if (typeof scaleDenominator !== 'number' || !Number.isFinite(scaleDenominator) || scaleDenominator <= 0) {
+    return '';
+  }
+
+  return `1:${Math.round(scaleDenominator)}`;
+}
+
 function getDeviceScaleCorrectionFactor() {
   if (typeof navigator === 'undefined') {
     return 1.0;

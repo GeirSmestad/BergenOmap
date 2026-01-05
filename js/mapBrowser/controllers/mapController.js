@@ -16,7 +16,13 @@ export function createMapController({
     throw new Error('Leaflet is required for mapController');
   }
 
-  const map = L.map(elementId, mapOptions).setView(DEFAULT_MAP_CENTER, DEFAULT_MAP_ZOOM);
+  const defaultMapOptions = {
+    // We need this to reliably set non-integer zoom levels for scale-accurate fixed zoom.
+    zoomSnap: 0
+  };
+
+  const map = L.map(elementId, { ...defaultMapOptions, ...mapOptions })
+    .setView(DEFAULT_MAP_CENTER, DEFAULT_MAP_ZOOM);
 
   L.tileLayer(TILE_LAYER_CONFIG.url, TILE_LAYER_CONFIG.options).addTo(map);
 
@@ -69,7 +75,8 @@ export function createMapController({
   function setFixedZoom(isEnabled, zoomLevel) {
     if (isEnabled) {
       if (typeof zoomLevel === 'number') {
-        map.flyTo(map.getCenter(), zoomLevel); // Need flyTo to get non-integer zoom level
+        // With zoomSnap: 0, this supports fractional zoom levels.
+        map.flyTo(map.getCenter(), zoomLevel, { animate: false, duration: 0 });
       }
       map.touchZoom.disable();
       map.doubleClickZoom.disable();
