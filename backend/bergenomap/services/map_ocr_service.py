@@ -193,7 +193,7 @@ class TesseractOcrEngine:
             config_parts.append(f"--psm {int(self._psm)}")
         if self._oem is not None:
             config_parts.append(f"--oem {int(self._oem)}")
-        config = " ".join(config_parts) if config_parts else None
+        config = " ".join(config_parts) if config_parts else ""
 
         data = pytesseract.image_to_data(
             prepared,

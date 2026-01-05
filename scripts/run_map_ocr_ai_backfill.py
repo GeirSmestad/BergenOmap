@@ -137,9 +137,9 @@ def main() -> int:
             map_name = str(entry["map_name"])
             username = str(entry["username"])
 
-            blob = map_files_repo.get_final_by_id(db, map_id)
+            blob = map_files_repo.get_original_by_id(db, map_id)
             if not blob:
-                print(f"- map_id={map_id} name={map_name}: missing final map image; skipping")
+                print(f"- map_id={map_id} name={map_name}: missing original map image; skipping")
                 continue
 
             try:
