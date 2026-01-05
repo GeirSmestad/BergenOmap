@@ -60,8 +60,7 @@ Key tables:
 
 ## Miscellaneous Notes
 
-- Code and markup is English, user-facing text is Norwegian
+- Code and markup is English, user-facing text is Norwegian. (Except in map registration, where user-facing text is English).
 - Map registration involves complex geo-referencing calculations
 - GPS lat/lon coordinates use 6 decimal places precision
-- Map images are stored as WebP (100% quality) for production
 

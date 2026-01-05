@@ -43,6 +43,7 @@ export class RegistrationStore {
       map_area: getValue('mapArea'),
       map_event: getValue('mapEvent'),
       map_date: getValue('mapDate'),
+      map_scale: getValue('mapScale'),
       map_course: getValue('mapCourse'),
       map_club: getValue('mapClub'),
       map_course_planner: getValue('mapCoursePlanner'),
