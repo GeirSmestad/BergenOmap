@@ -18,12 +18,15 @@ Return ONLY a single JSON object with these keys (all required, string values on
 - map_attribution: credits / attribution as a single string including both creators and field inspection ("synfaring") names if present, else ""
 
 Important rules:
+- The map scale may not have a legend, but if you see a value like "1:7 500" or similar, with no legend, it's safe to assume it's the scale.
+- Likewise, event name, area or attribution will rarely be clearly labelled as such. It's okay to make reasonable guesses, if they sound plausible.
 - Ignore disconnected control numbers and random decimals unless they belong to a date or a scale.
 - For dates, accept common Norwegian formats like "dd.mm.yyyy", "dd/mm/yyyy", "yyyy-mm-dd", "dd.mm.yy".
 - If multiple candidate values exist, pick the most plausible and keep the rest out (do not add extra keys).
-- Do not invent names; if unsure, return "" for that field.
+- If unsure, return "" for that field.
 
 Input format:
 - You will receive a JSON array of OCR text groups, each with "text" plus optional bbox/conf metadata.
+- Bounding box data for text blocks that are close to each other may contain pieces of related text.
 
 
