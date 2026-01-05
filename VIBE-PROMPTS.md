@@ -345,3 +345,58 @@ python scripts/run_map_ocr_ai_backfill.py `
   --dry-run `
   --debug-print-ocr `
   --debug-image-out C:\Temp\ocr_debug
+
+
+bcup-2017-06-21-Landåsfjellet-A
+
+  python scripts/run_map_ocr_ai_backfill.py `
+  --db data/database.db `
+  --map-name "bcup-2015-09-16-Stendskogen-N-10000" `
+  --debug-print-ocr `
+  --debug-image-out C:\Temp\ocr_debug
+
+
+  python scripts/run_map_ocr_ai_backfill.py `
+  --db data/database.db `
+  --map-name "bcup-2017-06-21-Landåsfjellet-A" `
+  --debug-print-ocr `
+  --debug-image-out C:\Temp\ocr_debug
+
+
+
+
+  python scripts/run_map_ocr_ai_backfill.py `
+  --db data/database.db `
+  --map-name "bcup-2015-09-16-Stendskogen-N-10000" `
+  --dry-run `
+  --debug-print-ocr `
+  --debug-image-out C:\Temp\ocr_debug `
+  --tesseract-psm 11 `
+  --tesseract-min-conf 0 `
+  --tesseract-max-dim 5000
+
+
+
+    python scripts/run_map_ocr_ai_backfill.py `
+  --db data/database.db `
+  --map-name "bcup-2017-06-21-Landåsfjellet-A" `
+  --dry-run `
+  --debug-print-ocr `
+  --debug-image-out C:\Temp\ocr_debug `
+  --tesseract-psm 11 `
+  --tesseract-min-conf 0 `
+  --tesseract-max-dim 5000
+
+
+
+
+  python scripts/run_map_ocr_ai_backfill.py `
+  --db data/database.db `
+  --map-name "bcup-2017-06-21-Landåsfjellet-A" `
+  --dry-run `
+  --debug-print-ocr `
+  --debug-print-ocr-sort-by-conf `
+  --debug-image-out C:\Temp\ocr_debug `
+  --tesseract-psm 11 `
+  --tesseract-min-conf 0 `
+  --tesseract-max-dim 6000

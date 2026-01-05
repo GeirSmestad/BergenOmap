@@ -38,12 +38,54 @@ def _parse_args(repo_root: Path) -> argparse.Namespace:
     debug = parser.add_argument_group("Debug / tuning")
     debug.add_argument("--debug-print-ocr", action="store_true", help="Print OCR text groups to console.")
     debug.add_argument(
+        "--debug-print-ocr-sort-by-conf",
+        action="store_true",
+        help="When printing OCR groups, sort by confidence descending (instead of reading order).",
+    )
+    debug.add_argument(
         "--debug-image-out",
         default=None,
         help=(
             "Write an annotated image with OCR text regions marked. "
             "If multiple maps are processed, this can be a directory or a template containing "
             "{map_id} and/or {map_name}."
+        ),
+    )
+
+    ocr = parser.add_argument_group("OCR tuning (Tesseract)")
+    ocr.add_argument(
+        "--tesseract-lang",
+        default="nor+eng",
+        help='Tesseract language(s) to use (default: "nor+eng"). Example: "nor+eng+osd".',
+    )
+    ocr.add_argument(
+        "--tesseract-psm",
+        type=int,
+        default=11,
+        help=(
+            "Tesseract page segmentation mode (PSM). "
+            "Try 11/12 for sparse text on maps, or 6 for uniform blocks. Default: 11."
+        ),
+    )
+    ocr.add_argument(
+        "--tesseract-oem",
+        type=int,
+        default=None,
+        help="Tesseract OCR engine mode (OEM). Default: tesseract default.",
+    )
+    ocr.add_argument(
+        "--tesseract-min-conf",
+        type=int,
+        default=40,
+        help="Filter out low-confidence OCR groups (0-100). Lower to detect more text (more noise). Default: 40.",
+    )
+    ocr.add_argument(
+        "--tesseract-max-dim",
+        type=int,
+        default=5000,
+        help=(
+            "Downscale images where max(width,height) exceeds this. "
+            "Increase to detect smaller text (slower). Default: 5000."
         ),
     )
 
@@ -129,7 +171,13 @@ def main() -> int:
 
         print(f"Selected {len(selected)} map(s). dry_run={args.dry_run}")
 
-        engine = TesseractOcrEngine()
+        engine = TesseractOcrEngine(
+            lang=str(args.tesseract_lang or "nor+eng").strip() or "nor+eng",
+            psm=args.tesseract_psm,
+            oem=args.tesseract_oem,
+            min_conf=int(args.tesseract_min_conf),
+            max_image_dim=int(args.tesseract_max_dim),
+        )
 
         updated = 0
         for entry in selected:
@@ -152,7 +200,7 @@ def main() -> int:
 
             print(f"- map_id={map_id} name={map_name}")
             if args.debug_print_ocr:
-                _print_ocr_groups(result.ocr_groups)
+                _print_ocr_groups(result.ocr_groups, sort_by_conf=bool(args.debug_print_ocr_sort_by_conf))
             print(f"  parsed: {result.metadata}")
 
             if debug_out:
@@ -232,12 +280,27 @@ def _select_maps(
     return [{"map_id": r[0], "username": r[1], "map_name": r[2]} for r in db.cursor.fetchall()]
 
 
-def _print_ocr_groups(groups: list[dict]) -> None:
+def _print_ocr_groups(groups: list[dict], *, sort_by_conf: bool = False) -> None:
     if not groups:
         print("  ocr_groups: []")
         return
+
+    printable = list(groups)
+    if sort_by_conf:
+        def sort_key(g: dict) -> tuple[float, str]:
+            conf = g.get("conf")
+            try:
+                conf_v = float(conf)
+            except Exception:
+                conf_v = float("-inf")
+            # Secondary key for deterministic output.
+            text = str(g.get("text") or "").strip()
+            return (conf_v, text)
+
+        printable.sort(key=sort_key, reverse=True)
+
     print(f"  ocr_groups ({len(groups)}):")
-    for g in groups[:500]:
+    for g in printable[:500]:
         text = str(g.get("text") or "").strip().replace("\n", " ")
         bbox = g.get("bbox")
         conf = g.get("conf")

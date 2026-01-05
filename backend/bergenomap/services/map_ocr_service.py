@@ -160,10 +160,10 @@ class TesseractOcrEngine:
         self,
         *,
         lang: str = "nor+eng",
-        psm: int | None = None,
+        psm: int | None = 11,
         oem: int | None = None,
-        min_conf: int = 25,
-        max_image_dim: int = 2800,
+        min_conf: int = 40,
+        max_image_dim: int = 5000,
     ) -> None:
         """
         lang: tesseract language string (e.g. "nor+eng")
