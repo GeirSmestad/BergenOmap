@@ -183,8 +183,7 @@ Shortlist: OCR, visuell design
 
 Se Strava-integrasjonschat i ChatGPT: https://chatgpt.com/c/693a0201-57cc-8326-9b89-7af8fc56102f
 
-
-- [ ] Date-picker vil helst være litt mer brukervennlig, men dette er flisespikkeri akkurat nå
+- [ ] Date-picker bør helst være litt mer brukervennlig, men dette er flisespikkeri akkurat nå
 - [ ] Mer konsistent styling, Dark Mode krasjer med utseendet ellers i appen. La Gemini kikke på den?
 - [ ] Bedre utseende på telefon; pr. nå snubler elementene litt i hverandre når det blir smal skjerm.
 - [ ] Lenke til selve Strava-aktiviteten fra kortene på siden?
@@ -216,7 +215,7 @@ Se Strava-integrasjonschat i ChatGPT: https://chatgpt.com/c/693a0201-57cc-8326-9
 
 ## Multi-brukerstøtte
 
-- [ ] Nye brukere kan prøve appen uten registrering, få et midlertidig brukernavn. Registrere kart, GPX og Strava.
+- [ ] Nye brukere skal kunne prøve appen uten registrering, få et midlertidig brukernavn. Registrere kart, GPX og Strava her. "Demo mode"
 - [ ] Landings-side med info om app og "try it out now"
 - [ ] Fjern spesial-håndteringen av kartnavnet; tillat duplikater og bruk ID som nøkkel
 
@@ -232,8 +231,8 @@ Se Strava-integrasjonschat i ChatGPT: https://chatgpt.com/c/693a0201-57cc-8326-9
 ## Infrastruktur
 
 - [ ] Database-nøkkel som gir versjonen av et bestemt kart, slik at jeg kan cache i nettleseren til brukeren
-- [ ] OpenAI-integrasjon for å tolke OCR fra kart til database-felter (med fallback dersom nede)
 
+- [x] OpenAI-integrasjon for å tolke OCR fra kart til database-felter (med fallback dersom nede)
 - [x] Slå sammen igjen databaser fra disk, hvor du slettet originalkartene i den ene
 - [x] Make eller tilsvarende system, som gjør deploy-prosessene mine og virker på både Windows og OS X
 - [x] På et tidspunkt vil jeg kanskje ha en indeks-primærnøkkel heller enn å bruke kartnavnet, pga. mange kart i samme område
@@ -304,9 +303,8 @@ Grov plan: Få inn alle områder, og ett B-kart fra alle som har. Deretter A for
 - [ ] Bedre styling: biings design system, eller sjekk ut themes fra mobbin.com 
 - [ ] Bedre ytelse ved registrering; går ganske treigt på mobil. Trolig både overflødig opplasting og beregning som tar tid.
 
-
-- [ ] Test OCR-funksjonalitet og hamre ut åpenbare bugs
-
+- [x] Bruk flere CPU-kjerner ved komprimering av bilde-filer av kart i database før deploy
+- [x] Test OCR-funksjonalitet og hamre ut åpenbare bugs
 - [x] Trenger nok snart dokumentasjon av prosjektet for at LLMene skal finne raskere fram.
 - [x] AGENTS.md
 - [x] Finjuster UI for kart-registrering på mobil mtp. marginer og andre detaljer; mye finpuss man kan gjøre
@@ -362,8 +360,9 @@ Grov plan: Få inn alle områder, og ett B-kart fra alle som har. Deretter A for
 - [ ] Localization til norsk eller engelsk
 - [ ] Finne Leaflet-kartkilde som fungerer for hele verden
 
-- [ ] Innsending av database-kart + kjente metadata til AI-modell for setting av metadata i database (hent all tekst)
-- [ ] Ifm. henting av metadata fra kart: Ekstra DB-felt for kartets målestokk (og integrer det med auto-målestokk-knapp)
+- [ ] Bedre OCR-modell; den jeg har er ikke bra nok til å bruke i prod eller engang lokalt.
+- [ ] Ta i bruk OCR-modell på server -- men det krever god nok ytelse; uaktuelt uten større server
+
 - [ ] Maskinlærings-system for å identifisere post-posisjoner på registrerte kart og regne disse om til ekte koordinater
 
 - [ ] Hvis jeg skal gjøre mer enn prototyping og personlig bruk med Strava, trenger jeg en dedikert Strava-konto
@@ -373,13 +372,15 @@ Grov plan: Få inn alle områder, og ett B-kart fra alle som har. Deretter A for
 - [ ] Logge track på turen du har gått så langt, med usikkerhet i GPS-mottak
 - [ ] Lagring på S3 er mye billigere per gigabyte hvis appen skal brukes av andre, men jeg har mye å gå på enda.
 
-- [ ] Bedre navn og domene, for publisering
+- [ ] Finne på bedre navn og domene, for publisering
 
 - [ ] Jeg konverterer vektor-PDF-kart i 144 DPI. 300-400 er best. Innfør ny database-rad for original-PDFene
 - [ ] ...og bestem hvorvidt du vil re-generere bildene i DB, eller gjøre det on-the-fly, evt. hvis brukeren ønsker.
 
 - [ ] Ta ned den gamle kart-appen, den nye appen er mye bedre
 
+- [x] Ifm. henting av metadata fra kart: Ekstra DB-felt for kartets målestokk (og integrer det med auto-målestokk-knapp)
+- [x] Innsending av database-kart + kjente metadata til AI-modell for setting av metadata i database (hent all tekst)
 - [x] (0) Når jeg får veldig mange kart, vil jeg kanskje ha et avansert filter for kart, som lar meg filtrere på metadata.
 - [x] (0) Kreditere kart-tegneren i grensesnittet, kanskje på placeholder-bildene før kartet lastes
 - [x] Analysere hva jeg kan gjøre av helhetlig visuell profil; fargevalg; UI-elementer
@@ -399,11 +400,15 @@ Grov plan: Få inn alle områder, og ett B-kart fra alle som har. Deretter A for
 - [ ] Enhetstester på backend
 - [ ] Enhetstester på frontend
 - [ ] Gjennomgang av databaseskjema; er det på god normalform og fornuftig?
-- [ ] Dokumentasjon på konvensjoner og kode, for Cursor
+    - [ ] "Enforce foreign keys on every DB connection" for å unngå korrupsjon ved feilede DB-operasjoner
+    - [ ] "Create table" må matche DB-migrasjonene inkludert indeksene som opprettes; instanser vil divergere over tid
+    - [ ] Trenger indeks på gps_tracks (username, track_id) for ytelse
+    - [ ] GPX- og Strava-import bør trekkes ut av hoved-tabellen for ytelse (samme problemstilling som kartfilene)
 
 - [ ] Dobbeltsjekk om alle flex-reglene i 59f7c05 var nødvendige; tror mange kan fjernes
 - [ ] Felles environment-config på tvers av sider? (har nå dette for registerMap, men ikke kartvisningen)
 
+- [x] Dokumentasjon på konvensjoner og kode, for Cursor
 - [x] Splitte registerMap opp i mobil og desktop-versjon (chat-historikk, desktop: "RegisterMap -> Desktop/Mobile", nå SCRATCHPAD.MD)
 - [x] Flytte database-kode fra Database.py inn i repository-mappene; koden bør faktisk *leve* der og ikke bare være linket derfra
 - [x] "GPX-spor for dette kartet": Featuren laster nå ned alle GPX-spor ved første kart-lasting. Flytt algoritme og "boundaries" for kart til DB/backend.
@@ -420,12 +425,10 @@ Grov plan: Få inn alle områder, og ett B-kart fra alle som har. Deretter A for
 
 - [ ] Kompass: Roter kartet mot geografisk nord med lookup-tabell e.l.; dette gir også korrekt rotasjon for registrerte kart
 - [ ] Verktøy for å finjustere registrering: rotasjon, størrelse, translasjon. Unødvendig i Norge pga. at Norgeskart er så bra
-
-- [ ] Animasjon med "flash" langs outline av kart før det lastes, for å gi brukeren en indikasjon på framdriften
-- [ ] Gjøre det mulig å raskt fokusere på sentrum av valgt kart, hvis brukeren ønsker det (men vanskelig å få UXen bra)
-
 - [ ] Registrere alle gjenstående bedriftscup-kart
 
+- [x] Gjøre det mulig å raskt fokusere på sentrum av valgt kart, hvis brukeren ønsker det (men vanskelig å få UXen bra)
+- [x] (0) Animasjon med "flash" langs outline av kart før det lastes, for å gi brukeren en indikasjon på framdriften
 - [x] (0) Registrere alle bedriftscup-kart som matcher registreringen fra allerede-registrerte løp, automatisk
 - [x] (0) Går an å lagre en "løpende" komprimert utgave av kartet ved registrering (ekstra rad), for å slippe deploy-komprimering
 - [x] (0) Legg til checkbox som lar deg registrere kartet til database hvis du leser inn registreringen fra JSON
