@@ -1,7 +1,8 @@
 # BergenOmap
 
-Orienteringskart for Bergen, med GPS-støtte for oppdagelsesferd i fremmed skog.
+Orienteringskart for Bergen, med GPS-støtte for oppdagelsesferd i fremmed skog. Få presis GPS-sporing for dine egne scannede orienteringskart og se navigasjonen fra Strava-øktene på kartet.
 
+Live på https://omaps.twerkules.com
 
 # Utviklingsmiljø
 
