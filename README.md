@@ -434,6 +434,14 @@ Grov plan: Få inn alle områder, og ett B-kart fra alle som har. Deretter A for
 
 ## Deployment
 
+## Utviklingsmiljø
+
+### Dependencies
+
+- Python
+- Alle pakkene i requirements.txt (pip3 install -r requirements.txt)
+- choco install tesseract (fra Powershell-vindu med admin-rettighet)
+- Installer språkpakker for tesseract. (Windows: Invoke-WebRequest -Uri "https://github.com/tesseract-ocr/tessdata/raw/main/nor.traineddata" -OutFile "C:\Program Files\Tesseract-OCR\tessdata\nor.traineddata")
 
 ### Installere ny server fra bunnen av
 

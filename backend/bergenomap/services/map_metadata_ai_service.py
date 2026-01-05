@@ -58,7 +58,7 @@ def parse_metadata_best_effort(
     if not api_key:
         return heur
 
-    model = (os.environ.get("OPENAI_MODEL") or "gpt-4o-mini").strip()
+    model = (os.environ.get("OPENAI_MODEL") or "gpt-5.1").strip()
     timeout_s = float(os.environ.get("OPENAI_TIMEOUT_S") or "30")
 
     try:

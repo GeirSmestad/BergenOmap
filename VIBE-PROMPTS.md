@@ -331,10 +331,17 @@ OCR will probably return a lot of disconnected numbers denoting controls and con
 
 Testing:
 
-python3 scripts/run_map_ocr_ai_backfill.py \
-  --db data/database.db \
-  --map-name "Some map" \
-  --openai-api-key "sk-..." \
-  --dry-run \
-  --debug-print-ocr \
-  --debug-image-out /tmp/ocr_debug
+python scripts/run_map_ocr_ai_backfill.py `
+  --db data/database.db `
+  --map-name "somemap" `
+  --dry-run `
+  --debug-print-ocr `
+  --debug-image-out C:\Temp\ocr_debug
+
+
+python scripts/run_map_ocr_ai_backfill.py `
+  --db data/database.db `
+  --map-name "bcup-2015-09-16-Stendskogen-N-10000" `
+  --dry-run `
+  --debug-print-ocr `
+  --debug-image-out C:\Temp\ocr_debug
