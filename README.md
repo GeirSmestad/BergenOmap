@@ -361,7 +361,6 @@ Grov plan: Få inn alle områder, og ett B-kart fra alle som har. Deretter A for
 - [ ] Finne Leaflet-kartkilde som fungerer for hele verden
 
 - [ ] Bedre OCR-modell; den jeg har er ikke bra nok til å bruke i prod eller engang lokalt.
-- [ ] Ta i bruk OCR-modell på server -- men det krever god nok ytelse; uaktuelt uten større server
 
 - [ ] Maskinlærings-system for å identifisere post-posisjoner på registrerte kart og regne disse om til ekte koordinater
 
@@ -399,9 +398,9 @@ Grov plan: Få inn alle områder, og ett B-kart fra alle som har. Deretter A for
 
 - [ ] Enhetstester på backend
 - [ ] Enhetstester på frontend
-- [ ] Gjennomgang av databaseskjema; er det på god normalform og fornuftig?
-    - [ ] "Enforce foreign keys on every DB connection" for å unngå korrupsjon ved feilede DB-operasjoner
-    - [ ] "Create table" må matche DB-migrasjonene inkludert indeksene som opprettes; instanser vil divergere over tid
+- [ ] Gjennomgang av databaseskjema; er det på god normalform og fornuftig? Se "Research: DB schema improvement" på desktop
+    - [x] "Enforce foreign keys on every DB connection" for å unngå korrupsjon ved feilede DB-operasjoner
+    - [x] "Create table" må matche DB-migrasjonene inkludert indeksene som opprettes; instanser vil divergere over tid
     - [ ] Trenger indeks på gps_tracks (username, track_id) for ytelse
     - [ ] GPX- og Strava-import bør trekkes ut av hoved-tabellen for ytelse (samme problemstilling som kartfilene)
 
@@ -423,6 +422,7 @@ Grov plan: Få inn alle områder, og ett B-kart fra alle som har. Deretter A for
 
 ## Løse idéer som jeg er usikker på
 
+- [ ] Ta i bruk OCR-modell på server -- men det krever god nok ytelse; trolig uaktuelt uten større server
 - [ ] Kompass: Roter kartet mot geografisk nord med lookup-tabell e.l.; dette gir også korrekt rotasjon for registrerte kart
 - [ ] Verktøy for å finjustere registrering: rotasjon, størrelse, translasjon. Unødvendig i Norge pga. at Norgeskart er så bra
 - [ ] Registrere alle gjenstående bedriftscup-kart

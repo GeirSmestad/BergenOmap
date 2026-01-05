@@ -22,6 +22,8 @@ class Database:
     def __init__(self, db_name: str = database_file_location):
         self.db_name = db_name
         self.connection = sqlite3.connect(db_name)
+        # SQLite requires this per-connection; without it, declared FK constraints are not enforced.
+        self.connection.execute("PRAGMA foreign_keys = ON")
         self.cursor = self.connection.cursor()
 
     def create_table(self) -> None:
@@ -47,7 +49,7 @@ class Database:
             map_area TEXT,
             map_event TEXT,
             map_date TEXT,
-            map_scale TEXT,
+            map_scale TEXT DEFAULT '',
             map_course TEXT,
             map_club TEXT,
             map_course_planner TEXT,
@@ -159,6 +161,15 @@ class Database:
         self.cursor.execute(create_connections_sql)
         self.cursor.execute(create_activities_sql)
         self.cursor.execute(create_imports_sql)
+
+        self.cursor.execute(
+            "CREATE INDEX IF NOT EXISTS idx_strava_activities_user_start_date "
+            "ON strava_activities(username, start_date)"
+        )
+        self.cursor.execute(
+            "CREATE INDEX IF NOT EXISTS idx_strava_imports_user_last_imported "
+            "ON strava_imports(username, last_imported_at)"
+        )
 
     def create_sessions_table(self) -> None:
         create_sessions_sql = """
