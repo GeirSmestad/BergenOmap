@@ -261,6 +261,8 @@ GPS-kartet allerede er på plass. Så hvis jeg har lagt inn en god registrering 
 
 Grov plan: Få inn alle områder, og ett B-kart fra alle som har. Deretter A for alle områder jeg har.
 
+- [ ] Få inn skog-teig
+
 - [x] Registrere alle bedriftscup-kart fra løyper jeg har deltatt i: 2025 (A)
 - [x] Registrere alle bedriftscup-kart fra løyper jeg har deltatt i: 2024 (B)
 - [x] Registrere alle bedriftscup-kart fra løyper jeg har deltatt i: 2023 (B)
