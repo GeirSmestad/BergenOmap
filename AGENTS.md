@@ -13,7 +13,7 @@ This file provides context and guidelines for AI agents working on this codebase
 - Readability first. Use explicit, descriptive names. Aim for self-explanatory code. Avoid excessive cleverness.
 - No unit tests for now. This may change later, so modular code structure is encouraged.
 - Validation: Perform whatever lightweight validation is suitable after making changes
-- Comment only when necessary. *Why*, not *what*, unless the mechanics of a block isn't obvious. Add rationale only when code alone does not convey it. Comment intent/reason when readers would be left wondering, but not otherwise.
+- Don't perform operations that modify the database during validation. If SQL scripts must be run after a change, let me know and I will do them manually.
 
 ## Tech Stack
 
