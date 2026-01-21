@@ -6,6 +6,7 @@ from flask_cors import CORS
 from bergenomap.api.admin import bp as admin_bp
 from bergenomap.api.auth import bp as auth_bp
 from bergenomap.api.maps import bp as maps_bp
+from bergenomap.api.stored_points import bp as stored_points_bp
 from bergenomap.api.strava import bp as strava_bp
 from bergenomap.api.tracks import bp as tracks_bp
 from bergenomap.repositories.db import close_db
@@ -24,6 +25,7 @@ def create_app() -> Flask:
     app.register_blueprint(auth_bp)
     app.register_blueprint(maps_bp)
     app.register_blueprint(tracks_bp)
+    app.register_blueprint(stored_points_bp)
     app.register_blueprint(strava_bp)
     app.register_blueprint(admin_bp)
 

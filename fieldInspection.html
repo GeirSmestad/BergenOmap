@@ -1,0 +1,96 @@
+<!doctype html>
+<html class="no-js" lang="">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title>Synfaring</title>
+  <link rel="stylesheet" href="css/map.css">
+  <link rel="stylesheet" href="css/fieldInspection.css">
+  <link rel="stylesheet" href="css/appMenu.css">
+  <meta name="description" content="">
+
+  <meta property="og:title" content="">
+  <meta property="og:type" content="">
+  <meta property="og:url" content="">
+  <meta property="og:image" content="">
+  <meta property="og:image:alt" content="">
+
+  <link rel="icon" href="/manifest/favicon.ico" sizes="any">
+  <link rel="icon" href="/manifest/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/manifest/icon.png">
+
+  <link rel="manifest" href="/manifest/site.webmanifest">
+  <meta name="theme-color" content="#fafafa">
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+        crossorigin=""/>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+          integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+          crossorigin=""></script>
+
+</head>
+
+<body class="field-inspection">
+
+  <div id="mapBrowser"></div>
+  <div class="map-controls">
+    <button id="showPositionToggle" class="map-control-button show-position-toggle"
+            type="button" aria-pressed="true" aria-label="Vis posisjon">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
+        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+      </svg>
+    </button>
+
+    <button id="markPositionButton" class="map-control-button mark-position-button"
+            type="button" disabled>
+      Merk posisjon
+    </button>
+  </div>
+
+  <button id="mapSelectorToggle" class="map-control-button map-selector-toggle" type="button"
+          aria-controls="mapSelectorPanel" aria-expanded="false">
+    Velg kart
+  </button>
+  <div id="mapSelectorPanel" class="map-selector-panel" aria-hidden="true">
+    <div class="map-selector-panel__header">
+      <div class="map-selector-search">
+        <input type="text" id="mapSelectorSearch" class="map-selector-search__input" placeholder="Søk..." aria-label="Søk etter kart...">
+        <button id="mapSelectorSearchClear" class="map-selector-search__clear" type="button" aria-label="Tøm søk" hidden>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
+            <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <ul id="mapSelectorList" class="map-selector-list"></ul>
+  </div>
+
+  <div id="pointModal" class="field-point-modal" aria-hidden="true" role="dialog" aria-modal="true">
+    <div class="field-point-modal__backdrop"></div>
+    <div class="field-point-modal__dialog">
+      <h2 id="pointModalTitle">Ny markør</h2>
+      <label class="field-point-modal__label" for="pointModalDescription">Beskrivelse</label>
+      <input id="pointModalDescription" class="field-point-modal__input" maxlength="200">
+      <p id="pointModalError" class="field-point-modal__error" aria-live="polite"></p>
+      <div class="field-point-modal__actions">
+        <button type="button" id="pointModalCancelButton" class="field-point-modal__button field-point-modal__button--secondary">
+          Avbryt
+        </button>
+        <button type="button" id="pointModalOkButton" class="field-point-modal__button field-point-modal__button--primary">
+          OK
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div id="fieldPointContextMenu" class="field-point-context-menu" aria-hidden="true"></div>
+
+  <script type="module" src="js/fieldChecking/main.js"></script>
+
+</body>
+
+</html>
+

@@ -69,6 +69,7 @@ class Database:
         self.cursor.execute("CREATE INDEX IF NOT EXISTS idx_maps_username ON maps(username)")
         self.cursor.execute(create_map_files_sql)
         self.create_gps_tracks_table()
+        self.create_stored_points_table()
         self.create_internal_kv_table()
         self.create_strava_tables()
         self.connection.commit()
@@ -107,6 +108,23 @@ class Database:
         )
         """
         self.cursor.execute(create_kv_sql)
+
+    def create_stored_points_table(self) -> None:
+        create_stored_points_sql = """
+        CREATE TABLE IF NOT EXISTS stored_points (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            lat REAL NOT NULL,
+            lon REAL NOT NULL,
+            precision_meters INTEGER NULL,
+            description TEXT NOT NULL DEFAULT '',
+            username TEXT NOT NULL,
+            FOREIGN KEY (username) REFERENCES users(username) ON DELETE CASCADE
+        )
+        """
+        self.cursor.execute(create_stored_points_sql)
+        self.cursor.execute(
+            "CREATE INDEX IF NOT EXISTS idx_stored_points_username ON stored_points(username)"
+        )
 
     def create_strava_tables(self) -> None:
         create_connections_sql = """

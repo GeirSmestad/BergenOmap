@@ -117,6 +117,7 @@ Shortlist: OCR, visuell design
 
 ## Navigasjons-app
 
+- [ ] Zoom med musehjul har blitt hakkete, skjønner ikke hvorfor. Var bra før.
 - [ ] Linjal som viser skala
 - [ ] Skala-velger støtter faktisk målestokk for kartet
 
@@ -212,6 +213,14 @@ Se Strava-integrasjonschat i ChatGPT: https://chatgpt.com/c/693a0201-57cc-8326-9
 - [ ] Visning av hvilke poster man har vært innom
 - [ ] Automatisk stempling (med minste avstand til post, og GPS-presisjon)
 - [ ] Mauell stempling (registrer avstand og presisjon fra GPS)
+
+## Synfarings-app
+
+- [ ] Plassere punkt ved å trekke det rundt
+- [ ] Trekke rundt punkt med "flytt"-alternativ i kontekst-meny
+- [ ] Vil vi justere hvordan markøren vises? Ser ikke så pen ut foreløpig, bare en hvit sirkel.
+- [x] Egen side for å se og lagre punkter i terrenget, lagret per bruker, bare synlig for pilotbruker foreløpig
+- [x] Lagre nåværende posisjon, redigere beskrivelse og slette punkter
 
 ## Multi-brukerstøtte
 

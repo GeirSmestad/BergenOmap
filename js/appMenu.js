@@ -11,12 +11,20 @@ export class AppMenu {
       { label: '📝 Registrer nytt kart', url: 'registerMap.html' },
       // { label: '🏃 Besøk poster', url: '#' } // Future placeholder
     ];
+
+    this.pilotUsers = new Set(['geir.smestad']);
+    this.pilotItems = [
+      { label: '🧭 Synfaring', url: 'fieldInspection.html' },
+    ];
     
     // Detect current page to highlight active link
     this.currentPath = window.location.pathname.split('/').pop() || 'index.html';
     if (this.currentPath === '') this.currentPath = 'index.html';
 
     this.init();
+    this.enhanceForPilotUsers().catch((err) => {
+      console.warn('Unable to resolve pilot menu items:', err);
+    });
   }
 
   /**
@@ -57,19 +65,9 @@ export class AppMenu {
     // 3. Create Menu List
     const list = document.createElement('nav');
     list.className = 'app-menu-list';
+    this.listEl = list;
     
-    this.items.forEach(item => {
-      const link = document.createElement('a');
-      link.href = item.url;
-      link.className = 'app-menu-link';
-      link.textContent = item.label;
-      
-      if (this.isActivePath(item.url)) {
-        link.classList.add('is-active');
-      }
-      
-      list.appendChild(link);
-    });
+    this.renderItems();
 
     // 4. Assemble
     container.appendChild(button);
@@ -91,6 +89,69 @@ export class AppMenu {
         button.setAttribute('aria-expanded', 'false');
       }
     });
+  }
+
+  renderItems() {
+    if (!this.listEl) {
+      return;
+    }
+
+    this.listEl.innerHTML = '';
+    this.items.forEach((item) => {
+      const link = document.createElement('a');
+      link.href = item.url;
+      link.className = 'app-menu-link';
+      link.textContent = item.label;
+
+      if (this.isActivePath(item.url)) {
+        link.classList.add('is-active');
+      }
+
+      this.listEl.appendChild(link);
+    });
+  }
+
+  async enhanceForPilotUsers() {
+    if (!this.listEl) {
+      return;
+    }
+
+    const username = await this.fetchCurrentUsername();
+    if (!username || !this.pilotUsers.has(username)) {
+      return;
+    }
+
+    const pilotAlreadyPresent = this.items.some((i) => i.url === 'fieldInspection.html');
+    if (pilotAlreadyPresent) {
+      return;
+    }
+
+    this.items = [...this.items, ...this.pilotItems];
+    this.renderItems();
+  }
+
+  async fetchCurrentUsername() {
+    const hostname = window.location.hostname || '';
+    const isLocalhost =
+      hostname === 'localhost' ||
+      hostname === '127.0.0.1' ||
+      hostname === '';
+    const apiBase = isLocalhost ? 'http://127.0.0.1:5000' : '';
+
+    const response = await fetch(`${apiBase}/api/auth/me`, {
+      method: 'GET',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+
+    if (!response.ok) {
+      return null;
+    }
+
+    const data = await response.json();
+    return data?.username || null;
   }
 }
 

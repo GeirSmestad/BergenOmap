@@ -1,0 +1,177 @@
+@import "./map.css";
+
+.field-inspection .map-controls {
+  left: 4rem;
+}
+
+.field-inspection .mark-position-button {
+  min-width: 140px;
+}
+
+.field-inspection .mark-position-button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.field-point-modal {
+  position: fixed;
+  inset: 0;
+  display: none;
+  z-index: 1600;
+}
+
+.field-point-modal.is-visible {
+  display: block;
+}
+
+.field-point-modal__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+}
+
+.field-point-modal__dialog {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(92vw, 420px);
+  border-radius: 18px;
+  background: rgba(21, 21, 21, 0.92);
+  color: #fff;
+  padding: 1.1rem 1.1rem 1rem;
+  box-shadow: 0 32px 60px rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(4px);
+}
+
+.field-point-modal__dialog h2 {
+  margin: 0 0 0.85rem;
+  font-size: 1.1rem;
+}
+
+.field-point-modal__label {
+  display: block;
+  font-weight: 600;
+  margin: 0 0 0.35rem;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.field-point-modal__input {
+  width: 100%;
+  box-sizing: border-box;
+  border: none;
+  border-radius: 10px;
+  padding: 0.75rem 0.85rem;
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  font-size: 0.95rem;
+  outline: none;
+}
+
+.field-point-modal__input:focus {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.field-point-modal__error {
+  min-height: 1.1rem;
+  margin: 0.65rem 0 0;
+  color: rgba(255, 179, 179, 0.95);
+  font-weight: 600;
+}
+
+.field-point-modal__actions {
+  margin-top: 0.9rem;
+  display: flex;
+  gap: 0.6rem;
+  justify-content: flex-end;
+}
+
+.field-point-modal__button {
+  border: none;
+  border-radius: 999px;
+  padding: 0.65rem 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.field-point-modal__button--secondary {
+  background: rgba(255, 255, 255, 0.14);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.field-point-modal__button--primary {
+  background: rgba(255, 255, 255, 0.92);
+  color: #111;
+}
+
+.field-point-context-menu {
+  position: fixed;
+  display: none;
+  z-index: 1700;
+  background: rgba(20, 20, 20, 0.92);
+  border-radius: 12px;
+  padding: 0.35rem;
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(6px);
+  min-width: 180px;
+}
+
+.field-point-context-menu.is-visible {
+  display: block;
+}
+
+.field-point-context-menu__item {
+  display: block;
+  width: 100%;
+  border: none;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.92);
+  text-align: left;
+  padding: 0.7rem 0.85rem;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.field-point-context-menu__item:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.field-point-context-menu__item--danger {
+  color: rgba(255, 120, 120, 0.95);
+}
+
+.field-point-icon {
+  overflow: visible !important;
+}
+
+.field-point-marker {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  pointer-events: auto;
+}
+
+.field-point-marker__pin {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.92);
+  border: 2px solid rgba(0, 0, 0, 0.55);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.35);
+}
+
+.field-point-marker__label {
+  padding: 0.2rem 0.45rem;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.55);
+  color: rgba(255, 255, 255, 0.92);
+  font-weight: 700;
+  font-size: 0.78rem;
+  white-space: nowrap;
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
