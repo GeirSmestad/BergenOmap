@@ -64,9 +64,9 @@ export function createMapController({
 
     currentOverlay = L.imageOverlay(overlayFile, overlayCoords, {
       opacity: 1,
-      ERROR_OVERLAY_URL,
+      errorOverlayUrl: ERROR_OVERLAY_URL,
       alt: '',
-      interactive: true
+      interactive: false
     }).addTo(map);
 
     return currentOverlay;
