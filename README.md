@@ -16,6 +16,20 @@ cd /Users/Geir/Source/BergenOmap; python3 -m http.server 8000
 
 Serves fra fx. http://127.0.0.1:8000/map.html
 
+
+# UX-Input fra Tyra
+
+- Bedre å dele opp registrerings-flyt i en side som eksplisitt gjør registrering av nye kart. Forenkle, ved å fjerne kart-valg og data-input.
+- Tre steg: Last opp kart, tilpass punkter (med valg mellom to visninger), "lagre" med modal-dialog for kartnavn.
+- Ha en "progress-indikator", som viser hvilket steg i prosessen vi er på
+- Få inn nytt design med farger; lyst alternativ også, i tillegg til det mørkegrønne
+- Highlight knappene for "beregn registrering" og "lagre kart" (disable alternativ som ikke foreløpig er aktuelle), etter hvor man er i prosessen.
+
+- Fint hvis vi kan beholde state i Strava-registreringen; få den opp som en sidebar fra bunnen i stedet for separat side
+- Skjule dato-velger i Strava-registreringen hvis vi har muligheten til det; gjemme den bak en filter-knapp
+
+
+
 # TODO
 
 Shortlist: OCR, visuell design
