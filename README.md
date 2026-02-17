@@ -29,6 +29,8 @@ Serves fra fx. http://127.0.0.1:8000/map.html
 - Skjule dato-velger i Strava-registreringen hvis vi har muligheten til det; gjemme den bak en filter-knapp
 
 
+- Design: https://www.figma.com/design/cMj36RZKKSve422IorebnX/Bergen-Bibliotek
+
 
 # TODO
 

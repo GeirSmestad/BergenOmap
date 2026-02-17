@@ -38,6 +38,20 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   const currentUsername = await fetchCurrentUsername();
 
+  let isSpeedColoringEnabled = false;
+  let currentTrackSegments = [];
+  let currentTrackMetadata = [];
+
+  const speedToggleButton = document.getElementById('gpxSpeedColorToggle');
+
+  function updateSpeedToggleButton() {
+    if (!speedToggleButton) {
+      return;
+    }
+    speedToggleButton.textContent = isSpeedColoringEnabled ? 'Fartfarger: På' : 'Fartfarger: Av';
+    speedToggleButton.setAttribute('aria-pressed', isSpeedColoringEnabled ? 'true' : 'false');
+  }
+
   const mapSelectorElements = {
     toggleButton: document.getElementById('mapSelectorToggle'),
     panel: document.getElementById('mapSelectorPanel'),
@@ -75,6 +89,21 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   let activeTrackRequest = 0;
+
+  updateSpeedToggleButton();
+  speedToggleButton?.addEventListener('click', () => {
+    isSpeedColoringEnabled = !isSpeedColoringEnabled;
+    updateSpeedToggleButton();
+
+    const hasTrack = Array.isArray(currentTrackSegments) && currentTrackSegments.length > 0;
+    if (!hasTrack) {
+      return;
+    }
+
+    trackRenderer.renderTrack(currentTrackSegments, currentTrackMetadata, {
+      colorBySpeed: isSpeedColoringEnabled
+    });
+  });
 
   function handleMapSelection(mapDefinition) {
     const selectedMapName = store.getState().selectedMapName;
@@ -160,7 +189,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         return;
       }
 
-      trackRenderer.renderTrack(segments, metadata);
+      currentTrackSegments = segments;
+      currentTrackMetadata = metadata;
+      trackRenderer.renderTrack(segments, metadata, { colorBySpeed: isSpeedColoringEnabled });
     } catch (error) {
       if (requestId !== activeTrackRequest) {
         return;
@@ -170,6 +201,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       store.setActiveTrack(null);
       store.setTrackLoading(false, error.message);
       trackRenderer.clearTrack();
+      currentTrackSegments = [];
+      currentTrackMetadata = [];
     }
   }
 
