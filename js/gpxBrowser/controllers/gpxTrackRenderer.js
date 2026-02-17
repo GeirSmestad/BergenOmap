@@ -1,3 +1,5 @@
+import { computeSpeedKmh, speedKmhToWhiteRedHex } from '../utils/speedColorUtils.js';
+
 const DEFAULT_POLYLINE_OPTIONS = {
   color: '#ff2d2d',
   weight: 6,
@@ -12,7 +14,6 @@ const SPEED_COLOR_LEVELS = 60; // quantize for fewer layers without looking "ste
 const SPEED_OUTLINE_COLOR = '#000000';
 const SPEED_OUTLINE_OPACITY = 0.55;
 const SPEED_HITBOX_OPACITY = 0.001;
-const EARTH_RADIUS_METERS = 6371000;
 
 export function createGpxTrackRenderer({
   map,
@@ -185,7 +186,11 @@ function createSpeedColoredLayers({ segment, metadataPoints, mergedOptions, base
     const t2 = metadataPoints?.[i + 1]?.time ?? null;
 
     const speed = computeSpeedKmh(p1, p2, t1, t2);
-    const color = speedToHex(speed, safeMax, { fallback: fallbackColor });
+    const color = speedKmhToWhiteRedHex(speed, {
+      maxKmh: safeMax,
+      levels: SPEED_COLOR_LEVELS,
+      fallback: fallbackColor
+    });
 
     if (currentColor === null) {
       currentColor = color;
@@ -220,119 +225,6 @@ function createSpeedPolyline(points, color, mergedOptions, baseWeight, paneName)
     pane: paneName,
     interactive: false
   });
-}
-
-function computeSpeedKmh(p1, p2, time1, time2) {
-  const t1 = parseTimeMs(time1);
-  const t2 = parseTimeMs(time2);
-  if (!Number.isFinite(t1) || !Number.isFinite(t2)) {
-    return null;
-  }
-  const dtSeconds = (t2 - t1) / 1000;
-  if (!Number.isFinite(dtSeconds) || dtSeconds <= 0) {
-    return null;
-  }
-  const distanceMeters = haversineDistanceMeters(p1, p2);
-  if (!Number.isFinite(distanceMeters) || distanceMeters < 0) {
-    return null;
-  }
-  return (distanceMeters / dtSeconds) * 3.6;
-}
-
-function parseTimeMs(value) {
-  if (!value) {
-    return NaN;
-  }
-  if (value instanceof Date) {
-    return value.getTime();
-  }
-  const ms = Date.parse(value);
-  return ms;
-}
-
-function haversineDistanceMeters(p1, p2) {
-  // p1/p2 are [lat, lon] in degrees
-  const lat1 = toRadians(p1?.[0]);
-  const lon1 = toRadians(p1?.[1]);
-  const lat2 = toRadians(p2?.[0]);
-  const lon2 = toRadians(p2?.[1]);
-
-  if (![lat1, lon1, lat2, lon2].every(Number.isFinite)) {
-    return NaN;
-  }
-
-  const dLat = lat2 - lat1;
-  const dLon = lon2 - lon1;
-  const a = Math.sin(dLat / 2) ** 2
-    + Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLon / 2) ** 2;
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  return EARTH_RADIUS_METERS * c;
-}
-
-function toRadians(deg) {
-  return (Number(deg) * Math.PI) / 180;
-}
-
-function speedToHex(speedKmh, speedMaxKmh, { fallback } = {}) {
-  if (!Number.isFinite(speedKmh)) {
-    return fallback ?? DEFAULT_POLYLINE_OPTIONS.color;
-  }
-
-  const max = Number.isFinite(speedMaxKmh) && speedMaxKmh > 0 ? speedMaxKmh : SPEED_MAX_KMH_DEFAULT;
-  const clamped = Math.max(0, Math.min(max, speedKmh));
-  const tRaw = clamped / max;
-  const t = quantize01(tRaw, SPEED_COLOR_LEVELS);
-
-  // HSV interpolation: white (h=0,s=0,v=1) -> red (h=0,s=1,v=1).
-  // Since hue and value are constant, this is simply saturation = t.
-  const { r, g, b } = hsvToRgb(0, t, 1);
-  return rgbToHex(r, g, b);
-}
-
-function quantize01(value, levels) {
-  const safeLevels = Number.isFinite(levels) && levels > 1 ? levels : 1;
-  const v = Math.max(0, Math.min(1, value));
-  return Math.round(v * safeLevels) / safeLevels;
-}
-
-function hsvToRgb(h, s, v) {
-  const hh = ((h % 360) + 360) % 360;
-  const c = v * s;
-  const x = c * (1 - Math.abs(((hh / 60) % 2) - 1));
-  const m = v - c;
-
-  let rp = 0;
-  let gp = 0;
-  let bp = 0;
-
-  if (hh < 60) {
-    rp = c; gp = x; bp = 0;
-  } else if (hh < 120) {
-    rp = x; gp = c; bp = 0;
-  } else if (hh < 180) {
-    rp = 0; gp = c; bp = x;
-  } else if (hh < 240) {
-    rp = 0; gp = x; bp = c;
-  } else if (hh < 300) {
-    rp = x; gp = 0; bp = c;
-  } else {
-    rp = c; gp = 0; bp = x;
-  }
-
-  return {
-    r: Math.round((rp + m) * 255),
-    g: Math.round((gp + m) * 255),
-    b: Math.round((bp + m) * 255)
-  };
-}
-
-function rgbToHex(r, g, b) {
-  return `#${toHexByte(r)}${toHexByte(g)}${toHexByte(b)}`;
-}
-
-function toHexByte(value) {
-  const v = Math.max(0, Math.min(255, Math.round(Number(value))));
-  return v.toString(16).padStart(2, '0');
 }
 
 function findClosestPointTime(latlng, segment, metadataPoints) {
