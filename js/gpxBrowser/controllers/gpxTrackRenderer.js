@@ -1,4 +1,4 @@
-import { computeSpeedKmh, speedKmhToWhiteRedHex } from '../utils/speedColorUtils.js';
+import { progressToRainbowPurpleToRedHex } from '../utils/progressColorUtils.js';
 
 const DEFAULT_POLYLINE_OPTIONS = {
   color: '#ff2d2d',
@@ -9,11 +9,10 @@ const DEFAULT_POLYLINE_OPTIONS = {
 };
 const OUTLINE_COLOR = '#2b0000'; // very dark red for subtle contrast
 const OUTLINE_EXTRA_WEIGHT = 1; // add 1px around the inner stroke
-const SPEED_MAX_KMH_DEFAULT = 12;
-const SPEED_COLOR_LEVELS = 60; // quantize for fewer layers without looking "steppy"
-const SPEED_OUTLINE_COLOR = '#000000';
-const SPEED_OUTLINE_OPACITY = 0.55;
-const SPEED_HITBOX_OPACITY = 0.001;
+const PROGRESS_COLOR_LEVELS = 180; // quantize for fewer layers without looking "steppy"
+const PROGRESS_OUTLINE_COLOR = '#000000';
+const PROGRESS_OUTLINE_OPACITY = 0.55;
+const PROGRESS_HITBOX_OPACITY = 0.001;
 
 export function createGpxTrackRenderer({
   map,
@@ -38,12 +37,15 @@ export function createGpxTrackRenderer({
     });
   }
 
-  function renderTrack(segmentLatLngs, segmentMetadata, { colorBySpeed = false, speedMaxKmh = SPEED_MAX_KMH_DEFAULT } = {}) {
+  function renderTrack(segmentLatLngs, segmentMetadata, { colorByProgress = false } = {}) {
     clearTrack();
 
     if (!Array.isArray(segmentLatLngs) || segmentLatLngs.length === 0) {
       return;
     }
+
+    const totalEdges = countTrackEdges(segmentLatLngs);
+    let segmentEdgeStartIndex = 0;
 
     segmentLatLngs.forEach((segment, index) => {
       if (!Array.isArray(segment) || segment.length < 2) {
@@ -61,7 +63,7 @@ export function createGpxTrackRenderer({
         ? mergedOptions.weight
         : DEFAULT_POLYLINE_OPTIONS.weight;
 
-      if (!colorBySpeed) {
+      if (!colorByProgress) {
         const outline = L.polyline(segment, {
           color: OUTLINE_COLOR,
           opacity: 1,
@@ -92,12 +94,13 @@ export function createGpxTrackRenderer({
         }
 
         layers.push(outline, polyline);
+        segmentEdgeStartIndex += segment.length - 1;
         return;
       }
 
       const outline = L.polyline(segment, {
-        color: SPEED_OUTLINE_COLOR,
-        opacity: SPEED_OUTLINE_OPACITY,
+        color: PROGRESS_OUTLINE_COLOR,
+        opacity: PROGRESS_OUTLINE_OPACITY,
         weight: baseWeight + OUTLINE_EXTRA_WEIGHT,
         lineCap: mergedOptions.lineCap,
         lineJoin: mergedOptions.lineJoin,
@@ -105,22 +108,22 @@ export function createGpxTrackRenderer({
         interactive: false
       }).addTo(map);
 
-      const speedLayers = createSpeedColoredLayers({
+      const progressLayers = createProgressColoredLayers({
         segment,
-        metadataPoints,
         mergedOptions,
         baseWeight,
         paneName,
-        speedMaxKmh
+        segmentEdgeStartIndex,
+        totalEdges
       });
 
-      speedLayers.forEach((layer) => layer.addTo(map));
+      progressLayers.forEach((layer) => layer.addTo(map));
 
       let hitbox = null;
       if (typeof onPointHover === 'function') {
         hitbox = L.polyline(segment, {
           color: '#000000',
-          opacity: SPEED_HITBOX_OPACITY,
+          opacity: PROGRESS_HITBOX_OPACITY,
           weight: baseWeight + 8,
           lineCap: mergedOptions.lineCap,
           lineJoin: mergedOptions.lineJoin,
@@ -137,17 +140,19 @@ export function createGpxTrackRenderer({
         });
       }
 
-      speedLayers.forEach((layer) => {
+      progressLayers.forEach((layer) => {
         if (typeof layer.bringToFront === 'function') {
           layer.bringToFront();
         }
       });
       hitbox?.bringToFront?.();
 
-      layers.push(outline, ...speedLayers);
+      layers.push(outline, ...progressLayers);
       if (hitbox) {
         layers.push(hitbox);
       }
+
+      segmentEdgeStartIndex += segment.length - 1;
     });
   }
 
@@ -170,10 +175,16 @@ function ensurePane(map, paneName, paneZIndex) {
   return pane;
 }
 
-function createSpeedColoredLayers({ segment, metadataPoints, mergedOptions, baseWeight, paneName, speedMaxKmh }) {
+function createProgressColoredLayers({
+  segment,
+  mergedOptions,
+  baseWeight,
+  paneName,
+  segmentEdgeStartIndex,
+  totalEdges
+}) {
   const layers = [];
 
-  const safeMax = Number.isFinite(speedMaxKmh) && speedMaxKmh > 0 ? speedMaxKmh : SPEED_MAX_KMH_DEFAULT;
   const fallbackColor = mergedOptions.color ?? DEFAULT_POLYLINE_OPTIONS.color;
 
   let currentColor = null;
@@ -182,15 +193,14 @@ function createSpeedColoredLayers({ segment, metadataPoints, mergedOptions, base
   for (let i = 0; i < segment.length - 1; i += 1) {
     const p1 = segment[i];
     const p2 = segment[i + 1];
-    const t1 = metadataPoints?.[i]?.time ?? null;
-    const t2 = metadataPoints?.[i + 1]?.time ?? null;
 
-    const speed = computeSpeedKmh(p1, p2, t1, t2);
-    const color = speedKmhToWhiteRedHex(speed, {
-      maxKmh: safeMax,
-      levels: SPEED_COLOR_LEVELS,
-      fallback: fallbackColor
+    const progress = computeEdgeProgress01({
+      segmentEdgeStartIndex,
+      localEdgeIndex: i,
+      totalEdges
     });
+
+    const color = progressToRainbowPurpleToRedHex(progress, { levels: PROGRESS_COLOR_LEVELS }) ?? fallbackColor;
 
     if (currentColor === null) {
       currentColor = color;
@@ -203,19 +213,19 @@ function createSpeedColoredLayers({ segment, metadataPoints, mergedOptions, base
       continue;
     }
 
-    layers.push(createSpeedPolyline(currentPoints, currentColor, mergedOptions, baseWeight, paneName));
+    layers.push(createColoredPolyline(currentPoints, currentColor, mergedOptions, baseWeight, paneName));
     currentColor = color;
     currentPoints = [p1, p2];
   }
 
   if (currentColor !== null && Array.isArray(currentPoints) && currentPoints.length >= 2) {
-    layers.push(createSpeedPolyline(currentPoints, currentColor, mergedOptions, baseWeight, paneName));
+    layers.push(createColoredPolyline(currentPoints, currentColor, mergedOptions, baseWeight, paneName));
   }
 
   return layers;
 }
 
-function createSpeedPolyline(points, color, mergedOptions, baseWeight, paneName) {
+function createColoredPolyline(points, color, mergedOptions, baseWeight, paneName) {
   return L.polyline(points, {
     color,
     weight: baseWeight,
@@ -257,5 +267,36 @@ function latLngDistance(latlng, pointArray) {
   const latDiff = latlng.lat - pointArray[0];
   const lngDiff = latlng.lng - pointArray[1];
   return Math.sqrt(latDiff * latDiff + lngDiff * lngDiff);
+}
+
+function countTrackEdges(segments) {
+  if (!Array.isArray(segments)) {
+    return 0;
+  }
+  let total = 0;
+  segments.forEach((segment) => {
+    if (Array.isArray(segment) && segment.length >= 2) {
+      total += segment.length - 1;
+    }
+  });
+  return total;
+}
+
+function computeEdgeProgress01({ segmentEdgeStartIndex, localEdgeIndex, totalEdges }) {
+  // Index-based "progress through session" across the whole track.
+  // This maps the first drawable edge to 0 (purple) and the last drawable edge to 1 (red).
+  if (!Number.isFinite(totalEdges) || totalEdges <= 1) {
+    return 0;
+  }
+  const globalEdgeIndex = segmentEdgeStartIndex + localEdgeIndex;
+  return clamp01(globalEdgeIndex / (totalEdges - 1));
+}
+
+function clamp01(value) {
+  const v = Number(value);
+  if (!Number.isFinite(v)) {
+    return 0;
+  }
+  return Math.max(0, Math.min(1, v));
 }
 

@@ -38,18 +38,18 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   const currentUsername = await fetchCurrentUsername();
 
-  let isSpeedColoringEnabled = false;
+  let isProgressColoringEnabled = false;
   let currentTrackSegments = [];
   let currentTrackMetadata = [];
 
-  const speedToggleButton = document.getElementById('gpxSpeedColorToggle');
+  const progressToggleButton = document.getElementById('gpxProgressColorToggle');
 
-  function updateSpeedToggleButton() {
-    if (!speedToggleButton) {
+  function updateProgressToggleButton() {
+    if (!progressToggleButton) {
       return;
     }
-    speedToggleButton.textContent = isSpeedColoringEnabled ? 'Fartfarger: På' : 'Fartfarger: Av';
-    speedToggleButton.setAttribute('aria-pressed', isSpeedColoringEnabled ? 'true' : 'false');
+    progressToggleButton.textContent = isProgressColoringEnabled ? 'Øktfarger: På' : 'Øktfarger: Av';
+    progressToggleButton.setAttribute('aria-pressed', isProgressColoringEnabled ? 'true' : 'false');
   }
 
   const mapSelectorElements = {
@@ -90,10 +90,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   let activeTrackRequest = 0;
 
-  updateSpeedToggleButton();
-  speedToggleButton?.addEventListener('click', () => {
-    isSpeedColoringEnabled = !isSpeedColoringEnabled;
-    updateSpeedToggleButton();
+  updateProgressToggleButton();
+  progressToggleButton?.addEventListener('click', () => {
+    isProgressColoringEnabled = !isProgressColoringEnabled;
+    updateProgressToggleButton();
 
     const hasTrack = Array.isArray(currentTrackSegments) && currentTrackSegments.length > 0;
     if (!hasTrack) {
@@ -101,7 +101,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     trackRenderer.renderTrack(currentTrackSegments, currentTrackMetadata, {
-      colorBySpeed: isSpeedColoringEnabled
+      colorByProgress: isProgressColoringEnabled
     });
   });
 
@@ -191,7 +191,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       currentTrackSegments = segments;
       currentTrackMetadata = metadata;
-      trackRenderer.renderTrack(segments, metadata, { colorBySpeed: isSpeedColoringEnabled });
+      trackRenderer.renderTrack(segments, metadata, { colorByProgress: isProgressColoringEnabled });
     } catch (error) {
       if (requestId !== activeTrackRequest) {
         return;
