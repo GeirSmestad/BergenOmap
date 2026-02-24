@@ -43,6 +43,8 @@ Shortlist: OCR, visuell design
 
 - [ ] Gjennomgang av API-flyt ved kartregistrering. Vil helst ha den raskere, alternativt mer granulære statusbar-tekster som viser framdriften.
 
+- [ ] Integrasjon med kart fra Livelox; se om det er mulig å hente kart derfra
+
 - [ ] Bytte navn på feltet "attribution" til "notes"
 
 - [x] Få inn skala i grensesnitt
@@ -205,6 +207,7 @@ Se Strava-integrasjonschat i ChatGPT: https://chatgpt.com/c/693a0201-57cc-8326-9
 - [ ] Bedre utseende på telefon; pr. nå snubler elementene litt i hverandre når det blir smal skjerm.
 - [ ] Lenke til selve Strava-aktiviteten fra kortene på siden?
 - [ ] Få inn informasjon fra dato-velger i framdrifts-indikator når man henter listen med aktiviteter
+- [ ] Sett dato-velger "fra" som default samme dag som siste aktivitet, for å ikke default hente alt hver gang
 
 - [x] Vis framdrift ved henting av aktiviteter og import av aktiviteter. Dette tar tid, mange nettverkskall. Fint å kunne følge med.
 - [x] Mindre høylytt rødfarge på "koble fra"-knappen
@@ -308,6 +311,7 @@ Grov plan: Få inn alle områder, og ett B-kart fra alle som har. Deretter A for
 - [ ] Løyper fra løp jeg har allerede: B-løypene fra 2025
 - [ ] Løyper fra løp jeg har allerede: A-løypene fra 2012-2021 (se registration-work-in-progress.txt for fullstendig liste)
 
+- [x] Få inn et utvalg av kart fra Lillehammer
 - [x] Importer GPX-spor fra Strava-løpene jeg glemte å merke som "Race" (de er allerede i DB)
 - [x] Legg inn GPX-spor fra alle de løpene mine fra Strava
 - [x] Registrer monster-kartet fra Vidden
