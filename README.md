@@ -259,6 +259,7 @@ Se Strava-integrasjonschat i ChatGPT: https://chatgpt.com/c/693a0201-57cc-8326-9
 ## Infrastruktur
 
 - [ ] Database-nøkkel som gir versjonen av et bestemt kart, slik at jeg kan cache i nettleseren til brukeren
+- [ ] Deploy-kommando for å skrive siste N innlagte kart til prod-databasen, uten å måtte kopiere hele
 
 - [x] OpenAI-integrasjon for å tolke OCR fra kart til database-felter (med fallback dersom nede)
 - [x] Slå sammen igjen databaser fra disk, hvor du slettet originalkartene i den ene
